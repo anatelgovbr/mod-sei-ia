@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+        name="IaWS"
+        targetNamespace="SeiIa"
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+        xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+        xmlns:tns="SeiIa">
+
+    <wsdl:types>
+        <xsd:schema targetNamespace="SeiIa">
+
+            <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+
+            <!-- Definir o tipo de dado para o conteúdo binário do arquivo -->
+            <xsd:complexType name="AttachmentType">
+                <xsd:sequence>
+                    <xsd:element name="Content" type="xsd:base64Binary"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+        </xsd:schema>
+    </wsdl:types>
+
+    <wsdl:message name="cadastrarClassificacaoRequest">
+        <wsdl:part name="Chave" type="xsd:string"/>
+        <wsdl:part name="IdProcedimento" type="xsd:string"/>
+        <wsdl:part name="Meta" type="xsd:string"/>
+    </wsdl:message>
+
+    <wsdl:message name="cadastrarClassificacaoResponse">
+        <wsdl:part name="parametros" type="tns:ArrayOfUsuarioExterno"/>
+    </wsdl:message>
+
+    <wsdl:message name="consultarDocumentoExternoIARequest">
+        <wsdl:part name="Chave" type="xsd:string"/>
+        <wsdl:part name="IdDocumento" type="xsd:string"/>
+    </wsdl:message>
+
+    <wsdl:message name="consultarDocumentoExternoIAResponse">
+        <wsdl:part name="Mensagem" type="xsd:string"/>
+        <wsdl:part name="NomeDocumento" type="xsd:string"/>
+        <!-- Mudar o tipo de xsd:base64Binary para o novo tipo de anexo -->
+        <wsdl:part name="Arquivo" type="tns:AttachmentType"/>
+    </wsdl:message>
+
+    <wsdl:portType name="SeiIaPortType">
+
+        <wsdl:operation name="cadastrarClassificacao">
+            <wsdl:documentation>Clasificar ODS</wsdl:documentation>
+            <wsdl:input message="tns:cadastrarClassificacaoRequest"/>
+            <wsdl:output message="tns:cadastrarClassificacaoResponse"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="consultarDocumentoExternoIA">
+            <wsdl:documentation>Consultar Documento Externo IA</wsdl:documentation>
+            <wsdl:input message="tns:consultarDocumentoExternoIARequest"/>
+            <wsdl:output message="tns:consultarDocumentoExternoIAResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <!-- Binding para cadastrarClassificacao usando encoded -->
+    <wsdl:binding name="SeiIaBindingEncoded" type="tns:SeiIaPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="cadastrarClassificacao">
+            <soap:operation soapAction="SeiIaAction"/>
+            <wsdl:input>
+                <soap:body namespace="SeiIa" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body namespace="SeiIa" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <!-- Binding para consultarDocumentoExternoIA usando document com MTOM habilitado -->
+    <wsdl:binding name="SeiIaBindingMTOM" type="tns:SeiIaPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" mtomEnabled="true"/>
+        <wsdl:operation name="consultarDocumentoExternoIA">
+            <soap:operation soapAction="SeiIaAction"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="SeiIaService">
+        <!-- Port para o binding SeiIaBindingEncoded -->
+        <wsdl:port name="SeiIaPortServiceEncoded" binding="tns:SeiIaBindingEncoded">
+            <soap:address location="[servidor]/modulos/ia/ws/IaWS.php"/>
+        </wsdl:port>
+
+        <!-- Port para o binding SeiIaBindingMTOM -->
+        <wsdl:port name="SeiIaPortServiceMTOM" binding="tns:SeiIaBindingMTOM">
+            <soap:address location="[servidor]/modulos/ia/ws/IaWS.php"/>
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>
