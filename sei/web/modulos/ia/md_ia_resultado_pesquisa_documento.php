@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 19/05/2023 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.2
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.2
  */
 
 try {
@@ -46,7 +46,7 @@ PaginaSEI::getInstance()->montarDocType();
 PaginaSEI::getInstance()->abrirHtml();
 PaginaSEI::getInstance()->abrirHead();
 PaginaSEI::getInstance()->montarMeta();
-PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
+PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ');
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
 include_once('md_ia_recurso_cadastro_css.php');

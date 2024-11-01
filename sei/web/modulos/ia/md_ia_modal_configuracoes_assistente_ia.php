@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 14/03/2017 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.40.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.40.0
  */
 
 try {
@@ -31,12 +31,12 @@ try {
     PaginaSEI::getInstance()->setTipoPagina(InfraPagina::$TIPO_PAGINA_SIMPLES);
     switch ($_GET['acao']) {
         case 'md_ia_modal_configuracoes_assistente_ia':
-            $strTitulo = 'Configurações do Assistente de IA';
+            $strTitulo = 'ConfiguraÃ§Ãµes do Assistente';
 
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
 } catch (Exception $e) {
@@ -64,7 +64,7 @@ $strLinkChatsArquivados = SessaoSEI::getInstance()->assinarLink('controlador.php
 <div id="conteudoModalConfiguracoes" style="margin-top: 35px;">
     <div class="card">
         <ul class="list-group list-group-flush">
-            <li class="list-group-item"><div class="float-left" style="padding: 7px 0 0 0;"><h6 style=" margin: 0;">Tópicos Arquivados</h6></div><div class="text-right float-right"><a onclick="infraAbrirJanelaModal('<?= $strLinkChatsArquivados ?> ', 1024, 800)" class="btn btn-sm btn-outline-secondary">Gerenciar</a></div></li>
+            <li class="list-group-item"><div class="float-left" style="padding: 7px 0 0 0;"><h6 style=" margin: 0;">TÃ³picos Arquivados</h6></div><div class="text-right float-right"><a onclick="infraAbrirJanelaModal('<?= $strLinkChatsArquivados ?> ', 1024, 800)" class="btn btn-sm btn-outline-secondary">Gerenciar</a></div></li>
         </ul>
     </div>
 </div>

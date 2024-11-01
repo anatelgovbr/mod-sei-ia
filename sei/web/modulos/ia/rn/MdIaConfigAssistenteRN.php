@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 19/05/2023 - criado por sabino.colab
  *
- * Vers„o do Gerador de CÛdigo: 1.43.2
+ * Vers√£o do Gerador de C√≥digo: 1.43.2
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -53,7 +53,7 @@ class MdIaConfigAssistenteRN extends InfraRN
                 $log .= "00002 - Usuario: " . SessaoSEI::getInstance()->getStrNomeUsuario() . " - Unidade: " . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . " \n";
                 $log .= "00003 - Endpoint do Recurso: " . $url . " \n";
                 $log .= "00004 - Tipo de Indisponibilidade: " . $httpcode . " \n";
-                $log .= "00005 - Mensagem retornada pelo Servidor: " . utf8_decode($resposta) . " \n";
+                $log .= "00005 - Mensagem retornada pelo Servidor: " . utf8_decode($response) . " \n";
                 $log .= "00006 - FIM \n";
                 LogSEI::getInstance()->gravar($log, InfraLog::$INFORMACAO);
 
@@ -67,9 +67,8 @@ class MdIaConfigAssistenteRN extends InfraRN
 
                 return false;
             }
-            return json_decode($response);
         } catch (Exception $e) {
-            throw new InfraException('Erro ao buscar recomendaÁıes de processos..', $e);
+            throw new InfraException('Erro ao buscar recomenda√ß√µes de processos..', $e);
         }
     }
 
@@ -126,7 +125,7 @@ class MdIaConfigAssistenteRN extends InfraRN
                 $log .= "00002 - Usuario: " . SessaoSEI::getInstance()->getStrNomeUsuario() . " - Unidade: " . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . " \n";
                 $log .= "00003 - Endpoint do Recurso: " . $dadosEnviados[1] . " \n";
                 $log .= "00004 - Tipo de Indisponibilidade: " . $httpcode . " \n";
-                $log .= "00005 - Mensagem retornada pelo Servidor: " . utf8_decode($resposta) . " \n";
+                $log .= "00005 - Mensagem retornada pelo Servidor: " . utf8_decode($response) . " \n";
                 $log .= "00006 - JSON enviado ao Servidor: " . $dadosEnviados[0] . " \n";
                 $log .= "00007 - FIM \n";
                 LogSEI::getInstance()->gravar($log, InfraLog::$INFORMACAO);
@@ -141,8 +140,6 @@ class MdIaConfigAssistenteRN extends InfraRN
                 return false;
             }
 
-            return json_decode($response);
-
         } catch (Exception $e) {
             throw new InfraException('Erro ao cadastrar Similaridade', $e);
         }
@@ -151,7 +148,7 @@ class MdIaConfigAssistenteRN extends InfraRN
     protected function consultarAnexoControlado($dblIdDocumento)
     {
         if (!isset($dblIdDocumento)) {
-            throw new InfraException('Par‚metro $dblIdDocumento n„o informado.');
+            throw new InfraException('Par√¢metro $dblIdDocumento n√£o informado.');
         }
         $objAnexoRN = new AnexoRN();
 

@@ -1,9 +1,9 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  ** 14/09/2023 - criado por sabino.colab
  *
- * Vers„o do Gerador de CÛdigo: 1.43.1
+ * Vers√£o do Gerador de C√≥digo: 1.43.1
  */
 
 try {
@@ -44,7 +44,7 @@ try {
     switch ($_GET['acao']) {
         case 'md_ia_adm_integracao_cadastrar':
             $strTipoAcao = 'cadastrar';
-            $strTitulo = 'Novo Mapeamento de IntegraÁ„o';
+            $strTitulo = 'Novo Mapeamento de Integra√ß√£o';
             $arrComandos[] = '<button type="submit" accesskey="S" name="sbmCadastrarMdIaAdmIntegracao" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
@@ -69,7 +69,7 @@ try {
                     $objMdIaAdmIntegracaoDTO->setStrTokenAutenticacao(empty($vlrToken) ? null : MdIaAdmIntegracaoINT::gerenciaDadosRestritos($vlrToken));
 
                     $objMdIaAdmIntegracaoDTO = $objMdIaAdmIntegracaoRN->cadastrar($objMdIaAdmIntegracaoDTO);
-                    PaginaSEI::getInstance()->adicionarMensagem('IntegraÁ„o "' . $objMdIaAdmIntegracaoDTO->getStrNome() . '" cadastrada com sucesso.');
+                    PaginaSEI::getInstance()->adicionarMensagem('Integra√ß√£o "' . $objMdIaAdmIntegracaoDTO->getStrNome() . '" cadastrada com sucesso.');
                     header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . '&id_md_ia_adm_integracao=' . $objMdIaAdmIntegracaoDTO->getNumIdMdIaAdmIntegracao() . PaginaSEI::getInstance()->montarAncora($objMdIaAdmIntegracaoDTO->getNumIdMdIaAdmIntegracao())));
                     die;
                 } catch (Exception $e) {
@@ -80,7 +80,7 @@ try {
 
         case 'md_ia_adm_integracao_alterar':
             $strTipoAcao = 'alterar';
-            $strTitulo = 'Alterar Mapeamento de IntegraÁ„o';
+            $strTitulo = 'Alterar Mapeamento de Integra√ß√£o';
             $arrComandos[] = '<button type="submit" accesskey="S" name="sbmAlterarMdIaAdmIntegracao" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $strDesabilitar = 'disabled="disabled"';
 
@@ -107,7 +107,7 @@ try {
             $strItensSelMdIaIntegFuncionalid = MdIaAdmIntegracaoINT::montarSelectNome('null', '&nbsp;', $objMdIaAdmIntegracaoDTO->getNumIdMdIaAdmIntegFuncion());
 
             if ($objMdIaAdmIntegracaoDTO == null) {
-                throw new InfraException("Registro n„o encontrado.");
+                throw new InfraException("Registro n√£o encontrado.");
             }
 
             if (isset($_GET['id_md_ia_adm_integracao'])) {
@@ -141,7 +141,7 @@ try {
                     $objMdIaAdmIntegracaoDTO->setStrOperacaoWsdl($_POST['txtUrlServico']);
                     $objMdIaAdmIntegracaoRN = new MdIaAdmIntegracaoRN();
                     $objMdIaAdmIntegracaoRN->alterar($objMdIaAdmIntegracaoDTO);
-                    PaginaSEI::getInstance()->adicionarMensagem('IntegraÁ„o "' . $objMdIaAdmIntegracaoDTO->getStrNome() . '" alterada com sucesso.');
+                    PaginaSEI::getInstance()->adicionarMensagem('Integra√ß√£o "' . $objMdIaAdmIntegracaoDTO->getStrNome() . '" alterada com sucesso.');
                     header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($objMdIaAdmIntegracaoDTO->getNumIdMdIaAdmIntegracao())));
                     die;
                 } catch (Exception $e) {
@@ -152,7 +152,7 @@ try {
 
         case 'md_ia_adm_integracao_consultar':
             $strTipoAcao = 'consultar';
-            $strTitulo = 'Consultar Mapeamento de IntegraÁ„o';
+            $strTitulo = 'Consultar Mapeamento de Integra√ß√£o';
             $arrComandos[] = '<button type="button" accesskey="F" name="btnFechar" value="Fechar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($_GET['id_md_ia_adm_integracao'])) . '\';" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
             $objMdIaAdmIntegracaoDTO->setNumIdMdIaAdmIntegracao($_GET['id_md_ia_adm_integracao']);
             $objMdIaAdmIntegracaoDTO->setBolExclusaoLogica(false);
@@ -176,12 +176,12 @@ try {
             $tpFuncionalidade = $objMdIaAdmIntegracaoDTO->getNumIdMdIaAdmIntegFuncion();
 
             if ($objMdIaAdmIntegracaoDTO === null) {
-                throw new InfraException("Registro n„o encontrado.");
+                throw new InfraException("Registro n√£o encontrado.");
             }
             break;
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
 
 
@@ -239,7 +239,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 
         <div class="row mb-2">
             <div class="col-sm-12 col-lg-12 mb-2">
-                <label id="lblTipoIntegracao" class="infraLabelObrigatorio">Tipo de IntegraÁ„o:</label>
+                <label id="lblTipoIntegracao" class="infraLabelObrigatorio">Tipo de Integra√ß√£o:</label>
                 <div id="divRadiosTpIntegracao">
                     <div class="form-check-inline">
                         <div class="infraRadioDiv">
@@ -250,7 +250,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                             <label class="infraRadioLabel" for="rdnTpSemIntegracao"></label>
                         </div>
                         <label id="lblSemIntegracao" name="lblSemIntegracao" for="rdnTpSemIntegracao"
-                               class="infraLabelOpcional infraLabelRadio">Sem IntegraÁ„o</label>
+                               class="infraLabelOpcional infraLabelRadio">Sem Integra√ß√£o</label>
                     </div>
 
                     <div class="form-check-inline">
@@ -278,7 +278,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             </div>
 
             <div class="col-sm-12 col-md-10 col-lg-3 mb-2 selSOAP" <?= $arrConfig['hab_soap'] == true ? '' : 'style="display: none;"' ?> >
-                <label id="lblVersaoSOAP" class="infraLabelObrigatorio">Vers„o SOAP:</label>
+                <label id="lblVersaoSOAP" class="infraLabelObrigatorio">Vers√£o SOAP:</label>
                 <select id="selVersaoSOAP" name="selVersaoSOAP" class="infraSelect form-control"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                     <option value="">Selecione</option>
@@ -288,7 +288,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             </div>
 
             <div class="col-sm-12 col-md-10 col-lg-3 mb-2 selREST" <?= $arrConfig['hab_rest'] ? '' : 'style="display: none;"' ?> >
-                <label id="lblMetodoRequisicao" class="infraLabelObrigatorio">MÈtodo da RequisiÁ„o:</label>
+                <label id="lblMetodoRequisicao" class="infraLabelObrigatorio">M√©todo da Requisi√ß√£o:</label>
                 <select id="selMetodoRequisicao" name="selMetodoRequisicao" class="infraSelect form-control"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" <?= $disabledSeiIa ?>>
                     <?= MdIaAdmIntegracaoINT::montarSelectMetodoRequisicao(PaginaSEI::tratarHTML($objMdIaAdmIntegracaoDTO->getNumMetodoRequisicao())) ?>
@@ -296,7 +296,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             </div>
 
             <div class="col-sm-12 col-md-10 col-lg-4 mb-2 selREST" <?= $arrConfig['hab_rest'] ? '' : 'style="display: none;"' ?>>
-                <label id="lblMetodoAutenticacao" class="infraLabelObrigatorio">MÈtodo de AutenticaÁ„o:</label>
+                <label id="lblMetodoAutenticacao" class="infraLabelObrigatorio">M√©todo de Autentica√ß√£o:</label>
                 <select id="selMetodoAutenticacao" name="selMetodoAutenticacao" class="infraSelect form-control"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" <?= $disabledSeiIa ?>>
                     <?= MdIaAdmIntegracaoINT::montarSelectMetodoAutenticacao(PaginaSEI::tratarHTML($objMdIaAdmIntegracaoDTO->getNumMetodoAutenticacao())) ?>
@@ -304,7 +304,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             </div>
 
             <div class="col-sm-12 col-md-10 col-lg-3 selREST" <?= $arrConfig['hab_rest'] ? '' : 'style="display: none;"' ?>>
-                <label id="lblFormato" class="infraLabelObrigatorio">Formato do Retorno da OperaÁ„o:</label>
+                <label id="lblFormato" class="infraLabelObrigatorio">Formato do Retorno da Opera√ß√£o:</label>
                 <select id="selFormato" name="selFormato" class="infraSelect form-control"
                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" <?= $disabledSeiIa ?>>
                     <?= MdIaAdmIntegracaoINT::montarSelectFormato(PaginaSEI::tratarHTML($objMdIaAdmIntegracaoDTO->getNumFormatoResposta())) ?>
@@ -317,12 +317,12 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
              style="width:100%; <?= ($arrConfig['hab_soap'] || $arrConfig['hab_rest']) ? '' : 'display: none' ?>">
             <div class="row mb-2">
                 <div class="col-sm-12 col-md-10">
-                    <label id="lblUrlServico" for="txtUrlServico" class="infraLabelObrigatorio">URL do Endpoint de AutenticaÁ„o:</label>
-                    <img id="imgDefServico" align="top"
+                    <label id="lblUrlServico" for="txtUrlServico" class="infraLabelObrigatorio">URL do Endpoint de Autentica√ß√£o:</label>
+                    <img id="imgDefServico" align="top" alt="√çcone de Ajuda"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" class="infraImg"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Informe a URL com o domÌnio utilizado na API da SoluÁ„o de InteligÍncia Artificial do SEI para o ambiente correspondente, conforme manual prÛprio indicado no README do mÛdulo SEI IA sobre a implantaÁ„o do container Docker da soluÁ„o de IA.
+                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Informe a URL com o dom√≠nio utilizado na API da Solu√ß√£o de Intelig√™ncia Artificial do SEI para o ambiente correspondente, conforme manual pr√≥prio indicado no README do m√≥dulo SEI IA sobre a implanta√ß√£o do container Docker da solu√ß√£o de IA.
 
-Deve utilizar o protocolo HTTPS na URL para a comunicaÁ„o ser criptografada e n„o pode finalizar a URL com barra (/) nem informaÁ„o de porta. Informar apenas o hostname da soluÁ„o de IA em container Docker instalado no Ûrg„o.
+Deve utilizar o protocolo HTTPS na URL para a comunica√ß√£o ser criptografada e n√£o pode finalizar a URL com barra (/) nem informa√ß√£o de porta. Informar apenas o hostname da solu√ß√£o de IA em container Docker instalado no √≥rg√£o.
 
 Exemplo de URL valida: https://hostname_docker_solucao_sei_ia_do_ambiente', 'Ajuda') ?> />
                     <div class="input-group">

@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 05/07/2023 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.2
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.2
  */
 
 require_once dirname(__FILE__) . '../../../../SEI.php';
@@ -12,7 +12,7 @@ require_once dirname(__FILE__) . '../../../../SEI.php';
 class MdIaAdmConfigAssistIARN extends InfraRN
 {
     public static $LLM_GPT_4_128K_ID   = '6';
-    public static $LLM_GPT_4_128K   = 'GPT 4 128K de Contexto';
+    public static $LLM_GPT_4_128K   = 'GPT-4o - 128K de Contexto';
     public static $LLM_GPT_4_128K_CONTEXTO   = '128000';
 
 
@@ -29,7 +29,7 @@ class MdIaAdmConfigAssistIARN extends InfraRN
     private function validarStrOrientacoesGerais(MdIaAdmConfigAssistIADTO $objMdIaAdmConfigAssistIADTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmConfigAssistIADTO->getStrOrientacoesGerais())) {
-            $objInfraException->adicionarValidacao('Orientações Gerais não informada.');
+            $objInfraException->adicionarValidacao('OrientaÃ§Ãµes Gerais nÃ£o informada.');
         } else {
             $objMdIaAdmConfigAssistIADTO->setStrOrientacoesGerais(trim($objMdIaAdmConfigAssistIADTO->getStrOrientacoesGerais()));
         }
@@ -38,7 +38,7 @@ class MdIaAdmConfigAssistIARN extends InfraRN
     private function validarStrSinExibirFuncionalidade(MdIaAdmConfigAssistIADTO $objMdIaAdmConfigAssistIADTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmConfigAssistIADTO->getStrSinExibirFuncionalidade())) {
-            $objInfraException->adicionarValidacao('Exibir Funcionalidade não informado.');
+            $objInfraException->adicionarValidacao('Exibir Funcionalidade nÃ£o informado.');
         } else {
             $objMdIaAdmConfigAssistIADTO->setStrSinExibirFuncionalidade(trim($objMdIaAdmConfigAssistIADTO->getStrSinExibirFuncionalidade()));
         }

@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 19/05/2023 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.2
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.2
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -70,10 +70,8 @@ class MdIaRecursoRN extends InfraRN
                 InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
                 return null;
             }
-
-            return json_decode($response);
         } catch (Exception $e) {
-            throw new InfraException('Erro ao buscar recomendações de processos..', $e);
+            throw new InfraException('Erro ao buscar recomendaÃ§Ãµes de processos..', $e);
         }
     }
 
@@ -118,8 +116,6 @@ class MdIaRecursoRN extends InfraRN
                 InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
                 throw new InfraException('Erro ao submeter Feedback de Processos Similares');
             }
-
-            return json_decode($response);
 
         } catch (Exception $e) {
             throw new InfraException('Erro ao submeter Feedback de Processos Similares', $e);
@@ -168,8 +164,6 @@ class MdIaRecursoRN extends InfraRN
                 InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
                 throw new InfraException('Erro ao submeter Feedback de Pesquisa de Documento');
             }
-
-            return json_decode($response);
 
         } catch (Exception $e) {
             throw new InfraException('Erro ao submeter Feedback de Pesquisa de Documento', $e);
@@ -239,8 +233,6 @@ class MdIaRecursoRN extends InfraRN
                 InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
                 throw new InfraException('Erro retornando Pesquisa Documentos!');
             }
-
-            return json_decode($response);
         } catch (Exception $e) {
             throw new InfraException('Erro retornando Pesquisa Documentos.', $e);
         }
@@ -288,10 +280,8 @@ class MdIaRecursoRN extends InfraRN
                 InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
                 return false;
             }
-
-            return json_decode($response);
         } catch (Exception $e) {
-            throw new InfraException('Erro validando conexão com API.', $e);
+            throw new InfraException('Erro validando conexÃ£o com API.', $e);
         }
     }
 
@@ -408,8 +398,8 @@ class MdIaRecursoRN extends InfraRN
         $tipoDocumento = $objMdIaAdmDocRelevRN->consultar($objMdIaAdmDocRelevDTO);
         $msg = "";
         if($tipoDocumento) {
-            $msg .= "Não é permitido excluir o Tipo de Documento ".$tipoDocumento->getStrNomeSerie().", pois ele é utilizado pelo Módulo de Inteligência Artificial. \n";
-            $msg .= "Verifique as parametrizações no menu Administração > Inteligência Artificial > Documentos Relevantes.";
+            $msg .= "NÃ£o Ã© permitido excluir o Tipo de Documento ".$tipoDocumento->getStrNomeSerie().", pois ele Ã© utilizado pelo MÃ³dulo de InteligÃªncia Artificial. \n";
+            $msg .= "Verifique as parametrizaÃ§Ãµes no menu AdministraÃ§Ã£o > InteligÃªncia Artificial > Documentos Relevantes.";
         }
         return $msg;
     }
@@ -433,8 +423,8 @@ class MdIaRecursoRN extends InfraRN
 
         $msg = "";
         if($tipoProcesso) {
-            $msg .= "Não é permitido excluir o Tipo de Processo " . $tipoProcesso->getStrNomeTipoProcedimento() . ", pois ele é utilizado  pelo Módulo de Inteligência Artificial. \n";
-            $msg .= " Verifique as parametrizações no menu Administração > Inteligência Artificial > Documentos Relevantes.";
+            $msg .= "NÃ£o Ã© permitido excluir o Tipo de Processo " . $tipoProcesso->getStrNomeTipoProcedimento() . ", pois ele Ã© utilizado  pelo MÃ³dulo de InteligÃªncia Artificial. \n";
+            $msg .= " Verifique as parametrizaÃ§Ãµes no menu AdministraÃ§Ã£o > InteligÃªncia Artificial > Documentos Relevantes.";
         }
         return $msg;
     }
