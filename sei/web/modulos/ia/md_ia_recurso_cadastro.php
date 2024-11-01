@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 19/05/2023 - criado por sabino.colab
  *
- * Vers„o do Gerador de CÛdigo: 1.43.2
+ * Vers√£o do Gerador de C√≥digo: 1.43.2
  */
 
 try {
@@ -67,7 +67,7 @@ try {
     if ($objMdIaAdmOdsOnuDTO) {
         $objMdIaAdmObjetivoOdsDTO = new MdIaAdmObjetivoOdsDTO();
         $objMdIaAdmObjetivoOdsDTO->retNumIdMdIaAdmObjetivoOds();
-        $objMdIaAdmObjetivoOdsDTO->retNumIdMdIaAdmObjetivoOds();
+        $objMdIaAdmObjetivoOdsDTO->retStrNomeOds();
         $objMdIaAdmObjetivoOdsDTO->retStrIconeOds();
         $objMdIaAdmObjetivoOdsDTO->setNumIdMdIaAdmOdsOnu($objMdIaAdmOdsOnuDTO->getNumIdMdIaAdmOdsOnu());
         $objMdIaAdmObjetivoOdsRN = new MdIaAdmObjetivoOdsRN();
@@ -91,7 +91,7 @@ try {
     $itensSimilares = $objMdIaRecursoRN->conexaoApiRecomendacaoSimilaridade(array($objMdIaAdmConfigSimilarDTO, $objSaidaConsultarProcedimentoAPI));
 
     if ($objMdIaAdmConfigSimilarDTO == null) {
-        throw new InfraException("Par‚metros das configuraÁıes similares n„o cadastrados.");
+        throw new InfraException("Par√¢metros das configura√ß√µes similares n√£o cadastrados.");
     }
 
     $strLinkDocumentoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_protocolos_selecionar&tipo_selecao=2&id_procedimento=' . $_GET["id_procedimento"] . '&id_object=objLupaDocumento');
@@ -108,7 +108,7 @@ try {
             break;
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
 
 } catch (Exception $e) {
@@ -141,7 +141,7 @@ if ($objMdIaAdmOdsOnuDTO->getStrSinExibirFuncionalidade() == "S") {
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 text-justify">
             <fieldset class="infraFieldset form-control mb-3 py-3" style="height: auto">
-                <legend class="infraLegend">Objetivos de Desenvolvimento Sustent·vel da ONU</legend>
+                <legend class="infraLegend">Objetivos de Desenvolvimento Sustent√°vel da ONU</legend>
                 <?= $objMdIaAdmOdsOnuDTO->getStrOrientacoesGerais() ?>
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12" id="objetivosOds">
@@ -184,7 +184,7 @@ if ($objMdIaAdmOdsOnuDTO->getStrSinExibirFuncionalidade() == "S") {
                                                 break;
 
                                             case MdIaClassificacaoOdsRN::$USUARIO_PADRAO:
-                                                // CASO O ULTIMO USUARIO TENHA SIDO UM USUARIO PADRAO E N√O TENHA META CLASSIFICADA EXIBE O ICONE DO HISTORICO
+                                                // CASO O ULTIMO USUARIO TENHA SIDO UM USUARIO PADRAO E N√ÉO TENHA META CLASSIFICADA EXIBE O ICONE DO HISTORICO
                                                 $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
                                                 $objMdIaClassMetaOdsDTO->setNumIdMdIaClassificacaoOds($objMdIaClassificacaoOdsDTO->getNumIdMdIaClassificacaoOds());
                                                 $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
@@ -201,7 +201,7 @@ if ($objMdIaAdmOdsOnuDTO->getStrSinExibirFuncionalidade() == "S") {
                                     <div class="col-sm-12 col-md-3 col-lg-3 col-xl-2 text-center" style="margin-bottom: 15px">
                                         <a onclick='consultarObjetivoOds("<?= $objMdIaAdmObjetivoOdsDTO->getNumIdMdIaAdmObjetivoOds() ?>")'>
                                             <div class="imagem text-center">
-                                                <img src='modulos/ia/imagens/Icones_Oficiais_ONU/<?= $objMdIaAdmObjetivoOdsDTO->getStrIconeOds() ?>' class="<?= $classe ?>"/>
+                                                <img src="modulos/ia/imagens/Icones_Oficiais_ONU/<?= $objMdIaAdmObjetivoOdsDTO->getStrIconeOds() ?>" class="<?= $classe ?>" alt="Objetivo ODS: <?= $objMdIaAdmObjetivoOdsDTO->getStrNomeOds() ?>"/>
                                                 <div id="sobreposicao_imagem" style="display: none" class="<?= $classe ?>"></div>
                                             </div>
                                         </a>
@@ -237,14 +237,14 @@ if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
                     <?php
                         } else {
                     ?>
-                        <legend class="infraLegend">AvaliaÁ„o de Similaridade entre Processos</legend>
+                        <legend class="infraLegend">Avalia√ß√£o de Similaridade entre Processos</legend>
                         <?php
                             if ($itensSimilares->recommendation != "" && $itensSimilares != "404") {
                                 ?>
                                 <div style="text-align: right; margin-top: -10px;">
                                     <button accesskey="S" name="sbmCadastrarMdIaAvaliacao" value="Salvar" class="infraButton"
                                             onclick="submeterDadosViaAjax()"><span class="infraTeclaAtalho">S</span>ubmeter
-                                        AvaliaÁ„o
+                                        Avalia√ß√£o
                                     </button>
                                 </div>
                     <?php
@@ -263,7 +263,7 @@ if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
                             <?php
                             if ($itensSimilares->recommendation != "" && $itensSimilares != "404") {
                                 ?>
-                                <table class="infraTable " id="tabela_ordenada">
+                                <table class="infraTable " id="tabela_ordenada" aria-describedby="Tabela de Processos Similares">
                                     <thead>
                                     <tr>
                                         <th class="infraTh" width="5%">Ranking</th>
@@ -272,12 +272,12 @@ if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
                                             if($exibirRacional != "1") {
                                         ?>
                                             <th class="infraTh" width="72%"> Tipo de Processo</th>
-                                            <th class="infraTh" width="9%" >AvaliaÁ„o</th>
+                                            <th class="infraTh" width="9%" >Avalia√ß√£o</th>
                                         <?php
                                             } else {
                                         ?>
                                             <th class="infraTh" width="35%"> Tipo de Processo</th>
-                                            <th class="infraTh" width="9%">AvaliaÁ„o</th>
+                                            <th class="infraTh" width="9%">Avalia√ß√£o</th>
                                             <th class="infraTh">Racional</th>
                                         <?php
                                             }
@@ -302,7 +302,7 @@ if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
                                         ?>
                                         <tr data-index="<?= $contador ?>" data-position="<?= $contador ?>">
                                             <td class="idRanking">
-                                                <?= $contador ?><i class="gg-arrows-v mr-2"></i>
+                                                <?= $contador ?><em class="gg-arrows-v mr-2"></em>
                                                 <input type="hidden" id="hdnRanking<?= $contador ?>"
                                                        name="hdnRanking<?= $contador ?>" value="<?= $contador ?>"/>
                                             </td>
@@ -358,7 +358,7 @@ if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
                                 ?>
                                 <div class="alert alert-danger">
                                     <label class="infraLabelOpcional">
-                                        O recurso especfico do SEI IA est· indisponÌvel no momento.
+                                        O recurso especfico do SEI IA est√° indispon√≠vel no momento.
                                     </label>
                                 </div>
                                 <?php
@@ -366,7 +366,7 @@ if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
                                 ?>
                                 <div class="alert alert-warning">
                                     <label class="infraLabelOpcional">
-                                        Este Processo ainda est· pendente de processamento pelo SEI IA.
+                                        Este Processo ainda est√° pendente de processamento pelo SEI IA.
                                     </label>
                                 </div>
                                 <?php
@@ -381,7 +381,7 @@ if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
                                 <div class="row">
                                     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                                         <label for="txaSugestoes" class="infraLabelOpcional">
-                                            Sugestıes
+                                            Sugest√µes
                                         </label>
                                         <label for="txaSugestoes" class="infraLabelOpcional">
                                         </label>
@@ -424,11 +424,11 @@ if ($objMdIaAdmPesqDocDTO->getStrSinExibirFuncionalidade() == "S") {
                         <div class="form-group">
                             <label id="lblQtdProcessListagem" for="txtTextoPesquisa" accesskey=""
                                    class="infraLabelOpcional">Texto para Pesquisa:</label>
-                            <img align="top"
+                            <img align="top" alt="√çcone de Ajuda"
                                  src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escrever aqui texto de pesquisa caso queira combinar ou n„o com a pesquisa confrontando o conte˙do dos documentos do processo que forem selecionados para montar a pesquisa.
+                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escrever aqui texto de pesquisa caso queira combinar ou n√£o com a pesquisa confrontando o conte√∫do dos documentos do processo que forem selecionados para montar a pesquisa.
 
-AtenÁ„o que esta funcionalidade N√O tem por objetivo substituir a pesquisa tradicional do SEI. Esta pesquisa utiliza tÈcnicas de InteligÍncia Artificial ˙teis  para pesquisar texto com recursos de similaridade e sem‚ntica, inclusive selecionando documentos para confrontar com documentos, sem escrever nenhum texto complementar para a pesquisa.', 'Ajuda') ?>
+Aten√ß√£o que esta funcionalidade N√ÉO tem por objetivo substituir a pesquisa tradicional do SEI. Esta pesquisa utiliza t√©cnicas de Intelig√™ncia Artificial √∫teis  para pesquisar texto com recursos de similaridade e sem√¢ntica, inclusive selecionando documentos para confrontar com documentos, sem escrever nenhum texto complementar para a pesquisa.', 'Ajuda') ?>
                                  class="infraImg"/>
                             <input type="text" id="txtTextoPesquisa" name="txtTextoPesquisa"
                                    class="infraText form-control"
@@ -441,10 +441,10 @@ AtenÁ„o que esta funcionalidade N√O tem por objetivo substituir a pesquisa tradi
                                 </label>
                                 <img align="top"
                                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escolha os documentos para montar a pesquisa. Caso selecione protocolo de Processo Anexados, todos os documentos dentro dele ser„o utilizados na montagem da pesquisa.
+                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escolha os documentos para montar a pesquisa. Caso selecione protocolo de Processo Anexados, todos os documentos dentro dele ser√£o utilizados na montagem da pesquisa.
 
-AtenÁ„o que esta funcionalidade N√O tem por objetivo substituir a pesquisa tradicional do SEI. Esta pesquisa utiliza tÈcnicas de InteligÍncia Artificial ˙teis para pesquisar texto com recursos de similaridade e sem‚ntica, inclusive selecionando documentos para confrontar com documentos, sem escrever nenhum texto complementar para a pesquisa.', 'Ajuda') ?>
-                                     class="infraImg"/>
+Aten√ß√£o que esta funcionalidade N√ÉO tem por objetivo substituir a pesquisa tradicional do SEI. Esta pesquisa utiliza t√©cnicas de Intelig√™ncia Artificial √∫teis para pesquisar texto com recursos de similaridade e sem√¢ntica, inclusive selecionando documentos para confrontar com documentos, sem escrever nenhum texto complementar para a pesquisa.', 'Ajuda') ?>
+                                     class="infraImg" alt="√çcone de Ajuda"/>
                             </div>
                         </div>
                         <div class="row mb-4">
@@ -479,10 +479,10 @@ AtenÁ„o que esta funcionalidade N√O tem por objetivo substituir a pesquisa tradi
                                 pesquisados:</label>
                             <img align="top"
                                  src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('… obrigatÛrio escolher pelo menos um tipo de documento alvo para a pesquisa.
+                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('√â obrigat√≥rio escolher pelo menos um tipo de documento alvo para a pesquisa.
 
-Aqui s„o listados apenas tipos de documentos definidos pela AdministraÁ„o do SEI, pois envolve prÈ processamento pela IA do conte˙do de todos os documentos desses tipos. Ainda, s„o indicados apenas tipos de documentos que decidem de forma relevante o resultado do mÈrito dos processos.', 'Ajuda') ?>
-                                 class="infraImg"/>
+Aqui s√£o listados apenas tipos de documentos definidos pela Administra√ß√£o do SEI, pois envolve pr√© processamento pela IA do conte√∫do de todos os documentos desses tipos. Ainda, s√£o indicados apenas tipos de documentos que decidem de forma relevante o resultado do m√©rito dos processos.', 'Ajuda') ?>
+                                 class="infraImg" alt="√çcone de Ajuda"/>
                             <br>
                             <?php
                             foreach ($arrObjMdIaAdmTpDocPesqDTO as $objMdIaAdmTpDocPesqDTO) { ?>

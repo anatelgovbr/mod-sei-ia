@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 05/07/2023 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.2
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.2
  */
 
 try {
@@ -39,7 +39,7 @@ try {
 
     switch ($_GET['acao']) {
         case 'md_ia_configuracao_similaridade':
-            $strTitulo = 'Configurações de Similaridade ';
+            $strTitulo = 'ConfiguraÃ§Ãµes de Similaridade ';
             $arrComandos[] = '<button type="submit" accesskey="S" name="sbmAlterarMdIaAdmConfigSimilar" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $strDesabilitar = 'disabled="disabled"';
             $objMdIaAdmConfigSimilarDTO = new MdIaAdmConfigSimilarDTO();
@@ -57,7 +57,7 @@ try {
             $objMdIaAdmConfigSimilarRN = new MdIaAdmConfigSimilarRN();
             $objMdIaAdmConfigSimilarDTO = $objMdIaAdmConfigSimilarRN->consultar($objMdIaAdmConfigSimilarDTO);
             if ($objMdIaAdmConfigSimilarDTO == null) {
-                throw new InfraException("Registro não encontrado.");
+                throw new InfraException("Registro nÃ£o encontrado.");
             }
 
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
@@ -124,7 +124,7 @@ try {
         $tabelaPercRelevMet .= "<td>" . $ObjMdIaAdmPercRelevMetDTO->getNumPercentualRelevancia() . "%</td>";
         $tabelaPercRelevMet .= "<td>" . $ObjMdIaAdmPercRelevMetDTO->getDthAlteracao() . "</td>";
         $tabelaPercRelevMet .= "<td class='text-center'>";
-        $tabelaPercRelevMet .= "<a onclick='editarPercRelevanciaMetadado(" . $ObjMdIaAdmPercRelevMetDTO->getNumIdMdIaAdmMetadado() . ")'><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/alterar.svg' title='Alterar Percentual de Relevância do Metadado' alt='Alterar Percentual de Relevância do Metadado' class='infraImg' /></a>";
+        $tabelaPercRelevMet .= "<a onclick='editarPercRelevanciaMetadado(" . $ObjMdIaAdmPercRelevMetDTO->getNumIdMdIaAdmMetadado() . ")'><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/alterar.svg' title='Alterar Percentual de RelevÃ¢ncia do Metadado' alt='Alterar Percentual de RelevÃ¢ncia do Metadado' class='infraImg' /></a>";
         $tabelaPercRelevMet .= "</td>";
         $tabelaPercRelevMet .= "</tr>";
         $somaPesosAdicionados += $ObjMdIaAdmPercRelevMetDTO->getNumPercentualRelevancia();
@@ -179,8 +179,8 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                        class="infraLabelObrigatorio">Exibir Funcionalidade:</label>
                 <img align="top"
                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('A funcionalidade de "Processos Similares" somente será exibida para os usuários se selecionada a opção "Exibir".', 'Ajuda') ?>
-                     class="infraImg"/>
+                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('A funcionalidade de "Processos Similares" somente serÃ¡ exibida para os usuÃ¡rios se selecionada a opÃ§Ã£o "Exibir".', 'Ajuda') ?>
+                     class="infraImg" alt="Ãcone de Ajuda"/>
                 <div class="infraDivRadio">
                     <input type="radio" utlCampoObrigatorio="o" name="rdnExibirFuncionalidade"
                            value="S" class="infraRadio" <?= $exibirFuncionalidade ?>
@@ -193,7 +193,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                            class="infraRadio" <?= $naoExibirFuncionalidade ?>
                     <label id="lblProcessosEspecificos" name="lblProcessosEspecificos"
                            for="rdnRelevanteProcessosEspecificos"
-                           class="infraLabelOpcional infraLabelRadio">Não Exibir</label>
+                           class="infraLabelOpcional infraLabelRadio">NÃ£o Exibir</label>
                 </div>
             </div>
         </div>
@@ -204,7 +204,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                            class="infraLabelObrigatorio">Resultados a serem listados:</label>
                     <img align="top"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Define a quantidade de processos a serem listados na funcionalidade "Processos Similares" para os usuários, sendo o mínimo 1 e máximo 15. O valor padrão é 5.', 'Ajuda') ?>
+                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Define a quantidade de processos a serem listados na funcionalidade "Processos Similares" para os usuÃ¡rios, sendo o mÃ­nimo 1 e mÃ¡ximo 15. O valor padrÃ£o Ã© 5.', 'Ajuda') ?>
                          class="infraImg"/>
                     <input type="number" id="txtQtdProcessListagem" name="txtQtdProcessListagem"
                            onkeypress="return infraMascaraNumero(this, event)"
@@ -219,11 +219,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-12 col-xl-12">
                 <div class="form-group">
                     <label id="lblOrientacoesGerais" for="txtOrientacoesGerais" accesskey=""
-                           class="infraLabelObrigatorio">Orientações
+                           class="infraLabelObrigatorio">OrientaÃ§Ãµes
                         Gerais:</label>
                     <img align="top"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('As orientações descritas abaixo serão exibidas na tela do SEI IA na seção da funcionalidade "Processos Similares".', 'Ajuda') ?>
+                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('As orientaÃ§Ãµes descritas abaixo serÃ£o exibidas na tela do SEI IA na seÃ§Ã£o da funcionalidade "Processos Similares".', 'Ajuda') ?>
                          class="infraImg"/>
                     <div id="divEditores" style="overflow: auto;">
                         <textarea id="txtOrientacoesGerais" name="txtOrientacoesGerais"
@@ -240,17 +240,17 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="row">
             <div class="col-12 col-xl-12">
                 <fieldset class="infraFieldset form-control mb-3 py-3" style="height: auto">
-                    <legend class="infraLegend">Percentual de Relevância e Metadados</legend>
+                    <legend class="infraLegend">Percentual de RelevÃ¢ncia e Metadados</legend>
                     <div class="row">
                         <div class="col-xl-8 col-lg-10 col-md-10 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label id="lblPercRelevContDoc" for="txtPercRelevContDoc" accesskey=""
                                        class="infraLabelObrigatorio">Percentual
-                                    de Relevância do Conteúdo dos Documentos:</label>
+                                    de RelevÃ¢ncia do ConteÃºdo dos Documentos:</label>
                                 <img align="top"
                                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('O valor deve ser maior que zero e não pode exceder 100%. É importante manter uma proporção de peso para conteúdo e metadados, sendo os valores padrões da instalação respectivamente 70% e 30%', 'Ajuda') ?>
-                                     class="infraImg"/>
+                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('O valor deve ser maior que zero e nÃ£o pode exceder 100%. Ã‰ importante manter uma proporÃ§Ã£o de peso para conteÃºdo e metadados, sendo os valores padrÃµes da instalaÃ§Ã£o respectivamente 70% e 30%', 'Ajuda') ?>
+                                     class="infraImg" alt="Ãcone de Ajuda"/>
                                 <div class="input-group input-group-sm mb-3">
                                     <input type="number" id="txtPercRelevContDoc" name="txtPercRelevContDoc"
                                            onkeypress="return infraMascara(this,event)"
@@ -269,11 +269,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <div class="col-xl-8 col-lg-10 col-md-10 col-sm-12 col-xs-12">
                             <label id="lblPercRelevMetadados" for="txtPercRelevMetadados" accesskey=""
                                    class="infraLabelObrigatorio">Percentual
-                                de Relevância dos Metadados:</label>
+                                de RelevÃ¢ncia dos Metadados:</label>
                             <img align="top"
                                  src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('O valor deste campo é calculado automaticamente de acordo com o valor indicado no campo "Percentual de Relevância do Conteúdo dos Documentos". A soma de ambos os campos totalizará sempre 100%.', 'Ajuda') ?>
-                                 class="infraImg"/>
+                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('O valor deste campo Ã© calculado automaticamente de acordo com o valor indicado no campo "Percentual de RelevÃ¢ncia do ConteÃºdo dos Documentos". A soma de ambos os campos totalizarÃ¡ sempre 100%.', 'Ajuda') ?>
+                                 class="infraImg" alt="Ãcone de Ajuda"/>
                             <div class="input-group input-group-sm mb-3">
                                 <input type="text" id="txtPercRelevMetadados" name="txtPercRelevMetadados"
                                        onkeypress="return infraMascaraNumero(this, event)"
@@ -289,8 +289,8 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     </div>
                     <div class="row">
                         <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                            <p><label class="infraLabelObrigatorio">Data/Hora da Última
-                                    Alteração:</label> <?= $objMdIaAdmConfigSimilarDTO->getDthAlteracao() ?></p>
+                            <p><label class="infraLabelObrigatorio">Data/Hora da Ãšltima
+                                    AlteraÃ§Ã£o:</label> <?= $objMdIaAdmConfigSimilarDTO->getDthAlteracao() ?></p>
                         </div>
                     </div>
                     <div class="row">
@@ -299,10 +299,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 <label id="lblMetadado" for="txtMetadado" accesskey="o" class="infraLabelObrigatorio">Metadado:</label>
                                 <img align="top"
                                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Somente existem os 7 tipos de Metadados já cadastrados na instalação com valores padrões, que podem ser alterados.
+                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Somente existem os 7 tipos de Metadados jÃ¡ cadastrados na instalaÃ§Ã£o com valores padrÃµes, que podem ser alterados.
 
-Atenção que essa distribuição de percentuais de metadados é sobre o valor do que já foi definido no campo "Percentual de Relevância dos Metadados" mais acima.', 'Ajuda') ?>
-                                     class="infraImg"/>
+AtenÃ§Ã£o que essa distribuiÃ§Ã£o de percentuais de metadados Ã© sobre o valor do que jÃ¡ foi definido no campo "Percentual de RelevÃ¢ncia dos Metadados" mais acima.', 'Ajuda') ?>
+                                     class="infraImg" alt="Ãcone de Ajuda"/>
                                 <input type="text" id="txtMetadado" name="txtMetadado"
                                        class="form-control infraText"
                                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" disabled
@@ -314,11 +314,11 @@ Atenção que essa distribuição de percentuais de metadados é sobre o valor do que
                             <div class="form-group">
                                 <label id="lblPercRelevMetadadoAdicionar" for="lblPercRelevMetadadoAdicionar"
                                        accesskey="" class="infraLabelObrigatorio">Percentual
-                                    de Relevância:</label>
+                                    de RelevÃ¢ncia:</label>
                                 <img align="top"
                                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('O valor deve ser maior que zero e não pode exceder 100%. O sistema obriga manter o valor total de 100% nessa distribuição de percentuais.', 'Ajuda') ?>
-                                     class="infraImg"/>
+                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('O valor deve ser maior que zero e nÃ£o pode exceder 100%. O sistema obriga manter o valor total de 100% nessa distribuiÃ§Ã£o de percentuais.', 'Ajuda') ?>
+                                     class="infraImg" alt="Ãcone de Ajuda"/>
                                 <div class="input-group input-group-sm mb-3">
                                     <input type="number" id="txtPercRelevMetadadoAdicionar"
                                            name="txtPercRelevMetadadoAdicionar"
@@ -353,9 +353,9 @@ Atenção que essa distribuição de percentuais de metadados é sobre o valor do que
                                 <tr>
                                     <th class="infraTh" style="display: none">Id</th>
                                     <th class="infraTh" width="65%">Metadado</th>
-                                    <th class="infraTh" width="15%">Percentual de Relevância</th>
-                                    <th class="infraTh" width="15%">Data/Hora da Última Alteração</th>
-                                    <th class="infraTh" width="5%">Ações</th>
+                                    <th class="infraTh" width="15%">Percentual de RelevÃ¢ncia</th>
+                                    <th class="infraTh" width="15%">Data/Hora da Ãšltima AlteraÃ§Ã£o</th>
+                                    <th class="infraTh" width="5%">AÃ§Ãµes</th>
                                 </tr>
                                 </thead>
                                 <tbody>

@@ -45,12 +45,12 @@
         });
 
         tippy(".iconeOrientacoesGerais", {
-            content: "OrientaÁıes Gerais",
+            content: "Orienta√ß√µes Gerais",
         });
 
 
         tippy(".iconeConfiguracoes", {
-            content: "ConfiguraÁıes",
+            content: "Configura√ß√µes",
         });
 
         tippy("#expandirAssistente", {
@@ -62,7 +62,7 @@
         });
 
         tippy(".chat-open", {
-            content: "InteligÍncia Artificial",
+            content: "Intelig√™ncia Artificial",
         });
 
         tippy(".close-chat", {
@@ -74,20 +74,37 @@
         });
 
         tippy("#adicionarTopico", {
-            content: "Novo TÛpico",
+            content: "Novo T√≥pico",
         });
 
         tippy(".iconeAdicionarTopico", {
-            content: "Novo TÛpico",
+            content: "Novo T√≥pico",
         });
         setTimeout(() => {
             fecharChat();
             $("#chat_ia").css("display", "block");
         }, 200);
-        if(document.getElementById("ifrVisualizacao")) {
+        if (document.getElementById("ifrVisualizacao")) {
             document.getElementById("ifrVisualizacao").onload = function () {
                 document.getElementById("ifrVisualizacao").contentWindow.document.getElementById("btnInfraTopo").style.right = "6.2rem";
             }
+        }
+        var ifrConteudoVisualizacao = document.getElementById("ifrConteudoVisualizacao");
+
+        if (ifrConteudoVisualizacao) {
+            ifrConteudoVisualizacao.onload = function () {
+                var ifrVisualizacao = ifrConteudoVisualizacao.contentWindow.document.getElementById("ifrVisualizacao");
+                if (ifrVisualizacao) {
+                    ifrVisualizacao.onmouseover = function () {
+                        var btnInfraTopo = ifrVisualizacao.contentWindow.document.getElementById("btnInfraTopo");
+
+                        if (btnInfraTopo) {
+                            btnInfraTopo.style.right = "4.5rem";
+                            btnInfraTopo.style.bottom = "0.2rem";
+                        }
+                    };
+                }
+            };
         }
     });
 
@@ -132,7 +149,7 @@
         }
     }
 
-    // FunÁ„o para exibir o bot„o no local do clique
+    // Fun√ß√£o para exibir o bot√£o no local do clique
     function exibirBotao(event, selectedText, tela) {
         const botao = document.getElementById("botaoTransferir");
         if (tela == "editor") {
@@ -158,7 +175,7 @@
         controlaTamanhoInputDigitacao();
     }
 
-    // FunÁ„o para abrir o modal
+    // Fun√ß√£o para abrir o modal
     function openModal(url) {
         infraAbrirJanelaModal(url,
             1024,
@@ -183,14 +200,14 @@
     }
 
     function safe_tags(str) {
-        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') ;
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
     function resolveItensEnvioMensagem(mensagem, procedimento = "", linkAcesso = "") {
         mensagem = safe_tags(mensagem);
         mensagem = mensagem.replace(/\n/g, "<br>");
         mensagem = mensagem.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
-        if(Array.isArray(procedimento)) {
+        if (Array.isArray(procedimento)) {
             var textoCitacaoProcedimento = procedimento[0];
         } else {
             var textoCitacaoProcedimento = procedimento;
@@ -221,23 +238,23 @@
 
     function identificarProtocolo(mensagem) {
 
-        let possiveisCitacoes =  mensagem.match(/#\S*(?=\s|$|\n)/g);
+        let possiveisCitacoes = mensagem.match(/#\S*(?=\s|$|\n)/g);
         let documentos = [];
 
-        if(possiveisCitacoes) {
+        if (possiveisCitacoes) {
             possiveisCitacoes = possiveisCitacoes.filter((value, index, array) => array.indexOf(value) == index);
             var citacaoIncorreta = false;
             var indicacaoFolhaIncorreta = false;
 
             if (possiveisCitacoes.length > 0) {
-                if(possiveisCitacoes.length > 1) {
-                    $("#validacaoMensagem").html('Provisoriamente, n„o È permitida a citaÁ„o de mais de um protocolo de processo ou de documento na mesma mensagem.');
+                if (possiveisCitacoes.length > 1) {
+                    $("#validacaoMensagem").html('Provisoriamente, n√£o √© permitida a cita√ß√£o de mais de um protocolo de processo ou de documento na mesma mensagem.');
                     estadoDeInteracao();
                     return false;
                 } else {
                     possiveisCitacoes.forEach(function (possivelCitacao) {
-                        if(possivelCitacao.length < 8) {
-                            $("#validacaoMensagem").html('O uso do caractere de "#" È exclusivo para citaÁ„o de protocolos do SEI, cujo n˙mero deve estar colado ao # (no formato, por exemplo #01234567). Assim, a mensagem possui citaÁ„o de protocolo em formato irregular.');
+                        if (possivelCitacao.length < 8) {
+                            $("#validacaoMensagem").html('O uso do caractere de "#" √© exclusivo para cita√ß√£o de protocolos do SEI, cujo n√∫mero deve estar colado ao # (no formato, por exemplo #01234567). Assim, a mensagem possui cita√ß√£o de protocolo em formato irregular.');
                             estadoDeInteracao();
                             citacaoIncorreta = true;
                             return false;
@@ -245,11 +262,11 @@
                             let padraoColchetes = /\[/;
 
                             if (padraoColchetes.test(possivelCitacao)) {
-                                let verificaColchete  = /#[0-9]+\[[0-9]+(:[0-9]+)?]/;
+                                let verificaColchete = /#[0-9]+\[[0-9]+(:[0-9]+)?]/;
                                 if (verificaColchete.test(possivelCitacao)) {
                                     documentos.push(possivelCitacao.match(verificaColchete)[0]);
                                 } else {
-                                    $("#validacaoMensagem").html('A indicaÁ„o de intervalo de p·ginas sobre o Documento Externo est· em formato irregular. Deve utilizar o formato [p:p] um intervalo ou [p] para indicar p·gina ˙nica: #01234567[10:15] ou #01234567[20].');
+                                    $("#validacaoMensagem").html('A indica√ß√£o de intervalo de p√°ginas sobre o Documento Externo est√° em formato irregular. Deve utilizar o formato [p:p] um intervalo ou [p] para indicar p√°gina √∫nica: #01234567[10:15] ou #01234567[20].');
                                     estadoDeInteracao();
                                     indicacaoFolhaIncorreta = true;
                                     return false;
@@ -259,7 +276,7 @@
                                 if (regexValido.test(possivelCitacao)) {
                                     documentos.push(possivelCitacao.match(regexValido)[0]);
                                 } else {
-                                    $("#validacaoMensagem").html('O uso do caractere de "#" È exclusivo para citaÁ„o de protocolos do SEI, cujo n˙mero deve estar colado ao # (no formato, por exemplo #01234567). Assim, a mensagem possui citaÁ„o de protocolo em formato irregular.');
+                                    $("#validacaoMensagem").html('O uso do caractere de "#" √© exclusivo para cita√ß√£o de protocolos do SEI, cujo n√∫mero deve estar colado ao # (no formato, por exemplo #01234567). Assim, a mensagem possui cita√ß√£o de protocolo em formato irregular.');
                                     estadoDeInteracao();
                                     citacaoIncorreta = true;
                                     return false;
@@ -269,7 +286,7 @@
                     })
                 }
             } else {
-                $("#validacaoMensagem").html('O uso do caractere de "#" È exclusivo para citaÁ„o de protocolos do SEI, cujo n˙mero deve estar colado ao # (no formato, por exemplo #01234567). Assim, a mensagem possui citaÁ„o de protocolo em formato irregular.');
+                $("#validacaoMensagem").html('O uso do caractere de "#" √© exclusivo para cita√ß√£o de protocolos do SEI, cujo n√∫mero deve estar colado ao # (no formato, por exemplo #01234567). Assim, a mensagem possui cita√ß√£o de protocolo em formato irregular.');
                 estadoDeInteracao();
                 citacaoIncorreta = true;
                 return false;
@@ -288,11 +305,11 @@
         $(".botaoEnvioMensagem #botaoEnviarMensagem").css("display", "none");
         $(".botaoEnvioMensagem #imgArvoreAguarde").css("display", "block");
 
-        if(documentos == null || documentos.length === 0 ){
+        if (documentos == null || documentos.length === 0) {
             verificaJanelaContexto(mensagem);
-        }else{
+        } else {
             documentos = documentos.filter((value, index, array) => array.indexOf(value) === index);
-            if(documentos.length === 1){
+            if (documentos.length === 1) {
                 let protocolo = {};
                 const urlParams = new URLSearchParams(window.location.search);
                 protocolo["documento"] = documentos;
@@ -320,8 +337,8 @@
                 });
             }
 
-            if(documentos.length > 1){
-                $("#validacaoMensagem").html('Provisoriamente, n„o È permitida a citaÁ„o de protocolo de processo ou de mais de um documento na mesma mensagem.');
+            if (documentos.length > 1) {
+                $("#validacaoMensagem").html('Provisoriamente, n√£o √© permitida a cita√ß√£o de protocolo de processo ou de mais de um documento na mesma mensagem.');
                 estadoDeInteracao();
             }
 
@@ -329,7 +346,7 @@
 
     }
 
-    function estadoDeInteracao(){
+    function estadoDeInteracao() {
         $("#botaoEnviarMensagem").removeClass("aguardandoResposta");
         controlaTamanhoConteudoChat();
         controlaPreenchimentoCampoMensagem();
@@ -377,8 +394,8 @@
             info["tokensEnviados"] = isWithinTokenLimit(text, 99999999);
             $.ajax({
                 url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_gera_log_excedeu_limite_janela_contexto_ajax'); ?>',
-                type: 'POST', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-                dataType: "json",//Tipo de dado que ser· enviado ao servidor
+                type: 'POST', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+                dataType: "json",//Tipo de dado que ser√° enviado ao servidor
                 data: info,
                 async: true,
                 success: function (data) {
@@ -398,7 +415,7 @@
 
     function apiIndisponivel(divpai, divfilho) {
         $("#botaoEnviarMensagem").removeClass("apiDisponivel");
-        divfilho.innerHTML = '<div class="mensagemIdentificador"><div class="iconeIdentificacao"><img src="modulos/ia/imagens/md_ia_icone.svg?' + <?=Icone::VERSAO ?> + '"/></div><div class="output">Assistente de IA est· indisponÌvel no momento. <br>Tente novamente mais tarde.</div></div>';
+        divfilho.innerHTML = '<div class="mensagemIdentificador"><div class="iconeIdentificacao"><img src="modulos/ia/imagens/md_ia_icone.svg?' + <?=Icone::VERSAO ?> + '"/></div><div class="output">Assistente de IA est√° indispon√≠vel no momento. <br>Tente novamente mais tarde.</div></div>';
         divpai.appendChild(divfilho);
         controlaTamanhoConteudoChat();
         controlaPreenchimentoCampoMensagem();
@@ -406,13 +423,13 @@
 
     function limiteDiarioUltrapassado() {
         $("#botaoEnviarMensagem").addClass("limiteDiarioExcedido");
-        $("#validacaoMensagem").html('O volume de conte˙do permitido nas interaÁıes di·rias foi excedido. Tente novamente amanh„, quando o volume de conte˙do permitido para interaÁ„o ter· sido renovado.');
+        $("#validacaoMensagem").html('O volume de conte√∫do permitido nas intera√ß√µes di√°rias foi excedido. Tente novamente amanh√£, quando o volume de conte√∫do permitido para intera√ß√£o ter√° sido renovado.');
         estadoDeInteracao();
     }
 
     function insereBoasVindas(divpai, divfilho) {
         divfilho.className = 'interaction client';
-        divfilho.innerHTML = '<div class="mensagemIdentificador"><div class="iconeIdentificacao"><img src="modulos/ia/imagens/md_ia_icone.svg?' + <?=Icone::VERSAO ?> + '"/></div><div class="output">Oi, sou um Assistente de InteligÍncia Artificial.<br>Como posso te ajudar?</div></div>';
+        divfilho.innerHTML = '<div class="mensagemIdentificador"><div class="iconeIdentificacao"><img src="modulos/ia/imagens/md_ia_icone.svg?' + <?=Icone::VERSAO ?> + '"/></div><div class="output">Oi, sou um Assistente de Intelig√™ncia Artificial.<br>Como posso te ajudar?</div></div>';
         divpai.appendChild(divfilho);
     }
 
@@ -451,8 +468,8 @@
 
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_assistente_consulta_disponibilidade_ajax'); ?>',
-            type: 'GET', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que ser· enviado ao servidor
+            type: 'GET', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que ser√° enviado ao servidor
             async: true,
             success: function (data) {
                 if (data) {
@@ -465,7 +482,7 @@
                             controlaPreenchimentoCampoMensagem();
                             $("#janelaContexto").val(data['janelaContexto']);
                             listarTopicos();
-                        }else {
+                        } else {
                             if (!apiJaIndisponivel) {
                                 apiIndisponivel(divpai, divfilho);
                             }
@@ -502,16 +519,16 @@
         mensagemUsuario["topicoTemporario"] = $("#topicoTemporario").val();
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_assistente_envia_mensagem_ajax'); ?>',
-            type: 'POST', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que ser· enviado ao servidor
+            type: 'POST', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que ser√° enviado ao servidor
             data: mensagemUsuario, // Enviando o JSON com o nome de itens
             success: function (data) {
-                if(data["error"]) {
+                if (data["error"]) {
                     $("#botaoEnviarMensagem").addClass("limiteDiarioExcedido");
                     $("#validacaoMensagem").html(data["mensagem"]);
                     listarTopicos();
                 } else {
-                    if($("#topicoTemporario").val() == "true") {
+                    if ($("#topicoTemporario").val() == "true") {
                         $("#topicoTemporario").val("false");
                         listarTopicos();
                     } else {
@@ -575,22 +592,23 @@
         divfilho.className = 'interaction client';
         divfilho.id = id_mensagem;
         var mensagem = data['resposta'];
-        if(mensagem == "") {
+        if (mensagem == "") {
             mensagem = "Ocorreu um erro no Assistente de IA.";
         }
         var respostaMontada = '<div class="mensagemIdentificador"><div class="iconeIdentificacao"><img src="modulos/ia/imagens/md_ia_icone.svg?' + <?=Icone::VERSAO ?> + '"/></div><div class="output erro_ia">' + mensagem + '</div></div>';
 
-        divfilho.innerHTML = respostaMontada ;
+        divfilho.innerHTML = respostaMontada;
         $("#botaoEnviarMensagem").removeClass("aguardandoResposta");
         divpai.appendChild(divfilho);
     }
+
     function aguardandoResposta(idMdIaInteracaoChat, divfilho, divpai) {
         var dadosMensagem = {};
         dadosMensagem["IdMdIaInteracaoChat"] = idMdIaInteracaoChat;
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_consultar_mensagem_ajax'); ?>',
-            type: 'POST', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que ser· enviado ao servidor
+            type: 'POST', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que ser√° enviado ao servidor
             data: dadosMensagem, // Enviando o JSON com o nome de itens
             success: function (data) {
                 if (data["result"] == "true") {
@@ -620,7 +638,7 @@
 
     function markdownToHTML(html, id_mensagem) {
         var quantidadeBlocoCodigo = 0;
-        // Blocos de CÛdigo
+        // Blocos de C√≥digo
         html = html.replace(/```([\s\S]*?)```/g, function (match, p1) {
             quantidadeBlocoCodigo++;
             var firstLine = p1.split('\n')[0];
@@ -662,18 +680,18 @@
 
         var regex = /<code>([\s\S]*?)<\/code>/g;
 
-        // Substitui os blocos de cÛdigo pela tag `<code>` e armazena em um array
+        // Substitui os blocos de c√≥digo pela tag `<code>` e armazena em um array
         var codeBlocks = [];
         var parsedText = html.replace(regex, function (match, p1) {
             codeBlocks.push(p1);
             return "<code>" + (codeBlocks.length - 1) + "</code>";
         });
-        // Aplica parsedown usando Marked.js apenas fora dos blocos de cÛdigo
+        // Aplica parsedown usando Marked.js apenas fora dos blocos de c√≥digo
         marked.use({
             breaks: true,
         });
         parsedText = marked.parse(parsedText);
-        // Substitui as tags `<code>` pelo conte˙do dos blocos de cÛdigo
+        // Substitui as tags `<code>` pelo conte√∫do dos blocos de c√≥digo
         html = parsedText.replace(/<code>(\d+)<\/code>/g, function (match, p1) {
             return "<code>" + codeBlocks[parseInt(p1)] + "</code>";
         });
@@ -715,6 +733,7 @@
             }
         }
     }
+
     function habilitaEstrelinhas(id_mensagem, pontuacao) {
         $("#" + id_mensagem + " .estrelinha").removeClass("pontuado");
         $("#" + id_mensagem + " .estrelinha").removeClass("pontuadoMeiaEstrela");
@@ -733,6 +752,7 @@
             }
         }
     }
+
     function pontuarResposta(pontuacao, id_mensagem) {
 
         habilitaEstrelinhas(id_mensagem, pontuacao);
@@ -742,8 +762,8 @@
         feeedbackUsuario["stars"] = pontuacao;
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_assistente_enviar_feedback_ajax'); ?>',
-            type: 'POST', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que ser· enviado ao servidor
+            type: 'POST', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que ser√° enviado ao servidor
             data: feeedbackUsuario, // Enviando o JSON com o nome de itens
             async: true,
             success: function (data) {
@@ -759,17 +779,17 @@
     function copiar(id) {
         var conteudo = document.getElementById("textoPuro" + id).innerText;
 
-        // Cria um elemento de texto tempor·rio
+        // Cria um elemento de texto tempor√°rio
         var tempInput = document.createElement("textarea");
         tempInput.style = "position: absolute; left: -1000px; top: -1000px";
         tempInput.value = conteudo;
         document.body.appendChild(tempInput);
 
-        // Seleciona e copia o conte˙do do texto
+        // Seleciona e copia o conte√∫do do texto
         tempInput.select();
         document.execCommand("copy");
 
-        // Remove o elemento de texto tempor·rio
+        // Remove o elemento de texto tempor√°rio
         document.body.removeChild(tempInput);
 
         document.getElementById("copiarResposta" + id)._tippy.setContent("Copiado");
@@ -816,14 +836,14 @@
     }
 
     function controlaTamanhoConteudoChat(display = "") {
-        if(display == "") {
+        if (display == "") {
             if ($(".widget-content").hasClass("expandido")) {
                 var display = "expandido";
             } else {
                 var display = "reduzido";
             }
         }
-        if(display == "expandido") {
+        if (display == "expandido") {
             if (document.getElementById('navInfraBarraNavegacao')) {
                 var reducaoAlturaChat = (document.getElementById('navInfraBarraNavegacao').clientHeight) + 30;
             } else {
@@ -846,7 +866,7 @@
         var larguraPainelTopicos = document.getElementById('painelTopicos').clientWidth;
         var larguraConteudoChat = document.getElementById('conteudoChat').clientWidth;
         var larguraTotal = parseInt(larguraPainelTopicos) + parseInt(larguraConteudoChat);
-        if($(window).width() < larguraTotal) {
+        if ($(window).width() < larguraTotal) {
             var larguraDesejada = (parseInt(larguraTotal) - parseInt($(window).width())) + 150;
             $("#conteudoChat").css({"width": larguraDesejada});
         }
@@ -908,24 +928,26 @@
         controlaTamanhoInputDigitacao();
         controlaTamanhoConteudoChat();
     }
+
     function retornaNomeMesAmigavel(mesAntes) {
         // Criando um objeto Date para a data atual
         var dataAtual = new Date();
 
-        // Subtraindo um mÍs
+        // Subtraindo um m√™s
         dataAtual.setMonth(dataAtual.getMonth() - mesAntes);
 
-        // Obtendo o n˙mero do mÍs (0 a 11, onde 0 È janeiro e 11 È dezembro)
+        // Obtendo o n√∫mero do m√™s (0 a 11, onde 0 √© janeiro e 11 √© dezembro)
         var ultimoMesNumero = dataAtual.getMonth();
 
-        // Convertendo para o nome do mÍs (opcional)
-        var meses = ["Janeiro", "Fevereiro", "MarÁo", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        // Convertendo para o nome do m√™s (opcional)
+        var meses = ["Janeiro", "Fevereiro", "Mar√ßo", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
         var ultimoMesNome = meses[ultimoMesNumero];
         return ultimoMesNome;
     }
+
     function nomeAmigavelPeriodo(periodo) {
         var dataAtual = new Date();    // Cria um objeto Date para a data atual
-        var anoAtual = dataAtual.getFullYear();    // ObtÈm o ano atual
+        var anoAtual = dataAtual.getFullYear();    // Obt√©m o ano atual
 
         switch (periodo) {
             case "hoje":
@@ -935,10 +957,10 @@
                 return "Ontem";
                 break;
             case "ultimos7dias":
-                return "⁄ltimos 7 dias"
+                return "√öltimos 7 dias"
                 break;
             case "ultimos30dias":
-                return "⁄ltimos 30 dias"
+                return "√öltimos 30 dias"
                 break;
             case "ultimoMes":
                 return retornaNomeMesAmigavel(1)
@@ -960,36 +982,37 @@
                 break;
         }
     }
+
     function listarTopicos() {
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_listar_topicos'); ?>',
-            type: 'GET', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que ser· enviado ao servidor
+            type: 'GET', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que ser√° enviado ao servidor
             success: function (data) {
                 var topicoAtivo = "";
-                if(data["budgetTokens"]["extrapolouLimiteTokens"]) {
+                if (data["budgetTokens"]["extrapolouLimiteTokens"]) {
                     limiteDiarioUltrapassado();
                 }
 
-                if(data["topicos"] != false) {
+                if (data["topicos"] != false) {
                     $("#listagemTopicos").html("");
                     var divPai = $("#listagemTopicos");
-                    // Ordem definida dos perÌodos
+                    // Ordem definida dos per√≠odos
                     var ordemPeriodos = ['hoje', 'ontem', 'ultimos7dias', 'ultimos30dias', 'ultimoMes', 'penultimoMes', 'antepenultimoMes', 'anoAtual', 'ultimoAno', 'maisAntigos'];
 
-                    // Iterar sobre os perÌodos na ordem correta
-                    ordemPeriodos.forEach(function(periodo) {
-                        // Verificar se o perÌodo existe nos dados
+                    // Iterar sobre os per√≠odos na ordem correta
+                    ordemPeriodos.forEach(function (periodo) {
+                        // Verificar se o per√≠odo existe nos dados
                         if (data["topicos"].hasOwnProperty(periodo)) {
-                            var topicos = data["topicos"][periodo]; // Array de tÛpicos dentro deste perÌodo
+                            var topicos = data["topicos"][periodo]; // Array de t√≥picos dentro deste per√≠odo
                             var nomeTopico = nomeAmigavelPeriodo(periodo);
 
-                            // Adicionar o tÌtulo da seÁ„o do perÌodo
+                            // Adicionar o t√≠tulo da se√ß√£o do per√≠odo
                             divPai.append('<div class="section-title">' + nomeTopico + '</div>');
 
-                            // Iterar sobre os tÛpicos dentro deste perÌodo
-                            topicos.forEach(function(topico) {
-                                // Renderizar o tÛpico
+                            // Iterar sobre os t√≥picos dentro deste per√≠odo
+                            topicos.forEach(function (topico) {
+                                // Renderizar o t√≥pico
                                 if (topico["ativo"] == false) {
                                     divPai.append('<div class="topico" onmouseover="mostrarAcoesTopico(this)" onmouseout="ocultarAcoesTopico(this)"><a onclick="selecionaTopico(' + topico["idTopico"] + ')" class="selecionaTopico"><button class="nav-link text-left" id="topico' + topico["idTopico"] + '" data-toggle="pill" data-target="topico' + topico["idTopico"] + '" type="button" role="tab" aria-controls="topico' + topico["idTopico"] + '" aria-selected="false"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path d="M160 368c26.5 0 48 21.5 48 48v16l72.5-54.4c8.3-6.2 18.4-9.6 28.8-9.6H448c8.8 0 16-7.2 16-16V64c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16V352c0 8.8 7.2 16 16 16h96zm48 124l-.2 .2-5.1 3.8-17.1 12.8c-4.8 3.6-11.3 4.2-16.8 1.5s-8.8-8.2-8.8-14.3V474.7v-6.4V468v-4V416H112 64c-35.3 0-64-28.7-64-64V64C0 28.7 28.7 0 64 0H448c35.3 0 64 28.7 64 64V352c0 35.3-28.7 64-64 64H309.3L208 492z"/></svg>' + topico["nome"] + '</button></a><div class="acoesTopico" id="acoesTopico' + topico["idTopico"] + '"><a class="arquivo" onclick="arquivarTopico(' + topico["idTopico"] + ')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path d="M121 32C91.6 32 66 52 58.9 80.5L1.9 308.4C.6 313.5 0 318.7 0 323.9V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V323.9c0-5.2-.6-10.4-1.9-15.5l-57-227.9C446 52 420.4 32 391 32H121zm0 64H391l48 192H387.8c-12.1 0-23.2 6.8-28.6 17.7l-14.3 28.6c-5.4 10.8-16.5 17.7-28.6 17.7H195.8c-12.1 0-23.2-6.8-28.6-17.7l-14.3-28.6c-5.4-10.8-16.5-17.7-28.6-17.7H73L121 96z"/></svg></a><a class="rename" onclick="editarTopico(' + topico["idTopico"] + ')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z"/></svg></a></div></div>');
                                 } else {
@@ -1002,17 +1025,17 @@
                 }
                 selecionaTopico(topicoAtivo);
                 tippy(".rename", {
-                    content: "Renomear TÛpico",
+                    content: "Renomear T√≥pico",
                 });
 
                 tippy(".arquivo", {
-                    content: "Arquivar TÛpico",
+                    content: "Arquivar T√≥pico",
                 });
 
                 tippy(".selecionaTopico", {
-                    content: "Selecionar TÛpico",
+                    content: "Selecionar T√≥pico",
                 });
-                $('#listagemTopicos').animate({ scrollTop: 0 }, "slow");
+                $('#listagemTopicos').animate({scrollTop: 0}, "slow");
             },
             error: function (err) {
                 console.log(err);
@@ -1039,8 +1062,8 @@
         dadosTopico["id"] = id;
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_selecionar_topico'); ?>',
-            type: 'POST', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que ser· enviado ao servidor
+            type: 'POST', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que ser√° enviado ao servidor
             async: false,
             data: dadosTopico, // Enviando o JSON com o nome de itens
             success: function (data) {
@@ -1051,10 +1074,10 @@
                 data.forEach(function (interacao) {
                     resolveItensEnvioMensagem(interacao["pergunta"], interacao["procedimento_citado"], interacao["link_acesso"]);
                     var divfilho = document.createElement('div');
-                    if(interacao["resposta"] != "" || interacao["status_requisicao"] > 0) {
-                        if(interacao["status_requisicao"] == "200" && interacao["resposta"] != "") {
+                    if (interacao["resposta"] != "" || interacao["status_requisicao"] > 0) {
+                        if (interacao["status_requisicao"] == "200" && interacao["resposta"] != "") {
                             insereResposta(interacao, divfilho, divpai);
-                            if(interacao["feedback"] >= '1') {
+                            if (interacao["feedback"] >= '1') {
                                 abrirEstrelinhas(interacao["id_mensagem"]);
                                 habilitaEstrelinhas(interacao["id_mensagem"], interacao["feedback"]);
                             }
@@ -1073,7 +1096,7 @@
                 console.log(err);
             }
         });
-        if(id != "") {
+        if (id != "") {
             $("#topicoTemporario").val("false");
         } else {
             $("#topicoTemporario").val("true");
@@ -1085,14 +1108,14 @@
     }
 
     function controlaActive(id = "") {
-        // Remove a classe "active" de todos os botıes
+        // Remove a classe "active" de todos os bot√µes
         var botoes = document.querySelectorAll('.nav-link');
         botoes.forEach(function (botao) {
             botao.classList.remove('active');
             botao.parentNode.parentNode.classList.remove('active');
         });
-        if(id != "") {
-            // Adiciona a classe "active" apenas ao bot„o clicado
+        if (id != "") {
+            // Adiciona a classe "active" apenas ao bot√£o clicado
             var botaoClicado = document.getElementById('topico' + id);
             botaoClicado.classList.add('active');
             botaoClicado.parentNode.parentNode.classList.add('active');
@@ -1101,10 +1124,10 @@
 
     function editarTopico(id) {
 
-        // Seleciona o bot„o original
+        // Seleciona o bot√£o original
         var botaoOriginal = $("#topico" + id);
 
-        // ObtÈm os atributos do bot„o original
+        // Obt√©m os atributos do bot√£o original
         var atributos = botaoOriginal.prop("attributes");
         var atributosObj = {};
         $.each(atributos, function () {
@@ -1113,31 +1136,31 @@
             }
         });
 
-        // ObtÈm o conte˙do do bot„o original
+        // Obt√©m o conte√∫do do bot√£o original
         var conteudo = botaoOriginal.text();
 
-        $("#acoesTopico"+id).addClass('topicoEmEdicao');
+        $("#acoesTopico" + id).addClass('topicoEmEdicao');
 
-        // Cria um input edit·vel com os mesmos atributos do bot„o original
+        // Cria um input edit√°vel com os mesmos atributos do bot√£o original
         var inputEditavel = $("<input>").attr(atributosObj).attr({
             "type": "text",
             "value": conteudo,
             "maxlength": 80 // Adiciona o limite de caracteres
         });
 
-        // Substitui o bot„o pelo input
+        // Substitui o bot√£o pelo input
         botaoOriginal.replaceWith(inputEditavel);
 
-        // Adiciona um evento de input para monitorar o n˙mero de caracteres digitados
+        // Adiciona um evento de input para monitorar o n√∫mero de caracteres digitados
         inputEditavel.on("input", function () {
             if (this.value.length > 80) {
-                this.value = this.value.slice(0, 80); // Limita o n˙mero de caracteres
+                this.value = this.value.slice(0, 80); // Limita o n√∫mero de caracteres
             }
         });
 
-        // Adiciona um evento para restaurar o bot„o quando o input perder o foco
+        // Adiciona um evento para restaurar o bot√£o quando o input perder o foco
         inputEditavel.blur(function () {
-            // ObtÈm o valor do input
+            // Obt√©m o valor do input
             var iconeTopico = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 512 512\"><path d=\"M160 368c26.5 0 48 21.5 48 48v16l72.5-54.4c8.3-6.2 18.4-9.6 28.8-9.6H448c8.8 0 16-7.2 16-16V64c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16V352c0 8.8 7.2 16 16 16h96zm48 124l-.2 .2-5.1 3.8-17.1 12.8c-4.8 3.6-11.3 4.2-16.8 1.5s-8.8-8.2-8.8-14.3V474.7v-6.4V468v-4V416H112 64c-35.3 0-64-28.7-64-64V64C0 28.7 28.7 0 64 0H448c35.3 0 64 28.7 64 64V352c0 35.3-28.7 64-64 64H309.3L208 492z\"/></svg>";
             var novoConteudo = iconeTopico + $(this).val();
 
@@ -1146,8 +1169,8 @@
             dadosTopico["nome_topico"] = $(this).val();
             $.ajax({
                 url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_renomear_topico'); ?>',
-                type: 'POST', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-                dataType: "json",//Tipo de dado que ser· enviado ao servidor
+                type: 'POST', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+                dataType: "json",//Tipo de dado que ser√° enviado ao servidor
                 data: dadosTopico, // Enviando o JSON com o nome de itens
                 success: function (data) {
                     console.log("ok");
@@ -1156,11 +1179,11 @@
                     console.log(err);
                 }
             });
-            // Cria um novo bot„o com o valor atualizado e os mesmos atributos
+            // Cria um novo bot√£o com o valor atualizado e os mesmos atributos
             var novoBotao = $("<button>").addClass("nav-link text-left").html(novoConteudo).attr(atributosObj);
-            // Substitui o input pelo bot„o
+            // Substitui o input pelo bot√£o
             $(this).replaceWith(novoBotao);
-            $("#acoesTopico"+id).removeClass('topicoEmEdicao');
+            $("#acoesTopico" + id).removeClass('topicoEmEdicao');
         });
     }
 
@@ -1169,8 +1192,8 @@
         dadosTopico["id_topico"] = id;
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_arquivar_topico'); ?>',
-            type: 'POST', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que ser· enviado ao servidor
+            type: 'POST', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que ser√° enviado ao servidor
             data: dadosTopico, // Enviando o JSON com o nome de itens
             success: function (data) {
                 $("#conversa").html("");

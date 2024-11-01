@@ -1,6 +1,6 @@
 <?
     /**
-     * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+     * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
      *
      * 27/12/2023 - criado por sabino.colab
      *
@@ -23,14 +23,14 @@
 
 //    SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
 
-        $strTitulo = 'Classificar Processo com os Objetivos de Desenvolvimento Sustent·vel da ONU';
+        $strTitulo = 'Classificar Processo com os Objetivos de Desenvolvimento Sustent√°vel da ONU';
 
 
         //TODO ORGANIZAR DEPOIS
 
         $objMdIaAdmObjetivoOdsDTO = new MdIaAdmObjetivoOdsDTO();
         $objMdIaAdmObjetivoOdsDTO->retNumIdMdIaAdmObjetivoOds();
-        $objMdIaAdmObjetivoOdsDTO->retNumIdMdIaAdmObjetivoOds();
+        $objMdIaAdmObjetivoOdsDTO->retStrNomeOds();
         $objMdIaAdmObjetivoOdsDTO->retStrIconeOds();
         $objMdIaAdmObjetivoOdsRN = new MdIaAdmObjetivoOdsRN();
         $arrObjMdIaAdmObjetivoOdsDTO = $objMdIaAdmObjetivoOdsRN->listar($objMdIaAdmObjetivoOdsDTO);
@@ -109,8 +109,8 @@
                         <div class="row" style="margin-top: -70px; padding: 20px">
                             <div class="col-12">
                                 <label style="font-size: medium">
-                                    Os Objetivos de Desenvolvimento Sustent·vel s„o um apelo global ‡ aÁ„o para acabar com a pobreza, proteger o meio ambiente e o clima e garantir que as pessoas, em todos os lugares, possam desfrutar de paz e de prosperidade (https://brasil.un.org/pt-br/sdgs).</br></br>
-                                    Acessando os Ìcones abaixo È possÌvel classificar o Processo com as Metas dos Objetivos de Desenvolvimento Sustent·vel da ONU.
+                                    Os Objetivos de Desenvolvimento Sustent√°vel s√£o um apelo global √† a√ß√£o para acabar com a pobreza, proteger o meio ambiente e o clima e garantir que as pessoas, em todos os lugares, possam desfrutar de paz e de prosperidade (https://brasil.un.org/pt-br/sdgs).</br></br>
+                                    Acessando os √≠cones abaixo √© poss√≠vel classificar o Processo com as Metas dos Objetivos de Desenvolvimento Sustent√°vel da ONU.
                                 </label>
                             </div>
                         </div>
@@ -123,7 +123,7 @@
                             </div>
                             <div class="col-11" style="margin-top: 7px;">
                                 <h6>
-                                    <strong>Exibir os Objetivos de Desenvolvimento Sustent·vel da ONU com Forte RelaÁ„o Tem·tica com o ”rg„o</strong>
+                                    <strong>Exibir os Objetivos de Desenvolvimento Sustent√°vel da ONU com Forte Rela√ß√£o Tem√°tica com o √ìrg√£o</strong>
                                 </h6>
                             </div>
                         </div>
@@ -141,7 +141,7 @@
                                          class=" col-2"
                                          style="margin-bottom: 15px;<?= $exibirObjetivo ?>"
                                          onclick="exibirMetas(<?= $objMdIaAdmObjetivoOdsDTO->getNumIdMdIaAdmObjetivoOds(); ?>)">
-                                        <a><img src='modulos/ia/imagens/Icones_Oficiais_ONU/<?= $objMdIaAdmObjetivoOdsDTO->getStrIconeOds() ?>' class="<?= $classe ?>"/></a>
+                                        <a><img src="modulos/ia/imagens/Icones_Oficiais_ONU/<?= $objMdIaAdmObjetivoOdsDTO->getStrIconeOds() ?>" alt="Objetivo ODS: <?= $objMdIaAdmObjetivoOdsDTO->getStrNomeOds() ?>" class="<?= $classe ?>"/></a>
                                     </div>
                                     <?php
                                 }
@@ -155,7 +155,7 @@
                     <div id="step-3" class="d-none">
                         <div class="row" style="padding: 20px">
                             <div class="col-12">
-                                <h5><strong>Este Peticionamento est· contribuindo com as seguintes Metas dos ODS:</strong></h5>
+                                <h5><strong>Este Peticionamento est√° contribuindo com as seguintes Metas dos ODS:</strong></h5>
                                 <div id="metas-selecionadas" style="padding-top: 10px">
                                 </div>
                             </div>

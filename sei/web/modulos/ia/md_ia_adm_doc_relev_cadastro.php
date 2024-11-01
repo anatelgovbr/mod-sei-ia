@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 13/07/2023 - criado por sabino.colab
  *
- * Vers„o do Gerador de CÛdigo: 1.43.2
+ * Vers√£o do Gerador de C√≥digo: 1.43.2
  */
 
 try {
@@ -119,12 +119,12 @@ try {
             $arrComandos[] = '<button type="button" accesskey="F" name="btnFechar" value="Fechar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
 
             if ($objMdIaAdmDocRelevDTO === null) {
-                throw new InfraException("Registro n„o encontrado.");
+                throw new InfraException("Registro n√£o encontrado.");
             }
             break;
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
     if ($_GET['documento_relevante'] > 0) {
         $objMdIaAdmDocRelevDTO->setBolExclusaoLogica(false);
@@ -165,8 +165,8 @@ try {
             $tabelaPercRelevMet .= "<td>" . $objMdIaAdmSegDocRelevDTO->getStrSegmentoDocumento() . "</td>";
             $tabelaPercRelevMet .= "<td>" . $objMdIaAdmSegDocRelevDTO->getNumPercentualRelevancia() . "%</td>";
             $tabelaPercRelevMet .= "<td>";
-            $tabelaPercRelevMet .= "<a onclick='editarPercRelevanciaSegmento(" . $objMdIaAdmSegDocRelevDTO->getNumIdMdIaAdmSegDocRelev() . ")'><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/alterar.svg' title='Alterar Percentual de Relev‚ncia do Segmento' alt='Alterar Percentual de Relev‚ncia do Segmento' class='infraImg' /></a>";
-            $tabelaPercRelevMet .= "<a onclick='removerPercRelevanciaSegmento(" . $objMdIaAdmSegDocRelevDTO->getNumIdMdIaAdmSegDocRelev() . ")'><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/excluir.svg' title='Excluir Percentual de Relev‚ncia do Segmento' alt='Excluir Percentual de Relev‚ncia do Segmento' class='infraImg' /></a>";
+            $tabelaPercRelevMet .= "<a onclick='editarPercRelevanciaSegmento(" . $objMdIaAdmSegDocRelevDTO->getNumIdMdIaAdmSegDocRelev() . ")'><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/alterar.svg' title='Alterar Percentual de Relev√¢ncia do Segmento' alt='Alterar Percentual de Relev√¢ncia do Segmento' class='infraImg' /></a>";
+            $tabelaPercRelevMet .= "<a onclick='removerPercRelevanciaSegmento(" . $objMdIaAdmSegDocRelevDTO->getNumIdMdIaAdmSegDocRelev() . ")'><img src='" . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . "/excluir.svg' title='Excluir Percentual de Relev√¢ncia do Segmento' alt='Excluir Percentual de Relev√¢ncia do Segmento' class='infraImg' /></a>";
             $tabelaPercRelevMet .= "</td>";
             $tabelaPercRelevMet .= "</tr>";
             $somaPesosAdicionados += $objMdIaAdmSegDocRelevDTO->getNumPercentualRelevancia();
@@ -225,10 +225,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <label id="lblAplicabilidade" for="selAplicabilidade" accesskey="o" class="infraLabelObrigatorio">Aplicabilidade:</label>
                     <img align="top"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Selecione "Interno" para abranger tipos de documentos Gerados no Editor do SEI, documentos Autom·ticos como de CorrespondÍncia EletrÙnica e documentos Formul·rio.
+                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Selecione "Interno" para abranger tipos de documentos Gerados no Editor do SEI, documentos Autom√°ticos como de Correspond√™ncia Eletr√¥nica e documentos Formul√°rio.
 
 Selecione "Externo" para abranger tipos de documentos Externos, ou seja, que teve o upload de arquivo.', 'Ajuda') ?>
-                         class="infraImg"/>
+                         class="infraImg" alt="√çcone de Ajuda"/>
                     <select class="infraSelect form-control" name="selAplicabilidade" id="selAplicabilidade"
                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"
                             onchange="retornaTiposDocumentos()" <?= $alterar ?>>
@@ -250,8 +250,8 @@ Selecione "Externo" para abranger tipos de documentos Externos, ou seja, que tev
                         de Documento:</label>
                     <img align="top"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escolha o Tipo de Documento de fato que ser· considerado Relevante para a funcionalidade de Processos Similares e outras funcionalidades do SEI IA.', 'Ajuda') ?>
-                         class="infraImg"/>
+                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Escolha o Tipo de Documento de fato que ser√° considerado Relevante para a funcionalidade de Processos Similares e outras funcionalidades do SEI IA.', 'Ajuda') ?>
+                         class="infraImg" alt="√çcone de Ajuda"/>
                     <select class="infraSelect form-control" name="selTipoDocumento" id="selTipoDocumento"
                             tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" <?= $alterar ?>>
                         <option></option>
@@ -268,11 +268,11 @@ Selecione "Externo" para abranger tipos de documentos Externos, ou seja, que tev
                             Documento:</label>
                         <img align="top"
                              src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                             name="ajuda" <?= PaginaSEI::montarTitleTooltip('Apenas excepcionalmente para documentos MUITO relevantes que tenham segmentos bem definidos no modelo (por exemplo: "ASSUNTO", "RELAT”RIO" e "CONCLUS√O"), È possÌvel cadastrar o nome de cada segmento para indicar o seu percentual de relev‚ncia dentro do teor de tais documentos.
+                             name="ajuda" <?= PaginaSEI::montarTitleTooltip('Apenas excepcionalmente para documentos MUITO relevantes que tenham segmentos bem definidos no modelo (por exemplo: "ASSUNTO", "RELAT√ìRIO" e "CONCLUS√ÉO"), √© poss√≠vel cadastrar o nome de cada segmento para indicar o seu percentual de relev√¢ncia dentro do teor de tais documentos.
 
-- Caso n„o seja encontrado o Segmento do Documento indicado ele ser· ignorado.
-- Caso um segmento possa ser apresentado de v·rias formas, utilizar o caractere | ("PIPE") para representar o operador "OU" (por exemplo: conselheiro|relatorio).', 'Ajuda') ?>
-                             class="infraImg"/>
+- Caso n√£o seja encontrado o Segmento do Documento indicado ele ser√° ignorado.
+- Caso um segmento possa ser apresentado de v√°rias formas, utilizar o caractere | ("PIPE") para representar o operador "OU" (por exemplo: conselheiro|relatorio).', 'Ajuda') ?>
+                             class="infraImg" alt="√çcone de Ajuda"/>
                         <input type="text" id="txtSegmentoDocumento" name="txtSegmentoDocumento"
                                class="form-control infraText"
                                value=""
@@ -284,13 +284,13 @@ Selecione "Externo" para abranger tipos de documentos Externos, ou seja, que tev
                     <div class="form-group">
                         <label id="lblPercRelevSegmentoAdicionar" for="lblPercRelevSegmentoAdicionar" accesskey=""
                                class="infraLabelOpcional">Percentual
-                            de Relev‚ncia:</label>
+                            de Relev√¢ncia:</label>
                         <img align="top"
                              src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                             name="ajuda" <?= PaginaSEI::montarTitleTooltip('O total de segmentos adicionados n„o pode ultrapassar os 100%.
+                             name="ajuda" <?= PaginaSEI::montarTitleTooltip('O total de segmentos adicionados n√£o pode ultrapassar os 100%.
 
-Caso n„o atinja os 100% os demais segmentos do documento ser„o considerados como um todo no percentual faltante. ', 'Ajuda') ?>
-                             class="infraImg"/>
+Caso n√£o atinja os 100% os demais segmentos do documento ser√£o considerados como um todo no percentual faltante. ', 'Ajuda') ?>
+                             class="infraImg" alt="√çcone de Ajuda"/>
                         <div class="input-group input-group-sm mb-3">
                             <input type="number" id="txtPercRelevSegmentoAdicionar" name="txtPercRelevSegmentoAdicionar"
                                    onkeypress="return infraMascaraNumero(this, event)" class="form-control"
@@ -322,8 +322,8 @@ Caso n„o atinja os 100% os demais segmentos do documento ser„o considerados como
                         <thead>
                         <tr>
                             <th class="infraTh" width="80%">Segmento do Documento</th>
-                            <th class="infraTh" width="15%">Percentual de Relev‚ncia</th>
-                            <th class="infraTh" width="5%">AÁıes</th>
+                            <th class="infraTh" width="15%">Percentual de Relev√¢ncia</th>
+                            <th class="infraTh" width="5%">A√ß√µes</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -361,7 +361,7 @@ Caso n„o atinja os 100% os demais segmentos do documento ser„o considerados como
                     <label id="lblProcessosEspecificos" name="lblProcessosEspecificos"
                            for="rdnRelevanteProcessosEspecificos"
                            class="infraLabelOpcional infraLabelRadio">Relevante apenas para Tipos de Processos
-                        EspecÌficos</label>
+                        Espec√≠ficos</label>
                 </div>
             </div>
         </div>
@@ -369,12 +369,12 @@ Caso n„o atinja os 100% os demais segmentos do documento ser„o considerados como
             <div class="row">
                 <div class="col-xs-2 col-sm-10 col-md-6 col-lg-6">
                     <label id="lblTpProcesso" for="selTpProcesso" accesskey="" class="infraLabelObrigatorio"> Tipo de
-                        Processo EspecÌfico:
+                        Processo Espec√≠fico:
                     </label>
                     <img align="top"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Este campo est· habilitado apenas para cadastro novo e serve para facilitar o cadastro em lote do mesmo Tipo de Documento para diversos Tipos de Processos.', 'Ajuda') ?>
-                         class="infraImg"/>
+                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Este campo est√° habilitado apenas para cadastro novo e serve para facilitar o cadastro em lote do mesmo Tipo de Documento para diversos Tipos de Processos.', 'Ajuda') ?>
+                         class="infraImg" alt="√çcone de Ajuda" />
                     <input type="text" id="txtTpProcesso" name="txtTpProcesso" class="infraText form-control"
                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" <?= $alterar ?> />
                 </div>

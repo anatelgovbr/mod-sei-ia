@@ -1,6 +1,6 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 21/12/2023 - criado por sabino.colab
  *
@@ -43,7 +43,7 @@ try {
 
     switch ($_GET['acao']) {
         case 'md_ia_adm_ods_onu':
-            $strTitulo = 'Objetivos de Desenvolvimento Sustentável da ONU';
+            $strTitulo = 'Objetivos de Desenvolvimento SustentÃ¡vel da ONU';
             $arrComandos[] = '<button type="submit" accesskey="S" name="sbmAlterarMdIaAdmOdsOnu" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $strDesabilitar = 'disabled="disabled"';
 
@@ -56,10 +56,10 @@ try {
             $objMdIaAdmOdsOnuRN = new MdIaAdmOdsOnuRN();
             $objMdIaAdmOdsOnuDTO = $objMdIaAdmOdsOnuRN->consultar($objMdIaAdmOdsOnuDTO);
 
-            $selectTipoDocumento = MdIaAdmTpDocPesqINT::montarSelectTipoDocumento(0, "Selecione uma opção:", 0);
+            $selectTipoDocumento = MdIaAdmTpDocPesqINT::montarSelectTipoDocumento(0, "Selecione uma opÃ§Ã£o:", 0);
 
             if ($objMdIaAdmOdsOnuDTO == null) {
-                throw new InfraException("Registro não encontrado.");
+                throw new InfraException("Registro nÃ£o encontrado.");
             }
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($objMdIaAdmOdsOnuDTO->getNumIdMdIaAdmOdsOnu())) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
@@ -150,7 +150,7 @@ try {
             }
             break;
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
 
@@ -188,9 +188,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="row">
             <div class="col-10 md-4">
                 <label id="lblExibirFuncionalidade" for="txtExibirFuncionalidade" accesskey="" class="infraLabelObrigatorio">Exibir Funcionalidade:</label>
-                <img align="top"
+                <img align="top" alt="Ãcone de Ajuda"
                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('A funcionalidade de "Objetivos de Desenvolvimento Sustentável da ONU" somente será exibida para os usuários se selecionada a opção "Exibir".', 'Ajuda') ?>
+                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('A funcionalidade de "Objetivos de Desenvolvimento SustentÃ¡vel da ONU" somente serÃ¡ exibida para os usuÃ¡rios se selecionada a opÃ§Ã£o "Exibir".', 'Ajuda') ?>
                      class="infraImg"/>
                 <div class="infraDivRadio">
                     <input type="radio" utlCampoObrigatorio="o" name="rdnExibirFuncionalidade"
@@ -204,17 +204,17 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                            class="infraRadio" <?= $naoExibirFuncionalidade ?>
                     <label id="lblProcessosEspecificos" name="lblProcessosEspecificos"
                            for="rdnRelevanteProcessosEspecificos"
-                           class="infraLabelOpcional infraLabelRadio">Não Exibir</label>
+                           class="infraLabelOpcional infraLabelRadio">NÃ£o Exibir</label>
                 </div>
             </div>
         </div>
         <div class="row classificacaoUsuarioExterno">
             <div class="col-10 md-4">
                 <label id="lblClassificacaoUsuarioExterno" for="txtClassificacaoUsuarioExterno" accesskey=""
-                       class="infraLabelObrigatorio">Classificação por Usuário Externo:</label>
+                       class="infraLabelObrigatorio">ClassificaÃ§Ã£o por UsuÃ¡rio Externo:</label>
                 <img align="top"
                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Esta opção permite que a funcionalidade de classificação de acordo com os "Objetivos de Desenvolvimento Sustentável da ONU" seja exibida para os Usuários Externos ao peticionar Processo Novo, Processo Intercorrente e Resposta da Intimação. \n\nA funcionalidade só estará disponível se o módulo "SEI Peticionamento, Intimação e Procuração" estiver instalado na versão 4.3.0 ou superior e a opção "Exibir Funcionalidade" estiver marcada como "Exibir".', 'Ajuda') ?>
+                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Esta opÃ§Ã£o permite que a funcionalidade de classificaÃ§Ã£o de acordo com os "Objetivos de Desenvolvimento SustentÃ¡vel da ONU" seja exibida para os UsuÃ¡rios Externos ao peticionar Processo Novo, Processo Intercorrente e Resposta da IntimaÃ§Ã£o. \n\nA funcionalidade sÃ³ estarÃ¡ disponÃ­vel se o mÃ³dulo "SEI Peticionamento, IntimaÃ§Ã£o e ProcuraÃ§Ã£o" estiver instalado na versÃ£o 4.3.0 ou superior e a opÃ§Ã£o "Exibir Funcionalidade" estiver marcada como "Exibir".', 'Ajuda') ?>
                      class="infraImg"/>
                 <div class="infraDivRadio">
                     <input type="radio" utlCampoObrigatorio="o" name="rdnClassificacaoExterno"
@@ -235,10 +235,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="row">
             <div class="col-10 md-4">
                 <label id="lblExibirFuncionalidade" for="txtExibirFuncionalidade" accesskey=""
-                       class="infraLabelObrigatorio">Fase de Avaliação Especializada por Racional:</label>
+                       class="infraLabelObrigatorio">Fase de AvaliaÃ§Ã£o Especializada por Racional:</label>
                 <img align="top"
                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Parametrização para exibir ou não a Avaliação Especializada por Racional.', 'Ajuda') ?>
+                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('ParametrizaÃ§Ã£o para exibir ou nÃ£o a AvaliaÃ§Ã£o Especializada por Racional.', 'Ajuda') ?>
                      class="infraImg"/>
                 <div class="infraDivRadio">
                     <input type="radio" utlCampoObrigatorio="o" name="rdnExibirAvaliacao"
@@ -260,11 +260,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-12 col-xl-12">
                 <div class="form-group">
                     <label id="lblOrientacoesGerais" for="txtOrientacoesGerais" accesskey=""
-                           class="infraLabelObrigatorio">Orientações
+                           class="infraLabelObrigatorio">OrientaÃ§Ãµes
                         Gerais:</label>
                     <img align="top"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('As orientações descritas abaixo serão exibidas na tela do SEI IA na seção da funcionalidade "Objetivos de Desenvolvimento Sustentável da ONU".', 'Ajuda') ?>
+                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('As orientaÃ§Ãµes descritas abaixo serÃ£o exibidas na tela do SEI IA na seÃ§Ã£o da funcionalidade "Objetivos de Desenvolvimento SustentÃ¡vel da ONU".', 'Ajuda') ?>
                          class="infraImg"/>
                     <div id="divEditores" style="overflow: auto;">
                         <textarea id="txtOrientacoesGerais" name="txtOrientacoesGerais"
@@ -284,10 +284,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <div class="row">
                         <div class="col-sm-8 col-md-8 col-lg-6">
                             <label id="lblUnidadeAlerta" for="txtUnidadeAlerta" class="infraLabelObrigatorio">Unidades para alertar
-                                pendência ou divergência:</label>
+                                pendÃªncia ou divergÃªncia:</label>
                             <img align="top"
                                  src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('Apenas nas Unidades aqui listadas apresentará ícone próprio do SEI IA sobre o processo alertando pendência de classificação por pelo menos um Usuário ou divergência de classificação de Usuário frente à nova sugestão feita pela Inteligência Artificial do SEI.', 'Ajuda') ?>
+                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('Apenas nas Unidades aqui listadas apresentarÃ¡ Ã­cone prÃ³prio do SEI IA sobre o processo alertando pendÃªncia de classificaÃ§Ã£o por pelo menos um UsuÃ¡rio ou divergÃªncia de classificaÃ§Ã£o de UsuÃ¡rio frente Ã  nova sugestÃ£o feita pela InteligÃªncia Artificial do SEI.', 'Ajuda') ?>
                                  class="infraImg"/>
                             <input type="text" id="txtUnidadeAlerta" name="txtUnidadeAlerta" class="infraText form-control"
                                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
@@ -305,8 +305,8 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                                 <div class="botoes ml-1">
                                     <img id="imgLupaUnidade" onclick="objLupaUnidade.selecionar(700,500);"
                                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/pesquisar.svg"
-                                         alt="Selecionar Unidade para alertar pendência ou divergência"
-                                         title="Selecionar Unidade para alertar pendência ou divergência"
+                                         alt="Selecionar Unidade para alertar pendÃªncia ou divergÃªncia"
+                                         title="Selecionar Unidade para alertar pendÃªncia ou divergÃªncia"
                                          class="infraImg"
                                          tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/> <br/>
                                     <img id="imgExcluirUnidade" onclick="objLupaUnidade.remover();"
@@ -324,16 +324,16 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="row">
             <div class="col-12 col-xl-12">
                 <fieldset class="infraFieldset form-control mb-3 py-3" style="height: auto">
-                    <legend class="infraLegend">Objetivos de Desenvolvimento Sustentável</legend>
+                    <legend class="infraLegend">Objetivos de Desenvolvimento SustentÃ¡vel</legend>
                     <div class="row">
                         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                             <table class="infraTable" id="tbPercRelevMetadado">
                                 <caption class='infraCaption'> <?= PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) ?> </caption>
                                 <thead>
                                 <tr>
-                                    <th class="infraTh text-center" width="5%%">Número</th>
+                                    <th class="infraTh text-center" width="5%%">NÃºmero</th>
                                     <th class="infraTh text-left" width="30%">Nome do Objetivo</th>
-                                    <th class="infraTh text-left" width="55%">Descrição</th>
+                                    <th class="infraTh text-left" width="55%">DescriÃ§Ã£o</th>
                                     <th class="infraTh text-center" width="5%">Metas</th>
                                     <th class="infraTh text-center" width="5%">Consultar</th>
                                 </tr>

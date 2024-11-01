@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 23/11/2022 - criado por michaelr.colab
  *
- * Versão do Gerador de Código: 1.43.1
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.1
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -638,7 +638,14 @@ class MdIaConfigAssistenteINT extends InfraINT
             </style>
 
         ';
-
+        if(version_compare(VERSAO_INFRA, '2.23.8') >= 0){
+            $css .= "
+            <style>
+                #btnInfraTopo {
+                        bottom: 0.8rem;
+                    }  
+            </style>";
+        }
         return $css;
     }
 
@@ -665,7 +672,7 @@ class MdIaConfigAssistenteINT extends InfraINT
                 <input class="widget-input-open" id="widget-open" type="checkbox" name="widget-open-chat" />
                 <div class="widget-button">
                     <svg onclick="fecharChat()"class="close-chat" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-                    <img onclick="abrirChat()" class="ionicon chat-open" src="modulos/ia/imagens/md_ia_icone_branco.svg?11" alt="Inteligência Artificial">
+                    <img onclick="abrirChat()" class="ionicon chat-open" src="modulos/ia/imagens/md_ia_icone_branco.svg?11" alt="InteligÃªncia Artificial">
                 </div>
                 <div class="widget-content">
                     <div class="widget-title">
@@ -694,7 +701,7 @@ class MdIaConfigAssistenteINT extends InfraINT
                         <div id="painelTopicos" class="row">
                         <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
                             <a onclick="adicionarTopico(this);">
-                                <button class="nav-link adicionarTopico" id="adicionarTopico" data-toggle="pill" data-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Novo Tópico</button>
+                                <button class="nav-link adicionarTopico" id="adicionarTopico" data-toggle="pill" data-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Novo TÃ³pico</button>
                             </a>
                             <div id="listagemTopicos"></div>
                         </div>
@@ -710,7 +717,7 @@ class MdIaConfigAssistenteINT extends InfraINT
                             </div>
                             <div class="wrapperMensagens">
 	                            <div id="validacaoMensagem" class="invalid-feedback"></div>
-	                            <div id="rodapeChat">Pode conter erros. Considere verificar informações importantes.</div>
+	                            <div id="rodapeChat">Pode conter erros. Considere verificar informaÃ§Ãµes importantes.</div>
 							</div>
                         </div>
                     </div>
@@ -735,7 +742,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         if ($budget["extrapolouLimiteTokens"]) {
             $retorno = [];
             $retorno["error"] = true;
-            $retorno["mensagem"] = utf8_encode("O volume de conteúdo permitido nas interações diárias foi excedido. Tente novamente amanhã, quando o volume de conteúdo permitido para interação terá sido renovado.");
+            $retorno["mensagem"] = utf8_encode("O volume de conteÃºdo permitido nas interaÃ§Ãµes diÃ¡rias foi excedido. Tente novamente amanhÃ£, quando o volume de conteÃºdo permitido para interaÃ§Ã£o terÃ¡ sido renovado.");
             return json_encode($retorno);
         }
         $systemPrompt = $objMdIaAdmConfigAssistIADTO->getStrSystemPrompt();
@@ -914,11 +921,11 @@ class MdIaConfigAssistenteINT extends InfraINT
                 $objProtocoloDTO = self::consultaProtocoloDocumento($documento);
                 if (!is_null($objProtocoloDTO)) {
                     if ($objProtocoloDTO->getStrStaProtocolo() == ProtocoloRN::$TP_PROCEDIMENTO) {
-                        return ["result" => "false", "mensagem" => utf8_encode("Provisoriamente, não é permitida a citação de protocolo de processo.")];
-                        if ($objProtocoloDTO->getStrStaNivelAcessoGlobal() == ProtocoloRN::$NA_SIGILOSO) {
+                        return ["result" => "false", "mensagem" => utf8_encode("Provisoriamente, nÃ£o Ã© permitida a citaÃ§Ã£o de protocolo de processo.")];
+                       /* if ($objProtocoloDTO->getStrStaNivelAcessoGlobal() == ProtocoloRN::$NA_SIGILOSO) {
                             if (($protocolo["acao_origem"] != "usuario_validar_acesso" && $protocolo["acao_origem"] != "arvore_visualizar" && $protocolo["acao_origem"] != "procedimento_gerar")
                                 || $protocolo["id_procedimento"] != $objProtocoloDTO->getDblIdProtocolo()) {
-                                return ["result" => "false", "mensagem" => utf8_encode("Para interagir com o Assistente IA em documentos de Processos com o nível de acesso Sigiloso é necessário que você tenha o acesso e esteja dentro do processo desejado.")];
+                                return ["result" => "false", "mensagem" => utf8_encode("Para interagir com o Assistente IA em documentos de Processos com o nÃ­vel de acesso Sigiloso Ã© necessÃ¡rio que vocÃª tenha o acesso e esteja dentro do processo desejado.")];
                             }
                         }
 
@@ -975,9 +982,9 @@ class MdIaConfigAssistenteINT extends InfraINT
                         if (!is_null($protocolosConsiderados)) {
                             return ["result" => "true", "idDocumento" => $idProcesso, "linkAcesso" => $linkAcesso, "relacaoProtocolos" => json_encode($idProtocolo), "idProcedimento" => $idProcesso];
                         } else {
-                            return ["result" => "false", "mensagem" => utf8_encode("Unidade [" . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . "] não possui acesso a nenhum documento do processo nº [" . $documento . "] ")];
+                            return ["result" => "false", "mensagem" => utf8_encode("Unidade [" . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . "] nÃ£o possui acesso a nenhum documento do processo nÂº [" . $documento . "] ")];
                         }
-
+*/
                     } else {
                         if ($objProtocoloDTO->getStrStaNivelAcessoGlobal() != ProtocoloRN::$NA_SIGILOSO) {
                             $objEntradaConsultarDocumentoAPI = new EntradaConsultarDocumentoAPI();
@@ -991,14 +998,14 @@ class MdIaConfigAssistenteINT extends InfraINT
                         } else {
                             if (($protocolo["acao_origem"] != "usuario_validar_acesso" && $protocolo["acao_origem"] != "arvore_visualizar" && $protocolo["acao_origem"] != "procedimento_gerar")
                                 || $protocolo["id_procedimento"] != $objProtocoloDTO->getDblIdProcedimentoDocumento()) {
-                                return ["result" => "false", "mensagem" => utf8_encode("Para interagir com o Assistente IA em documentos de Processos com o nível de acesso Sigiloso é necessário que você tenha o acesso e esteja dentro do processo desejado.")];
+                                return ["result" => "false", "mensagem" => utf8_encode("Para interagir com o Assistente IA em documentos de Processos com o nÃ­vel de acesso Sigiloso Ã© necessÃ¡rio que vocÃª tenha o acesso e esteja dentro do processo desejado.")];
                             }
 
                             $objDocumentoDTO = self::consultaDocumento($documento);
 
                             $retornoPermissaoAcesso = MdIaRecursoRN::verificarSelecaoDocumentoAlvo($objDocumentoDTO);
                             if(!$retornoPermissaoAcesso) {
-                                return ["result" => "false", "mensagem" => utf8_encode("Unidade [" . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . "] não possui acesso ao documento [" . $documento . "].")];
+                                return ["result" => "false", "mensagem" => utf8_encode("Unidade [" . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . "] nÃ£o possui acesso ao documento [" . $documento . "].")];
                             }
                             $linkAcesso = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador.php?acao=procedimento_trabalhar&amp;id_procedimento=' . $objProtocoloDTO->getDblIdProcedimentoDocumento() . '&amp;id_documento=' . $objProtocoloDTO->getDblIdProtocolo();
                             $idDocumento = $objProtocoloDTO->getDblIdProtocolo();
@@ -1007,7 +1014,7 @@ class MdIaConfigAssistenteINT extends InfraINT
                         }
                         if ($objProtocoloDTO->getStrStaProtocolo() == ProtocoloRN::$TP_DOCUMENTO_GERADO) {
                             if (!is_null($paginas)) {
-                                return ["result" => "false", "mensagem" => utf8_encode("O protocolo indicado se refere a Documento Gerado no SEI, que, por natureza, não aceita indicação de intervalo de páginas para interação sobre seu conteúdo com o Assistente de IA.")];
+                                return ["result" => "false", "mensagem" => utf8_encode("O protocolo indicado se refere a Documento Gerado no SEI, que, por natureza, nÃ£o aceita indicaÃ§Ã£o de intervalo de pÃ¡ginas para interaÃ§Ã£o sobre seu conteÃºdo com o Assistente de IA.")];
                             }
                         } elseif ($objProtocoloDTO->getStrStaProtocolo() == ProtocoloRN::$TP_DOCUMENTO_RECEBIDO) {
 
@@ -1019,16 +1026,16 @@ class MdIaConfigAssistenteINT extends InfraINT
 
                             if (in_array($extensaoArquivo, $arrExtensoesAceitas)) {
                                 if (!is_null($paginas) && !in_array($extensaoArquivo, ['pdf'])) {
-                                    return ["result" => "false", "mensagem" => utf8_encode("A indicação de intervalo de páginas sobre Documento Externo para interação com o Assistente de IA está restrita a documentos do tipo PDF.")];
+                                    return ["result" => "false", "mensagem" => utf8_encode("A indicaÃ§Ã£o de intervalo de pÃ¡ginas sobre Documento Externo para interaÃ§Ã£o com o Assistente de IA estÃ¡ restrita a documentos do tipo PDF.")];
                                 }
                             } else {
-                                return ["result" => "false", "mensagem" => utf8_encode("O protocolo indicado se refere a Documento Externo de arquivo com extensão não permitida para interação sobre seu conteúdo com o Assistente de IA.")];
+                                return ["result" => "false", "mensagem" => utf8_encode("O protocolo indicado se refere a Documento Externo de arquivo com extensÃ£o nÃ£o permitida para interaÃ§Ã£o sobre seu conteÃºdo com o Assistente de IA.")];
                             }
                         }
                     }
                     return ["result" => "true", "idDocumento" => $idDocumento, "linkAcesso" => $linkAcesso, "idProcedimento" => $idProcedimento];
                 } else {
-                    return ["result" => "false", "mensagem" => utf8_encode("O protocolo citado #" . $documento . " não existe no SEI.")];
+                    return ["result" => "false", "mensagem" => utf8_encode("O protocolo citado #" . $documento . " nÃ£o existe no SEI.")];
                 }
             } catch (Exception $e) {
                 if ($e->getArrObjInfraValidacao()) {
@@ -1058,7 +1065,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         $log .= "00002 - Usuario: " . SessaoSEI::getInstance()->getStrNomeUsuario() . " - Unidade: " . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . " \n";
         $log .= "00003 - Endpoint do Recurso: " . $urlEndpoint = $urlApi["urlBase"] . $urlApi["linkEndpoint"] . " \n";
         $log .= "00004 - Tokens Enviados: " . $dadosEnviados["tokensEnviados"] . " \n";
-        $log .= "00005 - Quantidade Máxima de Tokens Permitidos: " . $dadosEnviados["janelaContexto"] . " \n";
+        $log .= "00005 - Quantidade MÃ¡xima de Tokens Permitidos: " . $dadosEnviados["janelaContexto"] . " \n";
         $log .= "00006 - Protocolo Indicado: " . $protocoloIndicado . " \n";
         $log .= "00007 - FIM \n";
         LogSEI::getInstance()->gravar($log, InfraLog::$INFORMACAO);
@@ -1068,14 +1075,14 @@ class MdIaConfigAssistenteINT extends InfraINT
     public function retornaMensagemAmigavelUsuario($statusRequisicao, $mensagemOriginal, $procedimentoCitado = "")
     {
         if ($statusRequisicao != "200" && $statusRequisicao != "406") {
-            $mensagemErro = "Atenção: Ocorreu o erro abaixo na comunicação com a API da Inteligência Artificial.";
+            $mensagemErro = "AtenÃ§Ã£o: Ocorreu o erro abaixo na comunicaÃ§Ã£o com a API da InteligÃªncia Artificial.";
             switch ($statusRequisicao) {
                 case '204':
-                    $resposta = $mensagemErro . "<br> Erro: 204. RAG Não retornou nenhum documento similar.";
+                    $resposta = $mensagemErro . "<br> Erro: 204. RAG NÃ£o retornou nenhum documento similar.";
                     break;
 
                 case '400':
-                    $resposta = $mensagemErro . "<br> Erro: 400. Bad Request - Menção a mais de um documento não permitido para a intenção.";
+                    $resposta = $mensagemErro . "<br> Erro: 400. Bad Request - MenÃ§Ã£o a mais de um documento nÃ£o permitido para a intenÃ§Ã£o.";
                     break;
 
                 case '401':
@@ -1084,9 +1091,9 @@ class MdIaConfigAssistenteINT extends InfraINT
 
                 case '404':
                     if($mensagemOriginal == '{"detail":"Documento nao encontrado"}') {
-                        $resposta = $mensagemErro . "<br> Erro: 404. Documento não encontrado.";
+                        $resposta = $mensagemErro . "<br> Erro: 404. Documento nÃ£o encontrado.";
                     } else{
-                        $resposta = $mensagemErro . "<br> Erro: 404. Houve um problema de comunicação com o endpoint LLM.";
+                        $resposta = $mensagemErro . "<br> Erro: 404. Houve um problema de comunicaÃ§Ã£o com o endpoint LLM.";
                     }
                     break;
 
@@ -1095,7 +1102,7 @@ class MdIaConfigAssistenteINT extends InfraINT
                     break;
 
                 case '422':
-                    $resposta = $mensagemErro . "<br> Erro: 422. Requisição mal formatada.";
+                    $resposta = $mensagemErro . "<br> Erro: 422. RequisiÃ§Ã£o mal formatada.";
                     break;
 
                 case '500':
@@ -1145,7 +1152,7 @@ class MdIaConfigAssistenteINT extends InfraINT
                                         $extensaoArquivo = str_replace(' ', '', InfraString::transformarCaixaBaixa($extensaoArquivo));
 
                                         if ($extensaoArquivo == "pdf") {
-                                            $resposta = $mensagemErro . "<br> Erro: 502. Limite de tempo excedido devido o alto volume do documento citado, recomendamos a utilização de paginação.";
+                                            $resposta = $mensagemErro . "<br> Erro: 502. Limite de tempo excedido devido o alto volume do documento citado, recomendamos a utilizaÃ§Ã£o de paginaÃ§Ã£o.";
                                         } else {
                                             $resposta = $mensagemErro . "<br> Erro: 502. Limite de tempo excedido devido o alto volume do documento citado.";
                                         }

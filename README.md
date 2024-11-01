@@ -1,4 +1,4 @@
-# Módulo SEI Inteligência Artificial
+# Módulo SEI IA
 
 ## Requisitos
 - Requisito Mínimo é o SEI 4.0.12 instalado/atualizado - Não é compatível com versões anteriores e em versões mais recentes é necessário conferir antes se possui compatibilidade.
@@ -7,6 +7,7 @@
 - Os códigos-fonte do Módulo podem ser baixados a partir do link a seguir, devendo sempre utilizar a versão mais recente: [https://github.com/anatelgovbr/mod-sei-ia/releases](https://github.com/anatelgovbr/mod-sei-ia/releases "Clique e acesse")
 - Se já tiver instalado a versão principal com a execução dos scripts de banco do módulo no SEI e no SIP, então basta sobrescrever os códigos e não precisa executar os scripts de banco novamente.
    - Atualizações apenas de código são identificadas com o incremento apenas do terceiro dígito da versão (p. ex. v4.1.1, v4.1.2) e não envolve execução de scripts de banco.
+- **Atenção**: O Módulo SEI IA somente funciona em conjunto com a instalação do [Servidor de Soluções de IA](https://github.com/anatelgovbr/sei-ia?tab=readme-ov-file).
 
 ## Procedimentos para Instalação
 1. Fazer backup dos bancos de dados do SEI e do SIP.
@@ -37,60 +38,42 @@
 9. Após a execução com sucesso, com um usuário com permissão de Administrador no SEI, seguir os passos dispostos no tópico "Orientações Negociais" mais abaixo.
 
 ## Orientações Negociais
-1. Imediatamente após a instalação com sucesso, com usuário com permissão de "Administrador" do SEI, acessar os menus de administração do Módulo pelo seguinte caminho: Administração > Inteligência Artificial. Somente com tudo parametrizado adequadamente será possível o uso do módulo.
+1. Imediatamente após a instalação com sucesso, com usuário com permissão de "Administrador" do SEI, fazer novo login no SEI e acessar os menus de administração do Módulo pelo seguinte caminho: Administração > Inteligência Artificial.
+	- Somente com tudo parametrizado na Administração do Módulo será possível seu uso adequado.
 2. O script de banco do SIP já cria todos os Recursos e Menus e os associam automaticamente ao Perfil "Básico" ou ao Perfil "Administrador".
 	- Independente da criação de outros Perfis, os recursos indicados para o Perfil "Básico" ou "Administrador" devem manter correspondência com os Perfis dos Usuários internos que utilizarão o Módulo e dos Usuários Administradores do Módulo.
 	- Tão quanto ocorre com as atualizações do SEI, versões futuras deste Módulo continuarão a atualizar e criar Recursos e associá-los apenas aos Perfis "Básico" e "Administrador".
 	- Todos os recursos do Módulo iniciam pelo prefixo **"md_ia_"**.
-3. Funcionalidades do Módulo SEI Correios:
-	- 3.1. Administração:
+	- **Atenção**: O recurso "md_ia_adm_config_assist_ia_consultar" define quem visualiza o Assistente do SEI IA.
+		- Caso o órgão tenha perfil separado para colaboradores, por exemplo "Colaborador (Básico sem Assinatura)", e queira ampliar o uso do Assistente, deve incluir o mencionado recurso no Perfil pertinente.
+		- Caso o órgão queira restringir quem pode utilizar o Assistente, precisa retirar o mencionado recurso do Perfil "Básico" e incluir no Perfil pertinente.
+		- O custo do uso da API do GPT-4o é muito baixo e pode ser desnecessário restringir o uso do Assistente.
+		- É de responsabilidade do órgão essa avaliação sobre ampliar ou restringir o uso do Assistente.
+3. Acesse o [Manual do Webservice do Módulo SEI IA](https://github.com/anatelgovbr/mod-sei-ia/blob/master/sei/web/modulos/ia/ws/manual_ws_ia.md).
+	- Esse Webservice é acionado internamente na comunicação entre o SEI e o *Servidor de Soluções de IA*. Não deve ser utilizado para outras finalidades.
+4. Acesse o Manual do Usuário do SEI IA para conhecer suas funcionalidades: https://docs.google.com/document/d/e/2PACX-1vRsKljzHcKwRfdW7IcnFA1EHNPIInog9Mqpu58xEFzRMfZ5avrLhYbwUjPkXuTDFKFEPnev4ASJ-5Dm/pub
+5. Funcionalidades do Módulo SEI Inteligência Artificial:
+	- 5.1. Administração:
 		- Inteligência Artificial > Configurações de Similaridade:
-			- Definir se a funcionalidade "Processos Similares" será exibida.
-            - Definir a quantidade de processos a serem listados na funcionalidade "Processos Similares", sendo o mínimo 1 e o máximo 15. O valor padrão é 5.
-            - Definir as orientações que serão exibidas na tela do SEI IA na seção da funcionalidade "Processos Similares".
-            - Definir o percentual de relevância do conteúdo dos Documentos, o valor deve ser maior que zero e não pode exceder 100%. O valor padrão é 70%.
-            - Definir o percentual de relevância dos Metadados, o valor deve ser maior que zero e não pode exceder 100%. O valor padrão é 100%.
-            - Definir os metadados e seu percentual de relevância, o sistema obriga manter o valor de 100% nessa distribuição de percentuais. O percentual de distribuição é sobre o valor do que já foi definido no campo "Percentual de Relevância dos Metadados" Por padrão já são cadastrados na instalação 7 tipos de metadados com seus valores padrões.
+			- Tela de configuração da funcionalidade "Processos Similares".
         - Inteligência Artificial > Configurações do Assistente IA:
-            - Definir se a funcionalidade "Assistente IA" será exibida.
-            - Definir as orientações que serão exibidas no ícone de ajuda no "Assistente IA".
-            - Definir o Limite Geral de Tokens que um usuário pode utilizar por dia (milhões de tokens).
-            - Caso seja necessário você pode definir um Limite maior de tokens para Usuários específicos.
-            - Definir o LLM que deseja utilizar.
-            - Definir o Prompt System para o LLM.
+            - Tela de configuração da funcionalidade "Assistente IA".
         - Inteligência Artificial > Documentos Relevantes:
             - Parametrizar quais tipos de documentos serão considerados relevantes para a funcionalidade de "Processos Similares". 
         - Inteligência Artificial > Mapeamento das Integrações:
             - Parametrizar a URL do Endpoint de Autenticação da funcionalidade de "API Interna de interface entre SEI IA e LLM de IA Generativa".
             - Parametrizar a URL do Endpoint de Autenticação da funcionalidade de "Autenticação junto à Solução de Inteligência Artificial do SEI". 
         - Inteligência Artificial > Objetivos de Desenvolvimento Sustentável da ONU:
-            - Definir se a funcionalidade "Objetivos de Desenvolvimento Sustentável da ONU" será exibida.
-            - Definir se a funcionalidade "Objetivos de Desenvolvimento Sustentável da ONU" será exibida para classificação por Usuários Externos.
-            - Definir se irá exi
-            - Definir as orientações que serão exibidas no ícone de ajuda no "Assistente IA".
-            - Definir o Limite Geral de Tokens que um usuário pode utilizar por dia (milhões de tokens).
-            - Caso seja necessário você pode definir um Limite maior de tokens para Usuários específicos.
-            - Definir o LLM que deseja utilizar.
-            - Definir o Prompt System para o LLM.        
-	- 3.2. Unidade de Expedição:
-		- Expedição pelos Correios:
-			- Gerar PLP: 
-				- Tela onde lista as solicitações de expedições realizadas pelos Usuários e gera a PLP(pré-lista de postagem), sendo possível selecionar o "Formato de Expedição do Objeto" e visualizar a "Solicitação de Expedição" cadastrada.
-			- Expedir PLP:
-				- Lista as PLPs(pré-lista de postagem) geradas para expedição e realiza o "Expedir PLP".
-					- Antes de "Concluir a Expedição da PLP" e possível Imprimir os Documentos, Envelopes, ARs e Voucher da PLP.
-			- Consultar PLPs Geradas:
-				- Tela onde lista as PLPs Geradas e visualiza o detalhamento é sendo possível Imprimir os Documentos, Envelopes, ARs e Voucher da PLP.
-			- Processamento de Retorno de AR:
-				- Tela onde Lista o Processamento de Retorno de AR e realiza o processamento em lote.
-			- ARs Pendentes de Retorno:
-				- Tela onde lista os ARs Pendentes de Retorno e "Gerar Documento de Cobrança" vinculado aos dias em atraso do processo.
-	- 3.3 Relatórios:
-		- Correios:
-			- Expedições Solicitadas pela Unidade:
-				- Tela onde lista as Expedições Solicitadas pela Unidade.
-	- 3.4. Usuários:
-		- Iniciar Processo > Ofício > Solicitar Expedição pelos Correios:
-			- Solicitar Expedição pelos Correios:
-				- Após iniciar um Processo e vincular um documento do tipo "Ofício" é realizar a assinatura do documento será exibido o icone "Solicitar Expedição pelos Correios".
-				- Na tela de "Solicitar Expedição pelos Correios" é possível alterar os dados dos "Documentos Expedidos" e preencher o "Formato de Expedição dos Documentos" é incluir uma "Observação".
+            - Tela de configuração da funcionalidade "Objetivos de Desenvolvimento Sustentável da ONU".    
+        - Inteligência Artificial > Pesquisa de Documentos:
+            - Tela de configuração da funcionalidade "Pesquisa de Documentos".    
+	- 5.2. Funcionalidades acessadas pelos Usuários por meio do botão "Inteligência Artificial" sobre Processo ou Documento:
+		- Objetivos de Desenvolvimento Sustentável da ONU:
+			- Funcionalidade do SEI IA que apoia a classificação de processos segundo os Objetivos de Desenvolvimento Sustentável (ODS) definidos pela Organização das Nações Unidas (ONU) para a Agenda 2030. Nesta tela é possível visualizar as classificações e sugestões realizadas e realizar sua própria classificação.
+		- Processos Similares:
+			- Funcionalidade do SEI IA que, utilizando técnicas de inteligência artificial, apresenta recomendação de processos similares a partir do conteúdo dos documentos e metadados. Nesta tela é possível realizar uma avaliação acerca da Similaridade.
+		- Pesquisa de Documentos:
+            - Funcionalidade do SEI IA que, viabiliza a pesquisa por confronto do conteúdo de documentos com documentos, com ou sem a inserção de texto complementar para a pesquisa. Utiliza técnicas de inteligência artificial para que a pesquisa de conteúdo seja mais assertiva comparado com técnicas tradicionais de pesquisa. Nesta tela é possível realizar uma avaliação acerca da sua relevância sobre o conteúdo pesquisado.
+	- 5.3 Assistente de IA:
+		- Ícone no canto direito inferior contido nas tela inicial do SEI assim como na tela do Processo e Editor de Documentos)
+		- O Assistente de IA é amplo e pode ser utilizado em variadas necessidades. Pode copiar e colar textos variados e demandar o que quiser do Assistente, no mesmo estilo do ChatGPT e outros.

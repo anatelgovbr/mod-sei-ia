@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 28/09/2023 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.3
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.3
  */
 
 try {
@@ -53,10 +53,10 @@ try {
             $objMdIaAdmPesqDocRN = new MdIaAdmPesqDocRN();
             $objMdIaAdmPesqDocDTO = $objMdIaAdmPesqDocRN->consultar($objMdIaAdmPesqDocDTO);
 
-            $selectTipoDocumento = MdIaAdmTpDocPesqINT::montarSelectTipoDocumento(0, "Selecione uma opção:", 0);
+            $selectTipoDocumento = MdIaAdmTpDocPesqINT::montarSelectTipoDocumento(0, "Selecione uma opÃ§Ã£o:", 0);
 
             if ($objMdIaAdmPesqDocDTO == null) {
-                throw new InfraException("Registro não encontrado.");
+                throw new InfraException("Registro nÃ£o encontrado.");
             }
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($objMdIaAdmPesqDocDTO->getNumIdMdIaAdmPesqDoc())) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
@@ -137,7 +137,7 @@ try {
             }
             break;
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
 
@@ -176,9 +176,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-10">
                 <label id="lblExibirFuncionalidade" for="txtExibirFuncionalidade" accesskey=""
                        class="infraLabelObrigatorio">Exibir Funcionalidade:</label>
-                <img align="top"
+                <img align="top" alt="Ãcone de Ajuda"
                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('A funcionalidade de "Processos Similares" somente será exibida para os usuários se selecionada a opção "Exibir".', 'Ajuda') ?>
+                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('A funcionalidade de "Processos Similares" somente serÃ¡ exibida para os usuÃ¡rios se selecionada a opÃ§Ã£o "Exibir".', 'Ajuda') ?>
                      class="infraImg"/>
                 <div class="infraDivRadio">
                     <input type="radio" utlCampoObrigatorio="o" name="rdnExibirFuncionalidade"
@@ -192,22 +192,22 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                            class="infraRadio" <?= $naoExibirFuncionalidade ?>
                     <label id="lblProcessosEspecificos" name="lblProcessosEspecificos"
                            for="rdnRelevanteProcessosEspecificos"
-                           class="infraLabelOpcional infraLabelRadio">Não Exibir</label>
+                           class="infraLabelOpcional infraLabelRadio">NÃ£o Exibir</label>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-xl-5 col-lg-6 col-md-7 col-sm-12 col-xs-12">
                 <div class="form-group">
-                    <label id="lblNomeSecao" for="txtNomeSecao" accesskey="" class="infraLabelObrigatorio">Nome da Seção
+                    <label id="lblNomeSecao" for="txtNomeSecao" accesskey="" class="infraLabelObrigatorio">Nome da SeÃ§Ã£o
                         na Tela do
-                        Usuário:</label>
+                        UsuÃ¡rio:</label>
                     <img align="top"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Configura o nome da seção da funcionalidade "Pesquisa de Documentos" na tela do usuário no "SEI IA" sobre os processos.
-- Em alguns órgãos pode haver preferência para outro nome para a funcionalidade, como "Pesquisa de Jurisprudência".
+                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Configura o nome da seÃ§Ã£o da funcionalidade "Pesquisa de Documentos" na tela do usuÃ¡rio no "SEI IA" sobre os processos.
+- Em alguns Ã³rgÃ£os pode haver preferÃªncia para outro nome para a funcionalidade, como "Pesquisa de JurisprudÃªncia".
 
-Atenção que esta funcionalidade NÃO tem por objetivo substituir a pesquisa tradicional do SEI e muito menos NÃO deve indicar muitos Tipos de Documentos Alvo da Pesquisa.', 'Ajuda') ?>
+AtenÃ§Ã£o que esta funcionalidade NÃƒO tem por objetivo substituir a pesquisa tradicional do SEI e muito menos NÃƒO deve indicar muitos Tipos de Documentos Alvo da Pesquisa.', 'Ajuda') ?>
                          class="infraImg"/>
                     <input type="text" id="txtNomeSecao" name="txtNomeSecao" class="infraText form-control"
                            value="<?= PaginaSEI::tratarHTML($objMdIaAdmPesqDocDTO->getStrNomeSecao()); ?>"
@@ -223,8 +223,8 @@ Atenção que esta funcionalidade NÃO tem por objetivo substituir a pesquisa tradi
                            class="infraLabelObrigatorio">Resultados a serem listados:</label>
                     <img align="top"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Configura a quantidade de documentos a serem listados para o usuário na modal de resultado da pesquisa, sendo o mínimo 1 e o máximo 15. O valor padrão é 5.
-Deve se evitar utilizar o retorno acima de 10 resultados, pois comprometerá o desempenho do processamento e retorno resultado da pesquisa.', 'Ajuda') ?>
+                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Configura a quantidade de documentos a serem listados para o usuÃ¡rio na modal de resultado da pesquisa, sendo o mÃ­nimo 1 e o mÃ¡ximo 15. O valor padrÃ£o Ã© 5.
+Deve se evitar utilizar o retorno acima de 10 resultados, pois comprometerÃ¡ o desempenho do processamento e retorno resultado da pesquisa.', 'Ajuda') ?>
                          class="infraImg"/>
                     <input type="number" id="txtQtdProcessListagem" name="txtQtdProcessListagem"
                            onkeypress="return infraMascaraNumero(this, event)" class="infraText form-control" min="1" max="15"
@@ -237,11 +237,11 @@ Deve se evitar utilizar o retorno acima de 10 resultados, pois comprometerá o de
             <div class="col-12 col-xl-12">
                 <div class="form-group">
                     <label id="lblOrientacoesGerais" for="txtOrientacoesGerais" accesskey=""
-                           class="infraLabelObrigatorio">Orientações
+                           class="infraLabelObrigatorio">OrientaÃ§Ãµes
                         Gerais:</label>
                     <img align="top"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('As orientações descritas abaixo serão exibidas na tela do SEI IA na seção da funcionalidade "Pesquisa de Documentos".', 'Ajuda') ?>
+                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('As orientaÃ§Ãµes descritas abaixo serÃ£o exibidas na tela do SEI IA na seÃ§Ã£o da funcionalidade "Pesquisa de Documentos".', 'Ajuda') ?>
                          class="infraImg"/>
                     <div id="divEditores" style="overflow: auto;">
                         <textarea id="txtOrientacoesGerais" name="txtOrientacoesGerais"
@@ -264,12 +264,12 @@ Deve se evitar utilizar o retorno acima de 10 resultados, pois comprometerá o de
                             <div class="form-group">
                                 <label id="lblMetadado" for="txtMetadado" accesskey="o" class="infraLabelObrigatorio">Tipo
                                     de Documento:</label>
-                                <img align="top"
+                                <img align="top" alt="Ãcone de Ajuda"
                                      src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Apresenta Tipos de Documentos apenas Gerados, que possuem aplicabilidade na Administração de Tipos de Documentos como "Interno" e "Interno e Externo". Apenas documentos gerados no SEI para esta funcionalidade pelo SEI IA.
+                                     name="ajuda" <?= PaginaSEI::montarTitleTooltip('Apresenta Tipos de Documentos apenas Gerados, que possuem aplicabilidade na AdministraÃ§Ã£o de Tipos de Documentos como "Interno" e "Interno e Externo". Apenas documentos gerados no SEI para esta funcionalidade pelo SEI IA.
 
-Atenção que esta funcionalidade NÃO tem por objetivo substituir a pesquisa tradicional do SEI e muito menos NÃO deve indicar muitos Tipos de Documentos Alvo da Pesquisa.
-- Deve indicar Tipos de Documentos que decidem de forma relevante o resultado do mérito dos processos.', 'Ajuda') ?>
+AtenÃ§Ã£o que esta funcionalidade NÃƒO tem por objetivo substituir a pesquisa tradicional do SEI e muito menos NÃƒO deve indicar muitos Tipos de Documentos Alvo da Pesquisa.
+- Deve indicar Tipos de Documentos que decidem de forma relevante o resultado do mÃ©rito dos processos.', 'Ajuda') ?>
                                      class="infraImg"/>
                                 <select class="infraSelect form-control" name="selTipoDocumento" id="selTipoDocumento"
                                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>" <?= $alterar ?>>
@@ -296,8 +296,8 @@ Atenção que esta funcionalidade NÃO tem por objetivo substituir a pesquisa tradi
                                 <thead>
                                 <tr>
                                     <th class="infraTh" width="65%">Tipo de Documento</th>
-                                    <th class="infraTh" width="15%">Data/Hora da Última Alteração</th>
-                                    <th class="infraTh" width="5%">Ações</th>
+                                    <th class="infraTh" width="15%">Data/Hora da Ãšltima AlteraÃ§Ã£o</th>
+                                    <th class="infraTh" width="5%">AÃ§Ãµes</th>
                                 </tr>
                                 </thead>
                                 <tbody>

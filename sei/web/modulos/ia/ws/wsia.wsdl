@@ -21,14 +21,21 @@
                     <xsd:element name="Content" type="xsd:base64Binary"/>
                 </xsd:sequence>
             </xsd:complexType>
-
+            <xsd:complexType name="DocumentoExternoRequestType">
+                <xsd:sequence>
+                    <xsd:element name="IdentificacaoServico" type="xsd:string"/>
+                    <xsd:element name="IdDocumento" type="xsd:string"/>
+                    <xsd:element name="SiglaSistema" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
         </xsd:schema>
     </wsdl:types>
 
     <wsdl:message name="cadastrarClassificacaoRequest">
-        <wsdl:part name="Chave" type="xsd:string"/>
+        <wsdl:part name="IdentificacaoServico" type="xsd:string"/>
         <wsdl:part name="IdProcedimento" type="xsd:string"/>
         <wsdl:part name="Meta" type="xsd:string"/>
+        <wsdl:part name="SiglaSistema" type="xsd:string"/>
     </wsdl:message>
 
     <wsdl:message name="cadastrarClassificacaoResponse">
@@ -36,8 +43,7 @@
     </wsdl:message>
 
     <wsdl:message name="consultarDocumentoExternoIARequest">
-        <wsdl:part name="Chave" type="xsd:string"/>
-        <wsdl:part name="IdDocumento" type="xsd:string"/>
+        <wsdl:part name="parametros" element="tns:DocumentoExternoRequestType"/> <!-- Referenciando o tipo complexo -->
     </wsdl:message>
 
     <wsdl:message name="consultarDocumentoExternoIAResponse">

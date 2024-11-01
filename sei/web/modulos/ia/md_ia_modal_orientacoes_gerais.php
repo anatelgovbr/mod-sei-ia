@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 03/09/2024 - criado por sabino.colab
  *
- * Vers„o do Gerador de CÛdigo: 1.40.0
+ * Vers√£o do Gerador de C√≥digo: 1.40.0
  */
 
 try {
@@ -31,9 +31,9 @@ try {
     PaginaSEI::getInstance()->setTipoPagina(InfraPagina::$TIPO_PAGINA_SIMPLES);
     switch ($_GET['acao']) {
         case 'md_ia_modal_orientacoes_gerais':
-            $strTitulo = 'OrientaÁıes Gerais para o Assistente IA';
+            $strTitulo = 'Orienta√ß√µes Gerais sobre o Assistente';
 
-           // Consulta as configuraÁıes da funcionalidade para saber se deve ou n„o exibir o chat
+           // Consulta as configura√ß√µes da funcionalidade para saber se deve ou n√£o exibir o chat
             $objMdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();
             $objMdIaAdmConfigAssistIADTO->retStrOrientacoesGerais();
             $objMdIaAdmConfigAssistIADTO->setNumMaxRegistrosRetorno(1);
@@ -41,7 +41,7 @@ try {
             break;
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
 
 } catch (Exception $e) {
