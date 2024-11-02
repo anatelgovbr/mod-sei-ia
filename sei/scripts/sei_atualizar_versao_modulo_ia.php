@@ -1121,6 +1121,23 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         $this->logar('CRIANDO A SEQUENCE seq_md_ia_topico_chat');
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_ia_topico_chat', 1);
 
+
+        $this->logar('CRIANDO A TABELA md_ia_grupos_favoritos');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_grupo_prompts_fav (
+            id_md_ia_grupo_prompts_fav ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            nome_grupo ' . $objInfraMetaBD->tipoTextoVariavel(80) . ' NULL,
+            id_unidade ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            id_usuario ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL
+        )');
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_ia_grupo_prompts_fav', 'pk_md_ia_grupo_prompts_fav', array('id_md_ia_grupo_prompts_fav'));
+
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_ia_grupo_prompts_fav', 'md_ia_grupo_prompts_fav', array('id_unidade'), 'unidade', array('id_unidade'));
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_ia_grupo_prompts_fav', 'md_ia_grupo_prompts_fav', array('id_usuario'), 'usuario', array('id_usuario'));
+
+        $this->logar('CRIANDO A SEQUENCE seq_md_ia_grupo_prompts_fav');
+        BancoSEI::getInstance()->criarSequencialNativa('seq_md_ia_grupo_prompts_fav', 1);
+
         $this->logar('CRIANDO A TABELA md_ia_interacao_chat');
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_interacao_chat (
             id_md_ia_interacao_chat ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
@@ -1145,6 +1162,23 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         $this->logar('CRIANDO A SEQUENCE seq_md_ia_interacao_chat');
         BancoSEI::getInstance()->criarSequencialNativa('seq_md_ia_interacao_chat', 1);
 
+        $this->logar('CRIANDO A TABELA md_ia_prompts_favoritos');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_prompts_favoritos (
+            id_md_ia_prompts_favoritos ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            id_md_ia_interacao_chat ' . $objInfraMetaBD->tipoNumero() . ' NULL,
+            id_md_ia_grupo_prompts_fav ' . $objInfraMetaBD->tipoNumero() . ' NULL,
+            descricao_prompt ' . $objInfraMetaBD->tipoTextoVariavel(500) . ' NULL,
+            dth_alteracao ' . $objInfraMetaBD->tipoDataHora() . ' NULL
+        )');
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_ia_prompts_favoritos', 'pk_md_ia_prompts_favoritos', array('id_md_ia_prompts_favoritos'));
+
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_ia_prompts_favoritos', 'md_ia_prompts_favoritos', array('id_md_ia_interacao_chat'), 'md_ia_interacao_chat', array('id_md_ia_interacao_chat'));
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_ia_prompts_favoritos', 'md_ia_prompts_favoritos', array('id_md_ia_grupo_prompts_fav'), 'md_ia_grupo_prompts_fav', array('id_md_ia_grupo_prompts_fav'));
+
+        $this->logar('CRIANDO A SEQUENCE seq_md_ia_prompts_favoritos');
+        BancoSEI::getInstance()->criarSequencialNativa('seq_md_ia_prompts_favoritos', 1);
+
         $this->logar('CRIANDO NOVO SERVIÇO CONSULTAR DOCUMENTOS EXTERNOS');
         $this->cadastrarNovoServicoconsultarDocumentoExternoIA($objUsuarioDTO->getNumIdUsuario());
         $this->logar('FIM CRIANDO NOVO SERVIÇO CONSULTAR DOCUMENTOS EXTERNOS');
@@ -1167,7 +1201,9 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         $objUsuarioDTO->setNumIdContato(null);
         $objUsuarioDTO->setStrStaTipo(UsuarioRN::$TU_SISTEMA);
         $objUsuarioDTO->setStrSenha(null);
-        $objUsuarioDTO->setStrSinAcessibilidade('N');
+        if(version_compare(VERSAO_INFRA, "2.0.18") <= 0){
+            $objUsuarioDTO->setStrSinAcessibilidade('N');
+        }
         $objUsuarioDTO->setStrSinAtivo('S');
         $objUsuarioDTO = (new UsuarioRN())->cadastrarRN0487($objUsuarioDTO);
 

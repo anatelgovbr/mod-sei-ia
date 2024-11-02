@@ -10,7 +10,7 @@
                 }
             });
             if(campoVazio) {
-                alert ("N„o È permitida a reordenaÁ„o antes de avaliar todos os processos.");
+                alert ("N√£o √© permitida a reordena√ß√£o antes de avaliar todos os processos.");
             } else {
                 $("#tabela_ordenada tbody").sortable("enable");
             }
@@ -75,7 +75,13 @@
         });
     }
     function enviaPostApiRecomendacaoDocumento(callback) {
-        var form = window.top.document.getElementById("ifrVisualizacao").contentWindow.document.getElementById("frmMdIaPesquisaDocumentos");
+        if(window.top.document.getElementById("ifrVisualizacao") != null) {
+            var form = window.top.document.getElementById("ifrVisualizacao").contentWindow.document.getElementById("frmMdIaPesquisaDocumentos");
+        }else if(window.top.document.getElementById("ifrConteudoVisualizacao") != null) {
+            var form = window.top.document.getElementById("ifrConteudoVisualizacao").contentWindow.document.getElementById("ifrVisualizacao").contentWindow.document.getElementById("frmMdIaPesquisaDocumentos");
+        }else {
+            var form = window.top.document.getElementById("frmMdIaPesquisaDocumentos");
+        }
         var result = {};
         var arrayAuxiliar = [];
         $(form).find(":input").each(function (index, element) {
@@ -91,15 +97,15 @@
         result["ckbTipoDocumentoChecked"] = arrayAuxiliar;
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_pesquisa_documentos_api_ajax'); ?>',
-            type: 'POST', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que ser· enviado ao servidor
+            type: 'POST', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que ser√° enviado ao servidor
             data: result, // Enviando o JSON com o nome de itens
             async: false,
             success: function (data) {
                 callback(data);
             },
             error: function (err) {
-                $("#divMsg > div > label").html("Ocorreu um erro ao consultar a API de recomendaÁ„o de documentos.");
+                $("#divMsg > div > label").html("Ocorreu um erro ao consultar a API de recomenda√ß√£o de documentos.");
                 $("#divMsg > div").addClass("alert-danger");
                 $("#divMsg").show();
                 callback(false);
@@ -117,19 +123,19 @@
             result[name] = value;
         });
         $.ajax({
-            url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_pesquisa_documento_cadastrar_ajax'); ?>', //selecionando o endereÁo que iremos acessar no backend
-            type: 'POST', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que ser· enviado ao servidor
+            url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_pesquisa_documento_cadastrar_ajax'); ?>', //selecionando o endere√ßo que iremos acessar no backend
+            type: 'POST', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que ser√° enviado ao servidor
             data: result, // Enviando o JSON com o nome de itens
             success: function () {
                 console.log('Dados enviados');
             },
             error: function (err) {
                 //Em caso de erro
-                console.log('Dados n„o enviados');
+                console.log('Dados n√£o enviados');
             }
         }).done(function () {
-            //Finalizando todos os passos da operaÁ„o de AJAX
+            //Finalizando todos os passos da opera√ß√£o de AJAX
             console.log('Dados enviados');
         });
     }

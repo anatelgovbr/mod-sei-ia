@@ -223,6 +223,7 @@ if ($objMdIaAdmOdsOnuDTO->getStrSinExibirFuncionalidade() == "S") {
     </div>
     <?php
 }
+
 if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
     ?>
     <form id="frmMdIaSimilaridadeCadastro" method="post"
@@ -266,19 +267,19 @@ if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
                                 <table class="infraTable " id="tabela_ordenada" aria-describedby="Tabela de Processos Similares">
                                     <thead>
                                     <tr>
-                                        <th class="infraTh" width="5%">Ranking</th>
-                                        <th class="infraTh" width="14%">Processo</th>
+                                        <th class="infraTh" width="70px">Ranking</th>
+                                        <th class="infraTh" width="20%">Processo</th>
                                         <?php
                                             if($exibirRacional != "1") {
                                         ?>
-                                            <th class="infraTh" width="72%"> Tipo de Processo</th>
-                                            <th class="infraTh" width="9%" >Avaliação</th>
+                                            <th class="infraTh" width="auto"> Tipo de Processo</th>
+                                            <th class="infraTh" style="width: 130px !important">Avaliação</th>
                                         <?php
                                             } else {
                                         ?>
-                                            <th class="infraTh" width="35%"> Tipo de Processo</th>
-                                            <th class="infraTh" width="9%">Avaliação</th>
-                                            <th class="infraTh">Racional</th>
+                                            <th class="infraTh" width="auto"> Tipo de Processo</th>
+                                            <th class="infraTh" style="width: 130px !important">Avaliação</th>
+                                            <th class="infraTh" width="30%">Racional</th>
                                         <?php
                                             }
                                         ?>
