@@ -285,7 +285,7 @@ class MdIaRecursoRN extends InfraRN
         }
     }
 
-    public function exibeFuncionalidade()
+    public function exibeFuncionalidade($bolConsideraChatIa)
     {
 
         $bolExibirFuncionalidade = false;
@@ -324,16 +324,17 @@ class MdIaRecursoRN extends InfraRN
                 return $bolExibirFuncionalidade;
             }
         }
+        if($bolConsideraChatIa) {
+            $objMdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();
+            $objMdIaAdmConfigAssistIADTO->retStrSinExibirFuncionalidade();
+            $objMdIaAdmConfigAssistIARN = new MdIaAdmConfigAssistIARN();
+            $objMdIaAdmConfigAssistIADTO = $objMdIaAdmConfigAssistIARN->consultar($objMdIaAdmConfigAssistIADTO);
 
-        $objMdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();
-        $objMdIaAdmConfigAssistIADTO->retStrSinExibirFuncionalidade();
-        $objMdIaAdmConfigAssistIARN = new MdIaAdmConfigAssistIARN();
-        $objMdIaAdmConfigAssistIADTO = $objMdIaAdmConfigAssistIARN->consultar($objMdIaAdmConfigAssistIADTO);
-
-        if ($objMdIaAdmConfigAssistIADTO) {
-            if ($objMdIaAdmConfigAssistIADTO->getStrSinExibirFuncionalidade() == "S") {
-                $bolExibirFuncionalidade = true;
-                return $bolExibirFuncionalidade;
+            if ($objMdIaAdmConfigAssistIADTO) {
+                if ($objMdIaAdmConfigAssistIADTO->getStrSinExibirFuncionalidade() == "S") {
+                    $bolExibirFuncionalidade = true;
+                    return $bolExibirFuncionalidade;
+                }
             }
         }
     }

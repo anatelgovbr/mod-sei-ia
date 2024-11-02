@@ -22,7 +22,7 @@ class IaIntegracao extends SeiIntegracao
 
     public function getInstituicao()
     {
-        return 'Anatel - Agência Nacional de Telecomunicações';
+        return 'Anatel - AgÃªncia Nacional de TelecomunicaÃ§Ãµes';
     }
 
     public function montarBotaoProcesso(ProcedimentoAPI $objProcedimentoAPI)
@@ -54,7 +54,7 @@ class IaIntegracao extends SeiIntegracao
         {
             $strLink = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_recurso&arvore=1&id_procedimento=' . $_GET['id_procedimento']);
             $imgIcone = "modulos/ia/imagens/md_ia_icone.svg?" . Icone::VERSAO;
-            $title = "Inteligência Artificial";
+            $title = "InteligÃªncia Artificial";
 
             $strBotaoAvaliacaoSeiIa = '<a href="' . $strLink . '"class="botaoSEI">';
             $strBotaoAvaliacaoSeiIa .= '<img class="infraCorBarraSistema" src="' . $imgIcone . '" alt="' . $title . '" title="' . $title . '">';
@@ -62,7 +62,7 @@ class IaIntegracao extends SeiIntegracao
             return $strBotaoAvaliacaoSeiIa;
         }
 
-        public function verificaAcesso($objProcedimentoAPI)
+        public function verificaAcesso($objProcedimentoAPI, $bolConsideraChatIa= false)
         {
             if (!is_null($objProcedimentoAPI)) {
                 $bolPermissaoAcesso = $objProcedimentoAPI->getCodigoAcesso() > 0;
@@ -71,7 +71,7 @@ class IaIntegracao extends SeiIntegracao
             }
             $bolAcaoRecursoIa = SessaoSEI::getInstance()->verificarPermissao('md_ia_recurso');
             $mdIaRecursoRN = new MdIaRecursoRN();
-            $bolExibirFuncionalidade = $mdIaRecursoRN->exibeFuncionalidade();
+            $bolExibirFuncionalidade = $mdIaRecursoRN->exibeFuncionalidade($bolConsideraChatIa);
             if ($bolAcaoRecursoIa && $bolExibirFuncionalidade && $bolPermissaoAcesso) {
                 return true;
             }
@@ -141,7 +141,7 @@ class IaIntegracao extends SeiIntegracao
         {
             $tipo = 'IA';
             $id = 'IA_' . $objProcedimentoAPI->getIdProcedimento();
-            $title = 'IA - Alerta \nPendência de classificação segundo os Objetivos de Desenvolvimento Sustentável da ONU ou divergência em sugestão mais recente feita pelo SEI IA ou por Usuário Externo.';
+            $title = 'IA - Alerta \nPendÃªncia de classificaÃ§Ã£o segundo os Objetivos de Desenvolvimento SustentÃ¡vel da ONU ou divergÃªncia em sugestÃ£o mais recente feita pelo SEI IA ou por UsuÃ¡rio Externo.';
             $icone = "modulos/ia/imagens/md_ia_icone_alerta.svg?" . Icone::VERSAO;
 
             $objArvoreAcaoItemAPI = new ArvoreAcaoItemAPI();
@@ -194,7 +194,7 @@ class IaIntegracao extends SeiIntegracao
         public function montaTooltip()
         {
             $title = "IA - Alerta";
-            $descricao = "Pendência de classificação segundo os Objetivos de Desenvolvimento Sustentável da ONU ou divergência em sugestão mais recente feita pelo SEI IA ou por Usuário Externo.";
+            $descricao = "PendÃªncia de classificaÃ§Ã£o segundo os Objetivos de Desenvolvimento SustentÃ¡vel da ONU ou divergÃªncia em sugestÃ£o mais recente feita pelo SEI IA ou por UsuÃ¡rio Externo.";
 
             $icone = "modulos/ia/imagens/md_ia_icone_alerta.svg?" . Icone::VERSAO;
 
@@ -360,6 +360,7 @@ class IaIntegracao extends SeiIntegracao
                 case 'md_ia_modal_chats_arquivados' :
                     require_once dirname(__FILE__) . '/md_ia_modal_chats_arquivados.php';
                     return true;
+
             }
 
             return false;
@@ -606,7 +607,7 @@ class IaIntegracao extends SeiIntegracao
         }
         public function montarBotaoChatIA()
         {
-            if ($this->verificaAcesso(NULL)) {
+            if ($this->verificaAcesso(NULL, true)) {
                 $acao = $_REQUEST['acao'];
                 if(SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_config_assist_ia_consultar')) {
                     // Consulta as configuraes da funcionalidade para saber se deve ou no exibir o chat

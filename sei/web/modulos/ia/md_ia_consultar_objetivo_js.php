@@ -21,13 +21,12 @@
 
         $.ajax({
             url: url,
-            type: 'POST', //selecionando o tipo de requisição, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que será enviado ao servidor
+            type: 'POST', //selecionando o tipo de requisiÃ§Ã£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que serÃ¡ enviado ao servidor
             data: result, // Enviando o JSON com o nome de itens
             async: false,
             success: function (data) {
                 callback(data);
-                bloquearPermitirCassificacaoUsuarioExterno();
             },
             error: function (err) {
                 callback("Ocorreu um erro ao consultar o Metas do Objetivo.");
@@ -72,15 +71,15 @@
         dadosPost["hdnInfraItensSelecionados"] = $("#hdnInfraItensSelecionados").val();
         dadosPost["hdnIdObjetivo"] = $("#hdnIdObjetivo").val();
         $.ajax({
-            url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_adm_configurar_metas_ajax'); ?>', //selecionando o endereço que iremos acessar no backend
-            type: 'POST', //selecionando o tipo de requisição, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que será enviado ao servidor
+            url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_adm_configurar_metas_ajax'); ?>', //selecionando o endereÃ§o que iremos acessar no backend
+            type: 'POST', //selecionando o tipo de requisiÃ§Ã£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que serÃ¡ enviado ao servidor
             data: dadosPost, // Enviando o JSON com o nome de itens
             success: function (retorno) {
 
                 if(retorno.result == "true") {
                     rolar_para('#divMsg');
-                    $("#divMsg > div > label").html("Classificação realizada com sucesso.");
+                    $("#divMsg > div > label").html("ClassificaÃ§Ã£o realizada com sucesso.");
                     $("#divMsg > div").addClass("alert-success");
                     $("#divMsg").show();
                     $("#hdnHistoricoSelecionados").val(dadosPost["hdnInfraItensSelecionados"]);
@@ -100,7 +99,7 @@
             error: function (err) {
                 //Em caso de erro
                 rolar_para('#divMsg');
-                $("#divMsg > div > label").html("Ocorreu um erro ao realizar a Classificação.");
+                $("#divMsg > div > label").html("Ocorreu um erro ao realizar a ClassificaÃ§Ã£o.");
                 $("#divMsg > div").addClass("alert-danger");
                 $("#divMsg").show();
             }

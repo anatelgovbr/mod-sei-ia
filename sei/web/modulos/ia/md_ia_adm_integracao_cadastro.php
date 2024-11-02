@@ -320,11 +320,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <label id="lblUrlServico" for="txtUrlServico" class="infraLabelObrigatorio">URL do Endpoint de Autenticação:</label>
                     <img id="imgDefServico" align="top" alt="Ícone de Ajuda"
                          src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg" class="infraImg"
-                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Informe a URL com o domínio utilizado na API da Solução de Inteligência Artificial do SEI para o ambiente correspondente, conforme manual próprio indicado no README do módulo SEI IA sobre a implantação do container Docker da solução de IA.
+                         name="ajuda" <?= PaginaSEI::montarTitleTooltip('Informe a URL com o domínio do Servidor de Soluções de IA do ambiente correspondente, conforme manual próprio indicado no README do módulo SEI IA.
 
-Deve utilizar o protocolo HTTPS na URL para a comunicação ser criptografada e não pode finalizar a URL com barra (/) nem informação de porta. Informar apenas o hostname da solução de IA em container Docker instalado no órgão.
+Deve utilizar o protocolo HTTP na URL e não pode finalizar a URL com barra (/) nem informação de porta. Informar apenas o hostname do Servidor de Soluções de IA instalado no órgão para o ambiente correspondente. O HTTPS vai ser implementado em versão futura.
 
-Exemplo de URL valida: https://hostname_docker_solucao_sei_ia_do_ambiente', 'Ajuda') ?> />
+Exemplo de URL valida: http://hostname_docker_solucao_sei_ia_do_ambiente', 'Ajuda') ?> />
                     <div class="input-group">
                         <input type="text" id="txtUrlServico" name="txtUrlServico" class="infraText form-control mr-2"
                                value="<?= PaginaSEI::tratarHTML($objMdIaAdmIntegracaoDTO->getStrOperacaoWsdl()); ?>"
