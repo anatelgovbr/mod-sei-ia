@@ -81,26 +81,27 @@ try {
         $idProcedimento = $_GET['id_procedimento'];
     }
 
-    $objSeiRN = new SeiRN();
-    $objEntradaConsultarProcedimentoAPI = new EntradaConsultarProcedimentoAPI();
-    $objEntradaConsultarProcedimentoAPI->setIdProcedimento($idProcedimento);
+    if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
+        $objSeiRN = new SeiRN();
+        $objEntradaConsultarProcedimentoAPI = new EntradaConsultarProcedimentoAPI();
+        $objEntradaConsultarProcedimentoAPI->setIdProcedimento($idProcedimento);
 
-    $objSaidaConsultarProcedimentoAPI = $objSeiRN->consultarProcedimento($objEntradaConsultarProcedimentoAPI);
+        $objSaidaConsultarProcedimentoAPI = $objSeiRN->consultarProcedimento($objEntradaConsultarProcedimentoAPI);
 
-    $objMdIaRecursoRN = new MdIaRecursoRN();
-    $itensSimilares = $objMdIaRecursoRN->conexaoApiRecomendacaoSimilaridade(array($objMdIaAdmConfigSimilarDTO, $objSaidaConsultarProcedimentoAPI));
+        $objMdIaRecursoRN = new MdIaRecursoRN();
+        $itensSimilares = $objMdIaRecursoRN->conexaoApiRecomendacaoSimilaridade(array($objMdIaAdmConfigSimilarDTO, $objSaidaConsultarProcedimentoAPI));
 
-    if ($objMdIaAdmConfigSimilarDTO == null) {
-        throw new InfraException("Parâmetros das configurações similares não cadastrados.");
+        if ($objMdIaAdmConfigSimilarDTO == null) {
+            throw new InfraException("Parâmetros das configurações similares não cadastrados.");
+        }
+        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+        $exibirRacional = $objInfraParametro->getValor('MODULO_IA_EXIBIR_RACIONAL_PROCESSOS_SIMILARES', false);
     }
+    if ($objMdIaAdmPesqDocDTO->getStrSinExibirFuncionalidade() == "S") {
+        $strLinkDocumentoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_protocolos_selecionar&tipo_selecao=2&id_procedimento=' . $_GET["id_procedimento"] . '&id_object=objLupaDocumento');
+        $strLinkPesquisaDocumento = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_resultado_pesquisa_documento');
 
-    $strLinkDocumentoSelecao = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_protocolos_selecionar&tipo_selecao=2&id_procedimento=' . $_GET["id_procedimento"] . '&id_object=objLupaDocumento');
-
-    $strLinkPesquisaDocumento = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_resultado_pesquisa_documento');
-
-    $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-    $exibirRacional = $objInfraParametro->getValor('MODULO_IA_EXIBIR_RACIONAL_PROCESSOS_SIMILARES', false);
-
+    }
     switch ($_GET['acao']) {
         case 'md_ia_recurso':
             $strTitulo = 'SEI IA';

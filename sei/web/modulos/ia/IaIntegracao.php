@@ -69,10 +69,10 @@ class IaIntegracao extends SeiIntegracao
             } else {
                 $bolPermissaoAcesso = true;
             }
-            $bolAcaoRecursoIa = SessaoSEI::getInstance()->verificarPermissao('md_ia_recurso');
+
             $mdIaRecursoRN = new MdIaRecursoRN();
             $bolExibirFuncionalidade = $mdIaRecursoRN->exibeFuncionalidade($bolConsideraChatIa);
-            if ($bolAcaoRecursoIa && $bolExibirFuncionalidade && $bolPermissaoAcesso) {
+            if ($bolExibirFuncionalidade && $bolPermissaoAcesso) {
                 return true;
             }
         }
