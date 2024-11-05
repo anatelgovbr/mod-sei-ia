@@ -1,6 +1,6 @@
 <?
 /*
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 12/11/2007 - criado por MGA
  *
@@ -47,8 +47,8 @@ class PaginaSEI extends InfraPaginaEsquema3
 
   public function getStrLogoSistema(){
     $logoSufix = $this->getStrEsquemaCores() == self::$ESQUEMA_DSGOV ? '-azul' : '';    
-    $strRet = '<img class="d-none d-lg-inline-block" src="svg/sei_barra'.$logoSufix.'.svg" title="Sistema EletrÙnico de InformaÁıes - Vers„o ' . SEI_VERSAO . '"/>';
-    $strRet .= '<img class="d-inline-block d-lg-none" src="svg/sei_barra'.$logoSufix.'.svg" title="Sistema EletrÙnico de InformaÁıes - Vers„o ' . SEI_VERSAO . ' DistribuÌdo por ' . $strDistribuidoPor . '"/>';
+    $strRet = '<img class="d-none d-lg-inline-block" src="svg/sei_barra'.$logoSufix.'.svg" title="Sistema Eletr√¥nico de Informa√ß√µes - Vers√£o ' . SEI_VERSAO . '"/>';
+    $strRet .= '<img class="d-inline-block d-lg-none" src="svg/sei_barra'.$logoSufix.'.svg" title="Sistema Eletr√¥nico de Informa√ß√µes - Vers√£o ' . SEI_VERSAO . ' Distribu√≠do por ' . $strDistribuidoPor . '"/>';
     if (($strComplemento = ConfiguracaoSEI::getInstance()->getValor('PaginaSEI', 'NomeSistemaComplemento',false))!=null){
       $strRet .= '<span class="infraTituloLogoSistema">'.$strComplemento.'</span>';
     }
@@ -224,16 +224,6 @@ class PaginaSEI extends InfraPaginaEsquema3
     SeiINT::montarHeaderFavicon('favicon');
   }
 
-  public function abrirBody($strLocalizacao = '', $strAtributos = '') {
-    parent::abrirBody($strLocalizacao, $strAtributos);
-    global $SEI_MODULOS;
-    foreach ($SEI_MODULOS as $seiModulo) {
-      if (($ret = $seiModulo->executar('montarBotaoChatIA'))!=null){
-        echo $ret;
-      }
-    }
-  }
-  
   public function montarLinkMenu()
   {
     return '';
@@ -263,7 +253,7 @@ class PaginaSEI extends InfraPaginaEsquema3
 
 
   public function montarBarraComandosSuperior($arrComandos) {
-    array_unshift($arrComandos, '<a id="ancVoltarArvoreSuperior" href="javascript:seiVoltarArvoreProcesso()" class="btn" style="padding: 0px; float: left;display: none;" title="Voltar para a ¡rvore do Processo" tabindex="'.InfraPagina::$TAB_INI_BARRA_COMANDOS_SUPERIOR.'">
+    array_unshift($arrComandos, '<a id="ancVoltarArvoreSuperior" href="javascript:seiVoltarArvoreProcesso()" class="btn" style="padding: 0px; float: left;display: none;" title="Voltar para a √Årvore do Processo" tabindex="'.InfraPagina::$TAB_INI_BARRA_COMANDOS_SUPERIOR.'">
           <img src="'.$this->getDiretorioSvgGlobal() .'/voltar.svg" width="32" height="32">
         </a>');
 
@@ -271,7 +261,7 @@ class PaginaSEI extends InfraPaginaEsquema3
   }
 
   public function montarBarraComandosInferior($arrComandos, $bolForcarMontagem = false) {
-    array_unshift($arrComandos, '<a id="ancVoltarArvoreInferior" href="javascript:seiVoltarArvoreProcesso()" class="btn" style="padding: 0px; float: left;display: none;" title="Voltar para a ¡rvore do Processo" tabindex="'.InfraPagina::$TAB_INI_BARRA_COMANDOS_SUPERIOR.'">
+    array_unshift($arrComandos, '<a id="ancVoltarArvoreInferior" href="javascript:seiVoltarArvoreProcesso()" class="btn" style="padding: 0px; float: left;display: none;" title="Voltar para a √Årvore do Processo" tabindex="'.InfraPagina::$TAB_INI_BARRA_COMANDOS_SUPERIOR.'">
           <img src="'.$this->getDiretorioSvgGlobal() .'/voltar.svg" width="32" height="32">
         </a>');
 
@@ -335,13 +325,19 @@ class PaginaSEI extends InfraPaginaEsquema3
 
   public function abrirBody($strLocalizacao = '', $strAtributos = ''){
     parent::abrirBody($strLocalizacao, $strAtributos);
+    global $SEI_MODULOS;
+    foreach ($SEI_MODULOS as $seiModulo) {
+      if (($ret = $seiModulo->executar('montarBotaoChatIA'))!=null){
+          echo $ret;
+      }
+    }
     $this->montarBarraChaveAcessoInsegura();    
   }
 
   function montarBarraChaveAcessoInsegura(){
     if ($this->getTipoPagina()==self::$TIPO_PAGINA_COMPLETA || $this->getTipoPagina()==self::$TIPO_PAGINA_SEM_MENU) {
       if ($this->isBolProducao() && ConfiguracaoSEI::getInstance()->getValor('SessaoSEI', 'ChaveAcesso', false) === CHAVE_ACESSO_PADRAO){
-        echo '<div id="divInfraBarraSeguranca" class="infraBarraSeguranca"><span>ATEN«√O: Chave de acesso padr„o da base n„o deve ser utilizada em produÁ„o. Favor gerar novas chaves atravÈs menu Sistemas/Listar no SIP</span></div>';
+        echo '<div id="divInfraBarraSeguranca" class="infraBarraSeguranca"><span>ATEN√á√ÉO: Chave de acesso padr√£o da base n√£o deve ser utilizada em produ√ß√£o. Favor gerar novas chaves atrav√©s menu Sistemas/Listar no SIP</span></div>';
       }
     }
   }
