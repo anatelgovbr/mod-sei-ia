@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 19/05/2023 - criado por sabino.colab
  *
- * Vers„o do Gerador de CÛdigo: 1.43.2
+ * Vers√£o do Gerador de C√≥digo: 1.43.2
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -81,9 +81,9 @@ class MdIaRecursoINT extends InfraINT
         $objProtocoloRN = new ProtocoloRN();
 
         if ($dados["hdnIdDocumento"] != "") {
-            $protocolos = explode("•", $dados["hdnIdDocumento"]);
+            $protocolos = explode("¬•", $dados["hdnIdDocumento"]);
             foreach ($protocolos as $protocolo) {
-                $idProtocolo = explode("±", $protocolo);
+                $idProtocolo = explode("¬±", $protocolo);
 
                 $objProtocoloDTO = new ProtocoloDTO();
                 $objProtocoloDTO->retStrStaProtocolo();
@@ -92,7 +92,7 @@ class MdIaRecursoINT extends InfraINT
                 $objProtocoloDTO = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
 
                 if($objProtocoloDTO->getStrStaProtocolo() == "P") {
-                    //Carregar dados do cabeÁalho
+                    //Carregar dados do cabe√ßalho
                     $objProcedimentoDTO = new ProcedimentoDTO();
                     $objProcedimentoDTO->retDblIdProcedimento();
                     $objProcedimentoDTO->setDblIdProcedimento($idProtocolo[0]);
@@ -145,7 +145,7 @@ class MdIaRecursoINT extends InfraINT
                     <th class="infraTh" width="38%">Documento Resultado da Pesquisa</th>
                     <th class="infraTh" width="15%">Processo</th>
                     <th class="infraTh" width="30%">Tipo de Processo</th>
-                    <th class="infraTh" width="12%">AvaliaÁ„o</th>
+                    <th class="infraTh" width="12%">Avalia√ß√£o</th>
                 </tr>
                 </thead>
                 <tbody>';
@@ -155,7 +155,6 @@ class MdIaRecursoINT extends InfraINT
             $objDocumentoRN = new DocumentoRN();
 
             foreach ($pesquisaDocumentos->recommendation as $arrayItemSimilar) {
-
                 $objDocumentoDTO = new DocumentoDTO();
                 $objDocumentoDTO->retDblIdProcedimento();
                 $objDocumentoDTO->retDblIdDocumento();
@@ -165,45 +164,46 @@ class MdIaRecursoINT extends InfraINT
                 $objDocumentoDTO->retStrNomeArvore();
                 $objDocumentoDTO->setDblIdDocumento($arrayItemSimilar->id_document);
                 $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
+                if($objDocumentoDTO) {
+                    $objProcedimentoDTO = new ProcedimentoDTO();
+                    $objProcedimentoDTO->retDblIdProcedimento();
+                    $objProcedimentoDTO->retStrProtocoloProcedimentoFormatado();
+                    $objProcedimentoDTO->retStrNomeTipoProcedimento();
+                    $objProcedimentoDTO->setDblIdProcedimento($objDocumentoDTO->getDblIdProcedimento());
 
-                $objProcedimentoDTO = new ProcedimentoDTO();
-                $objProcedimentoDTO->retDblIdProcedimento();
-                $objProcedimentoDTO->retStrProtocoloProcedimentoFormatado();
-                $objProcedimentoDTO->retStrNomeTipoProcedimento();
-                $objProcedimentoDTO->setDblIdProcedimento($objDocumentoDTO->getDblIdProcedimento());
+                    $objProcedimentoRN = new ProcedimentoRN();
+                    $objProcedimentoDTO = $objProcedimentoRN->consultarRN0201($objProcedimentoDTO);
 
-                $objProcedimentoRN = new ProcedimentoRN();
-                $objProcedimentoDTO = $objProcedimentoRN->consultarRN0201($objProcedimentoDTO);
+                    $contador++;
 
-                $contador++;
-
-                $registrosPesquisa .= '
-                    <tr data-index="' . $contador .'" data-position="' . $contador .'">
-                        <td class="idRanking">
-                            ' . $contador .'<i class="gg-arrows-v mr-2"></i>
-                            <input type="hidden" id="hdnRanking' . $contador .'"
-                                   name="hdnRanking' . $contador .'" value="' . $contador .'"/>
-                        </td>
-                        <td>
-                            <a target="_blank"
-                               href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=procedimento_trabalhar&id_procedimento=' . $objDocumentoDTO->getDblIdProcedimento() . '&id_documento=' . $objDocumentoDTO->getDblIdDocumento()) . '">' .$objDocumentoDTO->getStrNomeSerie() . ' ' . $objDocumentoDTO->getStrNumero() . ' ' . $objDocumentoDTO->getStrNomeArvore() . ' (' . $objDocumentoDTO->getStrProtocoloDocumentoFormatado() . ')</a>
-                            <input type="hidden" id="hdnIdProtRecomend' . $contador . '"
-                                   name="hdnIdProtRecomend' . $contador . '"
-                                   value="' . $arrayItemSimilar->id_document . '"/>
-                        </td>
-                        <td>' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() . ' </td>
-                        <td>' . $objProcedimentoDTO->getStrNomeTipoProcedimento() . '</td>
-                        <td class="text-center" style="padding-left: 20px; padding-right: 20px">
-                            <div class="rounded-pill p-2 d-flex justify-content-around align-items-center"
-                                 style="background: #EEE;">
-                                <span class="btn_thumbs up bubbly-button"></span><span
-                                    style="color:#BBB">|</span>
-                                <span class="btn_thumbs down bubbly-button"></span>
-                                <input type="hidden" class="hdnAproved" id="hdnLike' . $contador . '"
-                                       name="hdnLike' . $contador . '" value=""/>
-                            </div>
-                        </td>
-                    </tr>';
+                    $registrosPesquisa .= '
+                        <tr data-index="' . $contador . '" data-position="' . $contador . '">
+                            <td class="idRanking">
+                                ' . $contador . '<i class="gg-arrows-v mr-2"></i>
+                                <input type="hidden" id="hdnRanking' . $contador . '"
+                                       name="hdnRanking' . $contador . '" value="' . $contador . '"/>
+                            </td>
+                            <td>
+                                <a target="_blank"
+                                   href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=procedimento_trabalhar&id_procedimento=' . $objDocumentoDTO->getDblIdProcedimento() . '&id_documento=' . $objDocumentoDTO->getDblIdDocumento()) . '">' . $objDocumentoDTO->getStrNomeSerie() . ' ' . $objDocumentoDTO->getStrNumero() . ' ' . $objDocumentoDTO->getStrNomeArvore() . ' (' . $objDocumentoDTO->getStrProtocoloDocumentoFormatado() . ')</a>
+                                <input type="hidden" id="hdnIdProtRecomend' . $contador . '"
+                                       name="hdnIdProtRecomend' . $contador . '"
+                                       value="' . $arrayItemSimilar->id_document . '"/>
+                            </td>
+                            <td>' . $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() . ' </td>
+                            <td>' . $objProcedimentoDTO->getStrNomeTipoProcedimento() . '</td>
+                            <td class="text-center" style="padding-left: 20px; padding-right: 20px">
+                                <div class="rounded-pill p-2 d-flex justify-content-around align-items-center"
+                                     style="background: #EEE;">
+                                    <span class="btn_thumbs up bubbly-button"></span><span
+                                        style="color:#BBB">|</span>
+                                    <span class="btn_thumbs down bubbly-button"></span>
+                                    <input type="hidden" class="hdnAproved" id="hdnLike' . $contador . '"
+                                           name="hdnLike' . $contador . '" value=""/>
+                                </div>
+                            </td>
+                        </tr>';
+                }
             }
             $rodapeTabela = '
                 <input type="hidden" id="hdnNumeroElementos" name="hdnNumeroElementos"
@@ -219,7 +219,7 @@ class MdIaRecursoINT extends InfraINT
             $topoTabela = '
             <div class="alert alert-warning">
                 <label class="infraLabelOpcional">
-                    Esta pesquisa n„o retornou registros.
+                    Esta pesquisa n√£o retornou registros.
                 </label>
             </div>';
         }
@@ -227,7 +227,7 @@ class MdIaRecursoINT extends InfraINT
     }
 
     public function listarDocumentosProcesso($idProcedimento) {
-        //Carregar dados do cabeÁalho
+        //Carregar dados do cabe√ßalho
         $objProcedimentoDTO = new ProcedimentoDTO();
         $objProcedimentoDTO->retStrNomeTipoProcedimento();
         $objProcedimentoDTO->retStrProtocoloProcedimentoFormatado();

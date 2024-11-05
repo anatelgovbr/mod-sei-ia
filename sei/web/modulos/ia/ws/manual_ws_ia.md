@@ -1,6 +1,6 @@
 # Manual do Webservice do Módulo SEI IA
 
- * Endereço do WSDL: http://[dominio_servidor]/sei/controlador_ws.php?servico=wsia 
+ * Endereço do WSDL: https://[dominio_servidor]/sei/modulos/ia/ws/IaWS.php
  * Recomendado utilizar o software SOAP-UI para testes: http://sourceforge.net/projects/soapui/files/soapui/
  * O script de instalação do módulo cria automaticamente o Sistema "Usuario_IA", o Serviço "consultarDocumentoExternoIA" e adiciona no mencionado Serviço a Operação "Consultar Documentos".
  * Para utilizar o Assistente do SEI IA é necessário gerar a "Chave de Acesso" do mencionado Serviço "consultarDocumentoExternoIA", pelo menu Administração > Sistemas > "Usuario_IA" > Serviços > "consultarDocumentoExternoIA" > botão de ação "Gerar Chave de Acesso".

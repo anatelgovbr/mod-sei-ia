@@ -12,7 +12,7 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdIaRecursoRN extends InfraRN
 {
-    const TIME_OUT = '10000';
+    const TIME_OUT = '120000';
 
     public function __construct()
     {
@@ -288,43 +288,49 @@ class MdIaRecursoRN extends InfraRN
     public function exibeFuncionalidade($bolConsideraChatIa)
     {
 
+        $bolAcaoRecursoIa = SessaoSEI::getInstance()->verificarPermissao('md_ia_recurso');
+
         $bolExibirFuncionalidade = false;
 
-        $objMdIaAdmConfigSimilarDTO = new MdIaAdmConfigSimilarDTO();
-        $objMdIaAdmConfigSimilarDTO->retStrSinExibirFuncionalidade();
-        $objMdIaAdmConfigSimilarRN = new MdIaAdmConfigSimilarRN();
-        $objMdIaAdmConfigSimilarDTO = $objMdIaAdmConfigSimilarRN->consultar($objMdIaAdmConfigSimilarDTO);
+        if($bolAcaoRecursoIa) {
+            $objMdIaAdmConfigSimilarDTO = new MdIaAdmConfigSimilarDTO();
+            $objMdIaAdmConfigSimilarDTO->retStrSinExibirFuncionalidade();
+            $objMdIaAdmConfigSimilarRN = new MdIaAdmConfigSimilarRN();
+            $objMdIaAdmConfigSimilarDTO = $objMdIaAdmConfigSimilarRN->consultar($objMdIaAdmConfigSimilarDTO);
 
-        if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
-            $bolExibirFuncionalidade = true;
-            return $bolExibirFuncionalidade;
-        }
-
-        $objMdIaAdmPesqDocDTO = new MdIaAdmPesqDocDTO();
-        $objMdIaAdmPesqDocDTO->setNumIdMdIaAdmPesqDoc(1);
-        $objMdIaAdmPesqDocDTO->retStrSinExibirFuncionalidade();
-        $objMdIaAdmPesqDocRN = new MdIaAdmPesqDocRN();
-        $objMdIaAdmPesqDocDTO = $objMdIaAdmPesqDocRN->consultar($objMdIaAdmPesqDocDTO);
-
-        if ($objMdIaAdmPesqDocDTO) {
-            if ($objMdIaAdmPesqDocDTO->getStrSinExibirFuncionalidade() == "S") {
+            if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
                 $bolExibirFuncionalidade = true;
                 return $bolExibirFuncionalidade;
             }
-        }
 
-        $objMdIaAdmOdsOnuDTO = new MdIaAdmOdsOnuDTO();
-        $objMdIaAdmOdsOnuDTO->retStrSinExibirFuncionalidade();
-        $objMdIaAdmOdsOnuRN = new MdIaAdmOdsOnuRN();
-        $objMdIaAdmOdsOnuDTO = $objMdIaAdmOdsOnuRN->consultar($objMdIaAdmOdsOnuDTO);
+            $objMdIaAdmPesqDocDTO = new MdIaAdmPesqDocDTO();
+            $objMdIaAdmPesqDocDTO->setNumIdMdIaAdmPesqDoc(1);
+            $objMdIaAdmPesqDocDTO->retStrSinExibirFuncionalidade();
+            $objMdIaAdmPesqDocRN = new MdIaAdmPesqDocRN();
+            $objMdIaAdmPesqDocDTO = $objMdIaAdmPesqDocRN->consultar($objMdIaAdmPesqDocDTO);
 
-        if ($objMdIaAdmOdsOnuDTO) {
-            if ($objMdIaAdmOdsOnuDTO->getStrSinExibirFuncionalidade() == "S") {
-                $bolExibirFuncionalidade = true;
-                return $bolExibirFuncionalidade;
+            if ($objMdIaAdmPesqDocDTO) {
+                if ($objMdIaAdmPesqDocDTO->getStrSinExibirFuncionalidade() == "S") {
+                    $bolExibirFuncionalidade = true;
+                    return $bolExibirFuncionalidade;
+                }
+            }
+
+            $objMdIaAdmOdsOnuDTO = new MdIaAdmOdsOnuDTO();
+            $objMdIaAdmOdsOnuDTO->retStrSinExibirFuncionalidade();
+            $objMdIaAdmOdsOnuRN = new MdIaAdmOdsOnuRN();
+            $objMdIaAdmOdsOnuDTO = $objMdIaAdmOdsOnuRN->consultar($objMdIaAdmOdsOnuDTO);
+
+            if ($objMdIaAdmOdsOnuDTO) {
+                if ($objMdIaAdmOdsOnuDTO->getStrSinExibirFuncionalidade() == "S") {
+                    $bolExibirFuncionalidade = true;
+                    return $bolExibirFuncionalidade;
+                }
             }
         }
-        if($bolConsideraChatIa) {
+        $bolAcaoChatIa = SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_config_assist_ia_consultar');
+
+        if($bolConsideraChatIa && $bolAcaoChatIa) {
             $objMdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();
             $objMdIaAdmConfigAssistIADTO->retStrSinExibirFuncionalidade();
             $objMdIaAdmConfigAssistIARN = new MdIaAdmConfigAssistIARN();
