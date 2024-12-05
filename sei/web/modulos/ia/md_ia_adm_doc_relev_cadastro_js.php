@@ -13,7 +13,7 @@
                 var options = document.getElementById('selTpProcesso').options;
                 for(var i=0;i < options.length;i++){
                     if (options[i].value == id){
-                        alert('Tipo de Processo Específico já consta na lista.');
+                        alert('Tipo de Processo EspecÃ­fico jÃ¡ consta na lista.');
                         break;
                     }
                 }
@@ -66,13 +66,13 @@
         }
 
         if (!$("input[name='rdnRelevante']:checked").length) {
-            alert('Informe se é Relevante para todos Tipos de Processo ou Relevante apenas para Tipos de Processos Específicos');
+            alert('Informe se Ã© Relevante para todos Tipos de Processo ou Relevante apenas para Tipos de Processos EspecÃ­ficos');
             document.getElementById('rdnRelevanteTodosProcessos').focus();
             return false;
         }
 
         if ($("[name='rdnRelevante']:checked").val() == "1" && $("#hdnIdTpProcesso").val() == "") {
-            alert('Informe os Tipos de Processos Específicos');
+            alert('Informe os Tipos de Processos EspecÃ­ficos');
             document.getElementById('txtTpProcesso').focus();
             return false;
         }
@@ -82,15 +82,15 @@
                 var mensagem = "";
                 $.each(data, function (index, element) {
                     if (element != "" && $("#hdnIdTpProcesso").val() == "" && mensagem == "") {
-                        mensagem = "O Tipo de Documento combinado com a Aplicabilidade selecionados já foram cadastrados com o Tipo de Processo Específicos listados abaixo. <br> Para cadastrar um novo Documento Relevante para Todos os Tipos de Processo, antes deve Desativar os Documentos Relevantes que possuem a mesma Aplicabilidade, o mesmo Tipo de Documento com os seguintes Tipos de Processos Específicos.";
+                        mensagem = "O Tipo de Documento combinado com a Aplicabilidade selecionados jÃ¡ foram cadastrados com o Tipo de Processo EspecÃ­ficos listados abaixo. <br> Para cadastrar um novo Documento Relevante para Todos os Tipos de Processo, antes deve Desativar os Documentos Relevantes que possuem a mesma Aplicabilidade, o mesmo Tipo de Documento com os seguintes Tipos de Processos EspecÃ­ficos.";
                         mensagem += "<br> - " + element;
                     } else if (element == "" && $("#hdnIdTpProcesso").val() == "" && mensagem == "") {
-                        mensagem = "O Tipo de Documento combinado com a Aplicabilidade selecionados já foram cadastrados para todos os Tipos de Processos.";
+                        mensagem = "O Tipo de Documento combinado com a Aplicabilidade selecionados jÃ¡ foram cadastrados para todos os Tipos de Processos.";
                     } else if (element != "" && $("#hdnIdTpProcesso").val() != "" && mensagem == "") {
-                        mensagem = "O Tipo de Documento combinado com a Aplicabilidade selecionados já foram cadastrados com o Tipo de Processo Específicos listados abaixo. <br> Para cadastrar um novo Documento Relevante para os Tipos de Processos Específicos listados abaixo, antes deve Desativar os Documentos Relevantes que possuem a mesma Aplicabilidade, o mesmo Tipo de Documento com os seguintes Tipos de Processos Específicos.";
+                        mensagem = "O Tipo de Documento combinado com a Aplicabilidade selecionados jÃ¡ foram cadastrados com o Tipo de Processo EspecÃ­ficos listados abaixo. <br> Para cadastrar um novo Documento Relevante para os Tipos de Processos EspecÃ­ficos listados abaixo, antes deve Desativar os Documentos Relevantes que possuem a mesma Aplicabilidade, o mesmo Tipo de Documento com os seguintes Tipos de Processos EspecÃ­ficos.";
                         mensagem += "<br> - " + element;
                     } else if (element == "" && $("#hdnIdTpProcesso").val() != "" && mensagem == "") {
-                        mensagem = "O Tipo de Documento combinado com a Aplicabilidade selecionados já foram cadastrados para todos os Tipos de Processos. <br> Para cadastrar um novo Documento Relevante para os Tipos de Processos Específicos, antes deve Desativar os Documentos Relevantes que possuem a mesma Aplicabilidade, o mesmo Tipo de Documento e seja Relevante para todos os Tipos de Processo.";
+                        mensagem = "O Tipo de Documento combinado com a Aplicabilidade selecionados jÃ¡ foram cadastrados para todos os Tipos de Processos. <br> Para cadastrar um novo Documento Relevante para os Tipos de Processos EspecÃ­ficos, antes deve Desativar os Documentos Relevantes que possuem a mesma Aplicabilidade, o mesmo Tipo de Documento e seja Relevante para todos os Tipos de Processo.";
                     } else {
                         if (element != "") {
                             mensagem += "<br> - " + element;
@@ -132,15 +132,15 @@
         }
         $.ajax({
             url: url,
-            type: 'POST', //selecionando o tipo de requisição, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que será enviado ao servidor
+            type: 'POST', //selecionando o tipo de requisiÃ§Ã£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que serÃ¡ enviado ao servidor
             data: result, // Enviando o JSON com o nome de itens
             async: false,
             success: function (data) {
                 callback(data);
             },
             error: function (err) {
-                callback("Ocorreu um erro ao verificar se o elemento já foi cadastrado.");
+                callback("Ocorreu um erro ao verificar se o elemento jÃ¡ foi cadastrado.");
             }
         });
     }
@@ -196,7 +196,7 @@
         $('#tbPercRelevSegmento > tbody > tr').each(function (index, element) {
             if($(element).attr("segmento") == itemAdicionar.val() && ($("#hdnCampoEdicao").val() == "")) {
                 rolar_para('#divMsg');
-                $("#divMsg > div > label").html("O segmento informado já consta na lista.");
+                $("#divMsg > div > label").html("O segmento informado jÃ¡ consta na lista.");
                 $("#divMsg > div").addClass("alert-danger");
                 $("#divMsg").show();
                 itemJaAdicionado = true;
@@ -208,7 +208,7 @@
         }
         if(percentualRelevanciaAdicionar < 1) {
             rolar_para('#divMsg');
-            $("#divMsg > div > label").html("O Percentual de Relevância deve ser maior que zero.");
+            $("#divMsg > div > label").html("O Percentual de RelevÃ¢ncia deve ser maior que zero.");
             $("#divMsg > div").addClass("alert-danger");
             $("#divMsg").show();
             return false;
@@ -222,13 +222,13 @@
         totalPercentualRelevancia = parseInt(percentualRelevanciaAdicionar) + parseInt(somaPesosAdicionados) - parseInt(peso_segmento);
         if(totalPercentualRelevancia > 100) {
             rolar_para('#divMsg');
-            $("#divMsg > div > label").html("A soma do Percentual de Relevância dos Segmentos dos Documentos não pode exceder 100%");
+            $("#divMsg > div > label").html("A soma do Percentual de RelevÃ¢ncia dos Segmentos dos Documentos nÃ£o pode exceder 100%");
             $("#divMsg > div").addClass("alert-danger");
             $("#divMsg").show();
             return false;
         }
         linhaAtualizada = removerItemHiddenPercRelevSegmentos($("#hdnTbPercRelevSegmento").val(), $("#hdnCampoEdicao").val());
-        linhaAtualizada += contadorSegmento+"±"+itemAdicionar.val()+"±"+percentualRelevanciaAdicionar;
+        linhaAtualizada += contadorSegmento+"Â±"+itemAdicionar.val()+"Â±"+percentualRelevanciaAdicionar;
         $("#hdnTbPercRelevSegmento").val(linhaAtualizada);
         var linhaTabela = montarLinhaTabela(itemAdicionar, percentualRelevanciaAdicionar, contadorSegmento);
         if($("#hdnCampoEdicao").val() != "") {
@@ -253,16 +253,16 @@
         $("#txtPercRelevSegmentos").val((100 - parseInt($("#txtPercRelevContDoc").val())));
     }
     function removerItemHiddenPercRelevSegmentos(hdnTbPercRelevSegmento, itemRemover) {
-        var linhas = hdnTbPercRelevSegmento.split('¥');
+        var linhas = hdnTbPercRelevSegmento.split('Â¥');
         var linhaAtualizada = "";
         linhas.forEach(function(linha) {
-            var colunas = linha.split('±');
+            var colunas = linha.split('Â±');
             if(colunas[0] != itemRemover) {
                 colunas.forEach(function (coluna) {
-                    linhaAtualizada += coluna+"±";
+                    linhaAtualizada += coluna+"Â±";
                 });
                 linhaAtualizada = linhaAtualizada.substring(0, linhaAtualizada.length - 1);
-                linhaAtualizada += "¥";
+                linhaAtualizada += "Â¥";
             }
         });
         return linhaAtualizada;
@@ -272,8 +272,8 @@
         linhaTabela += "<td>"+itemAdicionar.val()+"</td>";
         linhaTabela +=  "<td>"+percentualRelevanciaAdicionar+"%</td>";
         linhaTabela +=  "<td>";
-        linhaTabela +=  "<a onclick='editarPercRelevanciaSegmento("+contadorSegmento+")'><img src=' <?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/alterar.svg' title='Alterar Percentual de Relevância do Segmento' alt='Alterar Percentual de Relevância do Segmento' class='infraImg' /></a>";
-        linhaTabela +=  "<a onclick='removerPercRelevanciaSegmento("+contadorSegmento+")'><img src='<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/excluir.svg' title='Excluir Percentual de Relevância do Segmento' alt='Excluir Percentual de Relevância do Segmento' class='infraImg' /></a>";
+        linhaTabela +=  "<a onclick='editarPercRelevanciaSegmento("+contadorSegmento+")'><img src=' <?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/alterar.svg' title='Alterar Percentual de RelevÃ¢ncia do Segmento' alt='Alterar Percentual de RelevÃ¢ncia do Segmento' class='infraImg' /></a>";
+        linhaTabela +=  "<a onclick='removerPercRelevanciaSegmento("+contadorSegmento+")'><img src='<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/excluir.svg' title='Excluir Percentual de RelevÃ¢ncia do Segmento' alt='Excluir Percentual de RelevÃ¢ncia do Segmento' class='infraImg' /></a>";
         linhaTabela +=  "</td>";
         linhaTabela +=  "</tr>";
         return linhaTabela;

@@ -1,12 +1,12 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 18/04/2012 - criado por mga
  *
- * Vers„o do Gerador de CÛdigo: 1.32.1
+ * Vers√£o do Gerador de C√≥digo: 1.32.1
  *
- * Vers„o no CVS: $Id: editor_processar.php 10312 2015-09-16 15:01:30Z bcu $
+ * Vers√£o no CVS: $Id: editor_processar.php 10312 2015-09-16 15:01:30Z bcu $
  */
 
 try {
@@ -21,7 +21,7 @@ try {
   //////////////////////////////////////////////////////////////////////////////
 
   if ($_GET['acao'] == 'editor_salvar' && (isset($_POST['hdnSiglaUnidade']) && $_POST['hdnSiglaUnidade']!=SessaoSEI::getInstance()->getStrSiglaUnidadeAtual())){
-    die("INFRA_VALIDACAO\nDetectada troca para a unidade ".SessaoSEI::getInstance()->getStrSiglaUnidadeAtual().".\\nPara salvar este documento È necess·rio retornar para a unidade ".$_POST['hdnSiglaUnidade'].".");
+    die("INFRA_VALIDACAO\nDetectada troca para a unidade ".SessaoSEI::getInstance()->getStrSiglaUnidadeAtual().".\\nPara salvar este documento √© necess√°rio retornar para a unidade ".$_POST['hdnSiglaUnidade'].".");
   }
 
   PaginaSEI::getInstance()->setTipoPagina(PaginaSEI::$TIPO_PAGINA_SIMPLES);
@@ -71,10 +71,10 @@ try {
         $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
 
         if ($objDocumentoDTO==null){
-          throw new InfraException('Documento n„o encontrado.', null, null, false);
+          throw new InfraException('Documento n√£o encontrado.', null, null, false);
         }
         if($objDocumentoDTO->getStrStaProtocoloProtocolo()!=ProtocoloRN::$TP_DOCUMENTO_GERADO){
-          throw new InfraException('Tipo de Documento inv·lido.');
+          throw new InfraException('Tipo de Documento inv√°lido.');
         }
 
         $strTitulo = DocumentoINT::montarTitulo($objDocumentoDTO);
@@ -103,7 +103,7 @@ try {
         $objEditorDTO->setNumIdBaseConhecimento($objBaseConhecimentoDTO->getNumIdBaseConhecimento());
         $objEditorDTO->setStrSinProcessandoEditor('S');
       } else {
-        throw new InfraException('Montagem do editor n„o recebeu documento ou base de conhecimento.');
+        throw new InfraException('Montagem do editor n√£o recebeu documento ou base de conhecimento.');
       }
 
       $objEditorRN = new EditorRN();
@@ -122,11 +122,11 @@ try {
       $objModeloDTO=$objModeloRN->consultar($objModeloDTO);
 
       if($objModeloDTO==null){
-        throw new InfraException('Modelo n„o encontrado para simular.');
+        throw new InfraException('Modelo n√£o encontrado para simular.');
       }
 
 
-      $strTitulo='SimulaÁ„o do modelo ['.$objModeloDTO->getStrNome().']';
+      $strTitulo='Simula√ß√£o do modelo ['.$objModeloDTO->getStrNome().']';
       $objEditorDTO = new EditorDTO();
       $objEditorDTO->setNumIdModelo($numIdModelo);
 
@@ -138,7 +138,7 @@ try {
 
 
       if (count($_POST) == 0) {
-        die("INFRA_VALIDACAO\nN„o foi possÌvel salvar o documento.");
+        die("INFRA_VALIDACAO\nN√£o foi poss√≠vel salvar o documento.");
       }
 
       $objEditorDTO = new EditorDTO();
@@ -181,14 +181,14 @@ try {
           die($e->__toString());
         }
 
-        PaginaSEI::getInstance()->processarExcecao($e); //vai para a p·gina de erro padr„o
+        PaginaSEI::getInstance()->processarExcecao($e); //vai para a p√°gina de erro padr√£o
       }
 
       break;
 
 
     default:
-      throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+      throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
   }
   $objTextoPadraoInternoRN = new TextoPadraoInternoRN();
   $objTextoPadraoInternoDTO = new TextoPadraoInternoDTO();
@@ -296,15 +296,15 @@ try {
   <script type="text/javascript">//<![CDATA[
 
     if (document.documentMode == 7) {
-      alert("N„o È possÌvel inicializar corretamente o editor.\nCerifique-se que o modo de compatibilidade esteja desativado.");
+      alert("N√£o √© poss√≠vel inicializar corretamente o editor.\nCerifique-se que o modo de compatibilidade esteja desativado.");
       window.CKEDITOR = undefined;
     }
     if(!document.getElementsByClassName){
-      alert("N„o È possÌvel inicializar corretamente o editor.\nUtilize um navegador mais atualizado.");
+      alert("N√£o √© poss√≠vel inicializar corretamente o editor.\nUtilize um navegador mais atualizado.");
       window.CKEDITOR = undefined;
     }
     <?
-    //se houver validaÁıes, sÛ exibe as validaÁıes e descarta o resto do javascript
+    //se houver valida√ß√µes, s√≥ exibe as valida√ß√µes e descarta o resto do javascript
     if ($objEditorDTORetorno->getStrValidacao() == true){
     ?>
     function  inicializar() {
@@ -446,7 +446,7 @@ try {
           if (modificado) {
             botoes = document.getElementsByClassName('cke_button__save');
             if (timerAlertaSalvar == null) {
-              timerAlertaSalvar = setTimeout(realcarBotao, 600000);//tempo para iniciar o realce do bot„o default 10min=600.000
+              timerAlertaSalvar = setTimeout(realcarBotao, 600000);//tempo para iniciar o realce do bot√£o default 10min=600.000
             }
             for (var inst in CKEDITOR.instances) {
               CKEDITOR.instances[inst].getCommand('save').setState(CKEDITOR.TRISTATE_ENABLED);
@@ -502,7 +502,7 @@ try {
 
     };
     var confirmarSalvamento=function() {
-      //ajax buscar dados dos mÛdulos se precisa confirmar antes de salvar
+      //ajax buscar dados dos m√≥dulos se precisa confirmar antes de salvar
       //retornando mensagem de texto
       var objAjaxAlteracao = new infraAjaxComplementar(null,'<?=$strLinkAjaxConfirmarAlteracao?>');
       objAjaxAlteracao.limparCampo = false;
@@ -536,7 +536,7 @@ try {
                 case 'img':
                   var erro = false;
                   if (arrImgPermitida.length == 0) {
-                    alert('N„o s„o permitidas imagens no conte˙do.');
+                    alert('N√£o s√£o permitidas imagens no conte√∫do.');
                     erro = true;
                     break;
                   } else {
@@ -552,12 +552,12 @@ try {
                         if (posFim != -1) {
                           posIni = posIni + 1;
                             if (arrImgPermitida.indexOf(ImgSrc.substring(posIni, posFim))== -1) {
-                              alert('Imagem formato "' + ImgSrc.substring(posIni, posFim) + '" n„o permitida.');
+                              alert('Imagem formato "' + ImgSrc.substring(posIni, posFim) + '" n√£o permitida.');
                             erro = true;
                             break;
                           }
                         } else {
-                          alert('N„o s„o permitidas imagens referenciadas.');
+                          alert('N√£o s√£o permitidas imagens referenciadas.');
                           erro = true;
                           break;
                           }
@@ -570,30 +570,30 @@ try {
                 case 'button':
                 case 'input':
                 case 'select':
-                  alert('N„o s„o permitidos componentes de formul·rio HTML no conte˙do.');
+                  alert('N√£o s√£o permitidos componentes de formul√°rio HTML no conte√∫do.');
                   break;
 
                 case 'iframe':
-                  alert('N„o s„o permitidos formul·rios ocultos no conte˙do.');
+                  alert('N√£o s√£o permitidos formul√°rios ocultos no conte√∫do.');
                   break;
 
                 case 'frame':
                 case 'form':
-                  alert('N„o s„o permitidos formul·rios no conte˙do.');
+                  alert('N√£o s√£o permitidos formul√°rios no conte√∫do.');
                   break;
 
                 case 'embed':
                 case 'object':
                 case 'param':
-                  alert('N„o s„o permitidos objetos no conte˙do.');
+                  alert('N√£o s√£o permitidos objetos no conte√∫do.');
                   break;
 
                 case 'video':
-                  alert('N„o s„o permitidos vÌdeos no conte˙do.');
+                  alert('N√£o s√£o permitidos v√≠deos no conte√∫do.');
                   break;
 
                 case 'audio':
-                  alert('N„o È permitido ·udio no conte˙do.');
+                  alert('N√£o √© permitido √°udio no conte√∫do.');
                   break;
               }
 
@@ -620,7 +620,7 @@ try {
         }
       } catch (e) {
         infraOcultarAviso();
-        alert('N„o foi possÌvel salvar o documento.');
+        alert('N√£o foi poss√≠vel salvar o documento.');
         return;
       }
 
@@ -637,7 +637,7 @@ try {
 
           if (ret.substring(0,prefixoComparacao.length) == prefixoComparacao){
 
-            if (confirm('N„o foi possÌvel salvar o documento porque ele apresenta conte˙do n„o permitido.\n\nClique OK para comparar o conte˙do atual com o permitido.')){
+            if (confirm('N√£o foi poss√≠vel salvar o documento porque ele apresenta conte√∫do n√£o permitido.\n\nClique OK para comparar o conte√∫do atual com o permitido.')){
               infraAbrirJanela(ret.substring(prefixoComparacao.length+1).infraReplaceAll('&amp;','&'),'janelaComparacao',900,700,'location=0,status=1,resizable=1,scrollbars=1',false);
             }
 
@@ -649,10 +649,10 @@ try {
             msg = msg.infraReplaceAll("\\n", "\n");
             msg = decodeURIComponent(msg);
 
-            var prefixoNovaVersao = 'Existe uma nova vers„o';
+            var prefixoNovaVersao = 'Existe uma nova vers√£o';
 
             if (msg.substring(0, prefixoNovaVersao.length) == prefixoNovaVersao) {
-              if (confirm(msg + "\n\n" + 'Ignorar as alteraÁıes e salvar o conte˙do atual como ˙ltima vers„o?')) {
+              if (confirm(msg + "\n\n" + 'Ignorar as altera√ß√µes e salvar o conte√∫do atual como √∫ltima vers√£o?')) {
                 document.getElementById('hdnIgnorarNovaVersao').value = 'S';
                 for (inst in CKEDITOR.instances) {
                   CKEDITOR.instances[inst].execCommand('save');
@@ -694,7 +694,7 @@ try {
               spn = CKEDITOR.instances[inst].document.getById("spnVersao");
               if (spn != null) {
                 if (spn.getHtml() == ret.substring(3)) {
-                  alert('Nenhuma alteraÁ„o foi encontrada no conte˙do do documento.');
+                  alert('Nenhuma altera√ß√£o foi encontrada no conte√∫do do documento.');
                 } else {
                   spn.setHtml(ret.substring(3));
                 }
@@ -743,7 +743,7 @@ try {
     }
     window.onbeforeunload = function (evt) {
       if (modificado) {
-        return 'Existem alteraÁıes que n„o foram salvas.';
+        return 'Existem altera√ß√µes que n√£o foram salvas.';
       }
     };
 <? } ?>

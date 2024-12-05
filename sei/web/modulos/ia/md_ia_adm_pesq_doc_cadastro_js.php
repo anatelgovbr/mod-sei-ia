@@ -19,13 +19,13 @@
         }
 
         if (infraTrim(document.getElementById('txtOrientacoesGerais').value) == '') {
-            alert('Informe a Orientações Gerais.');
+            alert('Informe a OrientaÃ§Ãµes Gerais.');
             document.getElementById('txtOrientacoesGerais').focus();
             return false;
         }
 
         if (infraTrim(document.getElementById('txtNomeSecao').value) == '') {
-            alert('Informe o Nome da Seção na Tela do Usuário.');
+            alert('Informe o Nome da SeÃ§Ã£o na Tela do UsuÃ¡rio.');
             document.getElementById('txtNomeSecao').focus();
             return false;
         }
@@ -40,13 +40,13 @@
         var IdItipoDocumento = $("#selTipoDocumento").val();
         if($("#"+IdItipoDocumento).length) {
             rolar_para('#divMsg');
-            $("#divMsg > div > label").html("O Tipo de Documento selecionado já foi adicionado como Tipo de Documento Alvo da Pesquisa.");
+            $("#divMsg > div > label").html("O Tipo de Documento selecionado jÃ¡ foi adicionado como Tipo de Documento Alvo da Pesquisa.");
             $("#divMsg > div").addClass("alert-danger");
             $("#divMsg").show();
             return false;
         }
         var nomeTipoDocumento = $('#selTipoDocumento').find(":selected").text();
-        var linhaAtualizada = $("#hdnTbTipoDocumento").val()+"¥"+IdItipoDocumento+"±S";
+        var linhaAtualizada = $("#hdnTbTipoDocumento").val()+"Â¥"+IdItipoDocumento+"Â±S";
         $("#hdnTbTipoDocumento").val(linhaAtualizada);
         var linhaTabela = montarLinhaTabela(IdItipoDocumento, nomeTipoDocumento, true);
         $("#tbTipoDocumento").append(linhaTabela);
@@ -84,16 +84,16 @@
         $("#hdnTbTipoDocumento").val(linhaAtualizada);
     }
     function removerItemHiddenTipoDocumento(hdnTbTipoDocumento, itemRemover) {
-        var linhas = hdnTbTipoDocumento.split('¥');
+        var linhas = hdnTbTipoDocumento.split('Â¥');
         var linhaAtualizada = "";
         linhas.forEach(function(linha) {
-            var colunas = linha.split('±');
+            var colunas = linha.split('Â±');
             if(colunas[0] != itemRemover) {
                 colunas.forEach(function (coluna) {
-                    linhaAtualizada += coluna+"±";
+                    linhaAtualizada += coluna+"Â±";
                 });
                 linhaAtualizada = linhaAtualizada.substring(0, linhaAtualizada.length - 1);
-                linhaAtualizada += "¥";
+                linhaAtualizada += "Â¥";
             }
         });
         linhaAtualizada = linhaAtualizada.substring(0, linhaAtualizada.length - 1);
@@ -101,7 +101,7 @@
     }
     function desativarTipoDocumento(IdItipoDocumento) {
         var linhaAtualizada = removerItemHiddenTipoDocumento($("#hdnTbTipoDocumento").val(), IdItipoDocumento);
-        linhaAtualizada = linhaAtualizada+"¥"+IdItipoDocumento+"±N";
+        linhaAtualizada = linhaAtualizada+"Â¥"+IdItipoDocumento+"Â±N";
         var nomeTipoDocumento = $('#'+IdItipoDocumento+' > td:first-child').html();
         $("#hdnTbTipoDocumento").val(linhaAtualizada);
         var linhaTabela = montarLinhaTabela(IdItipoDocumento, nomeTipoDocumento, false, false);
@@ -110,7 +110,7 @@
     }
     function ativarTipoDocumento(IdItipoDocumento) {
         var linhaAtualizada = removerItemHiddenTipoDocumento($("#hdnTbTipoDocumento").val(), IdItipoDocumento);
-        linhaAtualizada = linhaAtualizada+"¥"+IdItipoDocumento+"±S";
+        linhaAtualizada = linhaAtualizada+"Â¥"+IdItipoDocumento+"Â±S";
         var nomeTipoDocumento = $('#'+IdItipoDocumento+' > td:first-child').html();
         $("#hdnTbTipoDocumento").val(linhaAtualizada);
         var linhaTabela = montarLinhaTabela(IdItipoDocumento, nomeTipoDocumento, false, true);

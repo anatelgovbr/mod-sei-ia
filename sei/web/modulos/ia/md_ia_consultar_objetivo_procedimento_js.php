@@ -66,7 +66,7 @@
             infraSelecionarItens( $(this).parent().parent().parent().find(".infraCheckboxDiv").find(".infraCheckboxInput")[0],'Infra');
         });
 
-        // Caso n„o tenha historico para exibir o botao nao e apresentado
+        // Caso n√£o tenha historico para exibir o botao nao e apresentado
         if (!document.getElementById("divHistoricoOds")) {
             document.getElementById("btnHistorico").style.display = "none";
         }
@@ -93,8 +93,8 @@
 
         $.ajax({
             url: url,
-            type: 'POST', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que ser· enviado ao servidor
+            type: 'POST', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que ser√° enviado ao servidor
             data: result, // Enviando o JSON com o nome de itens
             async: false,
             success: function (data) {
@@ -112,13 +112,13 @@
             var idCheckbox = this.id;
             idCheckbox = idCheckbox.split("chkInfraItem");
             if ($("#hdnLike_" + idCheckbox[1]).val() == "") {
-                alert("VocÍ deve confirmar ou n„o as sugestıes de classificaÁ„o existentes antes de salvar.");
+                alert("Voc√™ deve confirmar ou n√£o as sugest√µes de classifica√ß√£o existentes antes de salvar.");
                 error = true;
                 return false;
             }
             if(!$("#txaRacional_" + idCheckbox[1]).prop("disabled")) {
                 if ($("#txaRacional_" + idCheckbox[1]).val() == "") {
-                    alert("VocÍ deve preencher o racional antes de prosseguir.");
+                    alert("Voc√™ deve preencher o racional antes de prosseguir.");
                     error = true;
                     return false;
                 }
@@ -131,9 +131,9 @@
             return false;
         }
         if($("#hdnSugestaoIa").val() == "S") {
-            var confirmar = confirm('AtenÁ„o, na tela consta pelo menos uma sugest„o de classificaÁ„o recente do SEI IA.\n' +
+            var confirmar = confirm('Aten√ß√£o, na tela consta pelo menos uma sugest√£o de classifica√ß√£o recente do SEI IA.\n' +
                 '\n' +
-                'Deseja continuar e confirmar a classificaÁ„o?');
+                'Deseja continuar e confirmar a classifica√ß√£o?');
             if (confirmar == false) {
                 return;
             }
@@ -148,7 +148,7 @@
         result["hdnIdSugestaoIa"] = $("#hdnIdSugestaoIa").val();
         result["racionais"] = racionais;
         $.ajax({
-            url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_cadastrar_classificacao_ods_ajax'); ?>', //selecionando o endereÁo que iremos acessar no backend
+            url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_cadastrar_classificacao_ods_ajax'); ?>', //selecionando o endere√ßo que iremos acessar no backend
             type: 'POST',
             dataType: "json",
             data: result,
@@ -156,7 +156,7 @@
                 console.log(retorno);
                 if(retorno.result == "true") {
                     rolar_para('#divMsg');
-                    $("#divMsg > div > label").html("ClassificaÁ„o realizada com sucesso.");
+                    $("#divMsg > div > label").html("Classifica√ß√£o realizada com sucesso.");
                     $("#divMsg > div").addClass("alert-success");
                     $("#divMsg").show();
                     $("#hdnHistoricoSelecionados").val(result["hdnInfraItensSelecionados"]);
@@ -176,7 +176,7 @@
             },
             error: function (err) {
                 rolar_para('#divMsg');
-                $("#divMsg > div > label").html("Ocorreu um erro ao realizar a ClassificaÁ„o.");
+                $("#divMsg > div > label").html("Ocorreu um erro ao realizar a Classifica√ß√£o.");
                 $("#divMsg > div").addClass("alert-danger");
                 $("#divMsg").show();
             }
@@ -237,7 +237,7 @@
         document.getElementById("btnSalvar").style.display = "none";
         document.getElementById("btnHistorico").style.display = "none";
         document.getElementById("btnFechar").style.display = "none";
-        $('#divTituloModal').find('h4').html('HistÛrico das Metas');
+        $('#divTituloModal').find('h4').html('Hist√≥rico das Metas');
     }
 
     function exibirMetas(){
@@ -247,6 +247,6 @@
         document.getElementById("btnSalvar").style.display = "";
         document.getElementById("btnHistorico").style.display = "";
         document.getElementById("btnFechar").style.display = "";
-        $('#divTituloModal').find('h4').html('Metas dos Objetivos de Desenvolvimento Sustent·vel da ONU');
+        $('#divTituloModal').find('h4').html('Metas dos Objetivos de Desenvolvimento Sustent√°vel da ONU');
     }
 </script>

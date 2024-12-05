@@ -182,6 +182,8 @@ try {
 
     } else {
         $contadorSegmento = 0;
+        $strSumarioTabela = 'Segmentos do Documento';
+        $strCaptionTabela = 'Segmentos do Documento';
     }
     //$strItensSelTipoProcedimento = InfraINT::montarSelectArrInfraDTO(null, null, null, $objBaseConhecimentoDTO->getArrObjRelBaseConhecTipoProcedDTO(), 'IdTipoProcedimento', 'NomeTipoProcedimento');
 

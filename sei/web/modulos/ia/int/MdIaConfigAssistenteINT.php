@@ -261,12 +261,31 @@ class MdIaConfigAssistenteINT extends InfraINT
                       height: 16px;
                       float: left;
                 }
+                #chat_ia .acoes_assistente .promptFavoritado {
+                      background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Cpath%20fill%3D%22%23ff0000%22%20d%3D%22M47.6%20300.4L228.3%20469.1c7.5%207%2017.4%2010.9%2027.7%2010.9s20.2-3.9%2027.7-10.9L464.4%20300.4c30.4-28.3%2047.6-68%2047.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347%2036.5%20300.6%2051.4%20268%2084L256%2096%20244%2084c-32.6-32.6-79-47.5-124.6-39.9C50.5%2055.6%200%20115.2%200%20185.1v5.8c0%2041.5%2017.2%2081.2%2047.6%20109.5z%22/%3E%3C/svg%3E");
+                      background-repeat: no-repeat;
+                      width: 16px;
+                      height: 16px;
+                      float: left;
+                      margin: 0 4px;
+                }
+                #chat_ia .acoes_assistente .favoritarPrompt {
+                      background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Cpath%20d%3D%22M225.8%20468.2l-2.5-2.3L48.1%20303.2C17.4%20274.7%200%20234.7%200%20192.8l0-3.3c0-70.4%2050-130.8%20119.2-144C158.6%2037.9%20198.9%2047%20231%2069.6c9%206.4%2017.4%2013.8%2025%2022.3c4.2-4.8%208.7-9.2%2013.5-13.3c3.7-3.2%207.5-6.2%2011.5-9c0%200%200%200%200%200C313.1%2047%20353.4%2037.9%20392.8%2045.4C462%2058.6%20512%20119.1%20512%20189.5l0%203.3c0%2041.9-17.4%2081.9-48.1%20110.4L288.7%20465.9l-2.5%202.3c-8.2%207.6-19%2011.9-30.2%2011.9s-22-4.2-30.2-11.9zM239.1%20145c-.4-.3-.7-.7-1-1.1l-17.8-20-.1-.1s0%200%200%200c-23.1-25.9-58-37.7-92-31.2C81.6%20101.5%2048%20142.1%2048%20189.5l0%203.3c0%2028.5%2011.9%2055.8%2032.8%2075.2L256%20430.7%20431.2%20268c20.9-19.4%2032.8-46.7%2032.8-75.2l0-3.3c0-47.3-33.6-88-80.1-96.9c-34-6.5-69%205.4-92%2031.2c0%200%200%200-.1%20.1s0%200-.1%20.1l-17.8%2020c-.3%20.4-.7%20.7-1%201.1c-4.5%204.5-10.6%207-16.9%207s-12.4-2.5-16.9-7z%22/%3E%3C/svg%3E");
+                      background-repeat: no-repeat;
+                      width: 16px;
+                      height: 16px;
+                      float: left;
+                      margin: 0 4px;
+                }
                 #chat_ia .acoes_assistente .estrelinha:hover, .pontuado {
                     content: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20576%20512%22%3E%3C!--!Font%20Awesome%20Free%206.5.1%20by%20%40fontawesome%20-%20https%3A%2F%2Ffontawesome.com%20License%20-%20https%3A%2F%2Ffontawesome.com%2Flicense%2Ffree%20Copyright%202024%20Fonticons%2C%20Inc.--%3E%3Cpath%20fill%3D%22%23FFD43B%22%20d%3D%22M316.9%2018C311.6%207%20300.4%200%20288.1%200s-23.4%207-28.8%2018L195%20150.3%2051.4%20171.5c-12%201.8-22%2010.2-25.7%2021.7s-.7%2024.2%207.9%2032.7L137.8%20329%20113.2%20474.7c-2%2012%203%2024.2%2012.9%2031.3s23%208%2033.8%202.3l128.3-68.5%20128.3%2068.5c10.8%205.7%2023.9%204.9%2033.8-2.3s14.9-19.3%2012.9-31.3L438.5%20329%20542.7%20225.9c8.6-8.5%2011.7-21.2%207.9-32.7s-13.7-19.9-25.7-21.7L381.2%20150.3%20316.9%2018z%22%2F%3E%3C%2Fsvg%3E") !important;
                     text-shadow: 0 4px 5px rgba(0, 0, 0, .5);
                 }
                 #chat_ia .acoes_assistente .copiar:hover {
                     background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20448%20512%22%3E%3Cpath%20fill%3D%22%230d69af%22%20d%3D%22M208%200H332.1c12.7%200%2024.9%205.1%2033.9%2014.1l67.9%2067.9c9%209%2014.1%2021.2%2014.1%2033.9V336c0%2026.5-21.5%2048-48%2048H208c-26.5%200-48-21.5-48-48V48c0-26.5%2021.5-48%2048-48zM48%20128h80v64H64V448H256V416h64v48c0%2026.5-21.5%2048-48%2048H48c-26.5%200-48-21.5-48-48V176c0-26.5%2021.5-48%2048-48z%22%2F%3E%3C%2Fsvg%3E");
+                }
+                #chat_ia .acoes_assistente .favoritarPrompt:hover {
+                    background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Cpath%20fill%3D%22%23ff0000%22%20d%3D%22M47.6%20300.4L228.3%20469.1c7.5%207%2017.4%2010.9%2027.7%2010.9s20.2-3.9%2027.7-10.9L464.4%20300.4c30.4-28.3%2047.6-68%2047.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347%2036.5%20300.6%2051.4%20268%2084L256%2096%20244%2084c-32.6-32.6-79-47.5-124.6-39.9C50.5%2055.6%200%20115.2%200%20185.1v5.8c0%2041.5%2017.2%2081.2%2047.6%20109.5z%22/%3E%3C/svg%3E");
                 }
                 #chat_ia .rating {
                     display: flex;
@@ -615,6 +634,9 @@ class MdIaConfigAssistenteINT extends InfraINT
                     border-color: rgba(0,0,0,.25);
                     border-top: 0;
                 }
+                #chat_ia #botaoPromptFavorito {
+                    display: block;
+                }
                 @media (max-width: 576px) {
                     #chat_ia .expandido .iconeIdentificacao {
                         display:none;
@@ -664,6 +686,9 @@ class MdIaConfigAssistenteINT extends InfraINT
         $strLinkOrientacoesGerais = "'$strLinkOrientacoesGerais'";
         $strLinkConfiguracoes = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_modal_configuracoes_assistente_ia');
         $strLinkConfiguracoes = "'$strLinkConfiguracoes'";
+        $strLinkPromptsFavoritos = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_prompts_favoritos_selecionar&tipo_selecao=2');
+        $strLinkPromptsFavoritos = "'$strLinkPromptsFavoritos'";
+
         $botao = '
            
             <div class="widget-chat" id="chat_ia" style="display: none">
@@ -712,6 +737,7 @@ class MdIaConfigAssistenteINT extends InfraINT
                                 <textarea class="send-message-input"  aria-describedby="validacaoMensagem" id="mensagem"></textarea>
                                 <div class="botaoEnvioMensagem">
                                     <svg id="botaoEnviarMensagem" onclick="enviarMensagem(this);" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M4.01 6.03l7.51 3.22-7.52-1 .01-2.22m7.5 8.72L4 17.97v-2.22l7.51-1M2.01 3L2 10l15 2-15 2 .01 7L23 12 2.01 3z"/></svg>
+                                    <svg id="botaoPromptFavorito" onclick="infraAbrirJanelaModal('. $strLinkPromptsFavoritos .', 1024, 800)"  xmlns="http://www.w3.org/2000/svg" height="20"  viewBox="0 0 512 512"><path fill="#ff0000" d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg>
                                     <img id="imgArvoreAguarde" src="' . PaginaSEI::getInstance()->getIconeAguardar() . '" width="24" height="24" />
                                 </div>
                             </div>
@@ -725,6 +751,7 @@ class MdIaConfigAssistenteINT extends InfraINT
             </div>
             <input type="hidden" id="janelaContexto">
             <input type="hidden" id="topicoTemporario">
+            <input type="hidden" id="hdnIdPromptFavorito" name="hdnIdPromptFavorito"/>
         ';
 
         return $botao;
@@ -922,7 +949,8 @@ class MdIaConfigAssistenteINT extends InfraINT
                 if (!is_null($objProtocoloDTO)) {
                     if ($objProtocoloDTO->getStrStaProtocolo() == ProtocoloRN::$TP_PROCEDIMENTO) {
                         return ["result" => "false", "mensagem" => utf8_encode("Provisoriamente, não é permitida a citação de protocolo de processo.")];
-                       /* if ($objProtocoloDTO->getStrStaNivelAcessoGlobal() == ProtocoloRN::$NA_SIGILOSO) {
+                        /*
+                        if ($objProtocoloDTO->getStrStaNivelAcessoGlobal() == ProtocoloRN::$NA_SIGILOSO) {
                             if (($protocolo["acao_origem"] != "usuario_validar_acesso" && $protocolo["acao_origem"] != "arvore_visualizar" && $protocolo["acao_origem"] != "procedimento_gerar")
                                 || $protocolo["id_procedimento"] != $objProtocoloDTO->getDblIdProtocolo()) {
                                 return ["result" => "false", "mensagem" => utf8_encode("Para interagir com o Assistente IA em documentos de Processos com o nível de acesso Sigiloso é necessário que você tenha o acesso e esteja dentro do processo desejado.")];
@@ -1188,18 +1216,27 @@ class MdIaConfigAssistenteINT extends InfraINT
         $objMdIaInteracaoChatDTO->setNumIdMdIaInteracaoChat($dadosEnviados["IdMdIaInteracaoChat"]);
         $objMdIaInteracaoChatDTO->retStrResposta();
         $objMdIaInteracaoChatDTO->retNumIdMessage();
-        $objMdIaInteracaoChatDTO->retStrResposta();
+        $objMdIaInteracaoChatDTO->retStrPergunta();
         $objMdIaInteracaoChatDTO->retNumIdMessage();
         $objMdIaInteracaoChatDTO->retNumStatusRequisicao();
         $objMdIaInteracaoChatDTO->retStrProcedimentoCitado();
+        $objMdIaInteracaoChatDTO->retNumIdMdIaPromptsFavoritos();
+        $objMdIaInteracaoChatDTO->retNumIdMdIaGrupoPromptsFav();
+        $objMdIaInteracaoChatDTO->retStrDescricaoPrompt();
         $interacao = $objMdIaInteracaoChatRN->consultar($objMdIaInteracaoChatDTO);
-
         if (!is_null($interacao)) {
             if ($interacao->getNumStatusRequisicao() == "") {
                 return array("result" => "false");
             } else {
                 $resposta = self::retornaMensagemAmigavelUsuario($interacao->getNumStatusRequisicao(), $interacao->getStrResposta(), $interacao->getStrProcedimentoCitado());
-                return array("result" => "true", "resposta" => utf8_encode($resposta), "id_mensagem" => $interacao->getNumIdMessage(), "status_requisicao" => $interacao->getNumStatusRequisicao());
+                return array("result" => "true",
+                    "resposta" => utf8_encode($resposta),
+                    "id_mensagem" => $interacao->getNumIdMessage(),
+                    "status_requisicao" => $interacao->getNumStatusRequisicao(),
+                    "id_prompt_favorito" => $interacao->getNumIdMdIaPromptsFavoritos(),
+                    "id_grupo_favorito" => $interacao->getNumIdMdIaGrupoPromptsFav(),
+                    "descricao_prompt" => utf8_encode($interacao->getStrDescricaoPrompt()),
+                    "pergunta" => utf8_encode($interacao->getStrPergunta()));
             }
         } else {
             return array("result" => "false");

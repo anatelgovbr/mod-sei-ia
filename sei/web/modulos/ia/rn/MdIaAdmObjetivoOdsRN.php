@@ -1,6 +1,6 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 20/12/2023 - criado por sabino.colab
  *
@@ -24,20 +24,20 @@ class MdIaAdmObjetivoOdsRN extends InfraRN
     private function validarNumIdMdIaAdmObjetivoOds(MdIaAdmObjetivoOdsDTO $objMdIaAdmObjetivoOdsDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmObjetivoOdsDTO->getNumIdMdIaAdmObjetivoOds())) {
-            $objInfraException->adicionarValidacao('Id  Objetivo da ODS não informado.');
+            $objInfraException->adicionarValidacao('Id  Objetivo da ODS nÃ£o informado.');
         }
     }
     private function validarNumIdMdIaAdmOdsOnu(MdIaAdmObjetivoOdsDTO $objMdIaAdmObjetivoOdsDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmObjetivoOdsDTO->getNumIdMdIaAdmOdsOnu())) {
-            $objInfraException->adicionarValidacao('Id ODS ONU não informado.');
+            $objInfraException->adicionarValidacao('Id ODS ONU nÃ£o informado.');
         }
     }
 
     private function validarStrNomeOds(MdIaAdmObjetivoOdsDTO $objMdIaAdmObjetivoOdsDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmObjetivoOdsDTO->getStrNomeOds())) {
-            $objInfraException->adicionarValidacao('Nome da ODS não informado.');
+            $objInfraException->adicionarValidacao('Nome da ODS nÃ£o informado.');
         } else {
             $objMdIaAdmObjetivoOdsDTO->setStrNomeOds(trim($objMdIaAdmObjetivoOdsDTO->getStrNomeOds()));
         }
@@ -46,7 +46,7 @@ class MdIaAdmObjetivoOdsRN extends InfraRN
     private function validarStrDescricaoOds(MdIaAdmObjetivoOdsDTO $objMdIaAdmObjetivoOdsDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmObjetivoOdsDTO->getStrDescricaoOds())) {
-            $objInfraException->adicionarValidacao('Descrição da ODS não informado.');
+            $objInfraException->adicionarValidacao('DescriÃ§Ã£o da ODS nÃ£o informado.');
         } else {
             $objMdIaAdmObjetivoOdsDTO->setStrDescricaoOds(trim($objMdIaAdmObjetivoOdsDTO->getStrDescricaoOds()));
         }
@@ -55,7 +55,7 @@ class MdIaAdmObjetivoOdsRN extends InfraRN
     private function validarStrIconeOds(MdIaAdmObjetivoOdsDTO $objMdIaAdmObjetivoOdsDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmObjetivoOdsDTO->getStrIconeOds())) {
-            $objInfraException->adicionarValidacao('Icone da ODS não informado.');
+            $objInfraException->adicionarValidacao('Icone da ODS nÃ£o informado.');
         } else {
             $objMdIaAdmObjetivoOdsDTO->setStrIconeOds(trim($objMdIaAdmObjetivoOdsDTO->getStrIconeOds()));
         }

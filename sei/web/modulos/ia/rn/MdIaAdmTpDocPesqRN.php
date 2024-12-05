@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 28/09/2023 - criado por sabino.colab
  *
- * Vers„o do Gerador de CÛdigo: 1.43.3
+ * Vers√£o do Gerador de C√≥digo: 1.43.3
  */
 
 require_once dirname(__FILE__) . '../../../../SEI.php';
@@ -25,14 +25,14 @@ class MdIaAdmTpDocPesqRN extends InfraRN
     private function validarNumIdMdIaAdmPesqDoc(MdIaAdmTpDocPesqDTO $objMdIaAdmTpDocPesqDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmTpDocPesqDTO->getNumIdMdIaAdmPesqDoc())) {
-            $objInfraException->adicionarValidacao('Id Pesquisa Documento n„o informado.');
+            $objInfraException->adicionarValidacao('Id Pesquisa Documento n√£o informado.');
         }
     }
 
     private function validarNumIdSerie(MdIaAdmTpDocPesqDTO $objMdIaAdmTpDocPesqDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmTpDocPesqDTO->getNumIdSerie())) {
-            $objInfraException->adicionarValidacao('Id SÈrie n„o informado.');
+            $objInfraException->adicionarValidacao('Id S√©rie n√£o informado.');
         }
     }
 
@@ -42,7 +42,7 @@ class MdIaAdmTpDocPesqRN extends InfraRN
             $objMdIaAdmTpDocPesqDTO->setDthAlteracao(null);
         } else {
             if (!InfraData::validarDataHora($objMdIaAdmTpDocPesqDTO->getDthAlteracao())) {
-                $objInfraException->adicionarValidacao('Data de AlteraÁ„o inv·lida.');
+                $objInfraException->adicionarValidacao('Data de Altera√ß√£o inv√°lida.');
             }
         }
     }

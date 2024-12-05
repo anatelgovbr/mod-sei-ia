@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 28/09/2023 - criado por sabino.colab
  *
- * Vers„o do Gerador de CÛdigo: 1.43.3
+ * Vers√£o do Gerador de C√≥digo: 1.43.3
  */
 
 require_once dirname(__FILE__) . '../../../../SEI.php';
@@ -25,14 +25,14 @@ class MdIaAdmPesqDocRN extends InfraRN
     private function validarNumQtdProcessListagem(MdIaAdmPesqDocDTO $objMdIaAdmPesqDocDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmPesqDocDTO->getNumQtdProcessListagem())) {
-            $objInfraException->adicionarValidacao('Resultados a serem apresentados n„o informada.');
+            $objInfraException->adicionarValidacao('Resultados a serem apresentados n√£o informada.');
         }
     }
 
     private function validarStrOrientacoesGerais(MdIaAdmPesqDocDTO $objMdIaAdmPesqDocDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmPesqDocDTO->getStrOrientacoesGerais())) {
-            $objInfraException->adicionarValidacao('OrientaÁıes Gerais n„o informada.');
+            $objInfraException->adicionarValidacao('Orienta√ß√µes Gerais n√£o informada.');
         } else {
             $objMdIaAdmPesqDocDTO->setStrOrientacoesGerais(trim($objMdIaAdmPesqDocDTO->getStrOrientacoesGerais()));
         }
@@ -41,12 +41,12 @@ class MdIaAdmPesqDocRN extends InfraRN
     private function validarStrNomeSecao(MdIaAdmPesqDocDTO $objMdIaAdmPesqDocDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmPesqDocDTO->getStrNomeSecao())) {
-            $objInfraException->adicionarValidacao('Nome da SeÁ„o na Tela do Usu·rio n„o informado.');
+            $objInfraException->adicionarValidacao('Nome da Se√ß√£o na Tela do Usu√°rio n√£o informado.');
         } else {
             $objMdIaAdmPesqDocDTO->setStrNomeSecao(trim($objMdIaAdmPesqDocDTO->getStrNomeSecao()));
 
             if (strlen($objMdIaAdmPesqDocDTO->getStrNomeSecao()) > 100) {
-                $objInfraException->adicionarValidacao('Nome da SeÁ„o na Tela do Usu·rio possui tamanho superior a 100 caracteres.');
+                $objInfraException->adicionarValidacao('Nome da Se√ß√£o na Tela do Usu√°rio possui tamanho superior a 100 caracteres.');
             }
         }
     }

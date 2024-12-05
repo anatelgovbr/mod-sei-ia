@@ -6,8 +6,8 @@
         dadosTopico["id_topico"] = id;
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_desarquivar_topico'); ?>',
-            type: 'POST', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que ser· enviado ao servidor
+            type: 'POST', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que ser√° enviado ao servidor
             data: dadosTopico, // Enviando o JSON com o nome de itens
             success: function (data) {
                 window.parent.listarTopicos();

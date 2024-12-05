@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 13/07/2023 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.2
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.2
  */
 
 try {
@@ -41,7 +41,7 @@ try {
                 }
                 $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
                 $objMdIaAdmDocRelevRN->excluir($arrObjMdIaAdmDocRelevDTO);
-                PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
             } catch (Exception $e) {
                 PaginaSEI::getInstance()->processarExcecao($e);
             }
@@ -63,7 +63,7 @@ try {
                     $objMdIaAdmDocRelevRN->alterar($objMdIaAdmDocRelevDTO);
                 }
 
-                PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
             } catch (Exception $e) {
                 PaginaSEI::getInstance()->processarExcecao($e);
             }
@@ -86,7 +86,7 @@ try {
                         $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
                         $objMdIaAdmDocRelevRN->alterar($objMdIaAdmDocRelevDTO);
                     }
-                    PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                    PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
                 }
@@ -101,7 +101,7 @@ try {
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
     $arrComandos = array();
@@ -237,8 +237,8 @@ try {
         $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdIaAdmDocRelevDTO, 'Tipo de Documento', 'NomeSerie', $arrObjMdIaAdmDocRelevDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdIaAdmDocRelevDTO, 'Tipo de Processo', 'NomeTipoProcedimento', $arrObjMdIaAdmDocRelevDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh"> Segmento do Documento</th> '."\n";
-        $strResultado .= '<th class="infraTh"> Data/Hora da Última Alteração:</th> '."\n";
-        $strResultado .= '<th class="infraTh">Ações</th>' . "\n";
+        $strResultado .= '<th class="infraTh"> Data/Hora da Ãšltima AlteraÃ§Ã£o:</th> '."\n";
+        $strResultado .= '<th class="infraTh">AÃ§Ãµes</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
 
@@ -361,7 +361,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                         <select class="infraSelect form-control" name="selAplicabilidade" id="selAplicabilidade"
                                 tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"
                                 onchange="retornaTiposDocumentosCadastrados()">
-                            <option value="0">Selecione uma opção</option>
+                            <option value="0">Selecione uma opÃ§Ã£o</option>
                             <option value="I" <?php if ($_POST['selAplicabilidade'] == "I") {
                                 echo "selected";
                             } ?>>Interno

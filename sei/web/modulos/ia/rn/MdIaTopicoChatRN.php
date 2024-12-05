@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 05/04/2024 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.3
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.3
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -25,7 +25,7 @@ class MdIaTopicoChatRN extends InfraRN
     private function validarNumIdUsuario(MdIaTopicoChatDTO $objMdIaTopicoChatDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaTopicoChatDTO->getNumIdUsuario())) {
-            $objInfraException->adicionarValidacao(' não informad.');
+            $objInfraException->adicionarValidacao(' nÃ£o informad.');
         }
     }
 
@@ -55,7 +55,7 @@ class MdIaTopicoChatRN extends InfraRN
             $objMdIaTopicoChatDTO->setDthCadastro(null);
         } else {
             if (!InfraData::validarDataHora($objMdIaTopicoChatDTO->getDthCadastro())) {
-                $objInfraException->adicionarValidacao(' inválid.');
+                $objInfraException->adicionarValidacao(' invÃ¡lid.');
             }
         }
     }
@@ -82,7 +82,7 @@ class MdIaTopicoChatRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cadastrando Tópico.', $e);
+            throw new InfraException('Erro cadastrando TÃ³pico.', $e);
         }
     }
 
@@ -114,7 +114,7 @@ class MdIaTopicoChatRN extends InfraRN
             $objMdIaTopicoChatBD->alterar($objMdIaTopicoChatDTO);
 
         } catch (Exception $e) {
-            throw new InfraException('Erro alterando Tópico.', $e);
+            throw new InfraException('Erro alterando TÃ³pico.', $e);
         }
     }
 
@@ -135,7 +135,7 @@ class MdIaTopicoChatRN extends InfraRN
             }
 
         } catch (Exception $e) {
-            throw new InfraException('Erro excluindo Tópico.', $e);
+            throw new InfraException('Erro excluindo TÃ³pico.', $e);
         }
     }
 
@@ -157,7 +157,7 @@ class MdIaTopicoChatRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando Tópico.', $e);
+            throw new InfraException('Erro consultando TÃ³pico.', $e);
         }
     }
 
@@ -180,7 +180,7 @@ class MdIaTopicoChatRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro listando Tópicos.', $e);
+            throw new InfraException('Erro listando TÃ³picos.', $e);
         }
     }
 
@@ -200,7 +200,7 @@ class MdIaTopicoChatRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro contando Tópicos.', $e);
+            throw new InfraException('Erro contando TÃ³picos.', $e);
         }
     }
     /*
@@ -220,7 +220,7 @@ class MdIaTopicoChatRN extends InfraRN
           }
 
         }catch(Exception $e){
-          throw new InfraException('Erro desativando Tópico.',$e);
+          throw new InfraException('Erro desativando TÃ³pico.',$e);
         }
       }
 
@@ -240,7 +240,7 @@ class MdIaTopicoChatRN extends InfraRN
           }
 
         }catch(Exception $e){
-          throw new InfraException('Erro reativando Tópico.',$e);
+          throw new InfraException('Erro reativando TÃ³pico.',$e);
         }
       }
 
@@ -259,7 +259,7 @@ class MdIaTopicoChatRN extends InfraRN
 
           return $ret;
         }catch(Exception $e){
-          throw new InfraException('Erro bloqueando Tópico.',$e);
+          throw new InfraException('Erro bloqueando TÃ³pico.',$e);
         }
       }
 

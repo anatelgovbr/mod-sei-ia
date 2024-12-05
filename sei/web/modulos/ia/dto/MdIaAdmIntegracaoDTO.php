@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 15/09/2023 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.1
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.1
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';

@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 15/01/2024 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.3
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.3
  */
 
 require_once dirname(__FILE__) . '../../../../SEI.php';
@@ -15,16 +15,16 @@ class MdIaHistClassRN extends InfraRN
     public static $OPERACAO_INSERT_DESC            = "Adicionado";
 
     public static $OPERACAO_DELETE                 = "D";
-    public static $OPERACAO_DELETE_DESC            = "Excluído";
+    public static $OPERACAO_DELETE_DESC            = "ExcluÃ­do";
 
     public static $OPERACAO_CONFIRMACAO            = "C";
-    public static $OPERACAO_CONFIRMACAO_DESC       = "Sugestão Confirmada";
+    public static $OPERACAO_CONFIRMACAO_DESC       = "SugestÃ£o Confirmada";
 
-    public static $OPERACAO_NÃO_CONFIRMACAO        = "N";
-    public static $OPERACAO_NÃO_CONFIRMACAO_DESC   = "Sugestão Não Confirmada";
+    public static $OPERACAO_NÃƒO_CONFIRMACAO        = "N";
+    public static $OPERACAO_NÃƒO_CONFIRMACAO_DESC   = "SugestÃ£o NÃ£o Confirmada";
 	
 	public static $OPERACAO_SOBRESCRITA            = "S";
-	public static $OPERACAO_SOBRESCRITA_DESC       = "Sobrescreveu sugestão dada por IA";
+	public static $OPERACAO_SOBRESCRITA_DESC       = "Sobrescreveu sugestÃ£o dada por IA";
 
     public function __construct()
     {
@@ -39,21 +39,21 @@ class MdIaHistClassRN extends InfraRN
     private function validarNumIdMdIaClassificacaoOds(MdIaHistClassDTO $objMdIaHistClassDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaHistClassDTO->getNumIdMdIaClassificacaoOds())) {
-            $objInfraException->adicionarValidacao(' não informad.');
+            $objInfraException->adicionarValidacao(' nÃ£o informad.');
         }
     }
 
     private function validarNumIdMdIaAdmMetaOds(MdIaHistClassDTO $objMdIaHistClassDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaHistClassDTO->getNumIdMdIaAdmMetaOds())) {
-            $objInfraException->adicionarValidacao(' não informad.');
+            $objInfraException->adicionarValidacao(' nÃ£o informad.');
         }
     }
 
     private function validarStrOperacao(MdIaHistClassDTO $objMdIaHistClassDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaHistClassDTO->getStrOperacao())) {
-            $objInfraException->adicionarValidacao(' não informad.');
+            $objInfraException->adicionarValidacao(' nÃ£o informad.');
         } else {
             $objMdIaHistClassDTO->setStrOperacao(trim($objMdIaHistClassDTO->getStrOperacao()));
 
@@ -66,14 +66,14 @@ class MdIaHistClassRN extends InfraRN
     private function validarNumIdUsuario(MdIaHistClassDTO $objMdIaHistClassDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaHistClassDTO->getNumIdUsuario())) {
-            $objInfraException->adicionarValidacao(' não informad.');
+            $objInfraException->adicionarValidacao(' nÃ£o informad.');
         }
     }
 
     private function validarNumIdUnidade(MdIaHistClassDTO $objMdIaHistClassDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaHistClassDTO->getNumIdUnidade())) {
-            $objInfraException->adicionarValidacao(' não informad.');
+            $objInfraException->adicionarValidacao(' nÃ£o informad.');
         }
     }
 
@@ -83,7 +83,7 @@ class MdIaHistClassRN extends InfraRN
             $objMdIaHistClassDTO->setDthCadastro(null);
         } else {
             if (!InfraData::validarDataHora($objMdIaHistClassDTO->getDthCadastro())) {
-                $objInfraException->adicionarValidacao(' inválid.');
+                $objInfraException->adicionarValidacao(' invÃ¡lid.');
             }
         }
     }
@@ -111,7 +111,7 @@ class MdIaHistClassRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cadastrando Histórico de Classificação.', $e);
+            throw new InfraException('Erro cadastrando HistÃ³rico de ClassificaÃ§Ã£o.', $e);
         }
     }
 
@@ -149,7 +149,7 @@ class MdIaHistClassRN extends InfraRN
             $objMdIaHistClassBD->alterar($objMdIaHistClassDTO);
 
         } catch (Exception $e) {
-            throw new InfraException('Erro alterando Histórico de Classificação.', $e);
+            throw new InfraException('Erro alterando HistÃ³rico de ClassificaÃ§Ã£o.', $e);
         }
     }
 
@@ -170,7 +170,7 @@ class MdIaHistClassRN extends InfraRN
             }
 
         } catch (Exception $e) {
-            throw new InfraException('Erro excluindo Histórico de Classificação.', $e);
+            throw new InfraException('Erro excluindo HistÃ³rico de ClassificaÃ§Ã£o.', $e);
         }
     }
 
@@ -192,7 +192,7 @@ class MdIaHistClassRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando Histórico de Classificação.', $e);
+            throw new InfraException('Erro consultando HistÃ³rico de ClassificaÃ§Ã£o.', $e);
         }
     }
 
@@ -215,7 +215,7 @@ class MdIaHistClassRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro listando Histórico de Classificações.', $e);
+            throw new InfraException('Erro listando HistÃ³rico de ClassificaÃ§Ãµes.', $e);
         }
     }
 
@@ -235,7 +235,7 @@ class MdIaHistClassRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro contando Histórico de Classificações.', $e);
+            throw new InfraException('Erro contando HistÃ³rico de ClassificaÃ§Ãµes.', $e);
         }
     }
     /*
@@ -255,7 +255,7 @@ class MdIaHistClassRN extends InfraRN
           }
 
         }catch(Exception $e){
-          throw new InfraException('Erro desativando Histórico de Classificação.',$e);
+          throw new InfraException('Erro desativando HistÃ³rico de ClassificaÃ§Ã£o.',$e);
         }
       }
 
@@ -275,7 +275,7 @@ class MdIaHistClassRN extends InfraRN
           }
 
         }catch(Exception $e){
-          throw new InfraException('Erro reativando Histórico de Classificação.',$e);
+          throw new InfraException('Erro reativando HistÃ³rico de ClassificaÃ§Ã£o.',$e);
         }
       }
 
@@ -294,7 +294,7 @@ class MdIaHistClassRN extends InfraRN
 
           return $ret;
         }catch(Exception $e){
-          throw new InfraException('Erro bloqueando Histórico de Classificação.',$e);
+          throw new InfraException('Erro bloqueando HistÃ³rico de ClassificaÃ§Ã£o.',$e);
         }
       }
 

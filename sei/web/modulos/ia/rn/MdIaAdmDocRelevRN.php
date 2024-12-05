@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 13/07/2023 - criado por sabino.colab
  *
- * Vers„o do Gerador de CÛdigo: 1.43.2
+ * Vers√£o do Gerador de C√≥digo: 1.43.2
  */
 
 require_once dirname(__FILE__) . '../../../../SEI.php';
@@ -25,7 +25,7 @@ class MdIaAdmDocRelevRN extends InfraRN
     private function validarNumIdSerie(MdIaAdmDocRelevDTO $objMdIaAdmDocRelevDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmDocRelevDTO->getNumIdSerie())) {
-            $objInfraException->adicionarValidacao('Id SÈrie n„o informado.');
+            $objInfraException->adicionarValidacao('Id S√©rie n√£o informado.');
         }
     }
 

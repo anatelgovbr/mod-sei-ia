@@ -1,6 +1,6 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 20/12/2023 - criado por sabino.colab
  *
@@ -72,12 +72,12 @@ class MdIaAdmObjetivoOdsINT extends InfraINT
 				$objMdIaClassMetaOdsDTO = (new MdIaClassMetaOdsRN())->consultar($objMdIaClassMetaOdsDTO);
 			}
 			
-			//SE N√O HOUVE CLASSIFICACAO N√O … NECESSARIO VERIFICAR MAIS NADA
+			//SE N√ÉO HOUVE CLASSIFICACAO N√ÉO √â NECESSARIO VERIFICAR MAIS NADA
 			if ($objMdIaClassificacaoOdsDTO && $objMdIaClassMetaOdsDTO) {
 				
 				$txtRacional = $objMdIaClassMetaOdsDTO->getStrRacional() ? $objMdIaClassMetaOdsDTO->getStrRacional() : '';
 				
-				//IDENTIFICAR SE A META J¡ FOI CLASSIFICADA DEVIDO TER SIDO ALTERADO POR UM USUARIO INTERNO
+				//IDENTIFICAR SE A META J√Å FOI CLASSIFICADA DEVIDO TER SIDO ALTERADO POR UM USUARIO INTERNO
 				if ($objMdIaClassMetaOdsDTO->getStrStaTipoUsuario() == UsuarioRN::$TU_SIP) {
 					$itemMarcadoAvaliacao = "S";
 					$arrayItensMarcados[] = $objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmMetaOds();
@@ -93,7 +93,7 @@ class MdIaAdmObjetivoOdsINT extends InfraINT
 					$tr = "<tr class='table-info itemSugeridoIa'>";
 				}
 				
-				// CASO SEJA SUGERIDO POR UM USUARIO EXTERNO E QUE AINDA N√O FOI CLASSIFICADO POR UM USUARIO INTERNO
+				// CASO SEJA SUGERIDO POR UM USUARIO EXTERNO E QUE AINDA N√ÉO FOI CLASSIFICADO POR UM USUARIO INTERNO
 				if ($objMdIaClassMetaOdsDTO->getStrStaTipoUsuario() == UsuarioRN::$TU_EXTERNO) {
 					$itemSugerido = 'usuario_externo';
 					$tr = "<tr class='itemSugeridoUE' style='background-color: #ffbf94b5'>";
@@ -138,9 +138,9 @@ class MdIaAdmObjetivoOdsINT extends InfraINT
 	
 	private function montarHTMLTopoTabela($dados)
 	{
-		$txtAjuda = "Ao realizar a classificaÁ„o ou desclassificaÁ„o de qualquer Meta È obrigatÛrio o preenchimento do campo Racional. Ao realizar a ConfirmaÁ„o ou N„o ConfirmaÁ„o de sugest„o do SEI IA tambÈm È obrigatÛrio o preenchimento do campo Racional.
+		$txtAjuda = "Ao realizar a classifica√ß√£o ou desclassifica√ß√£o de qualquer Meta √© obrigat√≥rio o preenchimento do campo Racional. Ao realizar a Confirma√ß√£o ou N√£o Confirma√ß√£o de sugest√£o do SEI IA tamb√©m √© obrigat√≥rio o preenchimento do campo Racional.
   
-A classificaÁ„o por especialistas com preenchimento obrigatÛrio de Racional È fase inicial provisÛria essencial para o desenvolvimento dos algoritmos de IA para ter sugestıes adequadas, devendo descrever o raciocÌnio utilizado e destacar o quÍ no teor dos documentos fundamentam a escolha da Meta, citando expressamente os protocolos dos documentos utilizados na mencionada fundamentaÁ„o.";
+A classifica√ß√£o por especialistas com preenchimento obrigat√≥rio de Racional √© fase inicial provis√≥ria essencial para o desenvolvimento dos algoritmos de IA para ter sugest√µes adequadas, devendo descrever o racioc√≠nio utilizado e destacar o qu√™ no teor dos documentos fundamentam a escolha da Meta, citando expressamente os protocolos dos documentos utilizados na mencionada fundamenta√ß√£o.";
 		
 		$html = self::consultarHistObjetivo($dados);
 		$html .= "
@@ -149,8 +149,8 @@ A classificaÁ„o por especialistas com preenchimento obrigatÛrio de Racional È fa
                     <tbody>
                         <tr>
                             <th class='infraTh' width='1%'>" . PaginaSEI::getInstance()->getThCheck() . "</th>
-                            <th class='infraTh' width='6%'>IdentificaÁ„o</th>
-                            <th class='infraTh text-left' width='59%'>DescriÁ„o da Meta</th>";
+                            <th class='infraTh' width='6%'>Identifica√ß√£o</th>
+                            <th class='infraTh text-left' width='59%'>Descri√ß√£o da Meta</th>";
 		if (self::avaliacaoEspecializada()) {
 			$html .= "
                             <th class='infraTh text-left' width='35%'>
@@ -176,17 +176,17 @@ A classificaÁ„o por especialistas com preenchimento obrigatÛrio de Racional È fa
 	
 	private function montarTdIdentificacao($itemSugerido, $i, $objMdIaAdmMetaOdsDTO)
 	{
-		$txtAjudaIa = 'A classificaÁ„o desta Meta È apenas uma sugest„o realizada pela InteligÍncia Artificial do SEI. N„o È, ainda, uma classificaÁ„o efetiva nessa Meta.
+		$txtAjudaIa = 'A classifica√ß√£o desta Meta √© apenas uma sugest√£o realizada pela Intelig√™ncia Artificial do SEI. N√£o √©, ainda, uma classifica√ß√£o efetiva nessa Meta.
 
-… obrigatÛrio avaliar a sugest„o do SEI IA, podendo Confirmar (polegar para cima) ou N„o Confirmar (polegar para baixo) a sugest„o.
+√â obrigat√≥rio avaliar a sugest√£o do SEI IA, podendo Confirmar (polegar para cima) ou N√£o Confirmar (polegar para baixo) a sugest√£o.
 
-Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fundamentos da avaliaÁ„o sobre a sugest„o realizada pelo SEI IA.';
+Nos dois casos (Confirmar e N√£o Confirmar), deve preencher o Racional com os fundamentos da avalia√ß√£o sobre a sugest√£o realizada pelo SEI IA.';
 		
-		$txtAjudaUE = 'A classificaÁ„o desta Meta È apenas uma sugest„o realizada por Usu·rio Externo. N„o È, ainda, uma classificaÁ„o efetiva nessa Meta.
+		$txtAjudaUE = 'A classifica√ß√£o desta Meta √© apenas uma sugest√£o realizada por Usu√°rio Externo. N√£o √©, ainda, uma classifica√ß√£o efetiva nessa Meta.
 
-… obrigatÛrio avaliar, podendo Confirmar (polegar para cima) ou N„o Confirmar (polegar para baixo) a sugest„o.
+√â obrigat√≥rio avaliar, podendo Confirmar (polegar para cima) ou N√£o Confirmar (polegar para baixo) a sugest√£o.
 
-Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fundamentos da avaliaÁ„o realizada sobre a sugest„o.';
+Nos dois casos (Confirmar e N√£o Confirmar), deve preencher o Racional com os fundamentos da avalia√ß√£o realizada sobre a sugest√£o.';
 		switch ($itemSugerido) {
 			case 'ia' :
 				return "<td>
@@ -292,7 +292,7 @@ Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fun
 			
 			$tabela = '';
 			
-			$strCaptionTabela = "HistÛrico";
+			$strCaptionTabela = "Hist√≥rico";
 			
 			$tabela .= "<div class='col-12' id='divHistoricoOds' style='display: none'>";
 			$tabela .= "<table class='infraTable'>";
@@ -301,11 +301,11 @@ Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fun
 			
 			$tabela .= "<tr>";
 			$tabela .= "<th class='infraTh' width='4%'>Data</th>";
-			$tabela .= "<th class='infraTh' width='6%'>Usu·rio</th>";
+			$tabela .= "<th class='infraTh' width='6%'>Usu√°rio</th>";
 			$tabela .= "<th class='infraTh' width='4%' style='align-content: center'>Unidade</th>";
-			$tabela .= "<th class='infraTh' width='4%'>IdentificaÁ„o</th>";
-			$tabela .= "<th class='infraTh' width='15%'>DescriÁ„o da Meta</th>";
-			$tabela .= "<th class='infraTh' width='6%'>OperaÁ„o</th>";
+			$tabela .= "<th class='infraTh' width='4%'>Identifica√ß√£o</th>";
+			$tabela .= "<th class='infraTh' width='15%'>Descri√ß√£o da Meta</th>";
+			$tabela .= "<th class='infraTh' width='6%'>Opera√ß√£o</th>";
 			if (self::avaliacaoEspecializada()) {
 				$tabela .= "<th class='infraTh' width='11%'>Racional</th>";
 			}
@@ -378,9 +378,9 @@ Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fun
 		$table .= "<table class='infraTable' id='tabela_ordenada'>";
 		$table .= "<tr>";
 		$table .= "<caption class='infraCaption'>" . PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela, count($arrObjMdIaAdmMetaOdsDTO)) . "</caption>";
-		$table .= "<th class='infraTh' width='6%'>IdentificaÁ„o</th>";
-		$table .= "<th class='infraTh text-left' width='59%'>DescriÁ„o da Meta</th>";
-		$table .= "<th class='infraTh center' width='30%'>Forte RelaÁ„o Tem·tica com o ”rg„o</th>";
+		$table .= "<th class='infraTh' width='6%'>Identifica√ß√£o</th>";
+		$table .= "<th class='infraTh text-left' width='59%'>Descri√ß√£o da Meta</th>";
+		$table .= "<th class='infraTh center' width='30%'>Forte Rela√ß√£o Tem√°tica com o √ìrg√£o</th>";
 		$table .= "</tr>";
 		$i = 0;
 		foreach ($arrObjMdIaAdmMetaOdsDTO as $objMdIaAdmMetaOdsDTO) {
@@ -426,8 +426,8 @@ Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fun
 				return MdIaHistClassRN:: $OPERACAO_DELETE_DESC;
 			case MdIaHistClassRN::$OPERACAO_CONFIRMACAO :
 				return MdIaHistClassRN:: $OPERACAO_CONFIRMACAO_DESC;
-			case MdIaHistClassRN::$OPERACAO_N√O_CONFIRMACAO :
-				return MdIaHistClassRN:: $OPERACAO_N√O_CONFIRMACAO_DESC;
+			case MdIaHistClassRN::$OPERACAO_N√ÉO_CONFIRMACAO :
+				return MdIaHistClassRN:: $OPERACAO_N√ÉO_CONFIRMACAO_DESC;
 			case MdIaHistClassRN::$OPERACAO_SOBRESCRITA :
 				return MdIaHistClassRN:: $OPERACAO_SOBRESCRITA_DESC;
 		}
@@ -439,7 +439,7 @@ Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fun
 		$objInfraParametro = new InfraParametro(BancoSEI::getInstance());
 		$idUsuario = $idUsuario ? $idUsuario : $objInfraParametro->getValor(MdIaClassificacaoOdsRN::$MODULO_IA_ID_USUARIO_SISTEMA, false);
 		
-		// Recupera a Meta para utilizar na ClassificaÁ„o
+		// Recupera a Meta para utilizar na Classifica√ß√£o
 		$objMdIaAdmMetaOdsDTO = new MdIaAdmMetaOdsDTO();
 		$objMdIaAdmMetaOdsDTO->setStrIdentificacaoMeta($meta);
 		$objMdIaAdmMetaOdsDTO->retNumIdMdIaAdmMetaOds();
@@ -447,10 +447,10 @@ Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fun
 		$objMdIaAdmMetaOdsDTO = (new MdIaAdmMetaOdsRN())->consultar($objMdIaAdmMetaOdsDTO);
 		
 		if (!$objMdIaAdmMetaOdsDTO) {
-			throw new InfraException('A meta informada n„o existe ou n„o foi encontrada.');
+			throw new InfraException('A meta informada n√£o existe ou n√£o foi encontrada.');
 		}
 		
-		// Recupera a ClassificaÁ„o
+		// Recupera a Classifica√ß√£o
 		$objMdIaClassificacaoOdsDTO = new MdIaClassificacaoOdsDTO();
 		$objMdIaClassificacaoOdsDTO->setNumIdProcedimento($idProcedimento);
 		$objMdIaClassificacaoOdsDTO->setNumIdMdIaAdmObjetivoOds($objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmObjetivoOds());
@@ -459,12 +459,12 @@ Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fun
 		$objMdIaClassificacaoOdsDTO->retStrStaTipoUltimoUsuario();
 		$objMdIaClassificacaoOdsDTO = (new MdIaClassificacaoOdsRN())->consultar($objMdIaClassificacaoOdsDTO);
 		
-		// Caso a ClassificaÁ„o J¡ EXISTA realiza a ATUALIZA«√O
+		// Caso a Classifica√ß√£o J√Å EXISTA realiza a ATUALIZA√á√ÉO
 		if ($objMdIaClassificacaoOdsDTO) {
 			return self::alterarClassificacao($idUsuario, $objMdIaClassificacaoOdsDTO, $objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmMetaOds(), $staTipoUsuario);
 		}
 		
-		// Caso a ClassificaÁ„o N√O EXISTA realiza o CADASTRO
+		// Caso a Classifica√ß√£o N√ÉO EXISTA realiza o CADASTRO
 		return self::cadastrarClassificacao($idUsuario, $idProcedimento, $objMdIaAdmMetaOdsDTO, $staTipoUsuario);
 		
 	}
@@ -496,7 +496,7 @@ Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fun
 		$objMdIaClassMetaOdsDTO->setStrRacional(null);
 		(new MdIaClassMetaOdsRN())->cadastrar($objMdIaClassMetaOdsDTO);
 		
-		// Cadastrar o historico da classificaÁ„o
+		// Cadastrar o historico da classifica√ß√£o
 //		$objMdIaHistClassDTO = new MdIaHistClassDTO();
 //		$objMdIaHistClassDTO->setNumIdMdIaClassificacaoOds($objMdIaClassificacaoOdsDTO->getNumIdMdIaClassificacaoOds());
 //		$objMdIaHistClassDTO->setNumIdMdIaAdmMetaOds($idMeta);
@@ -507,7 +507,7 @@ Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fun
 //		$objMdIaHistClassDTO->setStrRacional(null);
 //		(new MdIaHistClassRN())->cadastrar($objMdIaHistClassDTO);
 		
-		// Cadastrar o historico de "Sobrescrito por Usu·rio Externo"
+		// Cadastrar o historico de "Sobrescrito por Usu√°rio Externo"
 		if(array_key_exists('tipoOperacao', $verificacao) && $verificacao['tipoOperacao'] == MdIaHistClassRN::$OPERACAO_SOBRESCRITA){
 			
 			$objMdIaHistClassDTO = new MdIaHistClassDTO();
@@ -528,7 +528,7 @@ Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fun
 			
 		}else{
 			
-			// Cadastrar o historico da classificaÁ„o
+			// Cadastrar o historico da classifica√ß√£o
 			self::cadastrarHistorico([
 				'IdClassificacao'   => $objMdIaClassificacaoOdsDTO->getNumIdMdIaClassificacaoOds(),
 				'IdMeta'            => $idMeta,
@@ -615,7 +615,7 @@ Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fun
 		
 		if (!empty($existeCadastroMeta)) {
 			
-			// Verifica se È sugest„o de UE sobre sugest„o de IA para sobrescrever a sugest„o da IA:
+			// Verifica se √© sugest√£o de UE sobre sugest√£o de IA para sobrescrever a sugest√£o da IA:
 			if($existeCadastroMeta->getStrStaTipoUsuario() == UsuarioRN::$TU_SISTEMA && $staTipoUsuario == MdIaClassificacaoOdsRN::$USUARIO_EXTERNO){
 				
 				$verificacao = [
@@ -667,7 +667,7 @@ Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fun
 		
 	}
 	
-	// verifica pelo historico se em algum momento a classificacao da meta j· foi sugerido pela IA
+	// verifica pelo historico se em algum momento a classificacao da meta j√° foi sugerido pela IA
 	private function verificarSeJaFoiSugeridoPelaIa($idClassificacao, $idMeta)
 	{
 		$objMdIaHistClassDTO = new MdIaHistClassDTO();
@@ -770,7 +770,7 @@ Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fun
 		$descricaoObjetivo .= '<input id="btn-checkbox" class="toggleMetasFortes" type="checkbox" '.($temMetaForte ? 'checked="checked"' : '').' onclick="atualizarListaMetas(this)">';
 		$descricaoObjetivo .= '<span class="slider round"></span>';
 		$descricaoObjetivo .= '</label>';
-		$descricaoObjetivo .= '<strong>Exibir apenas as Metas desse Objetivo com forte relaÁ„o tem·tica com o(a) '.SessaoSEIExterna::getInstance()->getStrSiglaOrgaoUsuarioExterno().'</strong>';
+		$descricaoObjetivo .= '<strong>Exibir apenas as Metas desse Objetivo com forte rela√ß√£o tem√°tica com o(a) '.SessaoSEIExterna::getInstance()->getStrSiglaOrgaoUsuarioExterno().'</strong>';
 		$descricaoObjetivo .= '</h6>';
 		$descricaoObjetivo .= '</div>';
 		$descricaoObjetivo .= '</div>';
@@ -781,8 +781,8 @@ Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fun
 		$table .= "<tr>";
 		$table .= "<caption class='infraCaption'>" . PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela, count($arrObjMdIaAdmMetaOdsDTO)) . "</caption>";
 		$table .= "<th class='infraTh' width='6%'></th>";
-		$table .= "<th class='infraTh' width='6%'>IdentificaÁ„o</th>";
-		$table .= "<th class='infraTh text-left' width='59%'>DescriÁ„o da Meta</th>";
+		$table .= "<th class='infraTh' width='6%'>Identifica√ß√£o</th>";
+		$table .= "<th class='infraTh text-left' width='59%'>Descri√ß√£o da Meta</th>";
 		$table .= "</tr>";
 		$i = 0;
 		$table .= "<tbody>";
@@ -877,7 +877,7 @@ Nos dois casos (Confirmar e N„o Confirmar), deve preencher o Racional com os fun
 			}
 		}
 		
-		return !empty($listaMetas) ? '<h6 class="alert alert-success mb-4">Sua demanda est· contribuindo com os seguintes Objetivos de Desenvolvimento Sustent·vel da ONU:</h6>'.$listaMetas : '<h6 class="alert alert-warning">Sua demanda ainda n„o est· contribuindo com os Objetivos de Desenvolvimento Sustent·vel da ONU.</h6>';
+		return !empty($listaMetas) ? '<h6 class="alert alert-success mb-4">Sua demanda est√° contribuindo com os seguintes Objetivos de Desenvolvimento Sustent√°vel da ONU:</h6>'.$listaMetas : '<h6 class="alert alert-warning">Sua demanda ainda n√£o est√° contribuindo com os Objetivos de Desenvolvimento Sustent√°vel da ONU.</h6>';
 		
 	}
 	

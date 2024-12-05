@@ -1,6 +1,6 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 20/12/2023 - criado por sabino.colab
  *
@@ -24,17 +24,17 @@ class MdIaAdmOdsOnuRN extends InfraRN
     private function validarNumIdMdIaAdmOdsOnu(MdIaAdmOdsOnuDTO $objMdIaAdmOdsOnuDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmOdsOnuDTO->getNumIdMdIaAdmOdsOnu())) {
-            $objInfraException->adicionarValidacao('Id ODS ONU não informado.');
+            $objInfraException->adicionarValidacao('Id ODS ONU nÃ£o informado.');
         }
     }
 
     private function validarStrSinExibirFuncionalidade(MdIaAdmOdsOnuDTO $objMdIaAdmOdsOnuDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmOdsOnuDTO->getStrSinExibirFuncionalidade())) {
-            $objInfraException->adicionarValidacao('Sinalizador de Exibir Funcionalidade não informado.');
+            $objInfraException->adicionarValidacao('Sinalizador de Exibir Funcionalidade nÃ£o informado.');
         } else {
             if (!InfraUtil::isBolSinalizadorValido($objMdIaAdmOdsOnuDTO->getStrSinExibirFuncionalidade())) {
-                $objInfraException->adicionarValidacao('Sinalizador de Exibir Funcionalidade não informado.');
+                $objInfraException->adicionarValidacao('Sinalizador de Exibir Funcionalidade nÃ£o informado.');
             }
         }
     }
@@ -42,7 +42,7 @@ class MdIaAdmOdsOnuRN extends InfraRN
     private function validarStrOrientacoesGerais(MdIaAdmOdsOnuDTO $objMdIaAdmOdsOnuDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmOdsOnuDTO->getStrOrientacoesGerais())) {
-            $objInfraException->adicionarValidacao('Orientações Gerais não informada.');
+            $objInfraException->adicionarValidacao('OrientaÃ§Ãµes Gerais nÃ£o informada.');
         } else {
             $objMdIaAdmOdsOnuDTO->setStrOrientacoesGerais(trim($objMdIaAdmOdsOnuDTO->getStrOrientacoesGerais()));
         }

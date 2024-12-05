@@ -1,6 +1,6 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 20/12/2023 - criado por sabino.colab
  *
@@ -24,21 +24,21 @@ class MdIaAdmUnidadeAlertaRN extends InfraRN
     private function validarNumIdMdIaAdmUnidadeAlerta(MdIaAdmUnidadeAlertaDTO $objMdIaAdmUnidadeAlertaDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmUnidadeAlertaDTO->getNumIdMdIaAdmUnidadeAlerta())) {
-            $objInfraException->adicionarValidacao('Id Adm Unidade Alerta n„o informado.');
+            $objInfraException->adicionarValidacao('Id Adm Unidade Alerta n√£o informado.');
         }
     }
 
     private function validarNumIdMdIaAdmOdsOnu(MdIaAdmUnidadeAlertaDTO $objMdIaAdmUnidadeAlertaDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmUnidadeAlertaDTO->getNumIdMdIaAdmOdsOnu())) {
-            $objInfraException->adicionarValidacao('Id ODS ONU n„o informado.');
+            $objInfraException->adicionarValidacao('Id ODS ONU n√£o informado.');
         }
     }
 
     private function validarNumIdUnidade(MdIaAdmUnidadeAlertaDTO $objMdIaAdmUnidadeAlertaDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmUnidadeAlertaDTO->getNumIdUnidade())) {
-            $objInfraException->adicionarValidacao('Id Unidade n„o informado.');
+            $objInfraException->adicionarValidacao('Id Unidade n√£o informado.');
         }
     }
 
@@ -48,7 +48,7 @@ class MdIaAdmUnidadeAlertaRN extends InfraRN
             $objMdIaAdmUnidadeAlertaDTO->setDthAlteracao(null);
         } else {
             if (!InfraData::validarDataHora($objMdIaAdmUnidadeAlertaDTO->getDthAlteracao())) {
-                $objInfraException->adicionarValidacao('Data de AlteraÁ„o inv·lida.');
+                $objInfraException->adicionarValidacao('Data de Altera√ß√£o inv√°lida.');
             }
         }
     }

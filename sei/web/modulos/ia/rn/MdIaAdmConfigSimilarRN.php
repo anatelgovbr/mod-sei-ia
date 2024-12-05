@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 05/07/2023 - criado por sabino.colab
  *
- * Vers„o do Gerador de CÛdigo: 1.43.2
+ * Vers√£o do Gerador de C√≥digo: 1.43.2
  */
 
 require_once dirname(__FILE__) . '../../../../SEI.php';
@@ -25,21 +25,21 @@ class MdIaAdmConfigSimilarRN extends InfraRN
     private function validarNumIdMdIaAdmConfigSimilar(MdIaAdmConfigSimilarDTO $objMdIaAdmConfigSimilarDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmConfigSimilarDTO->getNumIdMdIaAdmConfigSimilar())) {
-            $objInfraException->adicionarValidacao('IdMdIaAdmConfigSimilar n„o informado.');
+            $objInfraException->adicionarValidacao('IdMdIaAdmConfigSimilar n√£o informado.');
         }
     }
 
     private function validarNumQtdProcessListagem(MdIaAdmConfigSimilarDTO $objMdIaAdmConfigSimilarDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmConfigSimilarDTO->getNumQtdProcessListagem())) {
-            $objInfraException->adicionarValidacao('Quantidade de Processos para Listagem n„o informada.');
+            $objInfraException->adicionarValidacao('Quantidade de Processos para Listagem n√£o informada.');
         }
     }
 
     private function validarStrOrientacoesGerais(MdIaAdmConfigSimilarDTO $objMdIaAdmConfigSimilarDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmConfigSimilarDTO->getStrOrientacoesGerais())) {
-            $objInfraException->adicionarValidacao('OrientaÁıes Gerais n„o informada.');
+            $objInfraException->adicionarValidacao('Orienta√ß√µes Gerais n√£o informada.');
         } else {
             $objMdIaAdmConfigSimilarDTO->setStrOrientacoesGerais(trim($objMdIaAdmConfigSimilarDTO->getStrOrientacoesGerais()));
         }
@@ -48,14 +48,14 @@ class MdIaAdmConfigSimilarRN extends InfraRN
     private function validarNumPercRelevContDoc(MdIaAdmConfigSimilarDTO $objMdIaAdmConfigSimilarDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmConfigSimilarDTO->getNumPercRelevContDoc())) {
-            $objInfraException->adicionarValidacao('Percentual de Relev‚ncia do Conte˙do dos Documentos n„o informado.');
+            $objInfraException->adicionarValidacao('Percentual de Relev√¢ncia do Conte√∫do dos Documentos n√£o informado.');
         }
     }
 
     private function validarNumPercRelevMetadados(MdIaAdmConfigSimilarDTO $objMdIaAdmConfigSimilarDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmConfigSimilarDTO->getNumPercRelevMetadados())) {
-            $objInfraException->adicionarValidacao('Percentual de Relev‚ncia dos Metadados n„o informado.');
+            $objInfraException->adicionarValidacao('Percentual de Relev√¢ncia dos Metadados n√£o informado.');
         }
     }
 

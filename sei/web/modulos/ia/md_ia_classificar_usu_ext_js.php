@@ -77,8 +77,8 @@
 
         $.ajax({
            url: url,
-           type: 'POST', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-           dataType: "json",//Tipo de dado que ser· enviado ao servidor
+           type: 'POST', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+           dataType: "json",//Tipo de dado que ser√° enviado ao servidor
            data: params, // Enviando o JSON com o nome de itens
            async: false,
            success: function (data) {

@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 27/03/2024 - criado por sabino.colab
  *
- * Vers„o do Gerador de CÛdigo: 1.43.3
+ * Vers√£o do Gerador de C√≥digo: 1.43.3
  */
 
 require_once dirname(__FILE__) . '../../../../SEI.php';
@@ -25,7 +25,7 @@ class MdIaAdmCfgAssiIaUsuRN extends InfraRN
     private function validarNumIdMdIaAdmConfigAssistIA(MdIaAdmCfgAssiIaUsuDTO $objMdIaAdmCfgAssiIaUsuDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmCfgAssiIaUsuDTO->getNumIdMdIaAdmConfigAssistIA())) {
-            $objInfraException->adicionarValidacao(' n„o informad.');
+            $objInfraException->adicionarValidacao(' n√£o informad.');
         }
     }
 
@@ -56,7 +56,7 @@ class MdIaAdmCfgAssiIaUsuRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cadastrando Usu·rio ConfiguraÁ„o Assistente IA.', $e);
+            throw new InfraException('Erro cadastrando Usu√°rio Configura√ß√£o Assistente IA.', $e);
         }
     }
 
@@ -82,7 +82,7 @@ class MdIaAdmCfgAssiIaUsuRN extends InfraRN
             $objMdIaAdmCfgAssiIaUsuBD->alterar($objMdIaAdmCfgAssiIaUsuDTO);
 
         } catch (Exception $e) {
-            throw new InfraException('Erro alterando Usu·rio ConfiguraÁ„o Assistente IA.', $e);
+            throw new InfraException('Erro alterando Usu√°rio Configura√ß√£o Assistente IA.', $e);
         }
     }
 
@@ -103,7 +103,7 @@ class MdIaAdmCfgAssiIaUsuRN extends InfraRN
             }
 
         } catch (Exception $e) {
-            throw new InfraException('Erro excluindo Usu·rio ConfiguraÁ„o Assistente IA.', $e);
+            throw new InfraException('Erro excluindo Usu√°rio Configura√ß√£o Assistente IA.', $e);
         }
     }
 
@@ -125,7 +125,7 @@ class MdIaAdmCfgAssiIaUsuRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando Usu·rio ConfiguraÁ„o Assistente IA.', $e);
+            throw new InfraException('Erro consultando Usu√°rio Configura√ß√£o Assistente IA.', $e);
         }
     }
 
@@ -148,7 +148,7 @@ class MdIaAdmCfgAssiIaUsuRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro listando Usu·rios ConfiguraÁ„o Assistente IA.', $e);
+            throw new InfraException('Erro listando Usu√°rios Configura√ß√£o Assistente IA.', $e);
         }
     }
 
@@ -168,7 +168,7 @@ class MdIaAdmCfgAssiIaUsuRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro contando Usu·rios ConfiguraÁ„o Assistente IA.', $e);
+            throw new InfraException('Erro contando Usu√°rios Configura√ß√£o Assistente IA.', $e);
         }
     }
 
@@ -210,7 +210,7 @@ class MdIaAdmCfgAssiIaUsuRN extends InfraRN
           }
 
         }catch(Exception $e){
-          throw new InfraException('Erro desativando Usu·rio ConfiguraÁ„o Assistente IA.',$e);
+          throw new InfraException('Erro desativando Usu√°rio Configura√ß√£o Assistente IA.',$e);
         }
       }
 
@@ -230,7 +230,7 @@ class MdIaAdmCfgAssiIaUsuRN extends InfraRN
           }
 
         }catch(Exception $e){
-          throw new InfraException('Erro reativando Usu·rio ConfiguraÁ„o Assistente IA.',$e);
+          throw new InfraException('Erro reativando Usu√°rio Configura√ß√£o Assistente IA.',$e);
         }
       }
 
@@ -249,7 +249,7 @@ class MdIaAdmCfgAssiIaUsuRN extends InfraRN
 
           return $ret;
         }catch(Exception $e){
-          throw new InfraException('Erro bloqueando Usu·rio ConfiguraÁ„o Assistente IA.',$e);
+          throw new InfraException('Erro bloqueando Usu√°rio Configura√ß√£o Assistente IA.',$e);
         }
       }
 

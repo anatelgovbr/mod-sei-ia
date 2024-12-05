@@ -30,7 +30,7 @@ try {
             break;
 
         default:
-            throw new InfraException("AÁ„o '" . $_GET['acao'] . "' n„o reconhecida.");
+            throw new InfraException("A√ß√£o '" . $_GET['acao'] . "' n√£o reconhecida.");
     }
 
     $arrComandos = array();
@@ -98,9 +98,9 @@ try {
         }
         $strResultado .= '<th class="infraTh" width="10%">ID</th>' . "\n";
         $strResultado .= '<th class="infraTh text-center" width="10%">Sigla</th>' . "\n";
-        $strResultado .= '<th class="infraTh text-left">DescriÁ„o</th>' . "\n";
-        $strResultado .= '<th class="infraTh text-center" width="5%">”rg„o</th>' . "\n";
-        $strResultado .= '<th class="infraTh" width="15%">AÁıes</th>' . "\n";
+        $strResultado .= '<th class="infraTh text-left">Descri√ß√£o</th>' . "\n";
+        $strResultado .= '<th class="infraTh text-center" width="5%">√ìrg√£o</th>' . "\n";
+        $strResultado .= '<th class="infraTh" width="15%">A√ß√µes</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
         foreach ($arrObjUnidadeDTO as $i => $item) {
@@ -163,7 +163,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
 /*
   if ($bolAcaoDesativar) {
   function acaoDesativar(id,desc){
-  if (confirm("Confirma desativaÁ„o da Unidade \""+desc+"\"?")){
+  if (confirm("Confirma desativa√ß√£o da Unidade \""+desc+"\"?")){
   document.getElementById('hdnInfraItemId').value=id;
   document.getElementById('frmUnidadeLista').action='<?= $strLinkDesativar ?>';
   document.getElementById('frmUnidadeLista').submit();
@@ -175,7 +175,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
   alert('Nenhuma Unidade selecionada.');
   return;
   }
-  if (confirm("Confirma desativaÁ„o das Unidades selecionadas?")){
+  if (confirm("Confirma desativa√ß√£o das Unidades selecionadas?")){
   document.getElementById('hdnInfraItemId').value='';
   document.getElementById('frmUnidadeLista').action='<?= $strLinkDesativar ?>';
   document.getElementById('frmUnidadeLista').submit();
@@ -184,7 +184,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
   }
   if ($bolAcaoReativar) { ?>
   function acaoReativar(id,desc){
-  if (confirm("Confirma reativaÁ„o da Unidade \""+desc+"\"?")){
+  if (confirm("Confirma reativa√ß√£o da Unidade \""+desc+"\"?")){
   document.getElementById('hdnInfraItemId').value=id;
   document.getElementById('frmUnidadeLista').action='<?= $strLinkReativar ?>';
   document.getElementById('frmUnidadeLista').submit();
@@ -196,7 +196,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
   alert('Nenhuma Unidade selecionada.');
   return;
   }
-  if (confirm("Confirma reativaÁ„o das Unidades selecionadas?")){
+  if (confirm("Confirma reativa√ß√£o das Unidades selecionadas?")){
   document.getElementById('hdnInfraItemId').value='';
   document.getElementById('frmUnidadeLista').action='<?= $strLinkReativar ?>';
   document.getElementById('frmUnidadeLista').submit();
@@ -205,7 +205,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
   }
   if ($bolAcaoExcluir) { ?>
   function acaoExcluir(id,desc){
-  if (confirm("Confirma exclus„o da Unidade \""+desc+"\"?")){
+  if (confirm("Confirma exclus√£o da Unidade \""+desc+"\"?")){
   document.getElementById('hdnInfraItemId').value=id;
   document.getElementById('frmUnidadeLista').action='<?= $strLinkExcluir ?>';
   document.getElementById('frmUnidadeLista').submit();
@@ -217,7 +217,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
   alert('Nenhuma Unidade selecionada.');
   return;
   }
-  if (confirm("Confirma exclus„o das Unidades selecionadas?")){
+  if (confirm("Confirma exclus√£o das Unidades selecionadas?")){
   document.getElementById('hdnInfraItemId').value='';
   document.getElementById('frmUnidadeLista').action='<?= $strLinkExcluir ?>';
   document.getElementById('frmUnidadeLista').submit();
@@ -242,7 +242,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <div class="row">
             <div class="col-3">
                 <div class="form-group">
-                    <label id="lblOrgao" for="selOrgao" accesskey="o" class="infraLabelOpcional">”rg„<span
+                    <label id="lblOrgao" for="selOrgao" accesskey="o" class="infraLabelOpcional">√ìrg√£<span
                                 class="infraTeclaAtalho">o</span>:</label>
                     <select id="selOrgao" name="selOrgao" onchange="this.form.submit();"
                             class="infraSelect form-control"
@@ -262,7 +262,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="col-6">
                 <div class="form-group">
                     <label id="lblDescricaoUnidade" for="txtDescricaoUnidade"
-                           class="infraLabelOpcional">DescriÁ„o:</label>
+                           class="infraLabelOpcional">Descri√ß√£o:</label>
                     <input type="text" id="txtDescricaoUnidade" name="txtDescricaoUnidade"
                            class="infraText form-control"
                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"

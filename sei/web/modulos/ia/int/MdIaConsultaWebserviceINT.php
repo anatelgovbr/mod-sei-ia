@@ -98,10 +98,10 @@ class MdIaConsultaWebserviceINT extends InfraRN
 
             $this->numSeg = InfraUtil::verificarTempoProcessamento($this->numSeg);
 
-            // Substitui a vírgula por um ponto
+            // Substitui a vÃ­rgula por um ponto
             $tempoExecucao = str_replace(",", ".", $this->numSeg);
 
-            // Converte o número para um inteiro
+            // Converte o nÃºmero para um inteiro
             $tempoExecucaoInteiro = intval($tempoExecucao);
 
             $objMdIaInteracaoChatRN = new MdIaInteracaoChatRN();
@@ -117,10 +117,10 @@ class MdIaConsultaWebserviceINT extends InfraRN
 
             $this->numSeg = InfraUtil::verificarTempoProcessamento($this->numSeg);
 
-            // Substitui a vírgula por um ponto
+            // Substitui a vÃ­rgula por um ponto
             $tempoExecucao = str_replace(",", ".", $this->numSeg);
 
-            // Converte o número para um inteiro
+            // Converte o nÃºmero para um inteiro
             $tempoExecucaoInteiro = intval($tempoExecucao);
 
             $objMdIaInteracaoChatRN = new MdIaInteracaoChatRN();

@@ -8,12 +8,12 @@
 
     function validarCadastro() {
         if (infraTrim(document.getElementById('txtOrientacoesGerais').value) == '') {
-            alert('Informe a Orientações Gerais.');
+            alert('Informe a OrientaÃ§Ãµes Gerais.');
             document.getElementById('txtOrientacoesGerais').focus();
             return false;
         }
         if (infraTrim(document.getElementById('hdnIdUnidades').value) == '') {
-            alert('É necessário selecionar no minímo uma Unidade para alertar pendência ou divergência.');
+            alert('Ã‰ necessÃ¡rio selecionar no minÃ­mo uma Unidade para alertar pendÃªncia ou divergÃªncia.');
             document.getElementById('txtUnidadeAlerta').focus();
             return false;
         }

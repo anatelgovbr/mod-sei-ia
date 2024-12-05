@@ -1,6 +1,6 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 27/12/2023 - criado por sabino.colab
  *
@@ -54,11 +54,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     <div id="divTituloModal" class="infraBarraLocalizacao mb-3">
         <div class="row">
             <div class="col-8">
-                <h4 class="font-weight-bold">Metas dos Objetivos de Desenvolvimento Sustent·vel da ONU</h4>
+                <h4 class="font-weight-bold">Metas dos Objetivos de Desenvolvimento Sustent√°vel da ONU</h4>
             </div>
             <div class="col-4 text-right botoes" style="display: none">
-                <button type="button" accesskey="H" name="btnHistorico" id="btnHistorico" value="HistÛrico" onclick="exibirHistorico()" class="infraButton"><span class="infraTeclaAtalho">H</span>istÛrico</button>
-                <button type="button" accesskey="M" name="btnMetas" id="btnMetas" value="MÈtas" onclick="exibirMetas()" class="infraButton" style="display: none"><span class="infraTeclaAtalho">V</span>oltar</button>
+                <button type="button" accesskey="H" name="btnHistorico" id="btnHistorico" value="Hist√≥rico" onclick="exibirHistorico()" class="infraButton"><span class="infraTeclaAtalho">H</span>ist√≥rico</button>
+                <button type="button" accesskey="M" name="btnMetas" id="btnMetas" value="M√©tas" onclick="exibirMetas()" class="infraButton" style="display: none"><span class="infraTeclaAtalho">V</span>oltar</button>
                 <button type="button" accesskey="S" name="btnSalvar" id="btnSalvar" value="Salvar"  onclick="salvarClassificacaoOds()" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>
                 <button type="button" accesskey="C" name="btnFechar" id="btnFechar"   onclick="fecharModal()" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>
             </div>

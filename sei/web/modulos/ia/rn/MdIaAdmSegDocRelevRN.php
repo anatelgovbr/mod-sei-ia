@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 13/07/2023 - criado por sabino.colab
  *
- * Vers„o do Gerador de CÛdigo: 1.43.2
+ * Vers√£o do Gerador de C√≥digo: 1.43.2
  */
 
 require_once dirname(__FILE__) . '../../../../SEI.php';
@@ -25,14 +25,14 @@ class MdIaAdmSegDocRelevRN extends InfraRN
     private function validarNumIdMdIaAdmDocRelev(MdIaAdmSegDocRelevDTO $objMdIaAdmSegDocRelevDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmSegDocRelevDTO->getNumIdMdIaAdmDocRelev())) {
-            $objInfraException->adicionarValidacao('Id Documento Relevante n„o informado.');
+            $objInfraException->adicionarValidacao('Id Documento Relevante n√£o informado.');
         }
     }
 
     private function validarStrSegmentoDocumento(MdIaAdmSegDocRelevDTO $objMdIaAdmSegDocRelevDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmSegDocRelevDTO->getStrSegmentoDocumento())) {
-            $objInfraException->adicionarValidacao('Segmento do Documento n„o informado.');
+            $objInfraException->adicionarValidacao('Segmento do Documento n√£o informado.');
         } else {
             $objMdIaAdmSegDocRelevDTO->setStrSegmentoDocumento(trim($objMdIaAdmSegDocRelevDTO->getStrSegmentoDocumento()));
 
@@ -45,7 +45,7 @@ class MdIaAdmSegDocRelevRN extends InfraRN
     private function validarNumPercentualRelevancia(MdIaAdmSegDocRelevDTO $objMdIaAdmSegDocRelevDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmSegDocRelevDTO->getNumPercentualRelevancia())) {
-            $objInfraException->adicionarValidacao('Percentual de Relev‚ncia n„o informado.');
+            $objInfraException->adicionarValidacao('Percentual de Relev√¢ncia n√£o informado.');
         }
     }
 
@@ -70,7 +70,7 @@ class MdIaAdmSegDocRelevRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cadastrando Relev‚ncia do Segmento do Documento.', $e);
+            throw new InfraException('Erro cadastrando Relev√¢ncia do Segmento do Documento.', $e);
         }
     }
 
@@ -99,7 +99,7 @@ class MdIaAdmSegDocRelevRN extends InfraRN
             $objMdIaAdmSegDocRelevBD->alterar($objMdIaAdmSegDocRelevDTO);
 
         } catch (Exception $e) {
-            throw new InfraException('Erro alterando Relev‚ncia do Segmento do Documento.', $e);
+            throw new InfraException('Erro alterando Relev√¢ncia do Segmento do Documento.', $e);
         }
     }
 
@@ -120,7 +120,7 @@ class MdIaAdmSegDocRelevRN extends InfraRN
             }
 
         } catch (Exception $e) {
-            throw new InfraException('Erro excluindo Relev‚ncia do Segmento do Documento.', $e);
+            throw new InfraException('Erro excluindo Relev√¢ncia do Segmento do Documento.', $e);
         }
     }
 
@@ -142,7 +142,7 @@ class MdIaAdmSegDocRelevRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando Relev‚ncia do Segmento do Documento.', $e);
+            throw new InfraException('Erro consultando Relev√¢ncia do Segmento do Documento.', $e);
         }
     }
 
@@ -165,7 +165,7 @@ class MdIaAdmSegDocRelevRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro listando Relev‚ncia do Segmentos dos Documentos.', $e);
+            throw new InfraException('Erro listando Relev√¢ncia do Segmentos dos Documentos.', $e);
         }
     }
 
@@ -185,7 +185,7 @@ class MdIaAdmSegDocRelevRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro contando Relev‚ncia do Segmentos dos Documentos.', $e);
+            throw new InfraException('Erro contando Relev√¢ncia do Segmentos dos Documentos.', $e);
         }
     }
 

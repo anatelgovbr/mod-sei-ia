@@ -73,6 +73,10 @@
             content: "Enviar Mensagem",
         });
 
+        tippy("#botaoPromptFavorito", {
+            content: "Promps Favoritos",
+        });
+
         tippy("#adicionarTopico", {
             content: "Novo Tópico",
         });
@@ -190,9 +194,10 @@
     }
 
     function fecharChat() {
-        document.getElementById('widget-open').checked = false;
+        if(document.getElementById('widget-open')) {
+            document.getElementById('widget-open').checked = false;
+        }
     }
-
     function generateUniqueID() {
         var timestamp = Date.now();
         var random = Math.floor(Math.random() * 1000);
@@ -203,7 +208,7 @@
         return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    function resolveItensEnvioMensagem(mensagem, procedimento = "", linkAcesso = "") {
+    function resolveItensEnvioMensagem(mensagem, procedimento = "", linkAcesso = "", idInteracao = "", favorito = "") {
         mensagem = safe_tags(mensagem);
         mensagem = mensagem.replace(/\n/g, "<br>");
         mensagem = mensagem.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
@@ -218,9 +223,19 @@
 
         var respostaMontada = '<div class="interaction agent"><div class="mensagemIdentificador"><div class="iconeIdentificacao"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#dc3545" d="M399 384.2C376.9 345.8 335.4 320 288 320H224c-47.4 0-88.9 25.8-111 64.2c35.2 39.2 86.2 63.8 143 63.8s107.8-24.7 143-63.8zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 16a72 72 0 1 0 0-144 72 72 0 1 0 0 144z"/></svg></div><div class="input" id="textoPuro' + uniqueID + '">' + mensagem + '</div></div>';
         var iconesGerais = '<div class="acoes_assistente">' +
-            '<a onclick="copiar(' + uniqueID + ')"><div class="copiar" id="copiarResposta' + uniqueID + '"></div></a></div>';
+            '<a onclick="copiar(' + uniqueID + ')"><div class="copiar" id="copiarResposta' + uniqueID + '"></div></a>';
 
-        var perguntaCliente = respostaMontada + iconesGerais;
+        var iconeFavoritarChat = "";
+
+        if(idInteracao != "") {
+            if(favorito) {
+                iconeFavoritarChat = '<a onclick="favoritarChat(' + idInteracao + ')"><div class="promptFavoritado" id="promptFavoritado' + idInteracao + '"></div></a></div>';
+            } else {
+                iconeFavoritarChat = '<a onclick="favoritarChat(' + idInteracao + ')"><div class="favoritarPrompt" id="favoritarPrompt' + idInteracao + '"></div></a></div>';
+            }
+        }
+
+        var perguntaCliente = respostaMontada + iconesGerais + iconeFavoritarChat;
         divPai.append(perguntaCliente);
         document.getElementById('conversa').scrollBy(0, 5000);
         $("#mensagem").val("");
@@ -1022,6 +1037,8 @@
                             });
                         }
                     });
+                } else {
+                    $("#listagemTopicos").html("");
                 }
                 selecionaTopico(topicoAtivo);
                 tippy(".rename", {
@@ -1072,7 +1089,7 @@
                 $("#conversa").html("");
                 insereBoasVindas(divpai, divfilho);
                 data.forEach(function (interacao) {
-                    resolveItensEnvioMensagem(interacao["pergunta"], interacao["procedimento_citado"], interacao["link_acesso"]);
+                    resolveItensEnvioMensagem(interacao["pergunta"], interacao["procedimento_citado"], interacao["link_acesso"], interacao["id_interacao"], interacao["favorito"]);
                     var divfilho = document.createElement('div');
                     if (interacao["resposta"] != "" || interacao["status_requisicao"] > 0) {
                         if (interacao["status_requisicao"] == "200" && interacao["resposta"] != "") {
@@ -1203,6 +1220,12 @@
                 console.log(err);
             }
         });
+    }
+    function favoritarChat(idPrompt) {
+        $("#hdnIdPromptFavorito").val(idPrompt);
+        infraAbrirJanelaModal("<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_prompts_favoritos_cadastrar') ?>",
+            900,
+            700, false);
     }
 </script>
 
