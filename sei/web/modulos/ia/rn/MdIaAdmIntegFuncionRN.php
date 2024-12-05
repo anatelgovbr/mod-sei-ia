@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 03/09/2024 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.41.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.41.0
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -28,7 +28,7 @@ class MdIaAdmIntegFuncionRN extends InfraRN
     private function validarStrNome(MdIaAdmIntegFuncionDTO $objMdIaAdmIntegFuncionDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmIntegFuncionDTO->getStrNome())) {
-            $objInfraException->adicionarValidacao('Funcionalidade não informad.');
+            $objInfraException->adicionarValidacao('Funcionalidade nÃ£o informad.');
         } else {
             $objMdIaAdmIntegFuncionDTO->setStrNome(trim($objMdIaAdmIntegFuncionDTO->getStrNome()));
 

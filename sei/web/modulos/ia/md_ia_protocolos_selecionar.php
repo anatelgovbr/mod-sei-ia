@@ -1,6 +1,6 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 21/11/2023 - criado por sabino.colab
  *
@@ -32,7 +32,7 @@ try {
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
     $arrComandos = array();
@@ -45,7 +45,7 @@ try {
     $arr = MdIaRecursoINT::listarDocumentosProcesso($_GET['id_procedimento']);
 
     if (count($arr) == 0) {
-        throw new InfraException('Processo não encontrado.');
+        throw new InfraException('Processo nÃ£o encontrado.');
     }
 
     $objProcedimentoDTO = $arr[0];
@@ -124,7 +124,7 @@ try {
             '<th class="infraTh" width="20%">Protocolo</th>' . "\n" .
             '<th class="infraTh">Tipo</th>' . "\n" .
             '<th class="infraTh" width="20%">Unidade</th>' . "\n" .
-            (PaginaSEI::getInstance()->isBolPaginaSelecao() ? '<th class="infraTh" width="10%">Ações</th>' : '') . "\n" .
+            (PaginaSEI::getInstance()->isBolPaginaSelecao() ? '<th class="infraTh" width="10%">AÃ§Ãµes</th>' : '') . "\n" .
             '</tr>' . $strResultado . '</table>';
     }
 

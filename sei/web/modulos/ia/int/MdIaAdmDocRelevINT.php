@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 13/07/2023 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.2
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.2
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -82,7 +82,7 @@ class MdIaAdmDocRelevINT extends InfraINT
 
         $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
         $arrObjMdIaAdmDocRelevDTO = $objMdIaAdmDocRelevRN->listar($objMdIaAdmDocRelevDTO);
-        return parent::montarSelectArrInfraDTO(0, "Selecione uma opção", $selAplicabilidade["valorItemSelecionado"], $arrObjMdIaAdmDocRelevDTO, 'IdSerie', 'NomeSerie');
+        return parent::montarSelectArrInfraDTO(0, "Selecione uma opÃ§Ã£o", $selAplicabilidade["valorItemSelecionado"], $arrObjMdIaAdmDocRelevDTO, 'IdSerie', 'NomeSerie');
     }
     public static function retornaSelectTipoProcessoCadastrado($tipoDocumento)
     {
@@ -107,7 +107,7 @@ class MdIaAdmDocRelevINT extends InfraINT
 
         $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
         $arrObjMdIaAdmDocRelevDTO = $objMdIaAdmDocRelevRN->listar($objMdIaAdmDocRelevDTO);
-        return parent::montarSelectArrInfraDTO(0, "Selecione uma opção", $dados["selTipoDocumento"], $arrObjMdIaAdmDocRelevDTO, 'IdSerie', 'NomeSerie');
+        return parent::montarSelectArrInfraDTO(0, "Selecione uma opÃ§Ã£o", $dados["selTipoDocumento"], $arrObjMdIaAdmDocRelevDTO, 'IdSerie', 'NomeSerie');
     }
     public static function retornaComboboxTipoProcessos($dados) {
 
@@ -128,7 +128,7 @@ class MdIaAdmDocRelevINT extends InfraINT
             }
             array_push($arrayTiposProcessoCorrigido, $objMdIaAdmDocRelevDTO);
         }
-        return parent::montarSelectArrInfraDTO(0, "Selecione uma opção", $dados["selTipoProcesso"], $arrayTiposProcessoCorrigido, 'IdTipoProcedimento', 'NomeTipoProcedimento');
+        return parent::montarSelectArrInfraDTO(0, "Selecione uma opÃ§Ã£o", $dados["selTipoProcesso"], $arrayTiposProcessoCorrigido, 'IdTipoProcedimento', 'NomeTipoProcedimento');
     }
     public static function validarReativacao($dados) {
 
@@ -189,7 +189,7 @@ class MdIaAdmDocRelevINT extends InfraINT
                 $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
                 $arrObjMdIaAdmDocRelevDTO = $objMdIaAdmDocRelevRN->listar($objMdIaAdmDocRelevDTO);
                 if($arrObjMdIaAdmDocRelevDTO) {
-                    return array("result" => utf8_encode("O Tipo de Processo Específico <strong>".$arrObjMdIaAdmDocRelevDTO[0]->getStrNomeTipoProcedimento()."</strong> já existe no cadastro de Documentos Relevantes, porém se encontra com a situação desativado. Para utilizar o mesmo você deve realizar a reativação do Processo Específico informado."));
+                    return array("result" => utf8_encode("O Tipo de Processo EspecÃ­fico <strong>".$arrObjMdIaAdmDocRelevDTO[0]->getStrNomeTipoProcedimento()."</strong> jÃ¡ existe no cadastro de Documentos Relevantes, porÃ©m se encontra com a situaÃ§Ã£o desativado. Para utilizar o mesmo vocÃª deve realizar a reativaÃ§Ã£o do Processo EspecÃ­fico informado."));
                 }
             }
         } else {
@@ -202,7 +202,7 @@ class MdIaAdmDocRelevINT extends InfraINT
             $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
             $arrObjMdIaAdmDocRelevDTO = $objMdIaAdmDocRelevRN->listar($objMdIaAdmDocRelevDTO);
             if($arrObjMdIaAdmDocRelevDTO) {
-                return array("result" => utf8_encode("A Aplicabilidade combinada com o Tipo de Documento informado já existe no cadastro de Documentos Relevantes sendo Relevante para todos os Tipos de Processos, porém se encontra com a situação desativado. Para utilizar o mesmo você deve realizar a reativação."));
+                return array("result" => utf8_encode("A Aplicabilidade combinada com o Tipo de Documento informado jÃ¡ existe no cadastro de Documentos Relevantes sendo Relevante para todos os Tipos de Processos, porÃ©m se encontra com a situaÃ§Ã£o desativado. Para utilizar o mesmo vocÃª deve realizar a reativaÃ§Ã£o."));
             }
         }
         return array("result" => "false");

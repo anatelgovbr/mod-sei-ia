@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 14/09/2023 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.1
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.1
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -17,7 +17,7 @@ class MdIaAdmIntegracaoRN extends InfraRN
     public static $TP_INTEGRACAO_SOAP = 'SO';
 
     public static $AUT_VAZIA = '1';
-    public static $STR_AUT_VAZIA = 'Sem Autenticação';
+    public static $STR_AUT_VAZIA = 'Sem AutenticaÃ§Ã£o';
     public static $AUT_HEADER_TOKEN = '2';
     public static $STR_AUT_HEADER_TOKEN = 'Header Authentication by Token';
     public static $AUT_BODY_TOKEN = '3';
@@ -53,7 +53,7 @@ class MdIaAdmIntegracaoRN extends InfraRN
     private function validarStrNome(MdIaAdmIntegracaoDTO $objMdIaAdmIntegracaoDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmIntegracaoDTO->getStrNome())) {
-            $objInfraException->adicionarValidacao('Nome não informado.');
+            $objInfraException->adicionarValidacao('Nome nÃ£o informado.');
         } else {
             $objMdIaAdmIntegracaoDTO->setStrNome(trim($objMdIaAdmIntegracaoDTO->getStrNome()));
 
@@ -66,7 +66,7 @@ class MdIaAdmIntegracaoRN extends InfraRN
     private function validarNumIdMdIaAdmIntegFuncion(MdIaAdmIntegracaoDTO $objMdIaAdmIntegracaoDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmIntegracaoDTO->getNumIdMdIaAdmIntegFuncion())) {
-            $objInfraException->adicionarValidacao('IdMdIaAdmIntegFuncion não informada.');
+            $objInfraException->adicionarValidacao('IdMdIaAdmIntegFuncion nÃ£o informada.');
         }
     }
 
@@ -87,12 +87,12 @@ class MdIaAdmIntegracaoRN extends InfraRN
     private function validarStrOperacaoWsdl(MdIaAdmIntegracaoDTO $objMdIaAdmIntegracaoDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmIntegracaoDTO->getStrOperacaoWsdl())) {
-            $objInfraException->adicionarValidacao('Operação não informada.');
+            $objInfraException->adicionarValidacao('OperaÃ§Ã£o nÃ£o informada.');
         } else {
             $objMdIaAdmIntegracaoDTO->setStrOperacaoWsdl(trim($objMdIaAdmIntegracaoDTO->getStrOperacaoWsdl()));
 
             if (strlen($objMdIaAdmIntegracaoDTO->getStrOperacaoWsdl()) > 250) {
-                $objInfraException->adicionarValidacao('Operação possui tamanho superior a 250 caracteres.');
+                $objInfraException->adicionarValidacao('OperaÃ§Ã£o possui tamanho superior a 250 caracteres.');
             }
         }
     }
@@ -104,7 +104,7 @@ class MdIaAdmIntegracaoRN extends InfraRN
             return $this->processaCadastrarAlterar(array($objMdIaAdmIntegracaoDTO, "cadastrar"));
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cadastrando Integração.', $e);
+            throw new InfraException('Erro cadastrando IntegraÃ§Ã£o.', $e);
         }
     }
 
@@ -115,7 +115,7 @@ class MdIaAdmIntegracaoRN extends InfraRN
             return $this->processaCadastrarAlterar(array($objMdIaAdmIntegracaoDTO, "alterar"));
 
         } catch (Exception $e) {
-            throw new InfraException('Erro alterando Integração.', $e);
+            throw new InfraException('Erro alterando IntegraÃ§Ã£o.', $e);
         }
     }
 
@@ -166,7 +166,7 @@ class MdIaAdmIntegracaoRN extends InfraRN
             }
 
         } catch (Exception $e) {
-            throw new InfraException('Erro excluindo Integração.', $e);
+            throw new InfraException('Erro excluindo IntegraÃ§Ã£o.', $e);
         }
     }
 
@@ -186,7 +186,7 @@ class MdIaAdmIntegracaoRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando Integração.', $e);
+            throw new InfraException('Erro consultando IntegraÃ§Ã£o.', $e);
         }
     }
 
@@ -207,7 +207,7 @@ class MdIaAdmIntegracaoRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro listando Integrações.', $e);
+            throw new InfraException('Erro listando IntegraÃ§Ãµes.', $e);
         }
     }
 
@@ -227,7 +227,7 @@ class MdIaAdmIntegracaoRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro contando Integrações.', $e);
+            throw new InfraException('Erro contando IntegraÃ§Ãµes.', $e);
         }
     }
 
@@ -248,7 +248,7 @@ class MdIaAdmIntegracaoRN extends InfraRN
             }
 
         } catch (Exception $e) {
-            throw new InfraException('Erro desativando Integração.', $e);
+            throw new InfraException('Erro desativando IntegraÃ§Ã£o.', $e);
         }
     }
 
@@ -269,7 +269,7 @@ class MdIaAdmIntegracaoRN extends InfraRN
             }
 
         } catch (Exception $e) {
-            throw new InfraException('Erro reativando Integração.', $e);
+            throw new InfraException('Erro reativando IntegraÃ§Ã£o.', $e);
         }
     }
 
@@ -289,7 +289,7 @@ class MdIaAdmIntegracaoRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro bloqueando Integração.', $e);
+            throw new InfraException('Erro bloqueando IntegraÃ§Ã£o.', $e);
         }
     }
 }

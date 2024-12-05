@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 29/12/2023 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.3
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.3
  */
 
 require_once dirname(__FILE__) . '../../../../SEI.php';
@@ -12,10 +12,10 @@ require_once dirname(__FILE__) . '../../../../SEI.php';
 class MdIaClassificacaoOdsRN extends InfraRN
 {
     public static $MODULO_IA_ID_USUARIO_SISTEMA = 'MODULO_IA_ID_USUARIO_SISTEMA';
-    public static $MSG_SUCESSO_RETORNO_WS       = 'Classificação realizada com sucesso';
-    public static $MSG_ERROR_JA_CADASTRADA      = 'Meta já cadastrada';
-    public static $MSG_ERROR_JA_SUGERIDA_IA     = 'Meta já sugerida pela IA';
-	public static $MSG_ERROR_JA_SUGERIDA_UE     = 'Meta já sugerida por Usuário Externo';
+    public static $MSG_SUCESSO_RETORNO_WS       = 'ClassificaÃ§Ã£o realizada com sucesso';
+    public static $MSG_ERROR_JA_CADASTRADA      = 'Meta jÃ¡ cadastrada';
+    public static $MSG_ERROR_JA_SUGERIDA_IA     = 'Meta jÃ¡ sugerida pela IA';
+	public static $MSG_ERROR_JA_SUGERIDA_UE     = 'Meta jÃ¡ sugerida por UsuÃ¡rio Externo';
     public static $MSG_SUCESSO_RETORNO          = 'SUCCESS';
     public static $MSG_ERROR_RETORNO            = 'ERROR';
 
@@ -27,7 +27,7 @@ class MdIaClassificacaoOdsRN extends InfraRN
     public static $STR_SIM = 'Sim';
 
     public static $NAO = 'N';
-    public static $STR_NAO = 'Não';
+    public static $STR_NAO = 'NÃ£o';
 
     public function __construct()
     {
@@ -42,19 +42,19 @@ class MdIaClassificacaoOdsRN extends InfraRN
     private function validarNumIdProcedimento(MdIaClassificacaoOdsDTO $objMdIaClassificacaoOdsDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaClassificacaoOdsDTO->getNumIdProcedimento())) {
-            $objInfraException->adicionarValidacao('Id Procedimento não informado.');
+            $objInfraException->adicionarValidacao('Id Procedimento nÃ£o informado.');
         }
     }
 
     private function validarStrStaTipoUltimoUsuario(MdIaClassificacaoOdsDTO $objMdIaClassificacaoOdsDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaClassificacaoOdsDTO->getStrStaTipoUltimoUsuario())) {
-            $objInfraException->adicionarValidacao(' tipo usuário não informado.');
+            $objInfraException->adicionarValidacao(' tipo usuÃ¡rio nÃ£o informado.');
         } else {
             $objMdIaClassificacaoOdsDTO->setStrStaTipoUltimoUsuario(trim($objMdIaClassificacaoOdsDTO->getStrStaTipoUltimoUsuario()));
 
             if (strlen($objMdIaClassificacaoOdsDTO->getStrStaTipoUltimoUsuario()) > 1) {
-                $objInfraException->adicionarValidacao('  tipo usuário possui tamanho superior a 1 caractere.');
+                $objInfraException->adicionarValidacao('  tipo usuÃ¡rio possui tamanho superior a 1 caractere.');
             }
         }
     }
@@ -65,7 +65,7 @@ class MdIaClassificacaoOdsRN extends InfraRN
             $objMdIaClassificacaoOdsDTO->setDthAlteracao(null);
         } else {
             if (!InfraData::validarDataHora($objMdIaClassificacaoOdsDTO->getDthAlteracao())) {
-                $objInfraException->adicionarValidacao('Data Alteração inválida.');
+                $objInfraException->adicionarValidacao('Data AlteraÃ§Ã£o invÃ¡lida.');
             }
         }
     }
@@ -91,7 +91,7 @@ class MdIaClassificacaoOdsRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cadastrando Avaliação.', $e);
+            throw new InfraException('Erro cadastrando AvaliaÃ§Ã£o.', $e);
         }
     }
 
@@ -122,7 +122,7 @@ class MdIaClassificacaoOdsRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro alterando Avaliação.', $e);
+            throw new InfraException('Erro alterando AvaliaÃ§Ã£o.', $e);
         }
     }
 
@@ -143,7 +143,7 @@ class MdIaClassificacaoOdsRN extends InfraRN
             }
 
         } catch (Exception $e) {
-            throw new InfraException('Erro excluindo Avaliação.', $e);
+            throw new InfraException('Erro excluindo AvaliaÃ§Ã£o.', $e);
         }
     }
 
@@ -166,7 +166,7 @@ class MdIaClassificacaoOdsRN extends InfraRN
             return $ret;
         } catch (Exception $e) {
 
-            throw new InfraException('Erro consultando Avaliação.', $e);
+            throw new InfraException('Erro consultando AvaliaÃ§Ã£o.', $e);
         }
     }
 
@@ -189,7 +189,7 @@ class MdIaClassificacaoOdsRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro listando Avaliações.', $e);
+            throw new InfraException('Erro listando AvaliaÃ§Ãµes.', $e);
         }
     }
 
@@ -209,7 +209,7 @@ class MdIaClassificacaoOdsRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro contando Avaliações.', $e);
+            throw new InfraException('Erro contando AvaliaÃ§Ãµes.', $e);
         }
     }
     /*
@@ -229,7 +229,7 @@ class MdIaClassificacaoOdsRN extends InfraRN
           }
 
         }catch(Exception $e){
-          throw new InfraException('Erro desativando Avaliação.',$e);
+          throw new InfraException('Erro desativando AvaliaÃ§Ã£o.',$e);
         }
       }
 
@@ -249,7 +249,7 @@ class MdIaClassificacaoOdsRN extends InfraRN
           }
 
         }catch(Exception $e){
-          throw new InfraException('Erro reativando Avaliação.',$e);
+          throw new InfraException('Erro reativando AvaliaÃ§Ã£o.',$e);
         }
       }
 
@@ -268,7 +268,7 @@ class MdIaClassificacaoOdsRN extends InfraRN
 
           return $ret;
         }catch(Exception $e){
-          throw new InfraException('Erro bloqueando Avaliação.',$e);
+          throw new InfraException('Erro bloqueando AvaliaÃ§Ã£o.',$e);
         }
       }
 

@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 14/09/2023 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.1
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.1
  */
 
 try {
@@ -39,7 +39,7 @@ try {
                 }
                 $objMdIaIntegracaoRN = new MdIaAdmIntegracaoRN();
                 $objMdIaIntegracaoRN->excluir($arrObjMdIaIntegracaoDTO);
-                PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
             } catch (Exception $e) {
                 PaginaSEI::getInstance()->processarExcecao($e);
             }
@@ -58,7 +58,7 @@ try {
                 }
                 $objMdIaAdmIntegracaoRN = new MdIaAdmIntegracaoRN();
                 $objMdIaAdmIntegracaoRN->desativar($arrObjMdIaAdmIntegracaoDTO);
-                PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
             } catch (Exception $e) {
                 PaginaSEI::getInstance()->processarExcecao($e);
             }
@@ -66,7 +66,7 @@ try {
             die;
 
         case 'md_ia_adm_integracao_reativar':
-            $strTitulo = 'Reativar Integrações';
+            $strTitulo = 'Reativar IntegraÃ§Ãµes';
             if ($_GET['acao_confirmada'] == 'sim') {
                 try {
                     $arrStrIds = PaginaSEI::getInstance()->getArrStrItensSelecionados();
@@ -79,7 +79,7 @@ try {
                     }
                     $objMdIaAdmIntegracaoRN = new MdIaAdmIntegracaoRN();
                     $objMdIaAdmIntegracaoRN->reativar($arrObjMdIaAdmIntegracaoDTO);
-                    PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
+                    PaginaSEI::getInstance()->adicionarMensagem('OperaÃ§Ã£o realizada com sucesso.');
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
                 }
@@ -89,7 +89,7 @@ try {
             break;
 
         case 'md_ia_adm_integracao_selecionar':
-            $strTitulo = PaginaSEI::getInstance()->getTituloSelecao('Selecionar Integração', 'Selecionar Integrações');
+            $strTitulo = PaginaSEI::getInstance()->getTituloSelecao('Selecionar IntegraÃ§Ã£o', 'Selecionar IntegraÃ§Ãµes');
 
             //Se cadastrou alguem
             if ($_GET['acao_origem'] == 'md_ia_adm_integracao_cadastrar') {
@@ -100,11 +100,11 @@ try {
             break;
 
         case 'md_ia_adm_integracao_listar':
-            $strTitulo = 'Mapeamento de Integrações';
+            $strTitulo = 'Mapeamento de IntegraÃ§Ãµes';
             break;
 
         default:
-            throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
+            throw new InfraException("AÃ§Ã£o '" . $_GET['acao'] . "' nÃ£o reconhecida.");
     }
 
     $arrComandos = array();
@@ -187,11 +187,11 @@ try {
         }
 
         if ($_GET['acao'] != 'md_ia_adm_integracao_reativar') {
-            $strSumarioTabela = 'Tabela de Integrações.';
-            $strCaptionTabela = 'Integrações';
+            $strSumarioTabela = 'Tabela de IntegraÃ§Ãµes.';
+            $strCaptionTabela = 'IntegraÃ§Ãµes';
         } else {
-            $strSumarioTabela = 'Tabela de Integrações Inatives.';
-            $strCaptionTabela = 'Integrações Inatives';
+            $strSumarioTabela = 'Tabela de IntegraÃ§Ãµes Inatives.';
+            $strCaptionTabela = 'IntegraÃ§Ãµes Inatives';
         }
 
         $strResultado .= '<table width="99%" class="infraTable" summary="' . $strSumarioTabela . '">' . "\n";
@@ -202,7 +202,7 @@ try {
         }
         $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdIaAdmIntegracaoDTO, 'Nome', 'Nome', $arrObjMdIaAdmIntegracaoDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdIaAdmIntegracaoDTO, 'Funcionalidade', 'Funcionalidade', $arrObjMdIaAdmIntegracaoDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh" width="20%">Ações</th>' . "\n";
+        $strResultado .= '<th class="infraTh" width="20%">AÃ§Ãµes</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
         for ($i = 0; $i < $numRegistros; $i++) {
@@ -223,11 +223,11 @@ try {
             $strResultado .= PaginaSEI::getInstance()->getAcaoTransportarItem($i, $arrObjMdIaAdmIntegracaoDTO[$i]->getNumIdMdIaAdmIntegracao());
 
             if ($bolAcaoConsultar) {
-                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_adm_integracao_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_ia_adm_integracao=' . $arrObjMdIaAdmIntegracaoDTO[$i]->getNumIdMdIaAdmIntegracao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeConsultar() . '" title="Consultar Integração" alt="Consultar Integração" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_adm_integracao_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_ia_adm_integracao=' . $arrObjMdIaAdmIntegracaoDTO[$i]->getNumIdMdIaAdmIntegracao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeConsultar() . '" title="Consultar IntegraÃ§Ã£o" alt="Consultar IntegraÃ§Ã£o" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoAlterar) {
-                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_adm_integracao_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_ia_adm_integracao=' . $arrObjMdIaAdmIntegracaoDTO[$i]->getNumIdMdIaAdmIntegracao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeAlterar() . '" title="Alterar Integração" alt="Alterar Integração" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_adm_integracao_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_ia_adm_integracao=' . $arrObjMdIaAdmIntegracaoDTO[$i]->getNumIdMdIaAdmIntegracao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeAlterar() . '" title="Alterar IntegraÃ§Ã£o" alt="Alterar IntegraÃ§Ã£o" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir) {
@@ -236,15 +236,15 @@ try {
             }
 
             if ($bolAcaoDesativar && $arrObjMdIaAdmIntegracaoDTO[$i]->getStrSinAtivo() == 'S') {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeDesativar() . '" title="Desativar Integração" alt="Desativar Integração" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeDesativar() . '" title="Desativar IntegraÃ§Ã£o" alt="Desativar IntegraÃ§Ã£o" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoReativar && $arrObjMdIaAdmIntegracaoDTO[$i]->getStrSinAtivo() == 'N') {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeReativar() . '" title="Reativar Integração" alt="Reativar Integração" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeReativar() . '" title="Reativar IntegraÃ§Ã£o" alt="Reativar IntegraÃ§Ã£o" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoExcluir) {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeExcluir() . '" title="Excluir Integração" alt="Excluir Integração" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeExcluir() . '" title="Excluir IntegraÃ§Ã£o" alt="Excluir IntegraÃ§Ã£o" class="infraImg" /></a>&nbsp;';
             }
 
             $strResultado .= '</td></tr>' . "\n";

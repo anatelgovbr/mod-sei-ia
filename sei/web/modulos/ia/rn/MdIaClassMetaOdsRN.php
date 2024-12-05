@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 29/12/2023 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.3
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.3
  */
 
 require_once dirname(__FILE__) . '../../../../SEI.php';
@@ -25,21 +25,21 @@ class MdIaClassMetaOdsRN extends InfraRN
     private function validarNumIdMdIaClassificacaoOds(MdIaClassMetaOdsDTO $objMdIaClassMetaOdsDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaClassMetaOdsDTO->getNumIdMdIaClassificacaoOds())) {
-            $objInfraException->adicionarValidacao('Avaliação ODS não informada.');
+            $objInfraException->adicionarValidacao('AvaliaÃ§Ã£o ODS nÃ£o informada.');
         }
     }
 
     private function validarNumIdMdIaAdmMetaOds(MdIaClassMetaOdsDTO $objMdIaClassMetaOdsDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaClassMetaOdsDTO->getNumIdMdIaAdmMetaOds())) {
-            $objInfraException->adicionarValidacao('Meta ODS não informada.');
+            $objInfraException->adicionarValidacao('Meta ODS nÃ£o informada.');
         }
     }
 
     private function validarNumIdUsuario(MdIaClassMetaOdsDTO $objMdIaClassMetaOdsDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaClassMetaOdsDTO->getNumIdUsuario())) {
-            $objInfraException->adicionarValidacao('Id Usuário não informado.');
+            $objInfraException->adicionarValidacao('Id UsuÃ¡rio nÃ£o informado.');
         }
     }
 
@@ -47,7 +47,7 @@ class MdIaClassMetaOdsRN extends InfraRN
     private function validarNumIdUnidade(MdIaClassMetaOdsDTO $objMdIaClassMetaOdsDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaClassMetaOdsDTO->getNumIdUnidade())) {
-            $objInfraException->adicionarValidacao('Id Unidade não informado.');
+            $objInfraException->adicionarValidacao('Id Unidade nÃ£o informado.');
         }
     }
 
@@ -57,7 +57,7 @@ class MdIaClassMetaOdsRN extends InfraRN
             $objMdIaClassMetaOdsDTO->setDthCadastro(null);
         } else {
             if (!InfraData::validarDataHora($objMdIaClassMetaOdsDTO->getDthCadastro())) {
-                $objInfraException->adicionarValidacao('Data de Cadastro inválida.');
+                $objInfraException->adicionarValidacao('Data de Cadastro invÃ¡lida.');
             }
         }
     }
@@ -85,7 +85,7 @@ class MdIaClassMetaOdsRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cadastrando Meta Avaliação.', $e);
+            throw new InfraException('Erro cadastrando Meta AvaliaÃ§Ã£o.', $e);
         }
     }
 
@@ -120,7 +120,7 @@ class MdIaClassMetaOdsRN extends InfraRN
             $objMdIaClassMetaOdsBD->alterar($objMdIaClassMetaOdsDTO);
 
         } catch (Exception $e) {
-            throw new InfraException('Erro alterando Meta Avaliação.', $e);
+            throw new InfraException('Erro alterando Meta AvaliaÃ§Ã£o.', $e);
         }
     }
 
@@ -141,7 +141,7 @@ class MdIaClassMetaOdsRN extends InfraRN
             }
 
         } catch (Exception $e) {
-            throw new InfraException('Erro excluindo Meta Avaliação.', $e);
+            throw new InfraException('Erro excluindo Meta AvaliaÃ§Ã£o.', $e);
         }
     }
 
@@ -163,7 +163,7 @@ class MdIaClassMetaOdsRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando Meta Avaliação.', $e);
+            throw new InfraException('Erro consultando Meta AvaliaÃ§Ã£o.', $e);
         }
     }
 
@@ -187,7 +187,7 @@ class MdIaClassMetaOdsRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro listando Metas Avaliação.', $e);
+            throw new InfraException('Erro listando Metas AvaliaÃ§Ã£o.', $e);
         }
     }
 
@@ -208,7 +208,7 @@ class MdIaClassMetaOdsRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro contando Metas Avaliação.', $e);
+            throw new InfraException('Erro contando Metas AvaliaÃ§Ã£o.', $e);
         }
     }
     /*
@@ -228,7 +228,7 @@ class MdIaClassMetaOdsRN extends InfraRN
           }
 
         }catch(Exception $e){
-          throw new InfraException('Erro desativando Meta Avaliação.',$e);
+          throw new InfraException('Erro desativando Meta AvaliaÃ§Ã£o.',$e);
         }
       }
 
@@ -248,7 +248,7 @@ class MdIaClassMetaOdsRN extends InfraRN
           }
 
         }catch(Exception $e){
-          throw new InfraException('Erro reativando Meta Avaliação.',$e);
+          throw new InfraException('Erro reativando Meta AvaliaÃ§Ã£o.',$e);
         }
       }
 
@@ -267,7 +267,7 @@ class MdIaClassMetaOdsRN extends InfraRN
 
           return $ret;
         }catch(Exception $e){
-          throw new InfraException('Erro bloqueando Meta Avaliação.',$e);
+          throw new InfraException('Erro bloqueando Meta AvaliaÃ§Ã£o.',$e);
         }
       }
 

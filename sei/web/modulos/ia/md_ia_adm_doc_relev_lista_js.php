@@ -10,7 +10,7 @@
     <? if ($bolAcaoExcluir){ ?>
     function acaoExcluir(id, desc) {
         $("#divMsg").hide();
-        if (confirm("Confirma exclus„o do Documento Relevante \"" + desc + "\"?")) {
+        if (confirm("Confirma exclus√£o do Documento Relevante \"" + desc + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
             document.getElementById('frmMdIaAdmDocRelevLista').action = '<?=$strLinkExcluir?>';
             document.getElementById('frmMdIaAdmDocRelevLista').submit();
@@ -22,7 +22,7 @@
             alert('Nenhum Documento Relevante selecionado.');
             return;
         }
-        if (confirm("Confirma exclus„o dos Documentos Relevantes selecionados?")){
+        if (confirm("Confirma exclus√£o dos Documentos Relevantes selecionados?")){
             document.getElementById('hdnInfraItemId').value='';
             document.getElementById('frmMdIaAdmDocRelevLista').action='<?=$strLinkExcluir?>';
             document.getElementById('frmMdIaAdmDocRelevLista').submit();
@@ -32,7 +32,7 @@
     <? if ($bolAcaoDesativar){ ?>
     function acaoDesativar(id,desc){
         $("#divMsg").hide();
-        if (confirm("Confirma desativaÁ„o do Documento Relevante \""+desc+"\"?")){
+        if (confirm("Confirma desativa√ß√£o do Documento Relevante \""+desc+"\"?")){
             document.getElementById('hdnInfraItemId').value=id;
             document.getElementById('frmMdIaAdmDocRelevLista').action='<?=$strLinkDesativar?>';
             document.getElementById('frmMdIaAdmDocRelevLista').submit();
@@ -44,7 +44,7 @@
             alert('Nenhum Documento Relevante selecionado.');
             return;
         }
-        if (confirm("Confirma desativaÁ„o dos Documentos Relevantes selecionados?")){
+        if (confirm("Confirma desativa√ß√£o dos Documentos Relevantes selecionados?")){
             document.getElementById('hdnInfraItemId').value='';
             document.getElementById('frmMdIaAdmDocRelevLista').action='<?=$strLinkDesativar?>';
             document.getElementById('frmMdIaAdmDocRelevLista').submit();
@@ -58,16 +58,16 @@
             if(data["result"] != "false") {
                 event.preventDefault();
                 if(data["result"] != "todos") {
-                    var mensagem = "N„o foi possÌvel reativar o Documento Relevante selecionado, pois j· existe um Documento Relevante com situaÁ„o Ativa para o mesmo Tipo de Documento que abrange <strong>Todos os Tipos de Processos</strong>. <br> Caso ainda queira reativar o Documento Relevante selecionado para Processos EspecÌficos È necess·rio Desativar o Documento Relevante com o mesmo Tipo de Documento que abrange Todos os Tipos de Processos.";
+                    var mensagem = "N√£o foi poss√≠vel reativar o Documento Relevante selecionado, pois j√° existe um Documento Relevante com situa√ß√£o Ativa para o mesmo Tipo de Documento que abrange <strong>Todos os Tipos de Processos</strong>. <br> Caso ainda queira reativar o Documento Relevante selecionado para Processos Espec√≠ficos √© necess√°rio Desativar o Documento Relevante com o mesmo Tipo de Documento que abrange Todos os Tipos de Processos.";
                 } else {
-                    var mensagem = "N„o foi possÌvel reativar o Documento Relevante <strong>Todos os Tipos de Processos</strong>, pois j· existe um Documento Relevante com situaÁ„o Ativa para o mesmo Tipo de Documento que especifica quais Tipos de Processos EspecÌficos s„o relevantes. <br> Caso ainda queira reativar o Documento Relevante selecionado para Todos os Tipos de Processos È necess·rio Desativar o Documento Relevante com o mesmo Tipo de Documento cadastrados com os Tipos de Processos EspecÌficos.";
+                    var mensagem = "N√£o foi poss√≠vel reativar o Documento Relevante <strong>Todos os Tipos de Processos</strong>, pois j√° existe um Documento Relevante com situa√ß√£o Ativa para o mesmo Tipo de Documento que especifica quais Tipos de Processos Espec√≠ficos s√£o relevantes. <br> Caso ainda queira reativar o Documento Relevante selecionado para Todos os Tipos de Processos √© necess√°rio Desativar o Documento Relevante com o mesmo Tipo de Documento cadastrados com os Tipos de Processos Espec√≠ficos.";
                 }
                 rolar_para('#divMsg');
                 $("#divMsg > div > label").html(mensagem);
                 $("#divMsg > div").addClass("alert-danger");
                 $("#divMsg").show();
             } else {
-                if (confirm("Confirma reativaÁ„o do Documento Relevante \""+desc+"\"?")){
+                if (confirm("Confirma reativa√ß√£o do Documento Relevante \""+desc+"\"?")){
                     document.getElementById('hdnInfraItemId').value=id;
                     document.getElementById('frmMdIaAdmDocRelevLista').action='<?=$strLinkReativar?>';
                     document.getElementById('frmMdIaAdmDocRelevLista').submit();
@@ -85,16 +85,16 @@
             if(data["result"] != "false") {
                 event.preventDefault();
                 if(data["result"] != "todos") {
-                    var mensagem = "N„o foi possÌvel reativar o Documento Relevante <strong>"+data["result"]+"</strong>, pois j· existe um Documento Relevante com situaÁ„o Ativa para o mesmo Tipo de Documento que abrange <strong>Todos os Tipos de Processos</strong>. <br> Caso ainda queira reativar o Documento Relevante selecionado para Processos EspecÌficos È necess·rio Desativar o Documento Relevante com o mesmo Tipo de Documento que abrange Todos os Tipos de Processos.";
+                    var mensagem = "N√£o foi poss√≠vel reativar o Documento Relevante <strong>"+data["result"]+"</strong>, pois j√° existe um Documento Relevante com situa√ß√£o Ativa para o mesmo Tipo de Documento que abrange <strong>Todos os Tipos de Processos</strong>. <br> Caso ainda queira reativar o Documento Relevante selecionado para Processos Espec√≠ficos √© necess√°rio Desativar o Documento Relevante com o mesmo Tipo de Documento que abrange Todos os Tipos de Processos.";
                 } else {
-                    var mensagem = "N„o foi possÌvel reativar o Documento Relevante <strong>Todos os Tipos de Processos</strong>, pois j· existe um Documento Relevante com situaÁ„o Ativa para o mesmo Tipo de Documento que especifica quais Tipos de Processos EspecÌficos s„o relevantes. <br> Caso ainda queira reativar o Documento Relevante selecionado para Todos os Tipos de Processos È necess·rio Desativar o Documento Relevante com o mesmo Tipo de Documento cadastrados com os Tipos de Processos EspecÌficos.";
+                    var mensagem = "N√£o foi poss√≠vel reativar o Documento Relevante <strong>Todos os Tipos de Processos</strong>, pois j√° existe um Documento Relevante com situa√ß√£o Ativa para o mesmo Tipo de Documento que especifica quais Tipos de Processos Espec√≠ficos s√£o relevantes. <br> Caso ainda queira reativar o Documento Relevante selecionado para Todos os Tipos de Processos √© necess√°rio Desativar o Documento Relevante com o mesmo Tipo de Documento cadastrados com os Tipos de Processos Espec√≠ficos.";
                 }
                rolar_para('#divMsg');
                 $("#divMsg > div > label").html(mensagem);
                 $("#divMsg > div").addClass("alert-danger");
                 $("#divMsg").show();
             } else {
-                if (confirm("Confirma reativaÁ„o dos Documentos Relevantes selecionados?")) {
+                if (confirm("Confirma reativa√ß√£o dos Documentos Relevantes selecionados?")) {
                     document.getElementById('hdnInfraItemId').value = '';
                     document.getElementById('frmMdIaAdmDocRelevLista').action = '<?=$strLinkReativar?>';
                     document.getElementById('frmMdIaAdmDocRelevLista').submit();
@@ -151,15 +151,15 @@
         objeto["id"] = id;
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_documento_relevante_validar_reativacao_ajax'); ?>',
-            type: 'POST', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que ser· enviado ao servidor
+            type: 'POST', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que ser√° enviado ao servidor
             data: objeto, // Enviando o JSON com o nome de itens
             async: false,
             success: function (data) {
                 callback(data);
             },
             error: function (err) {
-                callback("Ocorreu um erro ao verificar se o elemento j· foi cadastrado.");
+                callback("Ocorreu um erro ao verificar se o elemento j√° foi cadastrado.");
             }
         });
     }

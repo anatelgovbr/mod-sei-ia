@@ -1,10 +1,10 @@
 <?
     /**
-     * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+     * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
      *
      * 29/12/2023 - criado por sabino.colab
      *
-     * Vers„o do Gerador de CÛdigo: 1.43.3
+     * Vers√£o do Gerador de C√≥digo: 1.43.3
      */
 
     require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -48,7 +48,7 @@
                     
                 }
                 
-                // Adicionando novas classificaÁıes que n„o foram sugeridas
+                // Adicionando novas classifica√ß√µes que n√£o foram sugeridas
                 if(!empty($itensAdicionados)){
 	
 	                foreach($itensAdicionados as $itemAdicionado){
@@ -143,7 +143,7 @@
                 	
                 }
 		
-		        // Removendo classificaÁıes anteriores
+		        // Removendo classifica√ß√µes anteriores
 		        if(!empty($itensRemovidos)){
 			
 			        foreach($itensRemovidos as $itemRemovido){
@@ -210,7 +210,7 @@
 							        $objMdIaHistClassDTO = new MdIaHistClassDTO();
 							        $objMdIaHistClassDTO->setNumIdMdIaClassificacaoOds($idClassificacao);
 							        $objMdIaHistClassDTO->setNumIdMdIaAdmMetaOds($sugestaoRecusada);
-							        $objMdIaHistClassDTO->setStrOperacao(MdIaHistClassRN::$OPERACAO_N√O_CONFIRMACAO);
+							        $objMdIaHistClassDTO->setStrOperacao(MdIaHistClassRN::$OPERACAO_N√ÉO_CONFIRMACAO);
 							        $objMdIaHistClassDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
 							        $objMdIaHistClassDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
 							        $objMdIaHistClassDTO->setDthCadastro(InfraData::getStrDataHoraAtual());
@@ -233,7 +233,7 @@
                 
             } else {
             	
-                return json_encode(array("result" => "false", "mensagem" => utf8_encode("Nenhum item foi alterado desde a ˙ltima classificaÁ„o. Se n„o desejar realizar alteraÁıes clicar no bot„o Fechar.")));
+                return json_encode(array("result" => "false", "mensagem" => utf8_encode("Nenhum item foi alterado desde a √∫ltima classifica√ß√£o. Se n√£o desejar realizar altera√ß√µes clicar no bot√£o Fechar.")));
             
             }
 

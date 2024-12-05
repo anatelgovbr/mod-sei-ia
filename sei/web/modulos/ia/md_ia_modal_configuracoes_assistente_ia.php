@@ -59,12 +59,14 @@ PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo);
 
 $strLinkChatsArquivados = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_modal_chats_arquivados');
+$strLinkPromptsFavoritos = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_prompts_favoritos_selecionar&tipo_selecao=2');
 
 ?>
 <div id="conteudoModalConfiguracoes" style="margin-top: 35px;">
     <div class="card">
         <ul class="list-group list-group-flush">
             <li class="list-group-item"><div class="float-left" style="padding: 7px 0 0 0;"><h6 style=" margin: 0;">Tópicos Arquivados</h6></div><div class="text-right float-right"><a onclick="infraAbrirJanelaModal('<?= $strLinkChatsArquivados ?> ', 1024, 800)" class="btn btn-sm btn-outline-secondary">Gerenciar</a></div></li>
+            <li class="list-group-item"><div class="float-left" style="padding: 7px 0 0 0;"><h6 style=" margin: 0;">Prompts Favoritos</h6></div><div class="text-right float-right"><a onclick="infraAbrirJanelaModal('<?= $strLinkPromptsFavoritos ?> ', 1024, 800)" class="btn btn-sm btn-outline-secondary">Gerenciar</a></div></li>
         </ul>
     </div>
 </div>

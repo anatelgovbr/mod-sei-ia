@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 06/07/2023 - criado por sabino.colab
  *
- * Vers„o do Gerador de CÛdigo: 1.43.2
+ * Vers√£o do Gerador de C√≥digo: 1.43.2
  */
 
 require_once dirname(__FILE__) . '../../../../SEI.php';
@@ -25,7 +25,7 @@ class MdIaAdmMetadadoRN extends InfraRN
     private function validarNumIdMdIaAdmMetadado(MdIaAdmMetadadoDTO $objMdIaAdmMetadadoDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmMetadadoDTO->getNumIdMdIaAdmMetadado())) {
-            $objInfraException->adicionarValidacao('ID Metadado n„o informado.');
+            $objInfraException->adicionarValidacao('ID Metadado n√£o informado.');
         }
     }
 

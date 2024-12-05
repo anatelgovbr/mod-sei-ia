@@ -1,6 +1,6 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 20/12/2023 - criado por sabino.colab
  *
@@ -24,21 +24,21 @@ class MdIaAdmMetaOdsRN extends InfraRN
     private function validarNumIdMdIaAdmMetaOds(MdIaAdmMetaOdsDTO $objMdIaAdmMetaOdsDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmMetaOds())) {
-            $objInfraException->adicionarValidacao('Id Meta ODS n„o informado.');
+            $objInfraException->adicionarValidacao('Id Meta ODS n√£o informado.');
         }
     }
 
     private function validarNumIdAdmObjetivoOds(MdIaAdmMetaOdsDTO $objMdIaAdmMetaOdsDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmObjetivoOds())) {
-            $objInfraException->adicionarValidacao('Id Objetivo ODS n„o informado.');
+            $objInfraException->adicionarValidacao('Id Objetivo ODS n√£o informado.');
         }
     }
 
     private function validarNumOrdem(MdIaAdmMetaOdsDTO $objMdIaAdmMetaOdsDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmMetaOdsDTO->getNumOrdem())) {
-            $objInfraException->adicionarValidacao('Ordem n„o informado.');
+            $objInfraException->adicionarValidacao('Ordem n√£o informado.');
         }
     }
 
@@ -50,7 +50,7 @@ class MdIaAdmMetaOdsRN extends InfraRN
             $objMdIaAdmMetaOdsDTO->setStrIdentificacaoMeta(trim($objMdIaAdmMetaOdsDTO->getStrIdentificacaoMeta()));
 
             if (strlen($objMdIaAdmMetaOdsDTO->getStrIdentificacaoMeta()) > 25) {
-                $objInfraException->adicionarValidacao('IdentificaÁ„o da Meta possui tamanho superior a 25 caracteres.');
+                $objInfraException->adicionarValidacao('Identifica√ß√£o da Meta possui tamanho superior a 25 caracteres.');
             }
         }
     }
@@ -63,7 +63,7 @@ class MdIaAdmMetaOdsRN extends InfraRN
             $objMdIaAdmMetaOdsDTO->setStrDescricaoMeta(trim($objMdIaAdmMetaOdsDTO->getStrDescricaoMeta()));
 
             if (strlen($objMdIaAdmMetaOdsDTO->getStrDescricaoMeta()) > 1000) {
-                $objInfraException->adicionarValidacao('DescriÁ„o da Meta possui tamanho superior a 1000 caracteres.');
+                $objInfraException->adicionarValidacao('Descri√ß√£o da Meta possui tamanho superior a 1000 caracteres.');
             }
         }
     }

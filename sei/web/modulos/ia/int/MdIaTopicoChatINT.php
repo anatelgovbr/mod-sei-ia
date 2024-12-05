@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 05/04/2024 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.3
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.3
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -111,15 +111,15 @@ class MdIaTopicoChatINT extends InfraINT
 
     public function infraCalcularDataFinalMes($data) {
         $date = DateTime::createFromFormat("d/m/Y", $data);
-        return $date->format("t/m/Y"); // 't' retorna o último dia do mês
+        return $date->format("t/m/Y"); // 't' retorna o Ãºltimo dia do mÃªs
     }
     public function retornaPeriodos() {
         $dataAtual = new DateTime();
 
-        // Subtrair um mês
+        // Subtrair um mÃªs
         $dataAtual->modify('-1 month');
 
-        $mesAnterior = $dataAtual->format('m'); // Mês anterior
+        $mesAnterior = $dataAtual->format('m'); // MÃªs anterior
         $ano = $dataAtual->format('Y'); // Ano atual
 
         // Formatar como MM/YYYY
@@ -138,31 +138,31 @@ class MdIaTopicoChatINT extends InfraINT
             "data_final" => self::infraCalcularDataDias(self::infraDataAtual(), "-1") . " 23:59:59"
         ];
 
-        // Últimos 7 dias
+        // Ãšltimos 7 dias
         $periodosPossiveis["ultimos7dias"] = [
             "data_inicial" => self::infraCalcularDataDias(self::infraDataAtual(), "-7") . " 00:00:00",
             "data_final" => self::infraDataAtual() . " 23:59:59"
         ];
 
-        // Últimos 30 dias
+        // Ãšltimos 30 dias
         $periodosPossiveis["ultimos30dias"] = [
             "data_inicial" => self::infraCalcularDataDias(self::infraDataAtual(), "-30") . " 00:00:00",
             "data_final" => self::infraDataAtual() . " 23:59:59"
         ];
 
-        // Último mês
+        // Ãšltimo mÃªs
         $periodosPossiveis["ultimoMes"] = [
             "data_inicial" => "01/" . $mesAnoFormatado . " 00:00:00",
             "data_final" => self::infraCalcularDataFinalMes("01/" . $mesAnoFormatado) . " 23:59:59"
         ];
 
-        // Penúltimo mês
+        // PenÃºltimo mÃªs
         $periodosPossiveis["penultimoMes"] = [
             "data_inicial" => self::infraCalcularDataMeses("01/" . $mesAnoFormatado, -1) . " 00:00:00",
             "data_final" => self::infraCalcularDataFinalMes(self::infraCalcularDataMeses("01/" . $mesAnoFormatado, -1)) . " 23:59:59"
         ];
 
-        // Antepenúltimo mês
+        // AntepenÃºltimo mÃªs
         $periodosPossiveis["antepenultimoMes"] = [
             "data_inicial" => self::infraCalcularDataMeses("01/" . $mesAnoFormatado, -2) . " 00:00:00",
             "data_final" => self::infraCalcularDataFinalMes(self::infraCalcularDataMeses("01/" . $mesAnoFormatado, -2)) . " 23:59:59"
@@ -174,7 +174,7 @@ class MdIaTopicoChatINT extends InfraINT
             "data_final" => "31/12/" . $ano . " 23:59:59"
         ];
 
-        // Último ano
+        // Ãšltimo ano
         $periodosPossiveis["ultimoAno"] = [
             "data_inicial" => "01/01/" . ($ano - 1) . " 00:00:00",
             "data_final" => "31/12/" . ($ano - 1) . " 23:59:59"
@@ -194,7 +194,7 @@ class MdIaTopicoChatINT extends InfraINT
         $dataInicioObj = converterParaDate($dataInicio);
         $dataFimObj = converterParaDate($dataFim);
 
-        // Verificar se a dataBase (data e horário) está entre dataInicio e dataFim
+        // Verificar se a dataBase (data e horÃ¡rio) estÃ¡ entre dataInicio e dataFim
         return ($dataBaseObj >= $dataInicioObj) && ($dataBaseObj <= $dataFimObj);
     }
 
@@ -202,18 +202,18 @@ class MdIaTopicoChatINT extends InfraINT
         // Converte a data base para um objeto DateTime
         $dataBaseObj = DateTime::createFromFormat('d/m/Y H:i:s', $dataBase);
 
-        // Itera sobre os períodos para verificar se a data base está dentro de algum deles
+        // Itera sobre os perÃ­odos para verificar se a data base estÃ¡ dentro de algum deles
         foreach ($periodos as $nomePeriodo => $intervalo) {
             $dataInicialObj = DateTime::createFromFormat('d/m/Y H:i:s', $intervalo['data_inicial']);
             $dataFinalObj = DateTime::createFromFormat('d/m/Y H:i:s', $intervalo['data_final']);
 
-            // Verifica se a data base está entre data_inicial e data_final
+            // Verifica se a data base estÃ¡ entre data_inicial e data_final
             if ($dataBaseObj >= $dataInicialObj && $dataBaseObj <= $dataFinalObj) {
-                return $nomePeriodo; // Retorna o nome do período correspondente
+                return $nomePeriodo; // Retorna o nome do perÃ­odo correspondente
             }
         }
 
-        // Se a data base não estiver em nenhum período, retorna "Mais Antigos"
+        // Se a data base nÃ£o estiver em nenhum perÃ­odo, retorna "Mais Antigos"
         return "maisAntigos";
     }
     public function listarTopicos()
@@ -270,12 +270,12 @@ class MdIaTopicoChatINT extends InfraINT
                 $arrayTopicos[$periodo][] = $arrayItensTopicos;
             }
 
-            // Opcional: Ordenar os tópicos dentro de cada período pelo campo 'dataUltimaInteracao'
+            // Opcional: Ordenar os tÃ³picos dentro de cada perÃ­odo pelo campo 'dataUltimaInteracao'
             foreach ($arrayTopicos as $topicos) {
                 usort($topicos, function ($a, $b) {
                     $timestampA = strtotime(str_replace("/", "-", $a['dataUltimaInteracao']));
                     $timestampB = strtotime(str_replace("/", "-", $b['dataUltimaInteracao']));
-                    return $timestampB - $timestampA; // Ordenação decrescente
+                    return $timestampB - $timestampA; // OrdenaÃ§Ã£o decrescente
                 });
             }
             $arrayRetorno["topicos"] = $arrayTopicos;
@@ -300,13 +300,17 @@ class MdIaTopicoChatINT extends InfraINT
         $objMdIaInteracaoChatDTO->retStrLinkAcessoProcedimento();
         $objMdIaInteracaoChatDTO->retNumIdMdIaInteracaoChat();
         $objMdIaInteracaoChatDTO->retNumStatusRequisicao();
+        $objMdIaInteracaoChatDTO->retNumIdMdIaPromptsFavoritos();
         $objMdIaInteracaoChatDTO->setNumIdMdIaTopicoChat($dados["id"]);
         $objMdIaInteracaoChatDTO->setOrdNumIdMdIaInteracaoChat(InfraDTO::$TIPO_ORDENACAO_ASC);
 
         $listagemInteracoes = $objMdIaInteracaoChatRN->listar($objMdIaInteracaoChatDTO);
+
         $arrayItensInteracoes = array();
         $arrayInteracoes = array();
         foreach ($listagemInteracoes as $itemInteracao) {
+            $arrayItensInteracoes["favorito"] = false;
+
             $arrayItensInteracoes["id_mensagem"] = $itemInteracao->getNumIdMessage();
             $arrayItensInteracoes["pergunta"] = utf8_encode($itemInteracao->getStrPergunta());
 
@@ -319,6 +323,10 @@ class MdIaTopicoChatINT extends InfraINT
             $arrayItensInteracoes["link_acesso"] = $itemInteracao->getStrLinkAcessoProcedimento();
             $arrayItensInteracoes["id_interacao"] = $itemInteracao->getNumIdMdIaInteracaoChat();
             $arrayItensInteracoes["status_requisicao"] = $itemInteracao->getNumStatusRequisicao();
+
+            if(!is_null($itemInteracao->getNumIdMdIaPromptsFavoritos())) {
+                $arrayItensInteracoes["favorito"] = true;
+            }
             $arrayInteracoes[] = $arrayItensInteracoes;
         }
         return $arrayInteracoes;

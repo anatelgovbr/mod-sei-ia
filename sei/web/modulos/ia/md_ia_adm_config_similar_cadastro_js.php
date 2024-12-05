@@ -21,19 +21,19 @@
         }
 
         if (infraTrim(document.getElementById('txtOrientacoesGerais').value) == '') {
-            alert('Informe as Orientações Gerais.');
+            alert('Informe as OrientaÃ§Ãµes Gerais.');
             document.getElementById('txtOrientacoesGerais').focus();
             return false;
         }
 
         if (infraTrim(document.getElementById('txtPercRelevContDoc').value) == '') {
-            alert('Informe o Percentual de Relevância do Conteúdo dos Documentos.');
+            alert('Informe o Percentual de RelevÃ¢ncia do ConteÃºdo dos Documentos.');
             document.getElementById('txtPercRelevContDoc').focus();
             return false;
         }
 
         if (infraTrim(document.getElementById('txtPercRelevMetadados').value) == '') {
-            alert('Informe o Percentual de Relevância dos Metadados.');
+            alert('Informe o Percentual de RelevÃ¢ncia dos Metadados.');
             document.getElementById('txtPercRelevMetadados').focus();
             return false;
         }
@@ -47,7 +47,7 @@
         }
         if (document.getElementById('txtPercRelevContDoc').value < 1) {
             rolar_para('#divMsg');
-            $("#divMsg > div > label").html("O Percentual de Relevância do Conteúdo dos Documentos não pode ser zero.");
+            $("#divMsg > div > label").html("O Percentual de RelevÃ¢ncia do ConteÃºdo dos Documentos nÃ£o pode ser zero.");
             $("#divMsg > div").addClass("alert-danger");
             $("#divMsg").show();
             document.getElementById('txtPercRelevContDoc').focus();
@@ -68,9 +68,9 @@
 
     function removerItensSelectMetadado() {
         var hdnTbPercRelevMetadado = $("#hdnTbPercRelevMetadado").val();
-        var linhas = hdnTbPercRelevMetadado.split('¥');
+        var linhas = hdnTbPercRelevMetadado.split('Â¥');
         linhas.forEach(function (linha) {
-            coluna = linha.split('±');
+            coluna = linha.split('Â±');
             $("option[value='" + coluna[0] + "']").remove();
         });
     }
@@ -82,7 +82,7 @@
         var peso_metadado = $("#" + $("#hdnMetadado").val()).attr("peso_metadado");
         totalPercentualRelevancia = parseInt(percentualRelevanciaAdicionar) + parseInt(somaPesosAdicionados) - parseInt(peso_metadado);
         linhaAtualizada = removerItemHiddenPercRelevMetadados($("#hdnTbPercRelevMetadado").val(), $("#hdnMetadado").val());
-        linhaAtualizada += $("#hdnMetadado").val() + "±" + itemAdicionar.val() + "±" + percentualRelevanciaAdicionar;
+        linhaAtualizada += $("#hdnMetadado").val() + "Â±" + itemAdicionar.val() + "Â±" + percentualRelevanciaAdicionar;
         $("#hdnTbPercRelevMetadado").val(linhaAtualizada);
         $("#" + $("#hdnMetadado").val()).remove();
         var linhaTabela = montarLinhaTabela(itemAdicionar, percentualRelevanciaAdicionar, $("#hdnMetadado").val());
@@ -110,7 +110,7 @@
         var percRelevContDoc = $("#txtPercRelevContDoc").val();
         if(percRelevContDoc == "") {
             rolar_para('#divMsg');
-            $("#divMsg > div > label").html("O Percentual de Relevância do Conteúdo dos Documentos não pode ser vazio.");
+            $("#divMsg > div > label").html("O Percentual de RelevÃ¢ncia do ConteÃºdo dos Documentos nÃ£o pode ser vazio.");
             $("#divMsg > div").addClass("alert-danger");
             $("#divMsg").show();
             percRelevContDoc = 0;
@@ -121,16 +121,16 @@
     }
 
     function removerItemHiddenPercRelevMetadados(hdnTbPercRelevMetadado, itemRemover) {
-        var linhas = hdnTbPercRelevMetadado.split('¥');
+        var linhas = hdnTbPercRelevMetadado.split('Â¥');
         var linhaAtualizada = "";
         linhas.forEach(function (linha) {
-            var colunas = linha.split('±');
+            var colunas = linha.split('Â±');
             if (colunas[0] != itemRemover) {
                 colunas.forEach(function (coluna) {
-                    linhaAtualizada += coluna + "±";
+                    linhaAtualizada += coluna + "Â±";
                 });
                 linhaAtualizada = linhaAtualizada.substring(0, linhaAtualizada.length - 1);
-                linhaAtualizada += "¥";
+                linhaAtualizada += "Â¥";
             }
         });
         return linhaAtualizada;
@@ -149,7 +149,7 @@
         linhaTabela += "<td>" + percentualRelevanciaAdicionar + "%</td>";
         linhaTabela += "<td>" + dia + "/" + mes + "/" + ano + " " + horas + ":" + minutos + ":" + segundos + "</td>";
         linhaTabela += "<td class='text-center'>";
-        linhaTabela += "<a onclick='editarPercRelevanciaMetadado(" + idItemAdicionar + ")'><img src=' <?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/alterar.svg' title='Alterar Percentual de Relevância do Metadado' alt='Alterar Percentual de Relevância do Metadado' class='infraImg' /></a>";
+        linhaTabela += "<a onclick='editarPercRelevanciaMetadado(" + idItemAdicionar + ")'><img src=' <?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/alterar.svg' title='Alterar Percentual de RelevÃ¢ncia do Metadado' alt='Alterar Percentual de RelevÃ¢ncia do Metadado' class='infraImg' /></a>";
         linhaTabela += "</td>";
         linhaTabela += "</tr>";
         return linhaTabela;

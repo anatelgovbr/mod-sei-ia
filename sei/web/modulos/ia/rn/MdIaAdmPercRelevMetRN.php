@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 05/07/2023 - criado por sabino.colab
  *
- * Vers„o do Gerador de CÛdigo: 1.43.2
+ * Vers√£o do Gerador de C√≥digo: 1.43.2
  */
 
 require_once dirname(__FILE__) . '../../../../SEI.php';
@@ -25,21 +25,21 @@ class MdIaAdmPercRelevMetRN extends InfraRN
     private function validarNumIdMdIaAdmConfigSimilar(MdIaAdmPercRelevMetDTO $objMdIaAdmPercRelevMetDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmPercRelevMetDTO->getNumIdMdIaAdmConfigSimilar())) {
-            $objInfraException->adicionarValidacao(' n„o informad.');
+            $objInfraException->adicionarValidacao(' n√£o informad.');
         }
     }
 
     private function validarNumIdMdIaAdmMetadado(MdIaAdmPercRelevMetDTO $objMdIaAdmPercRelevMetDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmPercRelevMetDTO->getNumIdMdIaAdmMetadado())) {
-            $objInfraException->adicionarValidacao(' n„o informad.');
+            $objInfraException->adicionarValidacao(' n√£o informad.');
         }
     }
 
     private function validarNumPercentualRelevancia(MdIaAdmPercRelevMetDTO $objMdIaAdmPercRelevMetDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaAdmPercRelevMetDTO->getNumPercentualRelevancia())) {
-            $objInfraException->adicionarValidacao('Percentual de Relev‚ncia n„o informado.');
+            $objInfraException->adicionarValidacao('Percentual de Relev√¢ncia n√£o informado.');
         }
     }
 

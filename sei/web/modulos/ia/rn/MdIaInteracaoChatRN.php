@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 05/04/2024 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.3
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.3
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -74,7 +74,7 @@ class MdIaInteracaoChatRN extends InfraRN
             $objMdIaInteracaoChatDTO->setDthCadastro(null);
         } else {
             if (!InfraData::validarDataHora($objMdIaInteracaoChatDTO->getDthCadastro())) {
-                $objInfraException->adicionarValidacao(' inválid.');
+                $objInfraException->adicionarValidacao(' invÃ¡lid.');
             }
         }
     }
@@ -100,7 +100,7 @@ class MdIaInteracaoChatRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro cadastrando Interação.', $e);
+            throw new InfraException('Erro cadastrando InteraÃ§Ã£o.', $e);
         }
     }
 
@@ -141,7 +141,7 @@ class MdIaInteracaoChatRN extends InfraRN
             $objMdIaInteracaoChatBD->alterar($objMdIaInteracaoChatDTO);
 
         } catch (Exception $e) {
-            throw new InfraException('Erro alterando Interação.', $e);
+            throw new InfraException('Erro alterando InteraÃ§Ã£o.', $e);
         }
     }
 
@@ -162,7 +162,7 @@ class MdIaInteracaoChatRN extends InfraRN
             }
 
         } catch (Exception $e) {
-            throw new InfraException('Erro excluindo Interação.', $e);
+            throw new InfraException('Erro excluindo InteraÃ§Ã£o.', $e);
         }
     }
 
@@ -184,7 +184,7 @@ class MdIaInteracaoChatRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro consultando Interação.', $e);
+            throw new InfraException('Erro consultando InteraÃ§Ã£o.', $e);
         }
     }
 
@@ -207,7 +207,7 @@ class MdIaInteracaoChatRN extends InfraRN
             return $ret;
 
         } catch (Exception $e) {
-            throw new InfraException('Erro listando Interações.', $e);
+            throw new InfraException('Erro listando InteraÃ§Ãµes.', $e);
         }
     }
 
@@ -227,9 +227,10 @@ class MdIaInteracaoChatRN extends InfraRN
 
             return $ret;
         } catch (Exception $e) {
-            throw new InfraException('Erro contando Interações.', $e);
+            throw new InfraException('Erro contando InteraÃ§Ãµes.', $e);
         }
     }
+
     /*
       protected function desativarControlado($arrObjMdIaInteracaoChatDTO){
         try {
@@ -247,7 +248,7 @@ class MdIaInteracaoChatRN extends InfraRN
           }
 
         }catch(Exception $e){
-          throw new InfraException('Erro desativando Interação.',$e);
+          throw new InfraException('Erro desativando InteraÃ§Ã£o.',$e);
         }
       }
 
@@ -267,7 +268,7 @@ class MdIaInteracaoChatRN extends InfraRN
           }
 
         }catch(Exception $e){
-          throw new InfraException('Erro reativando Interação.',$e);
+          throw new InfraException('Erro reativando InteraÃ§Ã£o.',$e);
         }
       }
 
@@ -286,7 +287,7 @@ class MdIaInteracaoChatRN extends InfraRN
 
           return $ret;
         }catch(Exception $e){
-          throw new InfraException('Erro bloqueando Interação.',$e);
+          throw new InfraException('Erro bloqueando InteraÃ§Ã£o.',$e);
         }
       }
 

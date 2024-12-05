@@ -14,7 +14,7 @@
                     }
                 });
                 if(campoVazio) {
-                    alert ("N„o È permitida a reordenaÁ„o antes de avaliar todos os processos.");
+                    alert ("N√£o √© permitida a reordena√ß√£o antes de avaliar todos os processos.");
                 } else {
                     $("#tabela_ordenada tbody").sortable("enable");
                 }
@@ -105,7 +105,7 @@
             if(num_words>max_limit){
                 var lastIndex = content.lastIndexOf(" ");
                 $("#txtTextoPesquisa").val(content.substring(0, lastIndex));
-                exibeMensagem("#divMsgPesquisaDocumento", "alert-danger", "A quantidade m·xima de palavras suportadas no Texto para Pesquisa È de 512 palavras.");
+                exibeMensagem("#divMsgPesquisaDocumento", "alert-danger", "A quantidade m√°xima de palavras suportadas no Texto para Pesquisa √© de 512 palavras.");
                 $("#txtTextoPesquisa").focus();
                 return false;
             }
@@ -115,7 +115,7 @@
         <?php
             if($exibirRacional == "1") {
         ?>
-                exibeMensagem("#divMsgProcessosSimilares", "alert-danger", "Ocorreu um erro ao realizar a AvaliaÁ„o de Similaridade entre Processos.");
+                exibeMensagem("#divMsgProcessosSimilares", "alert-danger", "Ocorreu um erro ao realizar a Avalia√ß√£o de Similaridade entre Processos.");
         <?php
             } else {
         ?>
@@ -146,9 +146,9 @@
             result[name] = value;
         });
         $.ajax({
-            url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_similaridade_cadastrar_ajax'); ?>', //selecionando o endereÁo que iremos acessar no backend
-            type: 'POST', //selecionando o tipo de requisiÁ„o, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que ser· enviado ao servidor
+            url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_similaridade_cadastrar_ajax'); ?>', //selecionando o endere√ßo que iremos acessar no backend
+            type: 'POST', //selecionando o tipo de requisi√ß√£o, PUT,GET,POST,DELETE
+            dataType: "json",//Tipo de dado que ser√° enviado ao servidor
             data: result, // Enviando o JSON com o nome de itens
             success: function (data) {
                 if(data != "Feedbacks salvos com sucesso.") {
@@ -157,7 +157,7 @@
                     <?php
                     if($exibirRacional == "1") {
                     ?>
-                    exibeMensagem("#divMsgProcessosSimilares", "alert-success", "AvaliaÁ„o de Similaridade entre Processos realizada com sucesso.");
+                    exibeMensagem("#divMsgProcessosSimilares", "alert-success", "Avalia√ß√£o de Similaridade entre Processos realizada com sucesso.");
                     <?php
                     }
                     ?>
@@ -167,7 +167,7 @@
                 erroProcessosSimilares(elemento);
             }
         }).done(function () {
-        //Finalizando todos os passos da operaÁ„o de AJAX
+        //Finalizando todos os passos da opera√ß√£o de AJAX
             console.log('Dados enviados');
         });
     }
@@ -176,14 +176,14 @@
         var form = $("#frmMdIaPesquisaDocumentos");
         if(form.find("input[name='ckbTipoDocumento[]']:checked").length > 0) {
             if($("#txtTextoPesquisa").val() == "" && $("#hdnIdDocumento").val() == "") {
-                exibeMensagem("#divMsgPesquisaDocumento", "alert-danger", "… necess·rio preencher o Texto para Pesquisa ou selecionar Documentos para montar a pesquisa.");
+                exibeMensagem("#divMsgPesquisaDocumento", "alert-danger", "√â necess√°rio preencher o Texto para Pesquisa ou selecionar Documentos para montar a pesquisa.");
             } else {
                 infraAbrirJanelaModal("<?= $strLinkPesquisaDocumento ?>",
                     1200,
                     550);
             }
         } else {
-            exibeMensagem("#divMsgPesquisaDocumento", "alert-danger", "… obrigatÛrio escolher pelo menos um Tipo de Documento Alvo para a pesquisa.");
+            exibeMensagem("#divMsgPesquisaDocumento", "alert-danger", "√â obrigat√≥rio escolher pelo menos um Tipo de Documento Alvo para a pesquisa.");
         }
     }
     function validarCamposObrigatoriosLikeDeslike() {
@@ -194,7 +194,7 @@
             if (todosPreenchidos) {
                 if (camposObrigatorios[i].value == "") {
                     todosPreenchidos = false;
-                    exibeMensagem("#divMsgProcessosSimilares", "alert-danger", "… necess·rio avaliar todas as recomendaÁıes de similaridade antes de prosseguir.");
+                    exibeMensagem("#divMsgProcessosSimilares", "alert-danger", "√â necess√°rio avaliar todas as recomenda√ß√µes de similaridade antes de prosseguir.");
                     camposObrigatorios[i].focus();
                 }
             }

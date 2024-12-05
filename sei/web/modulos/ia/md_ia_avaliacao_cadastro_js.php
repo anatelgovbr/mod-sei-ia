@@ -59,7 +59,7 @@
             if (todosPreenchidos) {
                 if (camposObrigatorios[i].value == "") {
                     todosPreenchidos = false;
-                    alert("Informe o campo Avaliação.");
+                    alert("Informe o campo AvaliaÃ§Ã£o.");
                     camposObrigatorios[i].focus();
                 }
             }

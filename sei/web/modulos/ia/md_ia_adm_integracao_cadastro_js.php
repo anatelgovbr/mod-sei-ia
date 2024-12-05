@@ -34,7 +34,7 @@
 
     $('#selMetodoRequisicao').change(function () {
         if ($(this).val() != <?= MdIaAdmIntegracaoRN::$REQUISICAO_POST ?>) {
-            alert('O MÈtodo da RequisiÁ„o "' + $('option:selected', this).text() + '" ainda n„o est· disponÌvel nesta vers„o.');
+            alert('O M√©todo da Requisi√ß√£o "' + $('option:selected', this).text() + '" ainda n√£o est√° dispon√≠vel nesta vers√£o.');
             $(this).val(<?= MdIaAdmIntegracaoRN::$REQUISICAO_POST ?>);
             return false;
         }
@@ -42,7 +42,7 @@
 
     $('#selFormato').change(function () {
         if ($(this).val() != <?= MdIaAdmIntegracaoRN::$FORMATO_JSON ?>) {
-            alert('O Formato do Retorno da OperaÁ„o "' + $('option:selected', this).text() + '" ainda n„o est· disponÌvel nesta vers„o.');
+            alert('O Formato do Retorno da Opera√ß√£o "' + $('option:selected', this).text() + '" ainda n√£o est√° dispon√≠vel nesta vers√£o.');
             $(this).val(<?= MdIaAdmIntegracaoRN::$FORMATO_JSON ?>);
             return false;
         }
@@ -65,7 +65,7 @@
                 break;
         }
 
-        // verifica se tem que exibir o input Conte˙do de AutenticaÁ„o:
+        // verifica se tem que exibir o input Conte√∫do de Autentica√ß√£o:
         if (document.querySelector('#selMetodoAutenticacao').value == <?= MdIaAdmIntegracaoRN::$AUT_BODY_TOKEN ?>) {
             $('#rowTokenAut').show();
         }
@@ -91,12 +91,12 @@
             return false;
         }
         if (infraTrim(document.querySelector('#txtUrlServico').value) == '') {
-            alert(setMensagemPersonalizada(msgDef, ['URL do Endpoint de AutenticaÁ„o']));
+            alert(setMensagemPersonalizada(msgDef, ['URL do Endpoint de Autentica√ß√£o']));
             document.querySelector('#txtUrlServico').focus();
             return false;
         }
         if (tpInteg == null) {
-            alert(setMensagemPersonalizada(msgDef, ['Tipo de IntegraÁ„o']));
+            alert(setMensagemPersonalizada(msgDef, ['Tipo de Integra√ß√£o']));
             return false;
         } else if (tpInteg.value == '<?= MdIaAdmIntegracaoRN::$TP_INTEGRACAO_REST ?>') {
             if (infraTrim(document.querySelector('#txtUrlServico').value) == '') {
@@ -114,7 +114,7 @@
                 itens.forEach((v, i) => {
                     if (v.value == '') {
                         v.focus();
-                        alert('Campo obrigatÛrio n„o preenchido.');
+                        alert('Campo obrigat√≥rio n√£o preenchido.');
                         valid = false;
                         return;
                     }
@@ -197,14 +197,14 @@
     function validarMapear() {
         $("#divMsg").hide();
         if (infraTrim(document.querySelector('#txtUrlServico').value) == '') {
-            alert(setMensagemPersonalizada(msgDef, ['URL do Endpoint da OperaÁ„o']));
+            alert(setMensagemPersonalizada(msgDef, ['URL do Endpoint da Opera√ß√£o']));
             document.querySelector('#txtUrlServico').focus();
             return false;
         }
         var ultimoCaractere = $("#txtUrlServico").val().slice(-1);
         if(ultimoCaractere == ":" || ultimoCaractere == "/") {
             rolar_para('#divMsg');
-            $("#divMsg > div > label").html("URL do Endpoint de AutenticaÁ„o inv·lido.");
+            $("#divMsg > div > label").html("URL do Endpoint de Autentica√ß√£o inv√°lido.");
             $("#divMsg > div").addClass("alert-danger");
             $("#divMsg").show();
             document.querySelector('#txtUrlServico').focus();
@@ -216,12 +216,12 @@
         objOperacao.operacao = arrUrlServico.pop();
         objOperacao.validado = false;
 
-        //executa consulta no arquivo .json, definido no campo: URL DefiniÁ„o do ServiÁo
+        //executa consulta no arquivo .json, definido no campo: URL Defini√ß√£o do Servi√ßo
         validarWebService();
 
         if (objOperacao.validado === false) {
             rolar_para('#divMsg');
-            $("#divMsg > div > label").html("N„o foi possÌvel conectar a API do SEI IA.");
+            $("#divMsg > div > label").html("N√£o foi poss√≠vel conectar a API do SEI IA.");
             $("#divMsg > div").addClass("alert-danger");
             $("#divMsg").show();
             return false;

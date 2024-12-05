@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 05/04/2024 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.3
+ * VersÃ£o do Gerador de CÃ³digo: 1.43.3
  */
 
 require_once dirname(__FILE__) . '../../../../SEI.php';
@@ -50,8 +50,22 @@ class MdIaInteracaoChatDTO extends InfraDTO
 
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdUsuario', 'id_usuario', 'md_ia_topico_chat');
 
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'NomeGrupoFavorito', 'nome_grupo', 'md_ia_grupo_prompts_fav');
+
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdUnidadeTopico', 'id_unidade', 'md_ia_topico_chat');
+
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdIaPromptsFavoritos', 'id_md_ia_prompts_favoritos', 'md_ia_prompts_favoritos');
+
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdIaGrupoPromptsFav', 'id_md_ia_grupo_prompts_fav', 'md_ia_prompts_favoritos');
+
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'DescricaoPrompt', 'descricao_prompt', 'md_ia_prompts_favoritos');
+
+        $this->adicionarAtributo(InfraDTO::$PREFIXO_STR,'PalavrasPesquisa');
+
         $this->configurarPK('IdMdIaInteracaoChat', InfraDTO::$TIPO_PK_NATIVA);
 
         $this->configurarFK('IdMdIaTopicoChat', 'md_ia_topico_chat', 'id_md_ia_topico_chat', InfraDTO::$TIPO_FK_OPCIONAL);
+
+        $this->configurarFK('IdMdIaInteracaoChat', 'md_ia_prompts_favoritos', 'id_md_ia_interacao_chat', InfraDTO::$TIPO_FK_OPCIONAL);
     }
 }

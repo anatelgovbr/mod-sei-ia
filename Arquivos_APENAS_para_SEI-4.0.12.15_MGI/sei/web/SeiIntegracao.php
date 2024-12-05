@@ -122,7 +122,7 @@ abstract class SeiIntegracao {
     try {
       $ret = call_user_func_array(array($this, $func), $params);
     }catch(Throwable $e){
-      throw new InfraException('Erro processando operação "'.$func.'" no módulo "'.$this->getNome().'".', $e);
+      throw new InfraException('Erro processando operaÃ§Ã£o "'.$func.'" no mÃ³dulo "'.$this->getNome().'".', $e);
     }
     return $ret;
   }

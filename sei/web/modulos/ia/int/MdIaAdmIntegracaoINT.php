@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4™ REGI√O
+ * TRIBUNAL REGIONAL FEDERAL DA 4¬™ REGI√ÉO
  *
  * 14/09/2023 - criado por sabino.colab
  *
- * Vers„o do Gerador de CÛdigo: 1.43.1
+ * Vers√£o do Gerador de C√≥digo: 1.43.1
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -18,10 +18,10 @@ class MdIaAdmIntegracaoINT extends InfraINT
         $xml = "<operacoes>\n";
         try {
             if (!filter_var($enderecoWSDL, FILTER_VALIDATE_URL) || !InfraUtil::isBolUrlValida($enderecoWSDL, FILTER_VALIDATE_URL))
-                throw new InfraException("EndereÁo do WebService inv·lido.");
+                throw new InfraException("Endere√ßo do WebService inv√°lido.");
 
             if ($data['tipoWs'] != 'SOAP')
-                throw new InfraException('O tipo de integraÁ„o informado deve ser do tipo SOAP.');
+                throw new InfraException('O tipo de integra√ß√£o informado deve ser do tipo SOAP.');
 
             $client = new MdIaSoapClienteRN($enderecoWSDL, 'wsdl');
             $client->setSoapVersion($data['versaoSoap']);
@@ -29,7 +29,7 @@ class MdIaAdmIntegracaoINT extends InfraINT
 
             if (empty($operacaoArr)) {
                 $xml .= "<success>false</success>\n";
-                $xml .= "<msg>N„o existe operaÁ„o.</msg>\n";
+                $xml .= "<msg>N√£o existe opera√ß√£o.</msg>\n";
                 $xml .= "</operacoes>\n";
                 return $xml;
             }
@@ -43,7 +43,7 @@ class MdIaAdmIntegracaoINT extends InfraINT
             return $xml;
 
         } catch (Exception $e) {
-            throw new InfraException("Erro OperaÁ„o SOAP: {$e->getMessage()}", $e);
+            throw new InfraException("Erro Opera√ß√£o SOAP: {$e->getMessage()}", $e);
         }
     }
 
@@ -60,10 +60,10 @@ class MdIaAdmIntegracaoINT extends InfraINT
         $urlServico = trim($post['urlServico'] . $urlApi['linkSwagger']);
 
         if (!filter_var($urlServico, FILTER_VALIDATE_URL) /*|| !InfraUtil::isBolUrlValida( $urlServico , FILTER_VALIDATE_URL )*/)
-            throw new InfraException("EndereÁo do WebService inv·lido.");
+            throw new InfraException("Endere√ßo do WebService inv√°lido.");
 
         if ($post['tipoWs'] != 'REST')
-            throw new InfraException('O Tipo de IntegraÁ„o informado deve ser do tipo REST.');
+            throw new InfraException('O Tipo de Integra√ß√£o informado deve ser do tipo REST.');
 
         $curl = curl_init($urlServico);
 
@@ -111,9 +111,9 @@ class MdIaAdmIntegracaoINT extends InfraINT
         try {
             $rs = self::getDadosServicoREST($post);
 
-            if (empty($rs)) throw new InfraException("N„o retornou dados para filtro via Json.");
+            if (empty($rs)) throw new InfraException("N√£o retornou dados para filtro via Json.");
 
-            if (!$rs->paths) throw new InfraException("N„o existe operaÁ„o.");
+            if (!$rs->paths) throw new InfraException("N√£o existe opera√ß√£o.");
 
             $xml .= "<operacoes>\n";
             $xml .= "<success>true</success>\n";
@@ -128,7 +128,7 @@ class MdIaAdmIntegracaoINT extends InfraINT
             return $xml;
 
         } catch (Exception $e) {
-            throw new InfraException("Erro OperaÁ„o REST: {$e->getMessage()}", $e);
+            throw new InfraException("Erro Opera√ß√£o REST: {$e->getMessage()}", $e);
         }
     }
 
@@ -210,7 +210,7 @@ class MdIaAdmIntegracaoINT extends InfraINT
     public static function executarConsultaREST($arrObjIntegracao, $parametros = [])
     {
 
-        if ($arrObjIntegracao['integracao']->getStrTipoIntegracao() != 'RE') throw new InfraException('ExecuÁ„o somente via REST.');
+        if ($arrObjIntegracao['integracao']->getStrTipoIntegracao() != 'RE') throw new InfraException('Execu√ß√£o somente via REST.');
 
         $strEnderecoServico = $arrObjIntegracao['integracao']->getStrOperacaoWsdl();
 
@@ -343,7 +343,7 @@ class MdIaAdmIntegracaoINT extends InfraINT
                 break;
 
             default:
-                throw new InfraException('Tipo de AÁ„o n„o declarado na funÁ„o.');
+                throw new InfraException('Tipo de A√ß√£o n√£o declarado na fun√ß√£o.');
         }
     }
 }

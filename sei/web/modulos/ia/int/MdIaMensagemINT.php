@@ -1,10 +1,10 @@
 <?
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃƒO
  *
  * 15/09/2023 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.41.0
+ * VersÃ£o do Gerador de CÃ³digo: 1.41.0
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
@@ -13,10 +13,10 @@ class MdIaMensagemINT extends InfraINT
 {
 
     public static $MSG_IA_01 = 'Informe o campo @VALOR1@.';
-    public static $MSG_IA_02 = 'O Tipo de Integração "SOAP" ainda não está disponível nesta versão.';
-    public static $MSG_IA_03 = 'Indique como Dado Restrito a chave de autenticação definida no Header.';
-    public static $MSG_IA_04 = 'O Conteúdo de Autenticação é de preenchimento obrigatório.';
-    public static $MSG_IA_05 = '@VALOR1@ já consta na lista.';
+    public static $MSG_IA_02 = 'O Tipo de IntegraÃ§Ã£o "SOAP" ainda nÃ£o estÃ¡ disponÃ­vel nesta versÃ£o.';
+    public static $MSG_IA_03 = 'Indique como Dado Restrito a chave de autenticaÃ§Ã£o definida no Header.';
+    public static $MSG_IA_04 = 'O ConteÃºdo de AutenticaÃ§Ã£o Ã© de preenchimento obrigatÃ³rio.';
+    public static $MSG_IA_05 = '@VALOR1@ jÃ¡ consta na lista.';
 
     public static function getMensagem($msg, $arrParams = null)
     {
