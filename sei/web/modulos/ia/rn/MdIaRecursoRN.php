@@ -39,6 +39,7 @@ class MdIaRecursoRN extends InfraRN
             curl_setopt_array($curl, [
                 CURLOPT_RETURNTRANSFER => 1,
                 CURLOPT_URL => $urlConsulta,
+                CURLOPT_SSL_VERIFYPEER => false,
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT
             ]);
 
@@ -86,6 +87,7 @@ class MdIaRecursoRN extends InfraRN
             curl_setopt_array($curl, [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_URL => $urlOperacao,
+                CURLOPT_SSL_VERIFYPEER => false,
                 CURLOPT_POSTFIELDS => $dadosEnviados[0],
                 CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT
@@ -134,6 +136,7 @@ class MdIaRecursoRN extends InfraRN
             curl_setopt_array($curl, [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_URL => $urlOperacao,
+                CURLOPT_SSL_VERIFYPEER => false,
                 CURLOPT_POSTFIELDS => $dadosEnviados[0],
                 CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT
@@ -203,6 +206,7 @@ class MdIaRecursoRN extends InfraRN
             curl_setopt_array($curl, [
                 CURLOPT_RETURNTRANSFER => 1,
                 CURLOPT_URL => $urlOperacao,
+                CURLOPT_SSL_VERIFYPEER => false,
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT
             ]);
 
@@ -252,9 +256,9 @@ class MdIaRecursoRN extends InfraRN
             curl_setopt_array($curl, [
                 CURLOPT_RETURNTRANSFER => 1,
                 CURLOPT_URL => $urlConsulta,
+                CURLOPT_SSL_VERIFYPEER => false,
                 CURLOPT_TIMEOUT_MS => '2000'
             ]);
-
             // Envio e armazenamento da resposta
             $response = curl_exec($curl);
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
