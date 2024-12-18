@@ -586,7 +586,7 @@ class MdIaAtualizadorSeiRN extends InfraRN
                     ),
                     PERC_POS_DOC_PROC_CVP AS(
                         SELECT
-                            CONCAT(CONCAT(CONCAT(CONCAT(CAST(POS_DOC_PROC_CVP.id_tipo_procedimento AS CHAR), '_'), CAST(POS_DOC_PROC_CVP.id_serie AS CHAR)), '_'), POS_DOC_PROC_CVP.sta_protocolo) as agg,
+                            CONCAT(CONCAT(CONCAT(CONCAT(CAST(POS_DOC_PROC_CVP.id_tipo_procedimento AS CHAR(255)), '_'), CAST(POS_DOC_PROC_CVP.id_serie AS CHAR(255))), '_'), POS_DOC_PROC_CVP.sta_protocolo) as agg,
                             POS_DOC_PROC_CVP.id_tipo_procedimento,
                             POS_DOC_PROC_CVP.id_procedimento,
                             MAX_POS_DOC_PROC_CVP.max_ordem_doc,
