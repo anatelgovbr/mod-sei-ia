@@ -52,8 +52,8 @@ try {
         $objMdIaAdmTpDocPesqDTO->retNumIdSerie();
         $objMdIaAdmTpDocPesqDTO->retStrNomeSerie();
         $objMdIaAdmTpDocPesqDTO->setNumIdMdIaAdmPesqDoc($objMdIaAdmPesqDocDTO->getNumIdMdIaAdmPesqDoc());
+        $objMdIaAdmTpDocPesqDTO->setStrSinAtivo("S");
         $objMdIaAdmTpDocPesqRN = new MdIaAdmTpDocPesqRN();
-
         $arrObjMdIaAdmTpDocPesqDTO = $objMdIaAdmTpDocPesqRN->listar($objMdIaAdmTpDocPesqDTO);
     }
 
@@ -360,7 +360,7 @@ if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
                                 ?>
                                 <div class="alert alert-danger">
                                     <label class="infraLabelOpcional">
-                                        O recurso especfico do SEI IA está indisponível no momento.
+                                        O recurso específico do SEI IA está indisponível no momento.
                                     </label>
                                 </div>
                                 <?php
