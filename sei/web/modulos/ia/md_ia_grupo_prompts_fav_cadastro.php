@@ -115,11 +115,6 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
-?>
-    #lblNomeGrupo {position:absolute;left:0%;top:0%;width:75%;}
-    #txtNomeGrupo {position:absolute;left:0%;top:40%;width:75%;}
-
-<?
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
@@ -131,22 +126,33 @@ PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
-    <form id="frmGrupoPromptsFavoritosCadastro" method="post" onsubmit="return OnSubmitForm();"
+    <form id="frmGrupoPromptsFavoritosCadastro" method="post" onsubmit="return OnSubmitForm(event);"
           action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
         <?
         PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
         //PaginaSEI::getInstance()->montarAreaValidacao();
         PaginaSEI::getInstance()->abrirAreaDados('5em');
         ?>
-        <label id="lblNomeGrupo" for="txtNomeGrupo" accesskey="N" class="infraLabelObrigatorio"><span
-                    class="infraTeclaAtalho">N</span>ome:</label>
-        <input type="text" id="txtNomeGrupo" name="txtNomeGrupo" class="infraText"
-               value="<?= PaginaSEI::tratarHTML($objMdIaGrupoPromptsFavDTO->getStrNomeGrupo()); ?>"
-               onkeypress="return infraMascaraTexto(this,event,100);" maxlength="100"
-               tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
+        <div id="divMsg" style="display: none">
+            <div class="alert" role="alert">
+                <label></label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-10">
+                <div class="form-group">
+                    <label id="lblNomeGrupo" for="txtNomeGrupo" accesskey="N" class="infraLabelObrigatorio"><span
+                                class="infraTeclaAtalho">N</span>ome:</label>
+                    <input type="text" id="txtNomeGrupo" name="txtNomeGrupo" class="infraText form-control"
+                           value="<?= PaginaSEI::tratarHTML($objMdIaGrupoPromptsFavDTO->getStrNomeGrupo()); ?>"
+                           onkeypress="return infraMascaraTexto(this,event,100);" maxlength="100"
+                           tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>
 
-        <input type="hidden" id="hdnIdGrupoPromptsFavoritos" name="hdnIdGrupoPromptsFavoritos"
-               value="<?= $objMdIaGrupoPromptsFavDTO->getNumIdMdIaGrupoPromptsFav(); ?>"/>
+                    <input type="hidden" id="hdnIdGrupoPromptsFavoritos" name="hdnIdGrupoPromptsFavoritos"
+                           value="<?= $objMdIaGrupoPromptsFavDTO->getNumIdMdIaGrupoPromptsFav(); ?>"/>
+                </div>
+            </div>
+        </div>
         <?
         PaginaSEI::getInstance()->fecharAreaDados();
         //PaginaSEI::getInstance()->montarAreaDebug();

@@ -657,6 +657,35 @@ class MdIaConfigAssistenteINT extends InfraINT
                     color: #6c757d;
                     margin-bottom: 8px;
                 }
+                #chat_ia .acesseManual a {
+                    color: #007bff;
+                }
+                #chat_ia .acesseManual a:hover {
+                    color: #0056b3;
+                }
+                #chat_ia .acesseManual {
+                    text-align: center;
+                    font-size: 17px;
+                    font-weight: bold;
+                }                   
+                #chat_ia .cards svg {
+                    width: 16px;
+                    height: 16px;
+                    margin-bottom: 3px;
+                }
+                #chat_ia .cards button {
+                    border-radius: 30px;
+                    font-size: 12px;
+                    margin: 5px 2px;
+                }
+                #chat_ia .cards {
+                    text-align: center;
+                    margin: 10px 0;
+                }
+                #chat_ia .cards button:hover {
+                    background: #f9f9f9;
+                    color: #000;
+                }
             </style>
 
         ';

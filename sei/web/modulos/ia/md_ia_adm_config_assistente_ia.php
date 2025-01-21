@@ -24,6 +24,9 @@ try {
 
     SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
 
+    // Links para consulta Ajax
+    $strLinkValidarWsdl = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_integracao_busca_operacao_ajax');
+
     $strDesabilitar = '';
 
     $arrComandos = array();
@@ -141,15 +144,15 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 No SIP, o recurso associado ao Assistente é o "md_ia_adm_config_assist_ia_consultar" e a instalação do módulo inclui ele apenas no Perfil Básico do SEI.', 'Ajuda') ?>
                      class="infraImg" alt="Ícone de Ajuda"/>
                 <div class="infraDivRadio">
-                    <input type="radio" utlCampoObrigatorio="o" name="rdnExibirFuncionalidade"
-                           value="S" class="infraRadio" <?= $exibirFuncionalidade ?>
+                    <input type="radio" onChange="exibirFuncionalidade()" utlCampoObrigatorio="o" name="rdnExibirFuncionalidade"
+                           value="S" class="infraRadio" <?= $exibirFuncionalidade ?>>
                     <label id="lblTodosProcessos" name="lblTodosProcessos" for="rdnRelevanteTodosProcessos"
                            class="infraLabelOpcional infraLabelRadio">Exibir</label>
                 </div>
 
                 <div class="infraDivRadio">
-                    <input type="radio" utlCampoObrigatorio="o" name="rdnExibirFuncionalidade" value="N"
-                           class="infraRadio" <?= $naoExibirFuncionalidade ?>
+                    <input type="radio" onChange="exibirFuncionalidade()"  utlCampoObrigatorio="o" name="rdnExibirFuncionalidade" value="N"
+                           class="infraRadio" <?= $naoExibirFuncionalidade ?> >
                     <label id="lblProcessosEspecificos" name="lblProcessosEspecificos"
                            for="rdnRelevanteProcessosEspecificos"
                            class="infraLabelOpcional infraLabelRadio">Não Exibir</label>
@@ -310,7 +313,7 @@ Define as instruções internas de como o LLM de IA Generativa deve se comportar
                 </div>
             </div>
         </div>
-
+        <input type="hidden" id="hdnConectadoAPI" value="0">
         <?
         //PaginaSEI::getInstance()->montarAreaDebug();
         PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);

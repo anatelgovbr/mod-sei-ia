@@ -346,4 +346,14 @@ class MdIaAdmIntegracaoINT extends InfraINT
                 throw new InfraException('Tipo de Ação não declarado na função.');
         }
     }
+    public function buscaDadosIntegracao($dados) {
+        $objMdIaAdmIntegracaoDTO = new MdIaAdmIntegracaoDTO();
+        $objMdIaAdmIntegracaoRN = new MdIaAdmIntegracaoRN();
+        $objMdIaAdmIntegracaoDTO->setNumIdMdIaAdmIntegFuncion($dados["idIntegracao"]);
+        $objMdIaAdmIntegracaoDTO->retStrOperacaoWsdl();
+        $objMdIaAdmIntegracaoDTO = $objMdIaAdmIntegracaoRN->consultar($objMdIaAdmIntegracaoDTO);
+        $dadosIntegracao = [];
+        $dadosIntegracao["operacaoWsdl"] = $objMdIaAdmIntegracaoDTO->getStrOperacaoWsdl();
+        return $dadosIntegracao;
+    }
 }

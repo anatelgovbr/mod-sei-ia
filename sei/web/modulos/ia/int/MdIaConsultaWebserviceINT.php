@@ -74,7 +74,8 @@ class MdIaConsultaWebserviceINT extends InfraRN
             $totalTokens = "";
             if ($httpcode == "200") {
                 $objResponse = json_decode($response);
-                $resposta = iconv("UTF-8", "ISO-8859-1//TRANSLIT", $objResponse->choices[0]->message->content);
+                $response = mb_convert_encoding($objResponse->choices[0]->message->content, 'HTML-ENTITIES', 'UTF-8');
+                $resposta = iconv("UTF-8", "ISO-8859-1//TRANSLIT//IGNORE", $response);
                 $idMensagem = $objResponse->id_message;
                 $totalTokens = $objResponse->usage->total_tokens;
             }  else {
