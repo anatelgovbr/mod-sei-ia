@@ -116,14 +116,14 @@ class MdIaTopicoChatINT extends InfraINT
     public function retornaPeriodos() {
         $dataAtual = new DateTime();
 
-        // Subtrair um mês
-        $dataAtual->modify('-1 month');
+        $anoAtual = $dataAtual->format('Y'); // Ano atual
 
+        $dataAtual->modify('-1 month');
         $mesAnterior = $dataAtual->format('m'); // Mês anterior
-        $ano = $dataAtual->format('Y'); // Ano atual
+        $anoMesAnterior = $dataAtual->format('Y'); // Ano anterior
 
         // Formatar como MM/YYYY
-        $mesAnoFormatado = $mesAnterior . '/' . $ano;
+        $mesAnoFormatado = $mesAnterior . '/' . $anoMesAnterior;
 
         $periodosPossiveis = array();
         // Hoje
@@ -170,14 +170,14 @@ class MdIaTopicoChatINT extends InfraINT
 
         // Ano atual
         $periodosPossiveis["anoAtual"] = [
-            "data_inicial" => "01/01/" . $ano . " 00:00:00",
-            "data_final" => "31/12/" . $ano . " 23:59:59"
+            "data_inicial" => "01/01/" . $anoAtual . " 00:00:00",
+            "data_final" => "31/12/" . $anoAtual . " 23:59:59"
         ];
 
         // Último ano
         $periodosPossiveis["ultimoAno"] = [
-            "data_inicial" => "01/01/" . ($ano - 1) . " 00:00:00",
-            "data_final" => "31/12/" . ($ano - 1) . " 23:59:59"
+            "data_inicial" => "01/01/" . ($anoAtual - 1) . " 00:00:00",
+            "data_final" => "31/12/" . ($anoAtual - 1) . " 23:59:59"
         ];
         return $periodosPossiveis;
     }
@@ -206,13 +206,11 @@ class MdIaTopicoChatINT extends InfraINT
         foreach ($periodos as $nomePeriodo => $intervalo) {
             $dataInicialObj = DateTime::createFromFormat('d/m/Y H:i:s', $intervalo['data_inicial']);
             $dataFinalObj = DateTime::createFromFormat('d/m/Y H:i:s', $intervalo['data_final']);
-
             // Verifica se a data base está entre data_inicial e data_final
             if ($dataBaseObj >= $dataInicialObj && $dataBaseObj <= $dataFinalObj) {
                 return $nomePeriodo; // Retorna o nome do período correspondente
             }
         }
-
         // Se a data base não estiver em nenhum período, retorna "Mais Antigos"
         return "maisAntigos";
     }
@@ -232,7 +230,6 @@ class MdIaTopicoChatINT extends InfraINT
         $arrayRetorno["budgetTokens"] = MdIaConfigAssistenteINT::calcularConsumoDiarioToken();
 
         $periodos = self::retornaPeriodos();
-
         if (!empty($listagemTopicos)) {
             if (!SessaoSEI::getInstance()->isSetAtributo('MD_IA_ID_TOPICO_CHAT_IA')) {
                 $dados["id"] = self::consultarUltimoTopico();

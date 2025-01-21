@@ -17,7 +17,7 @@ class IaIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '1.0.2';
+        return '1.0.3';
     }
 
     public function getInstituicao()
@@ -570,6 +570,16 @@ class IaIntegracao extends SeiIntegracao
 
             case 'md_ia_desarquivar_topico':
                 $json = MdIaTopicoChatINT::desarquivarTopico($_POST);
+                InfraAjax::enviarJSON(json_encode($json));
+                exit(0);
+
+            case 'md_ia_consultar_grupo_prompt_favorito_ajax':
+                $json = MdIaGrupoPromptsFavINT::consultarGrupoPromptFavorito($_POST);
+                InfraAjax::enviarJSON(json_encode($json));
+                exit(0);
+				
+            case 'md_ia_busca_dados_integracao':
+                $json = MdIaAdmIntegracaoINT::buscaDadosIntegracao($_POST);
                 InfraAjax::enviarJSON(json_encode($json));
                 exit(0);
 

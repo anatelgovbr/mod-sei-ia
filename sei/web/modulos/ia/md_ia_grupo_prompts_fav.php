@@ -41,7 +41,7 @@ try {
             } catch (Exception $e) {
                 PaginaSEI::getInstance()->processarExcecao($e);
             }
-            header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_grupo_prompts_fav_listar&acao_origem=md_ia_prompts_favoritos_selecionar&acao_retorno=md_ia_prompts_favoritos_listar&tipo_selecao=2'));
+            header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_grupo_prompts_fav_listar&acao_origem=md_ia_prompts_favoritos_selecionar&acao_retorno=md_ia_prompts_favoritos_selecionar&tipo_selecao=2'));
             die;
 
         case 'md_ia_grupo_prompts_fav_listar':

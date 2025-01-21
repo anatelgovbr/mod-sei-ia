@@ -29,4 +29,17 @@ class MdIaGrupoPromptsFavINT extends InfraINT
         return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrobjMdIaGrupoPromptsFavDTO, 'IdMdIaGrupoPromptsFav', 'NomeGrupo');
     }
 
+    public static function consultarGrupoPromptFavorito($dados) {
+        $objMdIaGrupoPromptsFavDTO = new MdIaGrupoPromptsFavDTO();
+        $objMdIaGrupoPromptsFavDTO->setStrNomeGrupo($dados['nomeGrupoPromptFavorito']);
+        $objMdIaGrupoPromptsFavDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+        $objMdIaGrupoPromptsFavDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
+        $objMdIaGrupoPromptsFavRN = new MdIaGrupoPromptsFavRN();
+        $objMdIaGrupoPromptsFavDTO = $objMdIaGrupoPromptsFavRN->contar($objMdIaGrupoPromptsFavDTO);
+        if($objMdIaGrupoPromptsFavDTO > 0) {
+            return array("existeGrupoFavorito" => true);
+        } else {
+            return array("existeGrupoFavorito" => false);
+        }
+    }
 }
