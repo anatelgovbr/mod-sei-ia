@@ -194,16 +194,16 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                      class="infraImg"/>
                 <div class="infraDivRadio">
                     <input type="radio" utlCampoObrigatorio="o" name="rdnExibirFuncionalidade"
-                           value="S" class="infraRadio" <?= $exibirFuncionalidade ?>
-                    <label id="lblTodosProcessos" name="lblTodosProcessos" for="rdnRelevanteTodosProcessos"
+                           value="S" class="infraRadio" id="exibirFuncionalidade" <?= $exibirFuncionalidade ?>>
+                    <label id="lblTodosProcessos" name="lblTodosProcessos" for="exibirFuncionalidade"
                            class="infraLabelOpcional infraLabelRadio">Exibir</label>
                 </div>
 
                 <div class="infraDivRadio">
-                    <input type="radio" utlCampoObrigatorio="o" name="rdnExibirFuncionalidade" value="N"
-                           class="infraRadio" <?= $naoExibirFuncionalidade ?>
+                    <input type="radio" utlCampoObrigatorio="o" id="naoExibirFuncionalidade" name="rdnExibirFuncionalidade" value="N"
+                           class="infraRadio" <?= $naoExibirFuncionalidade ?>>
                     <label id="lblProcessosEspecificos" name="lblProcessosEspecificos"
-                           for="rdnRelevanteProcessosEspecificos"
+                           for="naoExibirFuncionalidade"
                            class="infraLabelOpcional infraLabelRadio">Não Exibir</label>
                 </div>
             </div>
@@ -217,17 +217,17 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                      name="ajuda" <?= PaginaSEI::montarTitleTooltip('Esta opção permite que a funcionalidade de classificação de acordo com os "Objetivos de Desenvolvimento Sustentável da ONU" seja exibida para os Usuários Externos ao peticionar Processo Novo, Processo Intercorrente e Resposta da Intimação. \n\nA funcionalidade só estará disponível se o módulo "SEI Peticionamento, Intimação e Procuração" estiver instalado na versão 4.3.0 ou superior e a opção "Exibir Funcionalidade" estiver marcada como "Exibir".', 'Ajuda') ?>
                      class="infraImg"/>
                 <div class="infraDivRadio">
-                    <input type="radio" utlCampoObrigatorio="o" name="rdnClassificacaoExterno"
-                           value="S" class="infraRadio" <?= $classificacaoUsuarioExterno ?> <?= $disableClassificacaoUsuarioExterno ?>
-                    <label id="lblRdnClassificacaoUsuarioExternoS" name="lblRdnClassificacaoUsuarioExternoS" for="rdnClassificacaoExterno"
+                    <input type="radio" utlCampoObrigatorio="o" name="rdnClassificacaoExterno" id="ativarClassificacaoExterna"
+                           value="S" class="infraRadio" <?= $classificacaoUsuarioExterno ?> <?= $disableClassificacaoUsuarioExterno ?>>
+                    <label id="lblRdnClassificacaoUsuarioExternoS" name="lblRdnClassificacaoUsuarioExternoS" for="ativarClassificacaoExterna"
                            class="infraLabelOpcional infraLabelRadio">Ativar</label>
                 </div>
 
                 <div class="infraDivRadio">
-                    <input type="radio" utlCampoObrigatorio="o" name="rdnClassificacaoExterno" value="N"
-                           class="infraRadio" <?= $naoClassificacaoUsuarioExterno ?> <?= $disableClassificacaoUsuarioExterno ?>
+                    <input type="radio" utlCampoObrigatorio="o" id="desativarClassificacaoExterna" name="rdnClassificacaoExterno" value="N"
+                           class="infraRadio" <?= $naoClassificacaoUsuarioExterno ?> <?= $disableClassificacaoUsuarioExterno ?>>
                     <label id="lblRdnClassificacaoUsuarioExternoN" name="lblRdnClassificacaoExternoN"
-                           for="rdnClassificacaoExternoN"
+                           for="desativarClassificacaoExterna"
                            class="infraLabelOpcional infraLabelRadio">Desativar</label>
                 </div>
             </div>
@@ -241,17 +241,17 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                      name="ajuda" <?= PaginaSEI::montarTitleTooltip('Parametrização para exibir ou não a Avaliação Especializada por Racional.', 'Ajuda') ?>
                      class="infraImg"/>
                 <div class="infraDivRadio">
-                    <input type="radio" utlCampoObrigatorio="o" name="rdnExibirAvaliacao"
-                           value="S" class="infraRadio" <?= $exibirAvaliacao ?>
-                    <label id="lblExibirAvaliacao" name="lblExibirAvaliacao" for="rdnExibirAvaliacao"
+                    <input type="radio" utlCampoObrigatorio="o" name="rdnExibirAvaliacao" id="ativarRacional"
+                           value="S" class="infraRadio" <?= $exibirAvaliacao ?>>
+                    <label id="lblExibirAvaliacao" name="lblExibirAvaliacao" for="ativarRacional"
                            class="infraLabelOpcional infraLabelRadio">Ativar</label>
                 </div>
 
                 <div class="infraDivRadio">
-                    <input type="radio" utlCampoObrigatorio="o" name="rdnExibirAvaliacao" value="N"
-                           class="infraRadio" <?= $naoExibirAvaliacao ?>
+                    <input type="radio" utlCampoObrigatorio="o" name="rdnExibirAvaliacao" value="N" id="desativarRacional"
+                           class="infraRadio" <?= $naoExibirAvaliacao ?>>
                     <label id="lblNaoExibirAvaliacao" name="lblNaoExibirAvaliacao"
-                           for="rdnNaoExibirAvaliacao"
+                           for="desativarRacional"
                            class="infraLabelOpcional infraLabelRadio">Desativar</label>
                 </div>
             </div>

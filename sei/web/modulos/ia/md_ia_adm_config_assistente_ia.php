@@ -144,17 +144,17 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 No SIP, o recurso associado ao Assistente é o "md_ia_adm_config_assist_ia_consultar" e a instalação do módulo inclui ele apenas no Perfil Básico do SEI.', 'Ajuda') ?>
                      class="infraImg" alt="Ícone de Ajuda"/>
                 <div class="infraDivRadio">
-                    <input type="radio" onChange="exibirFuncionalidade()" utlCampoObrigatorio="o" name="rdnExibirFuncionalidade"
+                    <input type="radio" onChange="exibirFuncionalidade()" id="exibirFuncionalidade" utlCampoObrigatorio="o" name="rdnExibirFuncionalidade"
                            value="S" class="infraRadio" <?= $exibirFuncionalidade ?>>
-                    <label id="lblTodosProcessos" name="lblTodosProcessos" for="rdnRelevanteTodosProcessos"
+                    <label id="lblTodosProcessos" name="lblTodosProcessos" for="exibirFuncionalidade"
                            class="infraLabelOpcional infraLabelRadio">Exibir</label>
                 </div>
 
                 <div class="infraDivRadio">
-                    <input type="radio" onChange="exibirFuncionalidade()"  utlCampoObrigatorio="o" name="rdnExibirFuncionalidade" value="N"
+                    <input type="radio" onChange="exibirFuncionalidade()" id="naoExibirFuncionalidade"  utlCampoObrigatorio="o" name="rdnExibirFuncionalidade" value="N"
                            class="infraRadio" <?= $naoExibirFuncionalidade ?> >
                     <label id="lblProcessosEspecificos" name="lblProcessosEspecificos"
-                           for="rdnRelevanteProcessosEspecificos"
+                           for="naoExibirFuncionalidade"
                            class="infraLabelOpcional infraLabelRadio">Não Exibir</label>
                 </div>
             </div>

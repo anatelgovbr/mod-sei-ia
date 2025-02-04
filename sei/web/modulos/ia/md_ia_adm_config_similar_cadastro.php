@@ -182,17 +182,17 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                      name="ajuda" <?= PaginaSEI::montarTitleTooltip('A funcionalidade de "Processos Similares" somente será exibida para os usuários se selecionada a opção "Exibir".', 'Ajuda') ?>
                      class="infraImg" alt="Ícone de Ajuda"/>
                 <div class="infraDivRadio">
-                    <input type="radio" utlCampoObrigatorio="o" name="rdnExibirFuncionalidade"
-                           value="S" class="infraRadio" <?= $exibirFuncionalidade ?>
-                    <label id="lblTodosProcessos" name="lblTodosProcessos" for="rdnRelevanteTodosProcessos"
+                    <input type="radio" id="exibirFuncionalidade" utlCampoObrigatorio="o" name="rdnExibirFuncionalidade"
+                           value="S" class="infraRadio" <?= $exibirFuncionalidade ?>>
+                    <label id="lblTodosProcessos" name="lblTodosProcessos" for="exibirFuncionalidade"
                            class="infraLabelOpcional infraLabelRadio">Exibir</label>
                 </div>
 
                 <div class="infraDivRadio">
-                    <input type="radio" utlCampoObrigatorio="o" name="rdnExibirFuncionalidade" value="N"
-                           class="infraRadio" <?= $naoExibirFuncionalidade ?>
+                    <input type="radio" utlCampoObrigatorio="o" id="naoExibirFuncionalidade" name="rdnExibirFuncionalidade" value="N"
+                           class="infraRadio" <?= $naoExibirFuncionalidade ?>>
                     <label id="lblProcessosEspecificos" name="lblProcessosEspecificos"
-                           for="rdnRelevanteProcessosEspecificos"
+                           for="naoExibirFuncionalidade"
                            class="infraLabelOpcional infraLabelRadio">Não Exibir</label>
                 </div>
             </div>
