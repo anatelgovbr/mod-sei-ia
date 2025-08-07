@@ -1,11 +1,8 @@
 # Módulo SEI IA
 
 ## Requisitos
-- Requisito Mínimo é o SEI 4.0.12 (com ajustes em códigos para ativar ponto de extensão de módulo) ou diretamente no SEI 4.1.4.
+- Requisito Mínimo é o SEI 4.1.5.
    - Não é compatível com versões anteriores e em versões mais recentes é necessário conferir antes se possui compatibilidade.
-   - Instalar apenas no SEI 4.0.12 ou no SEI 4.1.4 em diante.
-      - No SEI 4.0.12, **antes**, sobrescrever os três arquivos do core do SEI disponibilizados na pasta `Arquivos_APENAS_para_SEI-4.0.12`.
-      - No SEI 4.0.12.15, **antes**, sobrescrever os três arquivos do core do SEI disponibilizados na pasta `Arquivos_APENAS_para_SEI-4.0.12.15_MGI`.
    - Verificar valor da constante de versão do SEI no arquivo `/sei/web/SEI.php` ou, após logado no sistema, parando o mouse sobre a logo do SEI no canto superior esquerdo.
 - **Atenção**: O Módulo SEI IA somente funciona em conjunto com a instalação do [Servidor de Soluções de IA](https://github.com/anatelgovbr/sei-ia?tab=readme-ov-file "Clique e acesse").
    - Todos os detalhes constantes no [README](https://github.com/anatelgovbr/sei-ia/blob/main/README.md) e no [INSTALL](https://github.com/anatelgovbr/sei-ia/blob/main/docs/INSTALL.md) do *Servidor de Soluçõea de IA* são importantes, nessa ordem e exigindo leitura prévia integral **antes** de iniciar sua instalação.
@@ -47,7 +44,6 @@
 2. Imediatamente após a instalação com sucesso do Módulo SEI IA no SEI, usuário com permissão de "Administrador" do SEI deve fazer novo login no SEI e acessar os menus de administração do Módulo pelo seguinte caminho: Administração > Inteligência Artificial.
 	- Somente com tudo parametrizado na Administração do Módulo será possível seu uso adequado.
  	- A funcionalidade de "Pesquisa de Documentos" (recomendação de documentos similares) somente funcionará depois que configurar pelo menos um Tipo de Documento como Alvo da Pesquisa no menu Administração > Inteligência Artificial > Pesquisa de Documentos (na seção "Tipos de Documentos Alvo da Pesquisa").
- 	- Atenção para o tópico [Ajustar Permissão por IP no Solr do SEI](https://github.com/anatelgovbr/sei-ia/blob/main/docs/INSTALL.md#ajustar-permiss%C3%A3o-por-ip-no-solr-do-sei) no INSTALL, para configurar a permissão de acesso ao Solr do SEI correspondente, e para a criação prévia de usuário de aplicação de SOMENTE LEITURA no banco do SEI correspondente, destacada no passo 6 do tópico [Passos para Instalação](https://github.com/anatelgovbr/sei-ia/blob/main/docs/INSTALL.md#passos-para-instala%C3%A7%C3%A3o).
 3. O script de banco do SIP já cria todos os Recursos e Menus e os associam automaticamente ao Perfil "Básico" ou ao Perfil "Administrador".
 	- Independente da criação de outros Perfis, os recursos indicados para o Perfil "Básico" ou "Administrador" devem manter correspondência com os Perfis dos usuários internos que utilizarão o Módulo e dos usuários Administradores.
 	- Tão quanto ocorre com as atualizações do SEI, versões futuras deste Módulo continuarão a atualizar e criar Recursos e associá-los apenas aos Perfis "Básico" e "Administrador".
@@ -57,10 +53,7 @@
 		- Caso o órgão queira restringir quem pode utilizar o Assistente, precisa retirar o mencionado recurso do Perfil "Básico" e incluir no Perfil pertinente.
 		- O custo do uso da API do GPT-4o é muito baixo e pode ser desnecessário restringir o uso do Assistente.
 		- É de responsabilidade do órgão essa avaliação sobre ampliar ou restringir o uso do Assistente.
-4. Acesse o [Manual do Webservice do Módulo SEI IA](https://github.com/anatelgovbr/mod-sei-ia/blob/master/sei/web/modulos/ia/ws/manual_ws_ia.md "Clique e acesse").
-	- Esse Webservice é acionado internamente na comunicação entre o SEI e o *Servidor de Soluções de IA*.
-	- Não deve ser utilizado para outras finalidades.
-5. Acesse o [Manual do Usuário do SEI IA](https://docs.google.com/document/d/e/2PACX-1vRsKljzHcKwRfdW7IcnFA1EHNPIInog9Mqpu58xEFzRMfZ5avrLhYbwUjPkXuTDFKFEPnev4ASJ-5Dm/pub "Clique e acesse") para conhecer suas funcionalidades.
+4. Acesse o [Manual do Usuário do SEI IA](https://docs.google.com/document/d/e/2PACX-1vRsKljzHcKwRfdW7IcnFA1EHNPIInog9Mqpu58xEFzRMfZ5avrLhYbwUjPkXuTDFKFEPnev4ASJ-5Dm/pub "Clique e acesse") para conhecer suas funcionalidades.
 
 ## Erros ou Sugestões
 1. [Abrir Issue](https://github.com/anatelgovbr/mod-sei-ia/issues) no repositório do GitHub do módulo se ocorrer erro na execução dos scripts de banco do módulo no SEI ou no SIP acima.
