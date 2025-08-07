@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -11,29 +12,12 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdIaAdmConfigAssistIAINT extends InfraINT
 {
-    public static function montarSelectLLMAtivo($itemSelecionado = null , $retornaItem = false)
+    public static function autoCompletarUsuarios($numIdOrgao, $strPalavrasPesquisa, $bolOutros, $bolExternos, $bolSiglaNome, $bolInativos)
     {
-        $arrMetReq = [
-            MdIaAdmConfigAssistIARN::$LLM_GPT_4_128K_ID => MdIaAdmConfigAssistIARN::$LLM_GPT_4_128K
-        ];
-
-        if ( $retornaItem ) return $arrMetReq[$retornaItem];
-
-        $strOptions = '<option value="">Selecione</option>';
-
-        foreach ( $arrMetReq as $k => $v ) {
-            $selected = '';
-            if ( $itemSelecionado && $itemSelecionado == $k ) $selected = 'selected';
-            $strOptions .= "<option value='$k' $selected>$v</option>";
-        }
-        return $strOptions;
-    }
-
-    public static function autoCompletarUsuarios($numIdOrgao, $strPalavrasPesquisa, $bolOutros, $bolExternos, $bolSiglaNome, $bolInativos){
 
         $objUsuarioDTO = new UsuarioDTO();
 
-        if ($bolInativos){
+        if ($bolInativos) {
             $objUsuarioDTO->setBolExclusaoLogica(false);
         }
 
@@ -44,17 +28,17 @@ class MdIaAdmConfigAssistIAINT extends InfraINT
         $objUsuarioDTO->setNumMaxRegistrosRetorno(50);
         $objUsuarioDTO->setStrPalavrasPesquisa($strPalavrasPesquisa);
 
-        if (!InfraString::isBolVazia($numIdOrgao)){
+        if (!InfraString::isBolVazia($numIdOrgao)) {
             $objUsuarioDTO->setNumIdOrgao($numIdOrgao);
         }
 
-        if ($bolOutros){
-            $objUsuarioDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario(),InfraDTO::$OPER_DIFERENTE);
+        if ($bolOutros) {
+            $objUsuarioDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario(), InfraDTO::$OPER_DIFERENTE);
         }
 
-        if (!$bolExternos){
+        if (!$bolExternos) {
             $objUsuarioDTO->setStrStaTipo(UsuarioRN::$TU_SIP);
-        }else{
+        } else {
             $objUsuarioDTO->setStrStaTipo(UsuarioRN::$TU_EXTERNO);
         }
 
@@ -67,10 +51,33 @@ class MdIaAdmConfigAssistIAINT extends InfraINT
 
         if ($bolSiglaNome) {
             foreach ($arrObjUsuarioDTO as $objUsuarioDTO) {
-                $objUsuarioDTO->setStrSigla($objUsuarioDTO->getStrSigla() . ' - '.$objUsuarioDTO->getStrNome());
+                $objUsuarioDTO->setStrSigla($objUsuarioDTO->getStrSigla() . ' - ' . $objUsuarioDTO->getStrNome());
             }
         }
 
         return $arrObjUsuarioDTO;
+    }
+
+    public static function habilitadoRefletir()
+    {
+        $objMdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();
+        $objMdIaAdmConfigAssistIADTO->retStrSinRefletir();
+        $objMdIaAdmConfigAssistIARN = new MdIaAdmConfigAssistIARN();
+        $objMdIaAdmConfigAssistIADTO = $objMdIaAdmConfigAssistIARN->consultar($objMdIaAdmConfigAssistIADTO);
+
+        if ($objMdIaAdmConfigAssistIADTO->getStrSinRefletir() != 'S') {
+            return "display:none !important;";
+        }
+    }
+    public static function habilitadoBuscarNaWeb()
+    {
+        $objMdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();
+        $objMdIaAdmConfigAssistIADTO->retStrSinBuscarWeb();
+        $objMdIaAdmConfigAssistIARN = new MdIaAdmConfigAssistIARN();
+        $objMdIaAdmConfigAssistIADTO = $objMdIaAdmConfigAssistIARN->consultar($objMdIaAdmConfigAssistIADTO);
+
+        if ($objMdIaAdmConfigAssistIADTO->getStrSinBuscarWeb() != 'S') {
+            return "display:none !important;";
+        }
     }
 }

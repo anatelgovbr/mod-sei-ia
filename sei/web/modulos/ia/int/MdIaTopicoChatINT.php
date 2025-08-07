@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -35,7 +36,6 @@ class MdIaTopicoChatINT extends InfraINT
                 SessaoSEI::getInstance()->setAtributo('MD_IA_ID_TOPICO_CHAT_IA', $idTopico);
                 return $idTopico;
             }
-
         } else {
             $objMdIaTopicoChatDTO = new MdIaTopicoChatDTO();
             $objMdIaTopicoChatRN = new MdIaTopicoChatRN();
@@ -93,27 +93,34 @@ class MdIaTopicoChatINT extends InfraINT
         }
         return SessaoSEI::getInstance()->getAtributo('MD_IA_ID_TOPICO_CHAT_IA');
     }
-    public function infraDataAtual() {
+
+    public function infraDataAtual()
+    {
         return date("d/m/Y");
     }
 
-    public function infraCalcularDataDias($data, $dias) {
+    public function infraCalcularDataDias($data, $dias)
+    {
         $date = DateTime::createFromFormat("d/m/Y", $data);
         $date->modify("$dias days");
         return $date->format("d/m/Y");
     }
 
-    public function infraCalcularDataMeses($data, $meses) {
+    public function infraCalcularDataMeses($data, $meses)
+    {
         $date = DateTime::createFromFormat("d/m/Y", $data);
         $date->modify("$meses months");
         return $date->format("d/m/Y");
     }
 
-    public function infraCalcularDataFinalMes($data) {
+    public function infraCalcularDataFinalMes($data)
+    {
         $date = DateTime::createFromFormat("d/m/Y", $data);
         return $date->format("t/m/Y"); // 't' retorna o último dia do mês
     }
-    public function retornaPeriodos() {
+
+    public function retornaPeriodos()
+    {
         $dataAtual = new DateTime();
 
         $anoAtual = $dataAtual->format('Y'); // Ano atual
@@ -182,23 +189,15 @@ class MdIaTopicoChatINT extends InfraINT
         return $periodosPossiveis;
     }
 
-    function converterParaDate($dataString) {
+    function converterParaDate($dataString)
+    {
         // Converter a string de data para um objeto DateTime
         $dateTime = DateTime::createFromFormat('d/m/Y H:i:s', $dataString);
         return $dateTime;
     }
 
-    function calcularDataEntrePeriodo($dataBase, $dataInicio, $dataFim) {
-        // Converter as strings de data em objetos DateTime
-        $dataBaseObj = converterParaDate($dataBase);
-        $dataInicioObj = converterParaDate($dataInicio);
-        $dataFimObj = converterParaDate($dataFim);
-
-        // Verificar se a dataBase (data e horário) está entre dataInicio e dataFim
-        return ($dataBaseObj >= $dataInicioObj) && ($dataBaseObj <= $dataFimObj);
-    }
-
-    public function definePeriodoTopico($dataBase, $periodos) {
+    public function definePeriodoTopico($dataBase, $periodos)
+    {
         // Converte a data base para um objeto DateTime
         $dataBaseObj = DateTime::createFromFormat('d/m/Y H:i:s', $dataBase);
 
@@ -214,6 +213,7 @@ class MdIaTopicoChatINT extends InfraINT
         // Se a data base não estiver em nenhum período, retorna "Mais Antigos"
         return "maisAntigos";
     }
+
     public function listarTopicos()
     {
         $objMdIaTopicoChatDTO = new MdIaTopicoChatDTO();
@@ -258,7 +258,7 @@ class MdIaTopicoChatINT extends InfraINT
                 $periodo = self::definePeriodoTopico($arrayItensTopicos["dataUltimaInteracao"], $periodos);
                 $arrayItensTopicos["periodo"] = $periodo;
 
-                $arrayItensTopicos["nome"] = utf8_encode($itemTopico->getStrNome());
+                $arrayItensTopicos["nome"] = mb_convert_encoding($itemTopico->getStrNome(), 'UTF-8', 'ISO-8859-1');
                 if ($arrayItensTopicos["idTopico"] != SessaoSEI::getInstance()->getAtributo('MD_IA_ID_TOPICO_CHAT_IA')) {
                     $arrayItensTopicos["ativo"] = false;
                 } else {
@@ -282,6 +282,31 @@ class MdIaTopicoChatINT extends InfraINT
         return $arrayRetorno;
     }
 
+    public function listarProcedimentosPrompt($prompt)
+    {
+        $documentos = [];
+        preg_match_all('/#\S*(?=\s|$|\n)/', $prompt, $matches);
+        $possiveisCitacoes = array_unique($matches[0]);
+        if (!empty($possiveisCitacoes)) {
+            foreach ($possiveisCitacoes as $possivelCitacao) {
+                if (strpos($possivelCitacao, '[') !== false) {
+                    if (preg_match('/#[0-9]+\[[0-9]+(:[0-9]+)?\]/', $possivelCitacao, $match)) {
+                        $documentos[] = $match[0];
+                    }
+                } else {
+                    if (preg_match('/#[0-9]+[^[\s]*?(?=\s|$|\n|[.,;:?!)](?![^.,;:?!)]))/', $possivelCitacao, $match)) {
+                        $documentos[] = $match[0];
+                    }
+                }
+            }
+        }
+        $protocolo["documento"] = $documentos;
+        $protocolo["consultaTopico"] = true;
+        $citacoes = MdIaConfigAssistenteINT::consultaProtocolo($protocolo);
+
+        return $citacoes;
+    }
+
     public function selecionarTopico($dados)
     {
         if ($dados["id"] != "" && !is_null($dados["id"])) {
@@ -293,13 +318,12 @@ class MdIaTopicoChatINT extends InfraINT
         $objMdIaInteracaoChatDTO->retStrPergunta();
         $objMdIaInteracaoChatDTO->retStrResposta();
         $objMdIaInteracaoChatDTO->retNumFeedback();
-        $objMdIaInteracaoChatDTO->retStrProcedimentoCitado();
-        $objMdIaInteracaoChatDTO->retStrLinkAcessoProcedimento();
         $objMdIaInteracaoChatDTO->retNumIdMdIaInteracaoChat();
         $objMdIaInteracaoChatDTO->retNumStatusRequisicao();
         $objMdIaInteracaoChatDTO->retNumIdMdIaPromptsFavoritos();
         $objMdIaInteracaoChatDTO->setNumIdMdIaTopicoChat($dados["id"]);
         $objMdIaInteracaoChatDTO->setOrdNumIdMdIaInteracaoChat(InfraDTO::$TIPO_ORDENACAO_ASC);
+        $objMdIaInteracaoChatDTO->retDthCadastro();
 
         $listagemInteracoes = $objMdIaInteracaoChatRN->listar($objMdIaInteracaoChatDTO);
 
@@ -309,25 +333,29 @@ class MdIaTopicoChatINT extends InfraINT
             $arrayItensInteracoes["favorito"] = false;
 
             $arrayItensInteracoes["id_mensagem"] = $itemInteracao->getNumIdMessage();
-            $arrayItensInteracoes["pergunta"] = utf8_encode($itemInteracao->getStrPergunta());
+            $arrayItensInteracoes["pergunta"] = mb_convert_encoding($itemInteracao->getStrPergunta(), 'UTF-8', 'ISO-8859-1');
 
-            $resposta = MdIaConfigAssistenteINT::retornaMensagemAmigavelUsuario($itemInteracao->getNumStatusRequisicao(), $itemInteracao->getStrResposta(), $itemInteracao->getStrProcedimentoCitado());
+            $arrayProcedimentos = self::listarProcedimentosPrompt($itemInteracao->getStrPergunta());
 
-            $arrayItensInteracoes["resposta"] = utf8_encode($resposta);
+            $resposta = MdIaConfigAssistenteINT::retornaMensagemAmigavelUsuario($itemInteracao->getNumStatusRequisicao(), $itemInteracao->getStrResposta());
+
+            $arrayItensInteracoes["resposta"] = mb_convert_encoding($resposta["resposta"], 'UTF-8', 'ISO-8859-1');
+            $arrayItensInteracoes["tipo_critica"] = $resposta["tipoCritica"];
 
             $arrayItensInteracoes["feedback"] = $itemInteracao->getNumFeedback();
-            $arrayItensInteracoes["procedimento_citado"] = $itemInteracao->getStrProcedimentoCitado();
-            $arrayItensInteracoes["link_acesso"] = $itemInteracao->getStrLinkAcessoProcedimento();
+            $arrayItensInteracoes["dadosCitacoes"] = $arrayProcedimentos;
             $arrayItensInteracoes["id_interacao"] = $itemInteracao->getNumIdMdIaInteracaoChat();
             $arrayItensInteracoes["status_requisicao"] = $itemInteracao->getNumStatusRequisicao();
+            $arrayItensInteracoes["dth_cadastro"] = substr($itemInteracao->getDthCadastro(),0,19);
 
-            if(!is_null($itemInteracao->getNumIdMdIaPromptsFavoritos())) {
+            if (!is_null($itemInteracao->getNumIdMdIaPromptsFavoritos())) {
                 $arrayItensInteracoes["favorito"] = true;
             }
             $arrayInteracoes[] = $arrayItensInteracoes;
         }
         return $arrayInteracoes;
     }
+
 
     public function renomearTopico($dados)
     {

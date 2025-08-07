@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -50,29 +51,32 @@ class MdIaRecursoRN extends InfraRN
             curl_close($curl);
             if ($httpcode == "200") {
                 return json_decode($response);
-            } elseif($httpcode == "404") {
+            } elseif ($httpcode == "404") {
                 return $httpcode;
             } else {
-                $log = "00001 - INDISPONIBILIDADE DE RECURSO NO SEI IA \n";
+                $resposta = iconv("UTF-8", "ISO-8859-1//TRANSLIT", $response);
+                $log = "00001 - ERRO DE RECURSO NO SEI IA \n";
                 $log .= "00002 - Processo: " . $dadosProcesso[1]->getProcedimentoFormatado() . " \n";
                 $log .= "00003 - Usuario: " . SessaoSEI::getInstance()->getStrNomeUsuario() . " - Unidade: " . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . " \n";
                 $log .= "00004 - Endpoint do Recurso: " . $urlConsulta . " \n";
                 $log .= "00005 - Tipo de Indisponibilidade: " . $httpcode . " \n";
-                $log .= "00006 - Mensagem retornada pelo Servidor: " . utf8_decode($response) . " \n";
-                $log .= "00007 - FIM \n";
+                $log .= "00006 - Mensagem retornada pelo Servidor: " . $resposta . " \n";
+                $log .= "00007 - Mensagem apresentada ao usuário:  O recurso específico do SEI IA está indisponível no momento. \n";
+                $log .= "00008 - Data e hora: " . InfraData::getStrDataHoraAtual() . " \n";
+                $log .= "00009 - FIM \n";
                 LogSEI::getInstance()->gravar($log, InfraLog::$INFORMACAO);
 
                 $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
 
                 $strDe = SessaoSEIExterna::getInstance()->getStrSiglaSistema() . "<" . $objInfraParametro->getValor('SEI_EMAIL_SISTEMA') . ">";
                 $strPara = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR');
-                $strAssunto = "INDISPONIBILIDADE DE RECURSO NO SEI IA";
+                $strAssunto = "ERRO DE RECURSO NO SEI IA";
                 $strConteudo = $log;
                 InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
                 return null;
             }
         } catch (Exception $e) {
-            throw new InfraException('Erro ao buscar recomendações de processos..', $e);
+            throw new InfraException('Erro ao buscar recomendações de processos.', $e);
         }
     }
 
@@ -99,26 +103,27 @@ class MdIaRecursoRN extends InfraRN
             if ($httpcode == "200") {
                 return array($httpcode, json_decode($response));
             } else {
-                $log = "00001 - INDISPONIBILIDADE DE RECURSO DE FEEDBACK DE PROCESSOS SIMILARES NO SEI IA \n";
+                $resposta = iconv("UTF-8", "ISO-8859-1//TRANSLIT", $response);
+                $log = "00001 - ERRO DE RECURSO DE FEEDBACK DE PROCESSOS SIMILARES NO SEI IA \n";
                 $log .= "00002 - Processo: " . $dadosEnviados[1]->getProcedimentoFormatado() . " \n";
                 $log .= "00003 - Usuario: " . SessaoSEI::getInstance()->getStrNomeUsuario() . " - Unidade: " . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . " \n";
                 $log .= "00004 - Endpoint do Recurso: " . $urlOperacao . " \n";
                 $log .= "00005 - Tipo de Indisponibilidade: " . $httpcode . " \n";
-                $log .= "00006 - Mensagem retornada pelo Servidor: " . utf8_decode($response) . " \n";
-                $log .= "00007 - JSON enviado ao Servidor: " . $dadosEnviados[0] . " \n";
-                $log .= "00008 - FIM \n";
+                $log .= "00006 - Mensagem retornada pelo Servidor: " . $resposta . " \n";
+                $log .= "00007 - Mensagem apresentada ao usuário:  Ocorreu um erro ao realizar a Avaliação de Similaridade entre Processos. \n";
+                $log .= "00008 - Data e hora: " . InfraData::getStrDataHoraAtual() . " \n";
+                $log .= "00009 - JSON enviado ao Servidor: " . $dadosEnviados[0] . " \n";
+                $log .= "00010 - FIM \n";
                 LogSEI::getInstance()->gravar($log, InfraLog::$INFORMACAO);
 
                 $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
 
                 $strDe = SessaoSEIExterna::getInstance()->getStrSiglaSistema() . "<" . $objInfraParametro->getValor('SEI_EMAIL_SISTEMA') . ">";
                 $strPara = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR');
-                $strAssunto = "INDISPONIBILIDADE DE RECURSO DE FEEDBACK DE PROCESSOS SIMILARES NO SEI IA";
+                $strAssunto = "ERRO DE RECURSO DE FEEDBACK DE PROCESSOS SIMILARES NO SEI IA";
                 $strConteudo = $log;
                 InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
-                throw new InfraException('Erro ao submeter Feedback de Processos Similares');
             }
-
         } catch (Exception $e) {
             throw new InfraException('Erro ao submeter Feedback de Processos Similares', $e);
         }
@@ -148,14 +153,17 @@ class MdIaRecursoRN extends InfraRN
             if ($httpcode == "200") {
                 return array($httpcode, json_decode($response));
             } else {
+                $resposta = iconv("UTF-8", "ISO-8859-1//TRANSLIT", $response);
                 $log = "00001 - INDISPONIBILIDADE DO RECURSO DE FEEDBACK DE PESQUISA DE DOCUMENTO NO SEI IA \n";
                 $log .= "00002 - Processo: " . $dadosEnviados[1]->getProcedimentoFormatado() . " \n";
                 $log .= "00003 - Usuario: " . SessaoSEI::getInstance()->getStrNomeUsuario() . " - Unidade: " . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . " \n";
                 $log .= "00004 - Endpoint do Recurso: " . $urlOperacao . " \n";
                 $log .= "00005 - Tipo de Indisponibilidade: " . $httpcode . " \n";
-                $log .= "00006 - Mensagem retornada pelo Servidor: " . utf8_decode($response) . " \n";
-                $log .= "00007 - JSON enviado ao Servidor: " . $dadosEnviados[0] . " \n";
-                $log .= "00008 - FIM \n";
+                $log .= "00006 - Mensagem retornada pelo Servidor: " . $resposta . " \n";
+                $log .= "00007 - Mensagem apresentada ao usuário:  *Não é apresentada mensagem ao usuário!* \n";
+                $log .= "00008 - Data e hora: " . InfraData::getStrDataHoraAtual() . " \n";
+                $log .= "00009 - JSON enviado ao Servidor: " . $dadosEnviados[0] . " \n";
+                $log .= "00010 - FIM \n";
                 LogSEI::getInstance()->gravar($log, InfraLog::$INFORMACAO);
 
                 $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
@@ -165,34 +173,44 @@ class MdIaRecursoRN extends InfraRN
                 $strAssunto = "INDISPONIBILIDADE DO RECURSO DE FEEDBACK DE PESQUISA DE DOCUMENTO NO SEI IA";
                 $strConteudo = $log;
                 InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
-                throw new InfraException('Erro ao submeter Feedback de Pesquisa de Documento');
             }
-
         } catch (Exception $e) {
             throw new InfraException('Erro ao submeter Feedback de Pesquisa de Documento', $e);
         }
     }
     public function retornarUrlApi()
     {
+        $idMdIaAdmIntegFuncion = 1;
         $objMdIaAdmIntegracaoDTO = new MdIaAdmIntegracaoDTO();
-        $objMdIaAdmIntegracaoDTO->setNumIdMdIaAdmIntegFuncion("1");
+        $objMdIaAdmIntegracaoDTO->setNumIdMdIaAdmIntegFuncion($idMdIaAdmIntegFuncion);
         $objMdIaAdmIntegracaoDTO->retStrOperacaoWsdl();
-        $objMdIaAdmIntegracaoRN = new MdIaAdmIntegracaoRN();
-        $objMdIaAdmIntegracaoDTO = $objMdIaAdmIntegracaoRN->consultar($objMdIaAdmIntegracaoDTO);
+        $objMdIaAdmIntegracaoDTO = (new MdIaAdmIntegracaoRN())->consultar($objMdIaAdmIntegracaoDTO);
 
         $urlsIntegracao = array();
         if ($objMdIaAdmIntegracaoDTO) {
             $urlsIntegracao['urlBase'] = $objMdIaAdmIntegracaoDTO->getStrOperacaoWsdl();
-            $urlsIntegracao['linkRecomendacaoProcesso'] = $urlsIntegracao['urlBase'] . ":8082/process-recommenders/weighted-mlt-recommender/recommendations/";
-            $urlsIntegracao['linkFeedbackRecomendacaoProcesso'] = $urlsIntegracao['urlBase'] . ":8086/process-recommenders/feedbacks";
-            $urlsIntegracao['linkIndexacaoProcesso'] = $urlsIntegracao['urlBase'] . ":8082/process-recommenders/weighted-mlt-recommender/indexed-ids/";
-            $urlsIntegracao['linkRecomendacaoDocumentos'] = $urlsIntegracao['urlBase'] . ":8082/document-recommenders/mlt-recommender/recommendations?";
-            $urlsIntegracao['linkFeedbackRecomendacaoDocumento'] = $urlsIntegracao['urlBase'] . ":8086/document-recommenders/feedbacks";
+            $urlsIntegracao['linkRecomendacaoProcesso'] = $urlsIntegracao['urlBase'] . $this->consultarUrlApi($idMdIaAdmIntegFuncion, 'linkRecomendacaoProcesso');
+            $urlsIntegracao['linkFeedbackRecomendacaoProcesso'] = $urlsIntegracao['urlBase'] . $this->consultarUrlApi($idMdIaAdmIntegFuncion, 'linkFeedbackRecomendacaoProcesso');
+            $urlsIntegracao['linkIndexacaoProcesso'] = $urlsIntegracao['urlBase'] . $this->consultarUrlApi($idMdIaAdmIntegFuncion, 'linkIndexacaoProcesso');
+            $urlsIntegracao['linkRecomendacaoDocumentos'] = $urlsIntegracao['urlBase'] . $this->consultarUrlApi($idMdIaAdmIntegFuncion, 'linkRecomendacaoDocumentos');
+            $urlsIntegracao['linkFeedbackRecomendacaoDocumento'] = $urlsIntegracao['urlBase'] . $this->consultarUrlApi($idMdIaAdmIntegFuncion, 'linkFeedbackRecomendacaoDocumento');
         }
-        $urlsIntegracao['linkSwagger'] = ":8082/openapi.json";
-        $urlsIntegracao['linkConsultaDisponibilidade'] = ":8082/health";
+        $urlsIntegracao['linkSwagger'] = $this->consultarUrlApi($idMdIaAdmIntegFuncion, 'linkSwagger');
+        $urlsIntegracao['linkConsultaDisponibilidade'] = $this->consultarUrlApi($idMdIaAdmIntegFuncion, 'linkConsultaDisponibilidade');
 
         return $urlsIntegracao;
+    }
+
+    private function consultarUrlApi($IdMdIaAdmIntegFuncion, $referencia)
+    {
+        $objMdIaAdmUrlIntegracaoDTO = new MdIaAdmUrlIntegracaoDTO();
+        $objMdIaAdmUrlIntegracaoDTO->setStrReferencia($referencia);
+        $objMdIaAdmUrlIntegracaoDTO->setNumIdAdmIaAdmIntegracao($IdMdIaAdmIntegFuncion);
+        $objMdIaAdmUrlIntegracaoDTO->retStrUrl();
+        $objMdIaAdmUrlIntegracaoDTO->setNumMaxRegistrosRetorno(1);
+        $objMdIaAdmUrlIntegracaoDTO = (new MdIaAdmUrlIntegracaoRN)->consultar($objMdIaAdmUrlIntegracaoDTO);
+
+        return $objMdIaAdmUrlIntegracaoDTO->getStrUrl();
     }
 
     public function enviaPostPesquisaDocumento($dadosConsulta)
@@ -219,73 +237,29 @@ class MdIaRecursoRN extends InfraRN
             if ($httpcode == "200") {
                 return $response;
             } else {
-                $log = "00001 - INDISPONIBILIDADE DE RECURSO NO SEI IA \n";
+                $resposta = iconv("UTF-8", "ISO-8859-1//TRANSLIT", $response);
+                $log = "00001 - ERRO DE RECURSO NO SEI IA \n";
                 $log .= "00002 - Processo: " . $dadosConsulta[1]->getProcedimentoFormatado() . " \n";
                 $log .= "00003 - Usuario: " . SessaoSEI::getInstance()->getStrNomeUsuario() . " - Unidade: " . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . " \n";
                 $log .= "00004 - Endpoint do Recurso: " . $urlOperacao . " \n";
                 $log .= "00005 - Tipo de Indisponibilidade: " . $httpcode . " \n";
-                $log .= "00006 - Mensagem retornada pelo Servidor: " . utf8_decode($response) . " \n";
-                $log .= "00007 - FIM \n";
+                $log .= "00006 - Mensagem retornada pelo Servidor: " . $resposta . " \n";
+                $log .= "00007 - Mensagem apresentada ao usuário:  Ocorreu um erro ao consultar a API de recomendação de documentos. \n";
+                $log .= "00008 - Data e hora: " . InfraData::getStrDataHoraAtual() . " \n";
+                $log .= "00009 - FIM \n";
                 LogSEI::getInstance()->gravar($log, InfraLog::$INFORMACAO);
 
                 $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
 
                 $strDe = SessaoSEIExterna::getInstance()->getStrSiglaSistema() . "<" . $objInfraParametro->getValor('SEI_EMAIL_SISTEMA') . ">";
                 $strPara = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR');
-                $strAssunto = "INDISPONIBILIDADE DE RECURSO NO SEI IA";
+                $strAssunto = "ERRO DE RECURSO NO SEI IA";
                 $strConteudo = $log;
                 InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
-                throw new InfraException('Erro retornando Pesquisa Documentos!');
+                return null;
             }
         } catch (Exception $e) {
             throw new InfraException('Erro retornando Pesquisa Documentos.', $e);
-        }
-    }
-
-    public function validaConexaoApi()
-    {
-        try {
-
-            $urlApi = $this->retornarUrlApi();
-
-            $urlConsulta = $urlApi['urlBase'] . $urlApi["linkConsultaDisponibilidade"];
-
-            $curl = curl_init();
-
-            // Configura
-            curl_setopt_array($curl, [
-                CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_URL => $urlConsulta,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_TIMEOUT_MS => '2000'
-            ]);
-            // Envio e armazenamento da resposta
-            $response = curl_exec($curl);
-            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            // Fecha e limpa recursos
-            curl_close($curl);
-            if ($httpcode == "200") {
-                return true;
-            } else {
-                $log = "00001 - INDISPONIBILIDADE DE RECURSO NO SEI IA \n";
-                $log .= "00003 - Usuario: " . SessaoSEI::getInstance()->getStrNomeUsuario() . " - Unidade: " . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . " \n";
-                $log .= "00004 - Endpoint do Recurso: " . $urlConsulta . " \n";
-                $log .= "00005 - Tipo de Indisponibilidade: " . $httpcode . " \n";
-                $log .= "00006 - Mensagem retornada pelo Servidor: " . utf8_decode($response) . " \n";
-                $log .= "00007 - FIM \n";
-                LogSEI::getInstance()->gravar($log, InfraLog::$INFORMACAO);
-
-                $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-
-                $strDe = SessaoSEIExterna::getInstance()->getStrSiglaSistema() . "<" . $objInfraParametro->getValor('SEI_EMAIL_SISTEMA') . ">";
-                $strPara = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR');
-                $strAssunto = "INDISPONIBILIDADE DE RECURSO NO SEI IA";
-                $strConteudo = $log;
-                InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
-                return false;
-            }
-        } catch (Exception $e) {
-            throw new InfraException('Erro validando conexão com API.', $e);
         }
     }
 
@@ -296,7 +270,7 @@ class MdIaRecursoRN extends InfraRN
 
         $bolExibirFuncionalidade = false;
 
-        if($bolAcaoRecursoIa) {
+        if ($bolAcaoRecursoIa) {
             $objMdIaAdmConfigSimilarDTO = new MdIaAdmConfigSimilarDTO();
             $objMdIaAdmConfigSimilarDTO->retStrSinExibirFuncionalidade();
             $objMdIaAdmConfigSimilarRN = new MdIaAdmConfigSimilarRN();
@@ -334,7 +308,7 @@ class MdIaRecursoRN extends InfraRN
         }
         $bolAcaoChatIa = SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_config_assist_ia_consultar');
 
-        if($bolConsideraChatIa && $bolAcaoChatIa) {
+        if ($bolConsideraChatIa && $bolAcaoChatIa) {
             $objMdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();
             $objMdIaAdmConfigAssistIADTO->retStrSinExibirFuncionalidade();
             $objMdIaAdmConfigAssistIARN = new MdIaAdmConfigAssistIARN();
@@ -382,7 +356,7 @@ class MdIaRecursoRN extends InfraRN
                 $objProtocoloDTO = $objProtocoloRN->pesquisarRN0967($objPesquisaProtocoloDTO);
                 return ($objDocumentoDTO->getStrStaEstadoProtocolo() != ProtocoloRN::$TE_DOCUMENTO_CANCELADO
                     &&
-                    ($objDocumentoDTO->getNumIdUnidadeGeradoraProtocolo() == SessaoSEI::getInstance()->getNumIdUnidadeAtual() || $objDocumentoDTO->getStrSinPublicado() == 'S' || $objDocumentoDTO->getStrSinAssinado()=='S' || $objProtocoloDTO[0]->getStrSinAcessoAssinaturaBloco()=='S' || $objProtocoloDTO[0]->getStrSinAcessoRascunhoBloco()=='S')
+                    ($objDocumentoDTO->getNumIdUnidadeGeradoraProtocolo() == SessaoSEI::getInstance()->getNumIdUnidadeAtual() || $objDocumentoDTO->getStrSinPublicado() == 'S' || $objDocumentoDTO->getStrSinAssinado() == 'S' || $objProtocoloDTO[0]->getStrSinAcessoAssinaturaBloco() == 'S' || $objProtocoloDTO[0]->getStrSinAcessoRascunhoBloco() == 'S')
                 );
             }
             return true;
@@ -408,8 +382,8 @@ class MdIaRecursoRN extends InfraRN
         $objMdIaAdmDocRelevDTO->setNumMaxRegistrosRetorno(1);
         $tipoDocumento = $objMdIaAdmDocRelevRN->consultar($objMdIaAdmDocRelevDTO);
         $msg = "";
-        if($tipoDocumento) {
-            $msg .= "Não é permitido excluir o Tipo de Documento ".$tipoDocumento->getStrNomeSerie().", pois ele é utilizado pelo Módulo de Inteligência Artificial. \n";
+        if ($tipoDocumento) {
+            $msg .= "Não é permitido excluir o Tipo de Documento " . $tipoDocumento->getStrNomeSerie() . ", pois ele é utilizado pelo Módulo de Inteligência Artificial. \n";
             $msg .= "Verifique as parametrizações no menu Administração > Inteligência Artificial > Documentos Relevantes.";
         }
         return $msg;
@@ -433,7 +407,7 @@ class MdIaRecursoRN extends InfraRN
         $tipoProcesso = $objMdIaAdmDocRelevRN->consultar($objMdIaAdmDocRelevDTO);
 
         $msg = "";
-        if($tipoProcesso) {
+        if ($tipoProcesso) {
             $msg .= "Não é permitido excluir o Tipo de Processo " . $tipoProcesso->getStrNomeTipoProcedimento() . ", pois ele é utilizado  pelo Módulo de Inteligência Artificial. \n";
             $msg .= " Verifique as parametrizações no menu Administração > Inteligência Artificial > Documentos Relevantes.";
         }

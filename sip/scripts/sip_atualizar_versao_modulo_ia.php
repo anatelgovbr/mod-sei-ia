@@ -10,7 +10,7 @@ class MdIaAtualizadorSipRN extends InfraRN
     private $versaoAtualDesteModulo = '1.0.0';
     private $nomeDesteModulo = 'MÓDULO DO IA';
     private $nomeParametroModulo = 'VERSAO_MODULO_IA';
-    private $historicoVersoes = array('1.0.0');
+    private $historicoVersoes = array('1.0.0', '1.1.0');
 
     public function __construct()
     {
@@ -74,16 +74,19 @@ class MdIaAtualizadorSipRN extends InfraRN
             $this->inicializar('INICIANDO A INSTALAÇÃO/ATUALIZAÇÃO DO ' . $this->nomeDesteModulo . ' NO SIP VERSÃO ' . SIP_VERSAO);
 
             //checando BDs suportados
-            if (!(BancoSip::getInstance() instanceof InfraMySql) &&
+            if (
+                !(BancoSip::getInstance() instanceof InfraMySql) &&
                 !(BancoSip::getInstance() instanceof InfraSqlServer) &&
-                !(BancoSip::getInstance() instanceof InfraOracle)) {
+                !(BancoSip::getInstance() instanceof InfraPostgreSql) &&
+                !(BancoSip::getInstance() instanceof InfraOracle)
+            ) {
 
                 $this->finalizar('BANCO DE DADOS NÃO SUPORTADO: ' . get_parent_class(BancoSip::getInstance()), true);
             }
 
             //testando versao do framework
-            $numVersaoInfraRequerida = '2.0.18';
-            if(version_compare(VERSAO_INFRA, $numVersaoInfraRequerida) < 0){
+            $numVersaoInfraRequerida = '2.29.0';
+            if (version_compare(VERSAO_INFRA, $numVersaoInfraRequerida) < 0) {
                 $this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
             }
 
@@ -102,12 +105,12 @@ class MdIaAtualizadorSipRN extends InfraRN
             switch ($strVersaoModulo) {
                 case '':
                     $this->instalarv100();
+                case '1.0.0':
+                    $this->instalarv110();
                     break;
-
                 default:
                     $this->finalizar('A VERSÃO MAIS ATUAL DO ' . $this->nomeDesteModulo . ' (v' . $this->versaoAtualDesteModulo . ') JÁ ESTÁ INSTALADA.');
                     break;
-
             }
 
             $this->logar('SCRIPT EXECUTADO EM: ' . date('d/m/Y H:i:s'));
@@ -119,14 +122,13 @@ class MdIaAtualizadorSipRN extends InfraRN
             InfraDebug::getInstance()->setBolEcho(false);
             throw new InfraException('Erro atualizando versão.', $e);
         }
-
     }
 
     protected function instalarv100()
     {
         $nmVersao = '1.0.0';
 
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $nmVersao . ' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
 
         $objSistemaRN = new SistemaRN();
         $objPerfilRN = new PerfilRN();
@@ -205,13 +207,15 @@ class MdIaAtualizadorSipRN extends InfraRN
 
 
         $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Administração->Inteligência Artificial->Configurações de Similaridade');
-        $this->adicionarItemMenu($numIdSistemaSei,
+        $this->adicionarItemMenu(
+            $numIdSistemaSei,
             $numIdPerfilSeiAdministrador,
             $numIdMenuSei,
             $objItemMenuDTOInteligênciaArtificial->getNumIdItemMenu(),
             $objRecursoPerfil->getNumIdRecurso(),
             'Configurações de Similaridade',
-            10);
+            10
+        );
 
 
         $this->logar('CRIANDO e VINCULANDO RECURSO DE MENU A PERFIL - Configurações de Similaridade  EM Administrador');
@@ -225,13 +229,15 @@ class MdIaAtualizadorSipRN extends InfraRN
         $objRecursoPerfil = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_adm_doc_relev_listar');
 
         $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Administração->Inteligência Artificial->Documentos Relevantes');
-        $this->adicionarItemMenu($numIdSistemaSei,
+        $this->adicionarItemMenu(
+            $numIdSistemaSei,
             $numIdPerfilSeiAdministrador,
             $numIdMenuSei,
             $objItemMenuDTOInteligênciaArtificial->getNumIdItemMenu(),
             $objRecursoPerfil->getNumIdRecurso(),
             'Documentos Relevantes',
-            10);
+            10
+        );
 
         $objRecursoPerfil = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_adm_doc_relev_cadastrar');
         $objRecursoPerfil = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_adm_seg_doc_relev_cadastrar');
@@ -248,13 +254,15 @@ class MdIaAtualizadorSipRN extends InfraRN
         $objRecursoPerfil = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_adm_integracao_listar');
 
         $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Administração->Inteligência Artificial->Mapeamento das Integrações');
-        $this->adicionarItemMenu($numIdSistemaSei,
+        $this->adicionarItemMenu(
+            $numIdSistemaSei,
             $numIdPerfilSeiAdministrador,
             $numIdMenuSei,
             $objItemMenuDTOInteligênciaArtificial->getNumIdItemMenu(),
             $objRecursoPerfil->getNumIdRecurso(),
             'Mapeamento das Integrações',
-            10);
+            10
+        );
 
         $objRecursoPerfil = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_adm_integracao_cadastrar');
         $objRecursoPerfil = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_adm_integracao_reativar');
@@ -272,13 +280,15 @@ class MdIaAtualizadorSipRN extends InfraRN
         $objRecursoPerfil = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_adm_pesq_doc_cadastro');
 
         $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Administração->Inteligência Artificial->Pesquisa de Documentos');
-        $this->adicionarItemMenu($numIdSistemaSei,
+        $this->adicionarItemMenu(
+            $numIdSistemaSei,
             $numIdPerfilSeiAdministrador,
             $numIdMenuSei,
             $objItemMenuDTOInteligênciaArtificial->getNumIdItemMenu(),
             $objRecursoPerfil->getNumIdRecurso(),
             'Pesquisa de Documentos',
-            10);
+            10
+        );
 
         $objRecursoPerfil = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_ia_adm_pesq_doc_consultar');
         $objRecursoPerfil = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_adm_pesq_doc_alterar');
@@ -292,13 +302,15 @@ class MdIaAtualizadorSipRN extends InfraRN
         $objRecursoPerfil = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_adm_ods_onu');
 
         $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Administração->Inteligência Artificial->ODSs da ONU');
-        $this->adicionarItemMenu($numIdSistemaSei,
+        $this->adicionarItemMenu(
+            $numIdSistemaSei,
             $numIdPerfilSeiAdministrador,
             $numIdMenuSei,
             $objItemMenuDTOInteligênciaArtificial->getNumIdItemMenu(),
             $objRecursoPerfil->getNumIdRecurso(),
             'ODSs da ONU',
-            10);
+            10
+        );
 
         $objRecursoPerfil = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_ia_adm_ods_onu_consultar');
         $objRecursoPerfil = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_adm_ods_onu_alterar');
@@ -327,13 +339,15 @@ class MdIaAtualizadorSipRN extends InfraRN
         $objRecursoPerfil = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_adm_config_assistente_ia');
 
         $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Administração->Inteligência Artificial->Configurações do Assistente IA');
-        $this->adicionarItemMenu($numIdSistemaSei,
+        $this->adicionarItemMenu(
+            $numIdSistemaSei,
             $numIdPerfilSeiAdministrador,
             $numIdMenuSei,
             $objItemMenuDTOInteligênciaArtificial->getNumIdItemMenu(),
             $objRecursoPerfil->getNumIdRecurso(),
             'Configurações do Assistente IA',
-            10);
+            10
+        );
 
         $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_adm_config_assist_ia_alterar');
         $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_ia_adm_config_assist_ia_consultar');
@@ -346,7 +360,8 @@ class MdIaAtualizadorSipRN extends InfraRN
 
         $arrAuditoria = array();
 
-        array_push($arrAuditoria,
+        array_push(
+            $arrAuditoria,
             '\'md_ia_adm_config_similar_alterar\'',
             '\'md_ia_adm_perc_relev_met_excluir\'',
             '\'md_ia_adm_perc_relev_met_cadastrar\'',
@@ -373,13 +388,161 @@ class MdIaAtualizadorSipRN extends InfraRN
             '\'md_ia_classificacao_ods_alterar\'',
             '\'md_ia_adm_config_assist_ia_alterar\'',
             '\'md_ia_adm_meta_ods_alterar\'',
-            '\'md_ia_consultar_documento_externo_ia\'');
+            '\'md_ia_consultar_documento_externo_ia\''
+        );
         $this->_cadastrarAuditoria($numIdSistemaSei, $arrAuditoria);
 
         $this->logar('ADICIONANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSip::getInstance()->executarSql('INSERT INTO infra_parametro(valor, nome) VALUES(\''.$nmVersao.'\',  \'' . $this->nomeParametroModulo . '\' )');
+        BancoSip::getInstance()->executarSql('INSERT INTO infra_parametro(valor, nome) VALUES(\'' . $nmVersao . '\',  \'' . $this->nomeParametroModulo . '\' )');
         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $nmVersao . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
+
+    protected function instalarv110()
+    {
+        $nmVersao = '1.1.0';
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $nmVersao . ' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+
+        $objSistemaRN = new SistemaRN();
+        $objPerfilRN = new PerfilRN();
+        $objMenuRN = new MenuRN();
+        $objItemMenuRN = new ItemMenuRN();
+
+        $objSistemaDTO = new SistemaDTO();
+        $objSistemaDTO->retNumIdSistema();
+        $objSistemaDTO->setStrSigla('SEI');
+
+        $objSistemaDTO = $objSistemaRN->consultar($objSistemaDTO);
+
+        if ($objSistemaDTO == null) {
+            throw new InfraException('Sistema SEI não encontrado.');
+        }
+
+        $numIdSistemaSei = $objSistemaDTO->getNumIdSistema();
+
+        //Perfil Básico
+        $objPerfilDTO = new PerfilDTO();
+        $objPerfilDTO->retNumIdPerfil();
+        $objPerfilDTO->setNumIdSistema($numIdSistemaSei);
+        $objPerfilDTO->setStrNome('Básico');
+        $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
+
+        if ($objPerfilDTO == null) {
+            throw new InfraException('Perfil Básico do sistema SEI não encontrado.');
+        }
+
+        $numIdPerfilSeiBasico = $objPerfilDTO->getNumIdPerfil();
+
+        $objMenuDTO = new MenuDTO();
+        $objMenuDTO->retNumIdMenu();
+        $objMenuDTO->setNumIdSistema($numIdSistemaSei);
+        $objMenuDTO->setStrNome('Principal');
+        $objMenuDTO = $objMenuRN->consultar($objMenuDTO);
+
+        if ($objMenuDTO == null) {
+            throw new InfraException('Menu do sistema SEI não encontrado.');
+        }
+
+        $numIdMenuSei = $objMenuDTO->getNumIdMenu();
+
+
+        $objItemMenuDTO = new ItemMenuDTO();
+        $objItemMenuDTO->retNumIdItemMenu();
+        $objItemMenuDTO->setNumIdSistema($numIdSistemaSei);
+        $objItemMenuDTO->setStrRotulo('Administração');
+        $objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
+
+        if ($objItemMenuDTO == null) {
+            throw new InfraException('Item de menu Administração do sistema SEI não encontrado.');
+        }
+
+        $numIdItemMenuSeiAdministracao = $objItemMenuDTO->getNumIdItemMenu();
+
+        $objPerfilDTO = new PerfilDTO();
+        $objPerfilDTO->retNumIdPerfil();
+        $objPerfilDTO->setNumIdSistema($numIdSistemaSei);
+        $objPerfilDTO->setStrNome('Administrador');
+        $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
+
+        if ($objPerfilDTO == null) {
+            throw new InfraException('Perfil Administrador do sistema SEI não encontrado.');
+        }
+
+        $numIdPerfilSeiAdministrador = $objPerfilDTO->getNumIdPerfil();
+
+        $this->logar('ATUALIZANDO RECURSOS, MENUS E PERFIS DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP...');
+
+        $objItemMenuDTO = new ItemMenuDTO();
+        $objItemMenuDTO->retTodos();
+        $objItemMenuDTO->setNumIdSistema($numIdSistemaSei);
+        $objItemMenuDTO->setNumIdMenu($numIdMenuSei);
+        $objItemMenuDTO->setStrRotulo('Configurações do Assistente IA');
+
+        $objItemMenuRN = new ItemMenuRN();
+        $objItemMenuDTO = $objItemMenuRN->consultar($objItemMenuDTO);
+
+        if ($objItemMenuDTO != null) {
+            $numIdItemMenuSeiInfra = $objItemMenuDTO->getNumIdItemMenu();
+            $objItemMenuDTO->setStrRotulo('Assistente IA');
+            $objItemMenuDTO->setNumIdRecurso('');
+            $objItemMenuRN->alterar($objItemMenuDTO);
+        }
+
+        $objRecursoPerfil = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_adm_config_assistente_ia');
+
+        $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Administração->Inteligência Artificial->Assistente IA->Configurações do Assistente IA');
+        $this->adicionarItemMenu(
+            $numIdSistemaSei,
+            $numIdPerfilSeiAdministrador,
+            $numIdMenuSei,
+            $numIdItemMenuSeiInfra,
+            $objRecursoPerfil->getNumIdRecurso(),
+            'Configurações do Assistente IA',
+            10
+        );
+
+        $this->logar('CRIANDO e VINCULANDO RECURSO DE MENU A PERFIL - Configuraes do Assistente IA  Em Administrador');
+        $objRecursoPerfil = $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_adm_grupos_galeria_prompts');
+
+        $this->logar('CRIANDO e VINCULANDO ITEM MENU A PERFIL - Administração->Inteligência Artificial->Assistente IA->Grupos de Galeria de Prompts');
+        $this->adicionarItemMenu(
+            $numIdSistemaSei,
+            $numIdPerfilSeiAdministrador,
+            $numIdMenuSei,
+            $numIdItemMenuSeiInfra,
+            $objRecursoPerfil->getNumIdRecurso(),
+            'Grupos de Galeria de Prompts',
+            10
+        );
+
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_grupo_galeria_prompt_cadastrar');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_grupo_galeria_prompt_alterar');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_grupo_galeria_prompt_excluir');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiAdministrador, 'md_ia_galeria_prompt_moderador');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_ia_galeria_prompt_cadastrar');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_ia_galeria_prompt_alterar');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_ia_galeria_prompt_desativar');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_ia_galeria_prompt_reativar');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_ia_galeria_prompt_excluir');
+
+        $arrAuditoria = array();
+
+        array_push(
+            $arrAuditoria,
+            '\'md_ia_grupo_galeria_prompt_cadastrar\'',
+            '\'md_ia_grupo_galeria_prompt_alterar\'',
+            '\'md_ia_grupo_galeria_prompt_excluir\'',
+            '\'md_ia_galeria_prompt_cadastrar\'',
+            '\'md_ia_galeria_prompt_alterar\'',
+            '\'md_ia_galeria_prompt_desativar\'',
+            '\'md_ia_galeria_prompt_reativar\'',
+            '\'md_ia_galeria_prompt_excluir\''
+        );
+        $this->_cadastrarAuditoria($numIdSistemaSei, $arrAuditoria);
+
+        $this->atualizarNumeroVersao($nmVersao);
+    }
+
 
     private function adicionarRecursoPerfil($numIdSistema, $numIdPerfil, $strNome, $strCaminho = null)
     {
@@ -422,7 +585,6 @@ class MdIaAtualizadorSipRN extends InfraRN
         }
 
         return $objRecursoDTO;
-
     }
 
     private function adicionarItemMenu($numIdSistema, $numIdPerfil, $numIdMenu, $numIdItemMenuPai, $numIdRecurso, $strRotulo, $numSequencia)
@@ -499,7 +661,6 @@ class MdIaAtualizadorSipRN extends InfraRN
         }
 
         return $objItemMenuDTO;
-
     }
 
     private function _cadastrarAuditoria($numIdSistemaSei, $arrAuditoria)
@@ -529,7 +690,8 @@ class MdIaAtualizadorSipRN extends InfraRN
             $objRegraAuditoriaDTO = $objRegraAuditoriaRN->cadastrar($objRegraAuditoriaDTO2);
         }
 
-        $rs = BancoSip::getInstance()->consultarSql('select id_recurso from recurso where id_sistema=' . $numIdSistemaSei . ' and nome in (
+        $rs = BancoSip::getInstance()->consultarSql(
+            'select id_recurso from recurso where id_sistema=' . $numIdSistemaSei . ' and nome in (
           ' . implode(', ', $arrAuditoria) . ')'
         );
 
@@ -564,7 +726,7 @@ class MdIaAtualizadorSipRN extends InfraRN
             $objInfraParametroBD->alterar($objInfraParametroDTO);
         }
 
-        $this->logar('ATUALIZAÇÃO DA VERSÃO '.$parStrNumeroVersao.' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
+        $this->logar('ATUALIZAÇÃO DA VERSÃO ' . $parStrNumeroVersao . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SIP');
     }
 }
 
@@ -577,9 +739,8 @@ try {
     $objVersaoSipRN = new MdIaAtualizadorSipRN();
     $objVersaoSipRN->atualizarVersao();
     exit;
-
 } catch (Exception $e) {
-    echo(InfraException::inspecionar($e));
+    echo (InfraException::inspecionar($e));
     try {
         LogSip::getInstance()->gravar(InfraException::inspecionar($e));
     } catch (Exception $e) {

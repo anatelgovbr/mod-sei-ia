@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -12,11 +13,11 @@ try {
 
     session_start();
     SessaoSEI::getInstance()->validarLink();
-//    SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
+    //    SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
     //////////////////////////////////////////////////////////////////////////////
-//    InfraDebug::getInstance()->setBolLigado(false);
-//    InfraDebug::getInstance()->setBolDebugInfra(false);
-//    InfraDebug::getInstance()->limpar();
+    //    InfraDebug::getInstance()->setBolLigado(false);
+    //    InfraDebug::getInstance()->setBolDebugInfra(false);
+    //    InfraDebug::getInstance()->limpar();
     //////////////////////////////////////////////////////////////////////////////
 
     $strParametros = '';
@@ -38,6 +39,8 @@ try {
             $objMdIaTopicoChatDTO->retStrNome();
             $objMdIaTopicoChatDTO->retDthCadastro();
             $objMdIaTopicoChatDTO->setStrSinAtivo("N");
+            $objMdIaTopicoChatDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
+            $objMdIaTopicoChatDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
             $objMdIaTopicoChatRN = new MdIaTopicoChatRN();
             $numRegistros = $objMdIaTopicoChatRN->contar($objMdIaTopicoChatDTO);
 
@@ -57,7 +60,6 @@ try {
         default:
             throw new InfraException("Ação '" . $_GET['acao'] . "' não reconhecida.");
     }
-
 } catch (Exception $e) {
     PaginaSEI::getInstance()->processarExcecao($e);
 }
@@ -80,14 +82,14 @@ PaginaSEI::getInstance()->abrirBody($strTitulo);
 <div id="conteudoModalChatsArquivados" style="margin-top: 35px;">
     <table class="infraTable" width="100%" aria-describedby="Tabela de Tópicos Arquivados">
         <thead>
-        <tr>
-            <th class="infraTh" width="70%">Nome</th>
-            <th class="infraTh" width="20%">Data de Criação</th>
-            <th class="infraTh" width="10%"></th>
-        </tr>
+            <tr>
+                <th class="infraTh" width="70%">Nome</th>
+                <th class="infraTh" width="20%">Data de Criação</th>
+                <th class="infraTh" width="10%"></th>
+            </tr>
         </thead>
         <tbody>
-        <?= $tabelaTopicosArquivados ?>
+            <?= $tabelaTopicosArquivados ?>
         </tbody>
     </table>
 </div>

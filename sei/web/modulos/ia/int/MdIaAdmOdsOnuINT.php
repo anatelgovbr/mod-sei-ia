@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -14,7 +15,7 @@ class MdIaAdmOdsOnuINT extends InfraINT
     public static function montarSelectUnidadesAlerta()
     {
         $objMdIaAdmUnidadeAlertaRN = new MdIaAdmUnidadeAlertaRN();
-        $objMdIaAdmUnidadeAlertaDTO= new MdIaAdmUnidadeAlertaDTO();
+        $objMdIaAdmUnidadeAlertaDTO = new MdIaAdmUnidadeAlertaDTO();
 
         $objMdIaAdmUnidadeAlertaDTO->retNumIdMdIaAdmUnidadeAlerta();
         $objMdIaAdmUnidadeAlertaDTO->retNumIdUnidade();
@@ -39,9 +40,9 @@ class MdIaAdmOdsOnuINT extends InfraINT
     public static function verificaSeModPeticionamentoVersaoMinima()
     {
         $bolVersaoValida = false;
-        $arrModulos = ConfiguracaoSEI::getInstance()->getValor('SEI','Modulos');
+        $arrModulos = ConfiguracaoSEI::getInstance()->getValor('SEI', 'Modulos');
 
-        if(is_array($arrModulos) && array_key_exists('PeticionamentoIntegracao', $arrModulos)){
+        if (is_array($arrModulos) && array_key_exists('PeticionamentoIntegracao', $arrModulos)) {
             $objInfraParametroDTO = new InfraParametroDTO();
             $objInfraParametroDTO->setStrNome('VERSAO_MODULO_PETICIONAMENTO');
             $objInfraParametroDTO->retStrValor();
@@ -54,5 +55,4 @@ class MdIaAdmOdsOnuINT extends InfraINT
         }
         return $bolVersaoValida;
     }
-
 }

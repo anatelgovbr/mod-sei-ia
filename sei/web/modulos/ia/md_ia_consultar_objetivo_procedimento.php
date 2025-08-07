@@ -25,6 +25,7 @@ try {
 
     $strDesabilitar = '';
     $arrComandos = array();
+    $arrIdsMetasForteRelacao = MdIaAdmObjetivoOdsINT::arrIdsMetasForteRelacao();
 
 } catch (Exception $e) {
     PaginaSEI::getInstance()->processarExcecao($e);
@@ -74,6 +75,8 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <p>Carregando dados do objetivo...</p>
         </div>
     </div>
+    <input type="hidden" id="forte-relacao" value="<? echo $_GET['forte_relacao']; ?>">
+    <input type="hidden" id="arr-metas-forte-relacao" value="<?=implode(",", $arrIdsMetasForteRelacao) ?>">
 <?
 require_once "md_ia_consultar_objetivo_procedimento_js.php";
 ?>

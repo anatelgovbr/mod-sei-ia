@@ -1,5 +1,4 @@
 <script type="text/javascript">
-
     var objOperacao = {
         operacao: null,
         validado: false
@@ -26,14 +25,9 @@
 
     function validarCadastro(event) {
         $("#divMsg").hide();
-        if (infraTrim(document.getElementById('selMetodoRequisicao').value) == '') {
-            alert('Informe o LLM Ativo.');
-            document.getElementById('selMetodoRequisicao').focus();
-            return false;
-        }
         const radioSelecionado = document.querySelector("input[name='rdnExibirFuncionalidade']:checked");
 
-        if($("#hdnConectadoAPI").val() == 0 && radioSelecionado.value === "S") {
+        if ($("#hdnConectadoAPI").val() == 0 && radioSelecionado.value === "S") {
             validarWebService();
         }
         return true;
@@ -46,31 +40,28 @@
         objAutoCompletarUsuario.limparCampo = true;
         objAutoCompletarUsuario.tamanhoMinimo = 3;
 
-        objAutoCompletarUsuario.prepararExecucao = function () {
+        objAutoCompletarUsuario.prepararExecucao = function() {
             return 'palavras_pesquisa=' + document.getElementById('txtUsuario').value;
         };
 
-        objAutoCompletarUsuario.processarResultado = function (id, descricao) {
+        objAutoCompletarUsuario.processarResultado = function(id, descricao) {
             if (id != '') {
                 objLupaUsuario.adicionar(id, descricao, document.getElementById('txtUsuario'));
             }
         };
     }
+
     function exibirFuncionalidade() {
-        if (infraTrim(document.getElementById('selMetodoRequisicao').value) == '') {
-            alert('Para Exibir a Funcionalidade é obrigatório a seleção de um LLM Ativo.');
-            document.getElementById('selMetodoRequisicao').focus();
-            return false;
-        }
 
         const radioSelecionado = document.querySelector("input[name='rdnExibirFuncionalidade']:checked");
 
         if (radioSelecionado) {
-            if(radioSelecionado.value === "S") {
+            if (radioSelecionado.value === "S") {
                 validarWebService();
             }
         }
     }
+
     function validarWebService() {
         $("#divMsg").hide();
         var params = {};
@@ -78,10 +69,10 @@
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_busca_dados_integracao'); ?>',
             type: 'POST', //selecionando o tipo de requisição, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que será enviado ao servidor
+            dataType: "json", //Tipo de dado que será enviado ao servidor
             data: params, // Enviando o JSON com o nome de itens
             async: false,
-            success: function (data) {
+            success: function(data) {
                 let params = {
                     urlServico: data["operacaoWsdl"],
                     tipoWs: 'REST',
@@ -92,7 +83,7 @@
                 };
                 buscarOperacoeWs(params);
             },
-            error: function (err) {
+            error: function(err) {
                 callback("Ocorreu um erro ao verificar se o elemento já foi cadastrado.");
             }
         });
@@ -106,16 +97,16 @@
             dataType: 'xml',
             async: false,
             data: parametros,
-            beforeSend: function () {
+            beforeSend: function() {
                 //infraExibirAviso(false);
             },
-            success: function (result) {
+            success: function(result) {
                 montaOperacao(result);
             },
-            error: function (msgError) {
+            error: function(msgError) {
                 msgCommit = "Erro ao processar o XML do SEI: " + msgError.responseText;
             },
-            complete: function (result) {
+            complete: function(result) {
                 //infraAvisoCancelar();
             }
         });
@@ -138,6 +129,4 @@
             $("#hdnConectadoAPI").val(1);
         }
     }
-
-
 </script>

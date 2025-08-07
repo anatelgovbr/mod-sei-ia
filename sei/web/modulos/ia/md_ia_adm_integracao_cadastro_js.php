@@ -285,4 +285,9 @@
 
         return msg;
     }
+
+    function emitirAlerta(){
+        var msg = 'Atenção: Este campo é crítico para o funcionamento do Assistente de IA. É mantido exclusivamente pelo script de atualização do Módulo.\n\nNunca altere manualmente esse campo!'
+        alert(msg);
+    }
 </script>

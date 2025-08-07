@@ -22,8 +22,6 @@ class MdIaHistClassDTO extends InfraDTO
 
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdMdIaHistClass', 'id_md_ia_hist_class');
 
-        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdMdIaClassificacaoOds', 'id_md_ia_classificacao_ods');
-
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdMdIaAdmMetaOds', 'id_md_ia_adm_meta_ods');
 
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'Operacao', 'operacao');
@@ -37,6 +35,10 @@ class MdIaHistClassDTO extends InfraDTO
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'SinSugestaoAceita', 'sin_sugestao_aceita');
 
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'Racional', 'racional');
+
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'StaTipoUsuario', 'sta_tipo_usuario');
+
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdProcedimento', 'id_procedimento');
 
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdMdIaHistClassSugest', 'id_md_ia_hist_class_sugest');
 
@@ -54,9 +56,9 @@ class MdIaHistClassDTO extends InfraDTO
 
         $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR,'StaTipoUsuario','sta_tipo','usuario');
 
-        $this->configurarPK('IdMdIaHistClass', InfraDTO::$TIPO_PK_NATIVA);
+        $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdIaAdmObjetivoOds', 'id_md_ia_adm_objetivo_ods', 'md_ia_adm_meta_ods');
 
-        $this->configurarFK('IdMdIaClassificacaoOds', 'md_ia_classificacao_ods', 'id_md_ia_classificacao_ods');
+        $this->configurarPK('IdMdIaHistClass', InfraDTO::$TIPO_PK_NATIVA);
 
         $this->configurarFK('IdMdIaAdmMetaOds', 'md_ia_adm_meta_ods', 'id_md_ia_adm_meta_ods');
 

@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -28,8 +29,8 @@ class MdIaRecursoINT extends InfraINT
                 $arrayMdIaSimilaridadeDTO["id_recommended"] = $dados['hdnIdProtRecomend' . $i];
                 $arrayMdIaSimilaridadeDTO["like_flag"] = $dados['hdnLike' . $i];
                 $arrayMdIaSimilaridadeDTO['ranking_user'] = $dados['hdnRanking' . $i];
-                $arrayMdIaSimilaridadeDTO["racional"] = utf8_encode($dados['txtRacional' . $i]);
-                $arrayMdIaSimilaridadeDTO['sugesty'] = utf8_encode($dados['txaSugestoes']);
+                $arrayMdIaSimilaridadeDTO["racional"] = mb_convert_encoding($dados['txtRacional' . $i], 'UTF-8', 'ISO-8859-1');
+                $arrayMdIaSimilaridadeDTO['sugesty'] = mb_convert_encoding($dados['txaSugestoes'], 'UTF-8', 'ISO-8859-1');
                 $arrayObjetosSimilaridade[] = $arrayMdIaSimilaridadeDTO;
             }
         }
@@ -75,7 +76,7 @@ class MdIaRecursoINT extends InfraINT
 
         $parametrosUrl = "";
         if ($dados["txtTextoPesquisa"] != "") {
-            $parametrosUrl .= "&text=" . urlencode(utf8_encode($dados["txtTextoPesquisa"]));
+            $parametrosUrl .= "&text=" . urlencode(mb_convert_encoding($dados["txtTextoPesquisa"], 'UTF-8', 'ISO-8859-1'));
         }
         $objSeiRN = new SeiRN();
         $objProtocoloRN = new ProtocoloRN();
@@ -91,7 +92,7 @@ class MdIaRecursoINT extends InfraINT
 
                 $objProtocoloDTO = $objProtocoloRN->consultarRN0186($objProtocoloDTO);
 
-                if($objProtocoloDTO->getStrStaProtocolo() == "P") {
+                if ($objProtocoloDTO->getStrStaProtocolo() == "P") {
                     //Carregar dados do cabeçalho
                     $objProcedimentoDTO = new ProcedimentoDTO();
                     $objProcedimentoDTO->retDblIdProcedimento();
@@ -125,7 +126,7 @@ class MdIaRecursoINT extends InfraINT
 
         $urlApi = $objMdIaRecursoRN->retornarUrlApi();
 
-        $urlConsulta = $urlApi["linkRecomendacaoDocumentos"].substr($parametrosUrl, 1);
+        $urlConsulta = $urlApi["linkRecomendacaoDocumentos"] . substr($parametrosUrl, 1);
 
         $objSeiRN = new SeiRN();
         $objEntradaConsultarProcedimentoAPI = new EntradaConsultarProcedimentoAPI();
@@ -135,7 +136,7 @@ class MdIaRecursoINT extends InfraINT
 
         $pesquisaDocumentos = json_decode($objMdIaRecursoRN->enviaPostPesquisaDocumento(array($urlConsulta, $objSaidaConsultarProcedimentoAPI)));
 
-        if ($pesquisaDocumentos->recommendation != "") {
+        if (!empty($pesquisaDocumentos->recommendation)) {
             $contador = 0;
 
             $topoTabela = '<table class="infraTable " id="tabela_ordenada">
@@ -164,7 +165,7 @@ class MdIaRecursoINT extends InfraINT
                 $objDocumentoDTO->retStrNomeArvore();
                 $objDocumentoDTO->setDblIdDocumento($arrayItemSimilar->id_document);
                 $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
-                if($objDocumentoDTO) {
+                if ($objDocumentoDTO) {
                     $objProcedimentoDTO = new ProcedimentoDTO();
                     $objProcedimentoDTO->retDblIdProcedimento();
                     $objProcedimentoDTO->retStrProtocoloProcedimentoFormatado();
@@ -215,6 +216,15 @@ class MdIaRecursoINT extends InfraINT
 
                 </tbody>
             </table>';
+        } elseif (is_null($pesquisaDocumentos)) {
+            $topoTabela = '
+            <div class="alert alert-danger">
+                <label class="infraLabelOpcional">
+                   Ocorreu um erro ao consultar a API de recomendação de documentos.
+                </label>
+            </div>';
+            $registrosPesquisa = '';
+            $rodapeTabela = '';
         } else {
             $topoTabela = '
             <div class="alert alert-warning">
@@ -223,10 +233,11 @@ class MdIaRecursoINT extends InfraINT
                 </label>
             </div>';
         }
-        return json_encode(utf8_encode($topoTabela.$registrosPesquisa.$rodapeTabela));
+        return json_encode(mb_convert_encoding($topoTabela . $registrosPesquisa . $rodapeTabela, 'UTF-8', 'ISO-8859-1'));
     }
 
-    public function listarDocumentosProcesso($idProcedimento) {
+    public function listarDocumentosProcesso($idProcedimento)
+    {
         //Carregar dados do cabeçalho
         $objProcedimentoDTO = new ProcedimentoDTO();
         $objProcedimentoDTO->retStrNomeTipoProcedimento();
@@ -242,5 +253,21 @@ class MdIaRecursoINT extends InfraINT
         $arr = $objProcedimentoRN->listarCompleto($objProcedimentoDTO);
 
         return $arr;
+    }
+
+    public static function verificarStatusIndexacao($idProcedimento)
+    {
+        $objMdIaProcIndexaveisRN = new MdIaProcIndexaveisRN();
+        $objMdIaProcIndexaveisDTO = new MdIaProcIndexaveisDTO();
+        $objMdIaProcIndexaveisDTO->retStrSinIndexado();
+        $objMdIaProcIndexaveisDTO->setDblIdProcedimento($idProcedimento);
+        $objMdIaProcIndexaveisDTO = $objMdIaProcIndexaveisRN->consultar($objMdIaProcIndexaveisDTO);
+
+
+        if (is_null($objMdIaProcIndexaveisDTO)) {
+            return "Este processo não atende aos requisitos de documentos relevantes para similaridade e não vai ser processado pelo SEI IA, ressalvado se mais documentos forem gerados e passar a atender aos requisitos.";
+        } elseif ($objMdIaProcIndexaveisDTO->getStrSinIndexado() == 'N') {
+            return "Este processo atende aos requisitos de documentos relevantes para similaridade, mas ainda está pendente de processamento pelo SEI IA. Espere alguns minutos.";
+        }
     }
 }

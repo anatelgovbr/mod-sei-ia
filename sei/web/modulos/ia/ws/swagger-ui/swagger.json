@@ -1,0 +1,1857 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SEI - Inteligência Artificial",
+    "version": "1.0.0",
+    "description": "Documentação da API"
+  },
+  "servers": [
+    {
+      "url": "/sei/controlador_ws.php",
+      "description": "Servidor local"
+    }
+  ],
+  "paths": {
+    "/md_ia_download_arquivo_documento_externo": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Realizar download do arquivo de documentos externos",
+        "description": "Endpoint para realizar download do arquivo de documentos externos.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_download_arquivo_documento_externo"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "IdDocumento",
+            "in": "query",
+            "description": "Id do documento externo a ser feito download.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 14772556
+            }
+          },
+          {
+            "name": "IdAnexo",
+            "in": "query",
+            "description": "Id do anexo a ser feito download.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 61482
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista retornada com sucesso"
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_consulta_documento": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Consultar metadados de documentos",
+        "description": "Endpoint para consultar metadados de documentos. Para consultar o conteúdo do documento veja a operação md_ia_consulta_conteudo_documento.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_consulta_documento"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "SinFiltraDocumentosRelevantes",
+            "in": "query",
+            "description": "Filtro de Documentos Relevantes.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "N"
+            }
+          },
+          {
+            "name": "SinFiltraBloqueados",
+            "in": "query",
+            "description": "Filtro de Documentos Bloqueados.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "N"
+            }
+          },
+          {
+            "name": "SinFiltraAtivos",
+            "in": "query",
+            "description": "Filtro de Documentos Ativos.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "N"
+            }
+          },
+          {
+            "name": "IdDocumentos",
+            "in": "query",
+            "description": "Lista de ids de documentos para consulta.",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "example": [14980855, 14980856]
+            },
+            "style": "form",
+            "explode": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "IdProcedimento ": {
+                            "type": "integer",
+                            "example": "123456"
+                          },
+                          "NumeroDocumento ": {
+                            "type": "integer",
+                            "example": "13347984"
+                          },
+                          "EspecificacaoDocumento ": {
+                            "type": "string",
+                            "example": "Texto de especificação"
+                          },
+                          "IdTipoDocumento ": {
+                            "type": "integer",
+                            "example": "41"
+                          },
+                          "DataInclusao ": {
+                            "type": "date",
+                            "example": "23/01/2025"
+                          },
+                          "NomeTipoDocumento ": {
+                            "type": "string",
+                            "example": "Suspensão de Procuração Eletrônica "
+                          },
+                          "StaTipoDocumento ": {
+                            "type": "string",
+                            "example": "E"
+                          },
+                          "NomeArquivo ": {
+                            "type": "string",
+                            "example": "nome.pdf"
+                          },
+                          "NumeroProcesso ": {
+                            "type": "string",
+                            "example": "53500.014900/2025-26"
+                          },
+                          "IdDocumento ": {
+                            "type": "integer",
+                            "example": "14980856"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Nenhum Documento encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_consulta_processo": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Consultar metadados de processos",
+        "description": "Endpoint para consultar metadados do processo.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_consulta_processo"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "IdProcedimentos",
+            "in": "query",
+            "description": "Lista de ids de processos para consulta.",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "example": [8668395, 11801078]
+            },
+            "style": "form",
+            "explode": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "NumeroProcesso ": {
+                            "type": "string",
+                            "example": "53500.094483/2023-25"
+                          },
+                          "EspecificacaoProcesso ": {
+                            "type": "string",
+                            "example": "processo base"
+                          },
+                          "IdTipoProcesso ": {
+                            "type": "integer",
+                            "example": "100000891"
+                          },
+                          "TipoProcesso ": {
+                            "type": "string",
+                            "example": "PAC: Ressarcimento"
+                          },
+                          "IdUnidadeGeradoraProcesso ": {
+                            "type": "integer",
+                            "example": "110000839"
+                          },
+                          "SiglaUnidadeGeradoraProcesso ": {
+                            "type": "string",
+                            "example": "PAC: Ressarcimento"
+                          },
+                          "DescricaoUnidadeGeradoraProcesso ": {
+                            "type": "string",
+                            "example": "Gerência de Controle de Obrigações de Direitos dos Consumidores"
+                          },
+                          "ProcessosFilhoRelacionado ": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "IdProcedimento ": {
+                                  "type": "integer",
+                                  "example": "123456"
+                                },
+                                "NumeroProcesso ": {
+                                  "type": "string",
+                                  "example": "53500.014900/2025-26"
+                                }
+                              }
+                            }
+                          },
+                          "ProcessosPaiRelacionado ": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "SiglaUnidadeGeradoraProcesso ": {
+                                  "type": "string",
+                                  "example": "CODI"
+                                },
+                                "Especificacao ": {
+                                  "type": "string",
+                                  "example": "processo pai"
+                                }
+                              }
+                            }
+                          },
+                          "IdProcessosAnexados ": {
+                            "type": "array",
+                              "items": {
+                                "type": "string",
+                                "example": ["15350461", "15350462"]
+                              }
+                          },
+                          "Interessados ": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "IdInteressado ": {
+                                  "type": "integer",
+                                  "example": "100375692"
+                                },
+                                "NomeInteressado ": {
+                                  "type": "string",
+                                  "example": "Camille Loyo Faria"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_gera_hash_conteudo_documento": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Consultar hash da versão de documentos",
+        "description": "Endpoint para consultar hash da versão de documentos.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_gera_hash_conteudo_documento"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "IdDocumento",
+            "in": "query",
+            "description": "Array de id de documentos.",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "example": [14816896, 14816897, 14816898]
+            },
+            "style": "form",
+            "explode": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "IdDocumento": {
+                            "type": "integer",
+                            "example": "14816897"
+                          },
+                          "HashConteudoDocumento   ": {
+                            "type": "string",
+                            "example": "14816897"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_lista_tipo_documento": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Listar tipos de documentos",
+        "description": "Endpoint para listar os tipos de documentos.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_lista_tipo_documento"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "IdTipoDocumento": {
+                            "type": "integer",
+                            "example": "12"
+                          },
+                          "TipoDocumento": {
+                            "type": "string",
+                            "example": "Memorando"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_lista_segmentos_documentos_relevantes": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Listar segmentos para documentos relevantes",
+        "description": "Endpoint para listar os segmentos configurados para os documentos em documentos relevantes.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_lista_segmentos_documentos_relevantes"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "IdDocumentoRelevante": {
+                            "type": "integer",
+                            "example": "2453"
+                          },
+                          "SegmentoDocumento": {
+                            "type": "string",
+                            "example": "Memorando"
+                          },
+                          "IdTipoDocumentoRelevante": {
+                            "type": "integer",
+                            "example": "8"
+                          },
+                          "PercentualRelevancia": {
+                            "type": "integer",
+                            "example": "85"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_lista_percentual_relevancia_metadados": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Listar metadados",
+        "description": "Endpoint para listar os metadados e sua relevância.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_lista_percentual_relevancia_metadados"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "Metadado": {
+                          "type": "integer",
+                          "example": "Processos Relacionado"
+                        },
+                        "Relevancia": {
+                          "type": "integer",
+                          "example": "15"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_lista_documentos_indexaveis": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Listar documentos elegíveis para indexação",
+        "description": "Endpoint para listar documentos elegíveis para indexação na Solução de IA.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_lista_documentos_indexaveis"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "QuantidadeRegistros",
+            "in": "query",
+            "description": "Quantidade de registros.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "default": "100"
+            }
+          },
+          {
+            "name": "IdUltimoRegistro",
+            "in": "query",
+            "description": "ID do último registro.",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "IdDocumentos": {
+                          "type": "integer",
+                          "example": "[12345, 12346]"
+                        },
+                        "QuantidadeRegistrosTotal": {
+                          "type": "integer",
+                          "example": 140000
+                        },
+                        "QuantidadeRegistrosEntregue": {
+                          "type": "integer",
+                          "example": 100
+                        },
+                        "IdUltimoRegistroEntregue": {
+                          "type": "integer",
+                          "example": 12345
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_atualiza_documentos_indexaveis": {
+      "put": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Atualizar status de indexação de documentos",
+        "description": "Endpoint para sinalizar que o documento foi indexado pela Solução de IA.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_atualiza_documentos_indexaveis"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "IdDocumento",
+            "in": "query",
+            "description": "Id do Documento.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 219079
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Status atualizado com sucesso."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
+    
+    "/md_ia_lista_documentos_indexaveis_cancelados": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Listar documentos para remover indexação",
+        "description": "Endpoint para listar os documentos que deixaram de ser elegíveis a indexação pela solução de IA.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_lista_documentos_indexaveis_cancelados"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "QuantidadeRegistros",
+            "in": "query",
+            "description": "Quantidade de registros.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "default": "100"
+            }
+          },
+          {
+            "name": "IdUltimoRegistro",
+            "in": "query",
+            "description": "ID do último registro.",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com lista de ids de Procedimento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "IdDocumentos": {
+                          "type": "integer",
+                          "example": "[12345, 12346]"
+                        },
+                        "QuantidadeRegistrosTotal": {
+                          "type": "integer",
+                          "example": 140000
+                        },
+                        "QuantidadeRegistrosEntregue": {
+                          "type": "integer",
+                          "example": 100
+                        },
+                        "IdUltimoRegistroEntregue": {
+                          "type": "integer",
+                          "example": 12345
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
+
+    
+    "/md_ia_remove_documentos_indexaveis_cancelados": {
+      "delete": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Remover documentos da lista de documentos_indexaveis_cancelados",
+        "description": "Endpoint para sinalizar que o documento teve a indexação removida pela Solução de IA.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_remove_documentos_indexaveis_cancelados"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "IdDocumento",
+            "in": "query",
+            "description": "Id do Documento.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 219079
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com a mensagem do cancelamento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Documento removido da lista de cancelados com sucesso."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Registro não encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_consulta_conteudo_documento": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Consultar conteúdo de documentos",
+        "description": "Endpoint para consultar o conteúdo de documentos internos e externos.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_consulta_conteudo_documento"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "IdDocumento",
+            "in": "query",
+            "description": "ID do documento que deseja consultar o conteúdo.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1986092
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "TipoConteudo": {
+                            "type": "string",
+                            "example": "application/pdf"
+                          },
+                          "ConteudoDocumento": {
+                            "type": "string",
+                            "example": "Este documento descreve como..."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_lista_processos_indexaveis": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Listar processos elegíveis para indexação",
+        "description": "Endpoint para listar processos elegíveis para indexação na Solução de IA.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_lista_processos_indexaveis"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "QuantidadeRegistros",
+            "in": "query",
+            "description": "Quantidade de registros.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "default": "100"
+            }
+          },
+          {
+            "name": "IdUltimoRegistro",
+            "in": "query",
+            "description": "ID do último registro.",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "IdProcedimentos": {
+                          "type": "integer",
+                          "example": "[12345, 12346]"
+                        },
+                        "QuantidadeRegistrosTotal": {
+                          "type": "integer",
+                          "example": 140000
+                        },
+                        "QuantidadeRegistrosEntregue": {
+                          "type": "integer",
+                          "example": 100
+                        },
+                        "IdUltimoRegistroEntregue": {
+                          "type": "integer",
+                          "example": 12345
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_atualiza_processos_indexaveis": {
+      "put": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Atualizar status de indexação de processos",
+        "description": "Endpoint para sinalizar que o processo foi indexado pela Solução de IA.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_atualiza_processos_indexaveis"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "IdProcedimento",
+            "in": "query",
+            "description": "Id do Procedimento.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 219079
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Status atualizado com sucesso."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_lista_processos_indexaveis_cancelados": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Listar processos para remover indexação",
+        "description": "Endpoint para listar os processos que deixaram de ser elegíveis a indexação pela solução de IA.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_lista_processos_indexaveis_cancelados"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "QuantidadeRegistros",
+            "in": "query",
+            "description": "Quantidade de registros.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "default": "100"
+            }
+          },
+          {
+            "name": "IdUltimoRegistro",
+            "in": "query",
+            "description": "ID do último registro.",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com lista de ids de Procedimento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "IdProcedimentos": {
+                          "type": "integer",
+                          "example": "[12345, 12346]"
+                        },
+                        "QuantidadeRegistrosTotal": {
+                          "type": "integer",
+                          "example": 140000
+                        },
+                        "QuantidadeRegistrosEntregue": {
+                          "type": "integer",
+                          "example": 100
+                        },
+                        "IdUltimoRegistroEntregue": {
+                          "type": "integer",
+                          "example": 12345
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_remove_processos_indexaveis_cancelados": {
+      "delete": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Remover processos da lista de processos_indexaveis_cancelados",
+        "description": "Endpoint para sinalizar que o processo teve a indexação removida pela Solução de IA.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_remove_processos_indexaveis_cancelados"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "IdProcedimento",
+            "in": "query",
+            "description": "Id do Procedimento.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 219079
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com a mensagem do cancelamento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Processo removido da lista de cancelados com sucesso."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Registro não encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_lista_documentos_elegiveis_processos_similares": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Consultar lista de documentos relevantes de um processo",
+        "description": "Endpoint para listar documentos relevantes de um processo.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_lista_documentos_elegiveis_processos_similares"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "IdProcedimento",
+            "in": "query",
+            "description": "ID do procedimento que deseja consultar os documentos.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 12
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "example": [2884, 2885, 2886, 2887, 2888, 2889, 2890, 2891]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_consulta_historico_topico": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Consultar lista de documentos relevantes de um processo",
+        "description": "Endpoint para listar documentos relevantes de um processo.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_consulta_historico_topico"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "IdTopico",
+            "in": "query",
+            "description": "ID do tópico que deseja consultar o histórico.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 4828
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "Pergunta": {
+                          "type": "string",
+                          "example": "Pergunta Feita"
+                        },
+                        "Resposta": {
+                          "type": "string",
+                          "example": "Resposta Recebida"
+                        },
+                        "DthCadastro": {
+                          "type": "string",
+                          "example": "03/05/2025 16:04:50"
+                        },
+                        "TotalTokens ": {
+                          "type": "integer",
+                          "example": "4153"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Nenhum Documento encontrado."
+          }
+        }
+      }
+    },
+
+    "/md_ia_consulta_ultimo_id_message": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Consultar o ultimo id_message da interação com chat",
+        "description": "Endpoint para consultar o ultimo id_message da interação com chat.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_consulta_ultimo_id_message"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "example": [1409526]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    }
+  }
+}
