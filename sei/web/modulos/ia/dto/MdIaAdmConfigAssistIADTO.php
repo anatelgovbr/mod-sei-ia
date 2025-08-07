@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -32,7 +33,9 @@ class MdIaAdmConfigAssistIADTO extends InfraDTO
 
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'LimiteMaiorUsuariosTokens', 'limite_maior_usuarios_tokens');
 
-        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'LlmAtivo', 'llm_ativo');
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'SinRefletir', 'sin_refletir');
+
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'SinBuscarWeb', 'sin_buscar_web');
 
         $this->configurarPK('IdMdIaAdmConfigAssistIA', InfraDTO::$TIPO_PK_NATIVA);
     }

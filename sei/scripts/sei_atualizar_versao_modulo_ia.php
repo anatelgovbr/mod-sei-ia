@@ -8,7 +8,7 @@ class MdIaAtualizadorSeiRN extends InfraRN
     private $versaoAtualDesteModulo = '1.0.0';
     private $nomeDesteModulo = 'MÓDULO IA';
     private $nomeParametroModulo = 'VERSAO_MODULO_IA';
-    private $historicoVersoes = array('1.0.0');
+    private $historicoVersoes = array('1.0.0', '1.1.0');
 
     public function __construct()
     {
@@ -77,15 +77,18 @@ class MdIaAtualizadorSeiRN extends InfraRN
             $this->inicializar('INICIANDO A INSTALAÇÃO/ATUALIZAÇÃO DO ' . $this->nomeDesteModulo . ' NO SEI VERSÃO ' . SEI_VERSAO);
 
             //checando BDs suportados
-            if (!(BancoSEI::getInstance() instanceof InfraMySql) &&
+            if (
+                !(BancoSEI::getInstance() instanceof InfraMySql) &&
                 !(BancoSEI::getInstance() instanceof InfraSqlServer) &&
-                !(BancoSEI::getInstance() instanceof InfraOracle)) {
+                !(BancoSEI::getInstance() instanceof InfraPostgreSql) &&
+                !(BancoSEI::getInstance() instanceof InfraOracle)
+            ) {
                 $this->finalizar('BANCO DE DADOS NÃO SUPORTADO: ' . get_parent_class(BancoSEI::getInstance()), true);
             }
 
             //testando versao do framework
-            $numVersaoInfraRequerida = '2.0.18';
-            if(version_compare(VERSAO_INFRA, $numVersaoInfraRequerida) < 0){
+            $numVersaoInfraRequerida = '2.29.0';
+            if (version_compare(VERSAO_INFRA, $numVersaoInfraRequerida) < 0) {
                 $this->finalizar('VERSÃO DO FRAMEWORK PHP INCOMPATÍVEL (VERSÃO ATUAL ' . VERSAO_INFRA . ', SENDO REQUERIDA VERSÃO IGUAL OU SUPERIOR A ' . $numVersaoInfraRequerida . ')', true);
             }
 
@@ -105,15 +108,16 @@ class MdIaAtualizadorSeiRN extends InfraRN
             switch ($strVersaoModuloIa) {
                 case '':
                     $this->instalarv100();
+                case '1.0.0':
+                    $this->instalarv110();
                     break;
                 default:
                     $this->finalizar('A VERSÃO MAIS ATUAL DO ' . $this->nomeDesteModulo . ' (v' . $this->versaoAtualDesteModulo . ') JÁ ESTÁ INSTALADA.');
                     break;
-
             }
 
             $this->logar('SCRIPT EXECUTADO EM: ' . date('d/m/Y H:i:s'));
-			$this->finalizar('FIM');
+            $this->finalizar('FIM');
             InfraDebug::getInstance()->setBolDebugInfra(true);
         } catch (Exception $e) {
             InfraDebug::getInstance()->setBolLigado(true);
@@ -126,8 +130,8 @@ class MdIaAtualizadorSeiRN extends InfraRN
     protected function instalarv100()
     {
         $nmVersao = '1.0.0';
-		
-		$this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSAO '.$nmVersao.' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSAO ' . $nmVersao . ' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
 
         $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
@@ -286,7 +290,8 @@ class MdIaAtualizadorSeiRN extends InfraRN
         // CRIA ESTRUTURA DAS TABELAS RELACIONADAS AO MAPEAMENTO DE INTEGRACAO
         # ----------------------------------- INTEGRACAO ---------------------
         $this->logar('CRIANDO A TABELA md_ia_adm_integracao');
-        BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_adm_integracao (
+        BancoSEI::getInstance()->executarSql(
+            'CREATE TABLE md_ia_adm_integracao (
                                 id_md_ia_adm_integracao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
                                 nome ' . $objInfraMetaBD->tipoTextoVariavel(100) . ' NOT NULL,
                                 id_md_ia_adm_integ_funcion ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
@@ -679,7 +684,7 @@ class MdIaAtualizadorSeiRN extends InfraRN
             id_md_ia_adm_ods_onu ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
             nome_ods ' . $objInfraMetaBD->tipoTextoVariavel(100) . ' NOT NULL,
             descricao_ods ' . $objInfraMetaBD->tipoTextoVariavel(250) . ' NOT NULL,
-            icone_ods ' . $objInfraMetaBD->tipoTextoVariavel(50). ' NOT NULL
+            icone_ods ' . $objInfraMetaBD->tipoTextoVariavel(50) . ' NOT NULL
         )');
 
         $objInfraMetaBD->adicionarChavePrimaria('md_ia_adm_objetivo_ods', 'pk_md_ia_adm_objetivo_ods', array('id_md_ia_adm_objetivo_ods'));
@@ -695,8 +700,8 @@ class MdIaAtualizadorSeiRN extends InfraRN
             id_md_ia_adm_objetivo_ods ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
             ordem ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
             identificacao_meta ' . $objInfraMetaBD->tipoTextoVariavel(25) . ' NOT NULL,
-            descricao_meta ' . $objInfraMetaBD->tipoTextoVariavel(1000). ' NOT NULL,
-            sin_forte_relacao ' . $objInfraMetaBD->tipoTextoVariavel(1). ' NOT NULL
+            descricao_meta ' . $objInfraMetaBD->tipoTextoVariavel(1000) . ' NOT NULL,
+            sin_forte_relacao ' . $objInfraMetaBD->tipoTextoVariavel(1) . ' NOT NULL
         )');
 
         $objInfraMetaBD->adicionarChavePrimaria('md_ia_adm_meta_ods', 'pk_md_ia_adm_meta_ods', array('id_md_ia_adm_meta_ods'));
@@ -1012,7 +1017,7 @@ class MdIaAtualizadorSeiRN extends InfraRN
                       id_md_ia_adm_conf_assist_ia ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
                       orientacoes_gerais ' . $objInfraMetaBD->tipoTextoGrande() . ' NOT NULL,
                       sin_exibir_funcionalidade ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
-                      llm_ativo ' . $objInfraMetaBD->tipoNumero(2) . ' NOT NULL,
+                      llm_ativo ' . $objInfraMetaBD->tipoNumero(2) . ' NULL,
                       system_prompt ' . $objInfraMetaBD->tipoTextoVariavel(2000) . ' NULL,
                       limite_geral_tokens ' . $objInfraMetaBD->tipoNumero(2) . ' NULL,
                       limite_maior_usuarios_tokens ' . $objInfraMetaBD->tipoNumero(2) . ' NULL
@@ -1073,7 +1078,6 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         $mdIaAdmConfigAssistIADTO->setStrSinExibirFuncionalidade("N");
         $mdIaAdmConfigAssistIADTO->setNumLimiteGeralTokens(3);
         $mdIaAdmConfigAssistIADTO->setNumLimiteMaiorUsuariosTokens(6);
-        $mdIaAdmConfigAssistIADTO->setNumLlmAtivo(6);
         $mdIaAdmConfigAssistIARN->cadastrar($mdIaAdmConfigAssistIADTO);
 
         $this->logar('CRIANDO USUARIO SISTEMA IA');
@@ -1184,8 +1188,429 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         $this->logar('FIM CRIANDO NOVO SERVIÇO CONSULTAR DOCUMENTOS EXTERNOS');
 
         $this->logar('ADICIONANDO PARÂMETRO ' . $this->nomeParametroModulo . ' NA TABELA infra_parametro PARA CONTROLAR A VERSÃO DO MÓDULO');
-        BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro(valor, nome) VALUES(\''.$nmVersao.'\',  \'' . $this->nomeParametroModulo . '\' )');
+        BancoSEI::getInstance()->executarSql('INSERT INTO infra_parametro(valor, nome) VALUES(\'' . $nmVersao . '\',  \'' . $this->nomeParametroModulo . '\' )');
         $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $nmVersao . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
+    }
+
+    protected function instalarv110()
+    {
+        $nmVersao = '1.1.0';
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSAO ' . $nmVersao . ' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+        $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+
+        $objInfraMetaBD->excluirColuna('md_ia_interacao_chat', 'procedimento_citado');
+        $objInfraMetaBD->excluirColuna('md_ia_interacao_chat', 'link_acesso_procedimento');
+
+        $this->logar('AJUSTANDO TEXTO DE ORIENTAÇÕES GERAIS EM CONFIGURAÇÕES DE SIMILARIDADE');
+
+        $mdIaConfigSimilarRN = new MdIaAdmConfigSimilarRN();
+
+        $orientacoesGeraisSimilaridade = '<p style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">Essa funcionalidade sugere processos similares com base no conte&uacute;do dos documentos e nas informa&ccedil;&otilde;es cadastradas, usando intelig&ecirc;ncia artificial.</p>
+
+<p style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">A opini&atilde;o dos usu&aacute;rios &eacute; essencial para melhorar os modelos de IA, avaliar os resultados e aprimorar as recomenda&ccedil;&otilde;es. Por isso, precisamos validar se os processos sugeridos realmente t&ecirc;m rela&ccedil;&atilde;o com o processo atual.</p>
+
+<p style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">Para isso, basta:<br />
+&#9989; Confirmar os processos similares (clicando no polegar para cima).<br />
+&#10060; Indicar os que n&atilde;o s&atilde;o similares (clicando no polegar para baixo).<br />
+&#128316; Se necess&aacute;rio, ajustar a ordem dos processos na primeira coluna para melhorar a lista.</p>';
+        $mdIaAdmConfigSimilarDTO = new MdIaAdmConfigSimilarDTO();
+        $mdIaAdmConfigSimilarDTO->setNumIdMdIaAdmConfigSimilar(1);
+        $mdIaAdmConfigSimilarDTO->setStrOrientacoesGerais($orientacoesGeraisSimilaridade);
+        $mdIaConfigSimilarRN->alterar($mdIaAdmConfigSimilarDTO);
+
+        $MdIaAdmPesqDocRN = new MdIaAdmPesqDocRN();
+
+        $orientacoesGeraisPesqDoc = '<p style="font-family: arial, verdana, helvetica, sans-serif; font-size: 13px;">Essa funcionalidade permite comparar o conte&uacute;do de documentos entre si, com ou sem a inclus&atilde;o de um texto complementar na pesquisa. A intelig&ecirc;ncia artificial torna a busca mais precisa do que os m&eacute;todos tradicionais.</p>
+
+<p style="font-family: arial, verdana, helvetica, sans-serif; font-size: 13px;">Para ajudar o SEI IA a aprender e melhorar, os usu&aacute;rios devem avaliar os documentos exibidos nos resultados da pesquisa:<br />
+&#9989; Clique no polegar para cima se o documento for relevante.<br />
+&#10060; Clique no polegar para baixo se n&atilde;o for relevante.</p>
+
+<p style="font-family: arial, verdana, helvetica, sans-serif; font-size: 13px;">Se for necess&aacute;rio ajustar a ordem dos documentos na primeira coluna, primeiro avalie todos os documentos listados.</p>';
+
+        $MdIaAdmPesqDocDTO = new MdIaAdmPesqDocDTO();
+        $MdIaAdmPesqDocDTO->setNumIdMdIaAdmPesqDoc(1);
+        $MdIaAdmPesqDocDTO->setStrOrientacoesGerais($orientacoesGeraisPesqDoc);
+        $MdIaAdmPesqDocRN->alterar($MdIaAdmPesqDocDTO);
+
+        $objInfraMetaBD->alterarColuna('md_ia_class_meta_ods', 'racional', $objInfraMetaBD->tipoTextoVariavel(4000), 'null');
+        $objInfraMetaBD->alterarColuna('md_ia_hist_class', 'racional', $objInfraMetaBD->tipoTextoVariavel(4000), 'null');
+
+        $this->logar('CRIANDO A TABELA md_ia_grupo_galeria_prompt');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_grupo_galeria_prompt (
+            id_md_ia_grupo_galeria_prompt ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            nome_grupo ' . $objInfraMetaBD->tipoTextoVariavel(100) . ' NOT NULL
+        )');
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_ia_grupo_galeria_prompt', 'pk_md_ia_grupo_galeria_prompt', array('id_md_ia_grupo_galeria_prompt'));
+
+        $this->logar('CRIANDO A SEQUENCE seq_md_ia_grupo_galeria_prompt');
+        BancoSEI::getInstance()->criarSequencialNativa('seq_md_ia_grupo_galeria_prompt', 1);
+
+        $this->logar('CRIANDO A TABELA md_ia_galeria_prompts');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_galeria_prompts (
+            id_md_ia_galeria_prompts ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            id_md_ia_grupo_galeria_prompt ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            id_usuario ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            id_unidade ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            descricao ' . $objInfraMetaBD->tipoTextoVariavel(500) . ' NOT NULL,
+            prompt ' . $objInfraMetaBD->tipoTextoGrande() . ' NULL,
+            sin_ativo ' . $objInfraMetaBD->tipoTextoVariavel(1) . ' NULL,
+            dth_alteracao ' . $objInfraMetaBD->tipoDataHora() . ' NULL
+        )');
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_ia_galeria_prompts', 'pk_md_ia_galeria_prompts', array('id_md_ia_galeria_prompts'));
+
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_ia_galeria_prompts', 'md_ia_galeria_prompts', array('id_md_ia_grupo_galeria_prompt'), 'md_ia_grupo_galeria_prompt', array('id_md_ia_grupo_galeria_prompt'));
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_ia_galeria_prompts', 'md_ia_galeria_prompts', array('id_usuario'), 'usuario', array('id_usuario'));
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk3_md_ia_galeria_prompts', 'md_ia_galeria_prompts', array('id_unidade'), 'unidade', array('id_unidade'));
+
+        $this->logar('CRIANDO A SEQUENCE seq_md_ia_galeria_prompts');
+        BancoSEI::getInstance()->criarSequencialNativa('seq_md_ia_galeria_prompts', 1);
+
+        $this->logar('POPULANDO TABELA md_ia_grupo_galeria_prompt');
+
+        $MdIaGrupoGaleriaPromptRN = new MdIaGrupoGaleriaPromptRN();
+
+        $arrMdIaGrupoGaleriaPrompt = [
+            ['nome' => 'Acesso à Informação'],
+            ['nome' => 'Acompanhamento Legislativo'],
+            ['nome' => 'Arrecadação'],
+            ['nome' => 'Comunicação'],
+            ['nome' => 'Contabilidade'],
+            ['nome' => 'Contratação Direta ou por Licitação'],
+            ['nome' => 'Convênios e outros Ajustes'],
+            ['nome' => 'Corregedoria'],
+            ['nome' => 'Ética'],
+            ['nome' => 'Finanças'],
+            ['nome' => 'Fiscalização'],
+            ['nome' => 'Gestão de Contratos'],
+            ['nome' => 'Gestão de Processos'],
+            ['nome' => 'Gestão de Projetos'],
+            ['nome' => 'Gestão e Controle'],
+            ['nome' => 'Infraestrutura'],
+            ['nome' => 'Jornalismo'],
+            ['nome' => 'Legislação, Regulamentação e Normas'],
+            ['nome' => 'Material'],
+            ['nome' => 'Orçamento'],
+            ['nome' => 'Ouvidoria'],
+            ['nome' => 'Patrimônio'],
+            ['nome' => 'Pesquisa, Desenvolvimento e Inovação'],
+            ['nome' => 'Pessoal'],
+            ['nome' => 'Planejamento Estratégico e Planos derivados'],
+            ['nome' => 'Procedimentos Sancionatórios'],
+            ['nome' => 'Processo Administrativo Fiscal (PAF)'],
+            ['nome' => 'Procuradoria'],
+            ['nome' => 'Relacionamento Institucional'],
+            ['nome' => 'Relações Internacionais'],
+            ['nome' => 'Segurança Institucional'],
+            ['nome' => 'Suprimento de Fundos'],
+            ['nome' => 'Tecnologia da Informação (TI)'],
+            ['nome' => 'Viagem'],
+        ];
+
+        foreach ($arrMdIaGrupoGaleriaPrompt as $chave => $tipo) {
+            $MdIaGrupoGaleriaPromptDTO = new MdIaGrupoGaleriaPromptDTO();
+            $MdIaGrupoGaleriaPromptDTO->setNumIdMdIaGrupoGaleriaPrompt(NULL);
+            $MdIaGrupoGaleriaPromptDTO->setStrNomeGrupo($tipo['nome']);
+            $MdIaGrupoGaleriaPromptRN->cadastrar($MdIaGrupoGaleriaPromptDTO);
+        }
+
+        $this->logar('CRIANDO A TABELA md_ia_proc_indexaveis');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_proc_indexaveis (
+            id_procedimento ' . $objInfraMetaBD->tipoNumeroGrande() . ' NOT NULL,
+            hash ' . $objInfraMetaBD->tipoTextoVariavel(150) . ' NOT NULL,
+            sin_indexado ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+            dth_alteracao ' . $objInfraMetaBD->tipoDataHora() . ' NULL,
+            dth_indexacao ' . $objInfraMetaBD->tipoDataHora() . ' NULL
+        )');
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_ia_proc_indexaveis', 'pk_md_ia_id_procedimento', array('id_procedimento'));
+
+        $this->logar('CRIANDO A TABELA md_ia_proc_index_canc');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_proc_index_canc (
+            id_procedimento ' . $objInfraMetaBD->tipoNumeroGrande() . ' NOT NULL
+        )');
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_ia_proc_index_canc', 'pk_md_ia_proc_index_canc', array('id_procedimento'));
+
+        $strDescricao = 'Agendamento responsável por atualizar lista procedimentos relevantes a serem indexados pelo Solr do IA.';
+        $strComando = 'MdIaAgendamentoAutomaticoRN::atualizarListaProcedimentosRelevantes';
+        $strPeriodicidadeComplemento = '0,12,18';
+        $this->_cadastrarNovoAgendamento($strDescricao, $strComando, $strPeriodicidadeComplemento, InfraAgendamentoTarefaRN::$PERIODICIDADE_EXECUCAO_HORA);
+
+        $this->logar('CRIANDO A TABELA md_ia_adm_url_integracao');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_adm_url_integracao (
+            id_adm_url_integracao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            id_md_ia_adm_integracao ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            referencia ' . $objInfraMetaBD->tipoTextoVariavel(50) . ' NOT NULL,
+            label ' . $objInfraMetaBD->tipoTextoVariavel(100) . ' NOT NULL,
+            url ' . $objInfraMetaBD->tipoTextoVariavel(150) . ' NOT NULL
+        )');
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_ia_adm_url_integracao', 'pk_md_ia_adm_url_integracao', array('id_adm_url_integracao'));
+
+        $this->logar('CRIANDO A SEQUENCE seq_md_ia_adm_url_integracao');
+        BancoSEI::getInstance()->criarSequencialNativa('seq_md_ia_adm_url_integracao', 1);
+
+        $arrMdIaAdmUrlIntegracao = [
+            ['id_adm_url_integracao' => '1', 'id_md_ia_adm_integracao' => '1', 'referencia' => 'linkRecomendacaoProcesso', 'label' => 'Recomendação do Processo', 'url' => ':8082/process-recommenders/weighted-mlt-recommender/recommendations/'],
+            ['id_adm_url_integracao' => '2', 'id_md_ia_adm_integracao' => '1', 'referencia' => 'linkFeedbackRecomendacaoProcesso', 'label' => 'Feedback  da Recomendação do Processo', 'url' => ':8086/process-recommenders/feedbacks'],
+            ['id_adm_url_integracao' => '3', 'id_md_ia_adm_integracao' => '1', 'referencia' => 'linkIndexacaoProcesso', 'label' => 'Indexação de Processo', 'url' => ':8082/process-recommenders/weighted-mlt-recommender/indexed-ids/'],
+            ['id_adm_url_integracao' => '4', 'id_md_ia_adm_integracao' => '1', 'referencia' => 'linkRecomendacaoDocumentos', 'label' => 'Recomendação de Documentos', 'url' => ':8082/document-recommenders/mlt-recommender/recommendations?'],
+            ['id_adm_url_integracao' => '5', 'id_md_ia_adm_integracao' => '1', 'referencia' => 'linkFeedbackRecomendacaoDocumento', 'label' => 'Feedback de Recomendação de Documento', 'url' => ':8086/document-recommenders/feedbacks'],
+            ['id_adm_url_integracao' => '6', 'id_md_ia_adm_integracao' => '1', 'referencia' => 'linkSwagger', 'label' => 'Swagger', 'url' => ':8082/openapi.json'],
+            ['id_adm_url_integracao' => '7', 'id_md_ia_adm_integracao' => '1', 'referencia' => 'linkConsultaDisponibilidade', 'label' => 'Consultar Disponibilidade', 'url' => ':8082/health'],
+            ['id_adm_url_integracao' => '8', 'id_md_ia_adm_integracao' => '2', 'referencia' => 'linkEndpoint', 'label' => 'Endpoint', 'url' => ':8088/llm_lang/chat_gpt_4_128k'],
+            ['id_adm_url_integracao' => '9', 'id_md_ia_adm_integracao' => '2', 'referencia' => 'linkSwagger', 'label' => 'Swagger', 'url' => ':8088/openapi.json'],
+            ['id_adm_url_integracao' => '10', 'id_md_ia_adm_integracao' => '2', 'referencia' => 'linkConsultaDisponibilidade', 'label' => 'Consultar Disponibilidade', 'url' => ':8088/health'],
+            ['id_adm_url_integracao' => '11', 'id_md_ia_adm_integracao' => '2', 'referencia' => 'linkFeedback', 'label' => 'Feedback', 'url' => ':8088/feedback/feedback']
+        ];
+        foreach ($arrMdIaAdmUrlIntegracao as $UrlIntegracao) {
+            $mdIaAdmUrlIntegracao = new MdIaAdmUrlIntegracaoDTO();
+            $mdIaAdmUrlIntegracao->setNumIdMdIaAdmUrlIntegracao($UrlIntegracao['id_adm_url_integracao']);
+            $mdIaAdmUrlIntegracao->setNumIdAdmIaAdmIntegracao($UrlIntegracao['id_md_ia_adm_integracao']);
+            $mdIaAdmUrlIntegracao->setStrReferencia($UrlIntegracao['referencia']);
+            $mdIaAdmUrlIntegracao->setStrLabel($UrlIntegracao['label']);
+            $mdIaAdmUrlIntegracao->setStrUrl($UrlIntegracao['url']);
+            (new MdIaAdmUrlIntegracaoRN())->cadastrar($mdIaAdmUrlIntegracao);
+        }
+
+        // Remover coluna llm_ativo da tabela md_ia_adm_config_assist_ia
+        $objInfraMetaBD->excluirColuna('md_ia_adm_config_assist_ia', 'llm_ativo');
+
+        $this->logar('CRIANDO A COLUNAS sin_refletir e sin_buscar_web em md_ia_adm_config_assist_ia');
+        $objInfraMetaBD->adicionarColuna('md_ia_adm_config_assist_ia', 'sin_refletir', $objInfraMetaBD->tipoTextoVariavel(1), 'null');
+        $objInfraMetaBD->adicionarColuna('md_ia_adm_config_assist_ia', 'sin_buscar_web', $objInfraMetaBD->tipoTextoVariavel(1), 'null');
+
+        BancoSEI::getInstance()->executarSql("UPDATE md_ia_adm_config_assist_ia set sin_refletir =  'N'");
+        BancoSEI::getInstance()->executarSql("UPDATE md_ia_adm_config_assist_ia set sin_buscar_web =  'N'");
+
+        $this->logar('CRIANDO A TABELA md_ia_doc_indexaveis');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_doc_indexaveis (
+            id_documento ' . $objInfraMetaBD->tipoNumeroGrande() . ' NOT NULL,
+            sin_indexado ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+            dth_alteracao ' . $objInfraMetaBD->tipoDataHora() . ' NULL,
+            dth_indexacao ' . $objInfraMetaBD->tipoDataHora() . ' NULL
+        )');
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_ia_doc_indexaveis', 'pk_md_ia_id_documento', array('id_documento'));
+
+        $this->logar('CRIANDO A TABELA md_ia_doc_index_canc');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_doc_index_canc (
+            id_documento ' . $objInfraMetaBD->tipoNumeroGrande() . ' NOT NULL
+        )');
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_ia_doc_index_canc', 'pk_md_ia_doc_index_canc', array('id_documento'));
+
+        $strDescricao = 'Agendamento responsável por atualizar lista de documentos relevantes a serem indexados pelo Solr do IA.';
+        $strComando = 'MdIaAgendamentoAutomaticoRN::atualizarListaDocsElegiveisPesquisaDocumentos';
+        $strPeriodicidadeComplemento = '0,13,19';
+        $this->_cadastrarNovoAgendamento($strDescricao, $strComando, $strPeriodicidadeComplemento, InfraAgendamentoTarefaRN::$PERIODICIDADE_EXECUCAO_HORA);
+
+        $this->logar('CRIANDO A TABELA md_ia_adm_class_tp_aut');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_adm_class_aut_tp (
+            id_md_ia_adm_class_aut_tp ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            id_md_ia_adm_meta_ods ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            id_tipo_procedimento ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL
+        )');
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_ia_adm_class_aut_tp', 'pk_md_ia_adm_class_aut_tp', array('id_md_ia_adm_class_aut_tp'));
+
+        $this->logar('CRIANDO A SEQUENCE seq_md_ia_adm_class_aut_tp');
+        BancoSEI::getInstance()->criarSequencialNativa('seq_md_ia_adm_class_aut_tp', 1);
+        $MdIaAdmConfigAssistIARN = new MdIaAdmConfigAssistIARN();
+
+        $orientacoesGeraisAssistenteIA = '<p style="text-align:center"><span style="font-size:16px"><span style="font-family:arial, verdana, helvetica, sans-serif"><strong>Acesse o <a style="color: #007bff;text-decoration: underline;" href="https://docs.google.com/document/d/e/2PACX-1vRsKljzHcKwRfdW7IcnFA1EHNPIInog9Mqpu58xEFzRMfZ5avrLhYbwUjPkXuTDFKFEPnev4ASJ-5Dm/pub" style="font-size:16px" target="_blank">Manual do Usu&aacute;rio do SEI IA</a> para aprender a utilizar o Assistente, especialmente sobre Prompt e Engenharia de Prompt</strong></span></span></p>
+
+<ol>
+	<li style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">O Assistente &eacute; amplo e pode ser utilizado em variadas necessidades. Pode copiar e colar textos variados e demandar o que quiser do Assistente, no mesmo estilo do ChatGPT e outros.</li>
+	<li style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">A cita&ccedil;&atilde;o de documento funciona com documentos externos e documentos gerados, inclusive no Editor do SEI com documento ainda n&atilde;o assinado.</li>
+	<li style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">A cita&ccedil;&atilde;o de documentos externos funciona apenas se a extens&atilde;o do arquivo for de texto (pdf; html; htm; txt; xlsx; csv; ods;&nbsp;odt; odp).</li>
+	<li style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">Para citar documento ou processo deve utilizar o s&iacute;mbolo de # junto com seu protocolo:
+	<ol>
+		<li style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">Exemplo de mensagem citando um documento: &quot;<strong>Resumir o documento #3485788</strong>&quot;</li>
+		<li style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">Aten&ccedil;&atilde;o que o n&uacute;mero do protocolo deve ser exato e colado ao s&iacute;mbolo de #.
+		<ol>
+			<li style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">Cita&ccedil;&atilde;o v&aacute;lida:&nbsp;#3485788</li>
+			<li style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">Cita&ccedil;&atilde;o n&atilde;o v&aacute;lida:&nbsp;# 3485788,&nbsp;#-3485788,&nbsp;#_3485788</li>
+		</ol>
+		</li>
+	</ol>
+	</li>
+	<li style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">O Assistente valida se o protocolo citado existe, apresentando abaixo da caixa de digita&ccedil;&atilde;o cr&iacute;tica em vermelho: &quot;<span style="color:#ff0000">O protocolo citado #98089789 n&atilde;o existe no SEI</span>&quot;</li>
+	<li style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">Indicando protocolo v&aacute;lido, o SEI ainda verifica se a unidade possui acesso ao protocolo.
+	<ol>
+		<li style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">O Assistente n&atilde;o acessa conte&uacute;do <strong>que o usu&aacute;rio <u>n&atilde;o</u> tenha acesso direto pelo pr&oacute;prio SEI</strong>.
+		<ol>
+			<li>O termo &quot;acesso direto&quot; corresponde &agrave; permiss&atilde;o de visualiza&ccedil;&atilde;o do documento pelo usu&aacute;rio logado no ambiente interno do SEI a partir da unidade. Eventuais acessos p&uacute;blicos dos documentos n&atilde;o necessariamente se enquadram como acesso direto no SEI e n&atilde;o s&atilde;o alcan&ccedil;ados pelo Assistente.</li>
+		</ol>
+		</li>
+		<li style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">Se a partir da pr&oacute;pria unidade o usu&aacute;rio n&atilde;o conseguir acessar o documento, o Assistente tamb&eacute;m n&atilde;o conseguir&aacute; acessar para interagir com seu conte&uacute;do.</li>
+		<li style="font-family:arial, verdana, helvetica, sans-serif; font-size:13px">Nesse caso, apresentar&aacute; abaixo da caixa de digita&ccedil;&atilde;o mensagem de cr&iacute;tica em vermelho: &quot;<span style="color:#ff0000">Unidade [GIIB] n&atilde;o possui acesso ao documento [11292302]</span>&quot;</li>
+	</ol>
+	</li>
+</ol>';
+
+        $MdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();
+        $MdIaAdmConfigAssistIADTO->setNumIdMdIaAdmConfigAssistIA(1);
+        $MdIaAdmConfigAssistIADTO->setStrOrientacoesGerais($orientacoesGeraisAssistenteIA);
+        $MdIaAdmConfigAssistIARN->alterar($MdIaAdmConfigAssistIADTO);
+
+        $this->logar('CRIANDO COLUNAS id_procedimento e sta_tipo_usuario PARA md_ia_class_meta_ods e md_ia_hist_class');
+        $objInfraMetaBD->adicionarColuna('md_ia_class_meta_ods', 'sta_tipo_usuario', '' . $objInfraMetaBD->tipoTextoVariavel(1), 'not null');
+        $objInfraMetaBD->adicionarColuna('md_ia_class_meta_ods', 'id_procedimento', '' . $objInfraMetaBD->tipoNumeroGrande(), 'not null');
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk5_md_ia_class_meta_ods', 'md_ia_class_meta_ods', array('id_procedimento'), 'procedimento', array('id_procedimento'));
+
+        $objInfraMetaBD->adicionarColuna('md_ia_hist_class', 'sta_tipo_usuario', '' . $objInfraMetaBD->tipoTextoVariavel(1), 'not null');
+        $objInfraMetaBD->adicionarColuna('md_ia_hist_class', 'id_procedimento', '' . $objInfraMetaBD->tipoNumeroGrande(), 'not null');
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk6_md_ia_class_meta_ods', 'md_ia_hist_class', array('id_procedimento'), 'procedimento', array('id_procedimento'));
+
+        $this->logar('POPULANDO AS COLUNAS');
+        $sql = "SELECT * FROM md_ia_classificacao_ods";
+        $arrClassificacaoOds = BancoSEI::getInstance()->consultarSql($sql);
+
+        $sql = "SELECT * FROM md_ia_class_meta_ods";
+        $arrClassMetaOds = BancoSEI::getInstance()->consultarSql($sql);
+
+        $sql = "SELECT * FROM md_ia_hist_class";
+        $arrHistClassMetaOds = BancoSEI::getInstance()->consultarSql($sql);
+
+        $objMdIaClassMetaOdsRN = new MdIaClassMetaOdsRN();
+        $objMdIaHistClassRN = new MdIaHistClassRN();
+
+        //CADASTRAR ID_PROCEDIMENTO
+        foreach ($arrClassificacaoOds as $classificacaoOds) {
+
+            // ATUALIZAR CLASSIFICACAO DE METAS
+            $arrIdMetas = [];
+            foreach ($arrClassMetaOds as $classMetaOds) {
+                if ($classMetaOds['id_md_ia_classificacao_ods'] == $classificacaoOds['id_md_ia_classificacao_ods']) {
+                    $arrIdMetas[] = $classMetaOds['id_md_ia_class_meta_ods'];
+                }
+            }
+
+            if (!empty($arrIdMetas)) {
+                $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
+                $objMdIaClassMetaOdsDTO->setNumIdMdIaClassMetaOds($arrIdMetas, InfraDTO::$OPER_IN);
+                $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
+                $arrObjMdIaClassMetaOdsDTO = $objMdIaClassMetaOdsRN->listar($objMdIaClassMetaOdsDTO);
+
+                foreach ($arrObjMdIaClassMetaOdsDTO as $objMdIaClassMetaOdsDTO) {
+                    $objMdIaClassMetaOdsDTO->setNumIdProcedimento($classificacaoOds['id_procedimento']);
+                    $objMdIaClassMetaOdsRN->alterar($objMdIaClassMetaOdsDTO);
+                }
+            }
+
+            unset($arrObjMdIaClassMetaOdsDTO);
+
+            $arrIdHistMetas = [];
+            foreach ($arrHistClassMetaOds as $histClassMetaOds) {
+                if ($histClassMetaOds['id_md_ia_classificacao_ods'] == $classificacaoOds['id_md_ia_classificacao_ods']) {
+                    $arrIdHistMetas[] = $histClassMetaOds['id_md_ia_hist_class'];
+                }
+            }
+
+            if (!empty($arrIdHistMetas)) {
+                $objMdIaHistClassDTO = new MdIaHistClassDTO();
+                $objMdIaHistClassDTO->setNumIdMdIaHistClass($arrIdHistMetas, InfraDTO::$OPER_IN);
+                $objMdIaHistClassDTO->retNumIdMdIaHistClass();
+                $arrObjMdIaHistClassDTO = $objMdIaHistClassRN->listar($objMdIaHistClassDTO);
+
+                foreach ($arrObjMdIaHistClassDTO as $objMdIaHistClassDTO) {
+                    $objMdIaHistClassDTO->setNumIdProcedimento($classificacaoOds['id_procedimento']);
+                    $objMdIaHistClassRN->alterar($objMdIaHistClassDTO);
+                }
+            }
+
+            unset($arrObjMdIaClassMetaOdsDTO);
+        }
+
+        $this->logar('POPULANDO AS COLUNAS sta_tipo_usuario');
+        foreach ($arrClassMetaOds as $classMetaOds) {
+            $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
+            $objMdIaClassMetaOdsDTO->setNumIdMdIaClassMetaOds($classMetaOds['id_md_ia_class_meta_ods']);
+            $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
+            $objMdIaClassMetaOdsDTO->retNumIdUsuario();
+            $objMdIaClassMetaOdsDTO = $objMdIaClassMetaOdsRN->consultar($objMdIaClassMetaOdsDTO);
+            $objMdIaClassMetaOdsDTO->setStrStaTipoUsuario($this->consultarStaTipoUsuario($objMdIaClassMetaOdsDTO->getNumIdUsuario()));
+            $objMdIaClassMetaOdsRN->alterar($objMdIaClassMetaOdsDTO);
+        }
+
+        foreach ($arrHistClassMetaOds as $histClassMetaOds) {
+            $objMdIaHistClassDTO = new MdIaHistClassDTO();
+            $objMdIaHistClassDTO->setNumIdMdIaHistClass($histClassMetaOds['id_md_ia_hist_class']);
+            $objMdIaHistClassDTO->retNumIdMdIaHistClass();
+            $objMdIaHistClassDTO->retNumIdUsuario();
+            $objMdIaHistClassDTO = $objMdIaHistClassRN->consultar($objMdIaHistClassDTO);
+            $objMdIaHistClassDTO->setStrStaTipoUsuario($this->consultarStaTipoUsuario($objMdIaHistClassDTO->getNumIdUsuario()));
+            $objMdIaHistClassRN->alterar($objMdIaHistClassDTO);
+        }
+
+        $this->logar('REMOVENDO colunas e tabelas descartadas');
+
+        $objInfraMetaBD->excluirChaveEstrangeira('md_ia_class_meta_ods', 'fk1_md_ia_class_meta_ods');
+
+        $objInfraMetaBD->excluirIndice('md_ia_class_meta_ods', 'fk1_md_ia_class_meta_ods');
+        $objInfraMetaBD->excluirChaveEstrangeira('md_ia_hist_class', 'fk1_md_ia_hist_class');
+        $objInfraMetaBD->excluirIndice('md_ia_hist_class', 'fk1_md_ia_hist_class');
+        $objInfraMetaBD->excluirColuna('md_ia_class_meta_ods', 'id_md_ia_classificacao_ods');
+        $objInfraMetaBD->excluirColuna('md_ia_hist_class', 'id_md_ia_classificacao_ods');
+
+        BancoSEI::getInstance()->executarSql("ALTER TABLE md_ia_class_meta_ods ADD CONSTRAINT uq_meta_usuario_procedimento UNIQUE (id_md_ia_adm_meta_ods, id_procedimento)");
+
+        $this->logar('Remover a sequence e tabela md_ia_classificacao_ods');
+        if (BancoSEI::getInstance() instanceof InfraOracle || BancoSEI::getInstance() instanceof InfraPostgreSql) {
+            BancoSEI::getInstance()->executarSql('drop sequence seq_md_ia_classificacao_ods');
+        } else {
+            BancoSEI::getInstance()->executarSql('DROP TABLE seq_md_ia_classificacao_ods');
+        }
+        BancoSEI::getInstance()->executarSql('DROP TABLE md_ia_classificacao_ods');
+
+        $this->logar('CRIANDO agemdamento para classificação automatica das ODS da ONU');
+        $strDescricao = 'Agendamento responsável por classificar metas da ODS de acordo com a parametrização na Administração.';
+        $strComando = 'MdIaAgendamentoAutomaticoRN::classificarMetasOdsTiposProcessos';
+        $strPeriodicidadeComplemento = '4';
+        $this->_cadastrarNovoAgendamento($strDescricao, $strComando, $strPeriodicidadeComplemento, InfraAgendamentoTarefaRN::$PERIODICIDADE_EXECUCAO_HORA);
+
+        $this->atualizarNumeroVersao($nmVersao);
+    }
+
+    private function _cadastrarNovoAgendamento($strDescricao = null, $strComando = null, $strPeriodicidadeComplemento = 0, $strPeriodicidade = null)
+    {
+        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+        SessaoInfra::setObjInfraSessao(SessaoSEI::getInstance());
+        $strEmailErro = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR');
+
+        $msgLogar = 'Inserção de Novo Agendamento: ' . $strDescricao;
+        $this->logar($msgLogar);
+
+        if (is_null($strPeriodicidade)) {
+            $strPeriodicidade = InfraAgendamentoTarefaRN::$PERIODICIDADE_EXECUCAO_HORA;
+        }
+
+        if (!is_null($strDescricao) && !is_null($strComando)) {
+
+            $strComando = trim($strComando);
+
+            $infraAgendamentoDTO = new InfraAgendamentoTarefaDTO();
+            $infraAgendamentoDTO->setStrDescricao($strDescricao);
+            $infraAgendamentoDTO->setStrComando($strComando);
+            $infraAgendamentoDTO->setStrSinAtivo('S');
+            $infraAgendamentoDTO->setStrStaPeriodicidadeExecucao($strPeriodicidade);
+            $infraAgendamentoDTO->setStrPeriodicidadeComplemento($strPeriodicidadeComplemento);
+            $infraAgendamentoDTO->setStrParametro(null);
+            $infraAgendamentoDTO->setDthUltimaExecucao(null);
+            $infraAgendamentoDTO->setDthUltimaConclusao(null);
+            $infraAgendamentoDTO->setStrSinSucesso('S');
+            $infraAgendamentoDTO->setStrEmailErro($strEmailErro);
+
+            $infraAgendamentoRN = new InfraAgendamentoTarefaRN();
+            $infraAgendamentoRN->cadastrar($infraAgendamentoDTO);
+        }
     }
 
     protected function cadastrarUsuarioSistemaIA()
@@ -1201,7 +1626,7 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         $objUsuarioDTO->setNumIdContato(null);
         $objUsuarioDTO->setStrStaTipo(UsuarioRN::$TU_SISTEMA);
         $objUsuarioDTO->setStrSenha(null);
-        if(version_compare(VERSAO_INFRA, "2.0.18") <= 0){
+        if (version_compare(VERSAO_INFRA, "2.0.18") <= 0) {
             $objUsuarioDTO->setStrSinAcessibilidade('N');
         }
         $objUsuarioDTO->setStrSinAtivo('S');
@@ -1221,14 +1646,13 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         if (is_array($sessaoSei) && array_key_exists('SiglaOrgaoSistema', $sessaoSei)) {
             $sigla = $sessaoSei['SiglaOrgaoSistema'];
 
-            if ($sigla != '')
-            {
+            if ($sigla != '') {
                 $objOrgaoRN  = new OrgaoRN();
                 $objOrgaoDTO = new OrgaoDTO();
                 $objOrgaoDTO->setStrSigla($sigla);
                 $objOrgaoDTO->retNumIdOrgao();
                 $objOrgaoDTO = $objOrgaoRN->consultarRN1352($objOrgaoDTO);
-                if($objOrgaoDTO){
+                if ($objOrgaoDTO) {
                     $idOrgao =  $objOrgaoDTO->getNumIdOrgao();
                 }
             }
@@ -1253,7 +1677,8 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         $this->cadastrarOperacaoConsultarDocumento($objServicoDTO);
     }
 
-    private function cadastrarOperacaoConsultarDocumento($objServicoDTO) {
+    private function cadastrarOperacaoConsultarDocumento($objServicoDTO)
+    {
         $this->logar('Criando Operação NA BASE DO SEI...');
         $objOperacaoServicoDTO = new OperacaoServicoDTO();
         $objOperacaoServicoDTO->setNumIdOperacaoServico(null);
@@ -1269,7 +1694,7 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
     private function cadastrarParametroUsuarioIa($idUsuario)
     {
         $objInfraParametroDTO = new InfraParametroDTO();
-        $objInfraParametroDTO->setStrNome(MdIaClassificacaoOdsRN::$MODULO_IA_ID_USUARIO_SISTEMA);
+        $objInfraParametroDTO->setStrNome(MdIaClassMetaOdsRN::$MODULO_IA_ID_USUARIO_SISTEMA);
         $objInfraParametroDTO->setStrValor($idUsuario);
         (new InfraParametroRN())->cadastrar($objInfraParametroDTO);
     }
@@ -1283,6 +1708,30 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         $objInfraMetaBD->processarIndicesChavesEstrangeiras($arrTabelas);
 
         InfraDebug::getInstance()->setBolDebugInfra(false);
+    }
+
+    private function consultarStaTipoUsuario($idUsuario)
+    {
+        $objUsuarioDTO = new UsuarioDTO();
+        $objUsuarioDTO->setNumIdUsuario($idUsuario);
+        $objUsuarioDTO->retNumIdUsuario();
+        $objUsuarioDTO->retStrStaTipo();
+        $objUsuarioDTO = (new UsuarioRN)->consultarRN0489($objUsuarioDTO);
+
+        $sta = '';
+        switch ($objUsuarioDTO->getStrStaTipo()) {
+            case '0':
+                $sta = 'U';
+                break;
+            case '1':
+                $sta = 'A';
+                break;
+            case '3':
+                $sta = 'E';
+                break;
+        }
+
+        return $sta;
     }
 
     /**
@@ -1303,7 +1752,7 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
             $objInfraParametroBD->alterar($objInfraParametroDTO);
         }
 
-        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '.$parStrNumeroVersao.' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
+        $this->logar('INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $parStrNumeroVersao . ' DO ' . $this->nomeDesteModulo . ' REALIZADA COM SUCESSO NA BASE DO SEI');
     }
 }
 
@@ -1331,9 +1780,8 @@ try {
     $objVersaoSeiRN = new MdIaAtualizadorSeiRN();
     $objVersaoSeiRN->atualizarVersao();
     exit;
-
 } catch (Exception $e) {
-    echo(InfraException::inspecionar($e));
+    echo (InfraException::inspecionar($e));
     try {
         LogSEI::getInstance()->gravar(InfraException::inspecionar($e));
     } catch (Exception $e) {

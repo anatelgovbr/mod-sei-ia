@@ -22,8 +22,6 @@
 
             $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdMdIaClassMetaOds', 'id_md_ia_class_meta_ods');
 
-            $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdMdIaClassificacaoOds', 'id_md_ia_classificacao_ods');
-
             $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdMdIaAdmMetaOds', 'id_md_ia_adm_meta_ods');
 
             $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'SinSugestaoAceita', 'sin_sugestao_aceita');
@@ -36,20 +34,23 @@
 
             $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DTH, 'Cadastro', 'dth_cadastro');
 
+            $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'StaTipoUsuario', 'sta_tipo_usuario');
+
+            $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdProcedimento', 'id_procedimento');
+
             $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdIaAdmObjetivoOds', 'id_md_ia_adm_objetivo_ods', 'md_ia_adm_meta_ods');
 
-            $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'StaTipoUsuario', 'sta_tipo', 'usuario');
-
-            $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_STR, 'StaTipoUltimoUsuario', 'sta_tipo_ultimo_usuario', 'md_ia_classificacao_ods');
+            $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdTipoProcedimento', 'id_tipo_procedimento', 'procedimento');
 
             $this->configurarPK('IdMdIaClassMetaOds', InfraDTO::$TIPO_PK_NATIVA);
-
-            $this->configurarFK('IdMdIaClassificacaoOds', 'md_ia_classificacao_ods', 'id_md_ia_classificacao_ods');
 
             $this->configurarFK('IdMdIaAdmMetaOds', 'md_ia_adm_meta_ods', 'id_md_ia_adm_meta_ods');
 
             $this->configurarFK('IdUsuario', 'usuario', 'id_usuario');
 
             $this->configurarFK('IdUnidade', 'unidade', 'id_unidade');
+
+            $this->configurarFK('IdProcedimento', 'procedimento', 'id_procedimento');
+
         }
     }

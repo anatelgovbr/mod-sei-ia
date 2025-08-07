@@ -1,0 +1,126 @@
+<?php
+$strLinkOrientacoesGerais = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_modal_orientacoes_gerais');
+$strLinkOrientacoesGerais = "'$strLinkOrientacoesGerais'";
+$strLinkConfiguracoes = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_modal_configuracoes_assistente_ia');
+$strLinkConfiguracoes = "'$strLinkConfiguracoes'";
+$strLinkPromptsFavoritos = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_prompts_favoritos_selecionar&tipo_selecao=2');
+$strLinkPromptsFavoritos = "'$strLinkPromptsFavoritos'";
+$strRefletir = MdIaAdmConfigAssistIAINT::habilitadoRefletir();
+$strBuscarNaWeb = MdIaAdmConfigAssistIAINT::habilitadoBuscarNaWeb();
+?>
+<div class="widget-chat" id="chat_ia" style="display: none">
+    <button id="botaoTransferir" onclick="transferirTexto()">Transferir para Assistente de IA</button>
+    <input type="hidden" id="textoSelecionado">
+    <input class="widget-input-open" id="widget-open" type="checkbox" name="widget-open-chat" />
+    <div class="widget-button">
+        <svg onclick="fecharChat()" class="close-chat" height="24" viewBox="0 0 24 24" width="24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+        </svg>
+        <img onclick="abrirChat()" class="ionicon chat-open" src="modulos/ia/imagens/md_ia_icone_branco.svg?11" alt="Inteligência Artificial">
+    </div>
+    <div class="widget-content">
+        <div class="widget-title">
+            <div id="tituloChat">
+                SEI IA
+            </div>
+            <div id="iconesExpandir" class="text-right">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="iconeAdicionarTopico" viewBox="0 0 512 512" onclick="adicionarTopico(this);">
+                    <path fill="#ffffff" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344V280H168c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H280v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 512 512" onclick="openModal( <?= $strLinkOrientacoesGerais ?>)" class="iconeOrientacoesGerais">
+                    <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 512 512" onclick="infraAbrirJanelaModal( <?= $strLinkConfiguracoes ?>, 800, 300)" class="iconeConfiguracoes">
+                    <path d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 448 512" onclick="expandirAssistente()" id="expandirAssistente">
+                    <path d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H64V352zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32H320zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V352z" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 448 512" onclick="reduzirAssistente()" id="reduzirAssistente">
+                    <path d="M160 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V64zM32 320c-17.7 0-32 14.3-32 32s14.3 32 32 32H96v64c0 17.7 14.3 32 32 32s32-14.3 32-32V352c0-17.7-14.3-32-32-32H32zM352 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H352V64zM320 320c-17.7 0-32 14.3-32 32v96c0 17.7 14.3 32 32 32s32-14.3 32-32V384h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H320z" />
+                </svg>
+            </div>
+        </div>
+        <div class="widget-container-dialog">
+            <div id="painelTopicos" class="row">
+                <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
+                    <a onclick="adicionarTopico(this);">
+                        <button class="nav-link adicionarTopico" id="adicionarTopico" data-toggle="pill" data-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Novo Tópico</button>
+                    </a>
+                    <a onclick="galeriaPrompts();">
+                        <button class="nav-link galeriaPrompts" id="galeriaPrompts" data-toggle="pill" data-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Galeria de Prompts</button>
+                    </a>
+                    <div id="listagemTopicos"></div>
+                </div>
+            </div>
+            <div id="conteudoChat">
+                <div class="interaction-container" id="conversa"></div>
+                <div id="lugarInteracaoUsuario">
+                    <div class="send-message">
+                        <textarea class="send-message-input" aria-describedby="validacaoMensagem" id="mensagem"></textarea>
+                    </div>
+                    <div class="botoesInferiores">
+                        <div id="botoesInferioresEsquerdo">
+                            <button type="button" id="titleBuscarWeb" onclick="ativaBotaoAcao(this)" class="btn btn-outline-secondary d-flex align-items-center" style=" <?= $strBuscarNaWeb ?>">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 512 512"
+                                    width="1em" height="1em"
+                                    fill="currentColor"
+                                    class="me-2"
+                                    aria-hidden="true" style="margin-right: 5px;">
+                                    <path d="M352 256c0 22.2-1.2 43.6-3.3 64l-185.3 0c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64l185.3 0c2.2 20.4 3.3 41.8 3.3 64zm28.8-64l123.1 0c5.3 20.5 8.1 41.9 8.1 64s-2.8 43.5-8.1 64l-123.1 0c2.1-20.6 3.2-42 3.2-64s-1.1-43.4-3.2-64zm112.6-32l-116.7 0c-10-63.9-29.8-117.4-55.3-151.6c78.3 20.7 142 77.5 171.9 151.6zm-149.1 0l-176.6 0c6.1-36.4 15.5-68.6 27-94.7c10.5-23.6 22.2-40.7 33.5-51.5C239.4 3.2 248.7 0 256 0s16.6 3.2 27.8 13.8c11.3 10.8 23 27.9 33.5 51.5c11.6 26 20.9 58.2 27 94.7zm-209 0L18.6 160C48.6 85.9 112.2 29.1 190.6 8.4C165.1 42.6 145.3 96.1 135.3 160zM8.1 192l123.1 0c-2.1 20.6-3.2 42-3.2 64s1.1 43.4 3.2 64L8.1 320C2.8 299.5 0 278.1 0 256s2.8-43.5 8.1-64zM194.7 446.6c-11.6-26-20.9-58.2-27-94.6l176.6 0c-6.1 36.4-15.5 68.6-27 94.6c-10.5 23.6-22.2 40.7-33.5 51.5C272.6 508.8 263.3 512 256 512s-16.6-3.2-27.8-13.8c-11.3-10.8-23-27.9-33.5-51.5zM135.3 352c10 63.9 29.8 117.4 55.3 151.6C112.2 482.9 48.6 426.1 18.6 352l116.7 0zm358.1 0c-30 74.1-93.6 130.9-171.9 151.6c25.5-34.2 45.2-87.7 55.3-151.6l116.7 0z" />
+                                </svg><span id="buscarWeb">Buscar na Web</span>
+                            </button>
+                            <button type="button" id="botaoRefletir" onclick="ativaBotaoAcao(this)" class="btn btn-outline-secondary d-flex align-items-center" style=" <?= $strRefletir ?>">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 512 512"
+                                    width="1em" height="1em"
+                                    fill="currentColor"
+                                    class="me-2"
+                                    aria-hidden="true">
+                                    <path d="M297.2 248.9C311.6 228.3 320 203.2 320 176c0-70.7-57.3-128-128-128S64 105.3 64 176c0 27.2 8.4 52.3 22.8 72.9c3.7 5.3 8.1 11.3 12.8 17.7c0 0 0 0 0 0c12.9 17.7 28.3 38.9 39.8 59.8c10.4 19 15.7 38.8 18.3 57.5L109 384c-2.2-12-5.9-23.7-11.8-34.5c-9.9-18-22.2-34.9-34.5-51.8c0 0 0 0 0 0s0 0 0 0c-5.2-7.1-10.4-14.2-15.4-21.4C27.6 247.9 16 213.3 16 176C16 78.8 94.8 0 192 0s176 78.8 176 176c0 37.3-11.6 71.9-31.4 100.3c-5 7.2-10.2 14.3-15.4 21.4c0 0 0 0 0 0s0 0 0 0c-12.3 16.8-24.6 33.7-34.5 51.8c-5.9 10.8-9.6 22.5-11.8 34.5l-48.6 0c2.6-18.7 7.9-38.6 18.3-57.5c11.5-20.9 26.9-42.1 39.8-59.8c0 0 0 0 0 0s0 0 0 0s0 0 0 0c4.7-6.4 9-12.4 12.7-17.7zM192 128c-26.5 0-48 21.5-48 48c0 8.8-7.2 16-16 16s-16-7.2-16-16c0-44.2 35.8-80 80-80c8.8 0 16 7.2 16 16s-7.2 16-16 16zm0 384c-44.2 0-80-35.8-80-80l0-16 160 0 0 16c0 44.2-35.8 80-80 80z" />
+                                </svg><span id="refletir">Refletir</span>
+                            </button>
+                        </div>
+                        <div id="botoesInferioresDireito">
+                            <button id="botaoEnviarMensagem" type="button" class="btn btn-outline-secondary d-flex align-items-center" onclick="enviarMensagem(this);">
+                                <svg fill="currentColor" onclick="enviarMensagem(this);" xmlns="http://www.w3.org/2000/svg" width="21px" height="21px" viewBox="0 0 24 24" width="24">
+                                    <path d="M0 0h24v24H0V0z" fill="none" />
+                                    <path d="M4.01 6.03l7.51 3.22-7.52-1 .01-2.22m7.5 8.72L4 17.97v-2.22l7.51-1M2.01 3L2 10l15 2-15 2 .01 7L23 12 2.01 3z" />
+                                </svg>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary d-flex align-items-center titleGaleriaPrompt" onclick="galeriaPrompts();">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 512 512"
+                                    width="1em" height="1em"
+                                    fill="currentColor"
+                                    class="me-2 iconeGaleriaPrompt"
+                                    aria-hidden="true">
+                                    <path d="M307 34.8c-11.5 5.1-19 16.6-19 29.2l0 64-112 0C78.8 128 0 206.8 0 304C0 417.3 81.5 467.9 100.2 478.1c2.5 1.4 5.3 1.9 8.1 1.9c10.9 0 19.7-8.9 19.7-19.7c0-7.5-4.3-14.4-9.8-19.5C108.8 431.9 96 414.4 96 384c0-53 43-96 96-96l96 0 0 64c0 12.6 7.4 24.1 19 29.2s25 3 34.4-5.4l160-144c6.7-6.1 10.6-14.7 10.6-23.8s-3.8-17.7-10.6-23.8l-160-144c-9.4-8.5-22.9-10.6-34.4-5.4z" />
+                                </svg>
+                            </button>
+                            <button type="button" id="botaoPromptFavorito" class="btn btn-outline-secondary d-flex align-items-center" onclick="infraAbrirJanelaModal( <?= $strLinkPromptsFavoritos ?>, 1024, 800)">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 512 512"
+                                    width="1em" height="1em"
+                                    fill="currentColor"
+                                    class="me-2"
+                                    aria-hidden="true">
+                                    <path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="wrapperMensagens">
+                    <div id="validacaoMensagem" class="invalid-feedback"></div>
+                    <div id="rodapeChat">Pode conter erros. Considere verificar informações importantes.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="janelaContexto">
+<input type="hidden" id="topicoTemporario">
+<input type="hidden" id="hdnIdPromptSelecionado" name="hdnIdPromptSelecionado" />

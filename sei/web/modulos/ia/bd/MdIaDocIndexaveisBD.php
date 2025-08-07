@@ -1,20 +1,20 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
- * 29/12/2023 - criado por sabino.colab
+ * 13/03/2025 - criado por sabino.colab
  *
- * Versão do Gerador de Código: 1.43.3
+ * Versão do Gerador de Código: 1.41.0
  */
 
-require_once dirname(__FILE__) . '../../../../SEI.php';
+require_once dirname(__FILE__) . '/../../../SEI.php';
 
-class MdIaClassificacaoOdsBD extends InfraBD
+class MdIaDocIndexaveisBD extends InfraBD
 {
 
     public function __construct(InfraIBanco $objInfraIBanco)
     {
         parent::__construct($objInfraIBanco);
     }
-
 }

@@ -5,10 +5,7 @@ class IaIntegracao extends SeiIntegracao
 
     const PARAMETRO_VERSAO_MODULO = 'VERSAO_MODULO_IA';
 
-    public function __construct()
-    {
-
-    }
+    public function __construct() {}
 
     public function getNome()
     {
@@ -17,7 +14,7 @@ class IaIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '1.0.4';
+        return '1.1.0';
     }
 
     public function getInstituicao()
@@ -52,14 +49,37 @@ class IaIntegracao extends SeiIntegracao
 
     public function retornaBotao()
     {
-        $strLink = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_recurso&arvore=1&id_procedimento=' . $_GET['id_procedimento']);
-        $imgIcone = "modulos/ia/imagens/md_ia_icone.svg?" . Icone::VERSAO;
-        $title = "Inteligência Artificial";
-
-        $strBotaoAvaliacaoSeiIa = '<a href="' . $strLink . '"class="botaoSEI">';
-        $strBotaoAvaliacaoSeiIa .= '<img class="infraCorBarraSistema" src="' . $imgIcone . '" alt="' . $title . '" title="' . $title . '">';
+        $strLinkIA = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_recurso&arvore=1&id_procedimento=' . $_GET['id_procedimento']);
+        $imgIconeIA = "modulos/ia/imagens/md_ia_icone_1.svg?" . Icone::VERSAO;
+        $titleIA = "Inteligência Artificial";
+        $strBotaoAvaliacaoSeiIa = '<a href="' . $strLinkIA . '"class="botaoSEI">';
+        $strBotaoAvaliacaoSeiIa .= '    <img class="infraCorBarraSistema" src="' . $imgIconeIA . '" alt="' . $titleIA . '" title="' . $titleIA . '">';
         $strBotaoAvaliacaoSeiIa .= '</a>';
+
+        $strBotaoAvaliacaoSeiIa .= $this->retornarBotaoOds();
         return $strBotaoAvaliacaoSeiIa;
+    }
+
+    private function retornarBotaoOds()
+    {
+        $strBotaoOds = '';
+        $objMdIaAdmOdsOnuDTO = new MdIaAdmOdsOnuDTO();
+        $objMdIaAdmOdsOnuDTO->retStrSinExibirFuncionalidade();
+        $objMdIaAdmOdsOnuDTO->retNumIdMdIaAdmOdsOnu();
+        $objMdIaAdmOdsOnuDTO->retStrOrientacoesGerais();
+        $objMdIaAdmOdsOnuRN = new MdIaAdmOdsOnuRN();
+        $objMdIaAdmOdsOnuDTO = $objMdIaAdmOdsOnuRN->consultar($objMdIaAdmOdsOnuDTO);
+
+        if ($objMdIaAdmOdsOnuDTO->getStrSinExibirFuncionalidade() == "S") {
+            $strLinkODS = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_ods&arvore=1&id_procedimento=' . $_GET['id_procedimento']);
+            $imgIconeODS = "modulos/ia/imagens/md_ia_icone_ods.png?" . Icone::VERSAO;
+            $titleODS = "Classificação pelos ODS da ONU";
+            $strBotaoOds .= '<a href="' . $strLinkODS . '"class="botaoSEI">';
+            $strBotaoOds .= '    <img class="infraCorBarraSistema" src="' . $imgIconeODS . '" alt="' . $titleODS . '" title="' . $titleODS . '">';
+            $strBotaoOds .= '</a>';
+        }
+
+        return $strBotaoOds;
     }
 
     public function verificaAcesso($objProcedimentoAPI, $bolConsideraChatIa = false)
@@ -125,23 +145,51 @@ class IaIntegracao extends SeiIntegracao
         return $objetivosdaOnu;
     }
 
-    public function retornaClassificacao($dados)
+    private function montarArrIcone($arrObjProcedimentoDTO)
     {
-        $idProcedimento = $dados[0];
-        $objetivoOds = $dados[1];
-        $objMdIaClassificacaoOdsDTO = new MdIaClassificacaoOdsDTO();
-        $objMdIaClassificacaoOdsDTO->setNumIdProcedimento($idProcedimento);
-        $objMdIaClassificacaoOdsDTO->setNumIdMdIaAdmObjetivoOds($objetivoOds);
-        $objMdIaClassificacaoOdsDTO->retStrStaTipoUltimoUsuario();
-        $objMdIaClassificacaoOdsRN = new MdIaClassificacaoOdsRN();
-        return $objMdIaClassificacaoOdsRN->consultar($objMdIaClassificacaoOdsDTO);
+        if ($this->verificaAcesso(NULL) && $this->exibeTooltip()) {
+
+            foreach ($arrObjProcedimentoDTO as $objProcedimentoDTO) {
+                if ($this->sugeridoPorUsuarioExtIntArtificial($objProcedimentoDTO->getIdProcedimento())) {
+                    $descricao = "Pendência de validação de sugestão feita pelo SEI IA ou por Usuário Externo de classificação do processo segundo os Objetivos de Desenvolvimento Sustentável da ONU.";
+                    $arrIcone[$objProcedimentoDTO->getIdProcedimento()][] = $this->montaTooltip($descricao);;
+                    break;
+                }
+                if (!$this->verificarSeJaFoiClassificadoAlgumaVez($objProcedimentoDTO->getIdProcedimento()) && !is_null($this->consultaUnidadeAlerta())) {
+                    $descricao = "Pendência de classificação do processo segundo os Objetivos de Desenvolvimento Sustentável da ONU.";
+                    $arrIcone[$objProcedimentoDTO->getIdProcedimento()][] = $this->montaTooltip($descricao);
+                }
+            }
+
+            return $arrIcone;
+        }
     }
 
-    public function retornaIconePendencia($objProcedimentoAPI)
+    private function sugeridoPorUsuarioExtIntArtificial($idProcedimento)
+    {
+        $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
+        $objMdIaClassMetaOdsDTO->setNumIdProcedimento($idProcedimento);
+        $objMdIaClassMetaOdsDTO->setStrStaTipoUsuario([MdIaClassMetaOdsRN::$USUARIO_IA, MdIaClassMetaOdsRN::$USUARIO_EXTERNO], InfraDTO::$OPER_IN);
+        $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
+        $objMdIaClassMetaOdsDTO->setNumMaxRegistrosRetorno(1);
+        return (new MdIaClassMetaOdsRN())->consultar($objMdIaClassMetaOdsDTO);
+    }
+
+    private function verificarSeJaFoiClassificadoAlgumaVez($idProcedimento)
+    {
+        $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
+        $objMdIaClassMetaOdsDTO->setNumIdProcedimento($idProcedimento);
+        $objMdIaClassMetaOdsDTO->setStrStaTipoUsuario(MdIaClassMetaOdsRN::$USUARIO_PADRAO);
+        $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
+        $objMdIaClassMetaOdsDTO->setNumMaxRegistrosRetorno(1);
+        $objMdIaClassMetaOdsDTO =  (new MdIaClassMetaOdsRN())->consultar($objMdIaClassMetaOdsDTO);
+        return $objMdIaClassMetaOdsDTO ? true : false;
+    }
+
+    public function retornaIconePendencia($objProcedimentoAPI, $title)
     {
         $tipo = 'IA';
         $id = 'IA_' . $objProcedimentoAPI->getIdProcedimento();
-        $title = 'IA - Alerta \nPendência de classificação segundo os Objetivos de Desenvolvimento Sustentável da ONU ou divergência em sugestão mais recente feita pelo SEI IA ou por Usuário Externo.';
         $icone = "modulos/ia/imagens/md_ia_icone_alerta.svg?" . Icone::VERSAO;
 
         $objArvoreAcaoItemAPI = new ArvoreAcaoItemAPI();
@@ -162,40 +210,23 @@ class IaIntegracao extends SeiIntegracao
         if ($this->verificaAcesso($objProcedimentoAPI)) {
 
             if ($this->exibeTooltip()) {
-                if (!is_null($this->consultaUnidadeAlerta())) {
 
-                    $existeClassificacao = false;
-                    $arrObjMdIaAdmObjetivoOdsDTO = $this->listaObjetivosOdsOnu();
+                if ($this->sugeridoPorUsuarioExtIntArtificial($objProcedimentoAPI->getIdProcedimento())) {
+                    $title = 'IA - Alerta \nPendência de validação de sugestão feita pelo SEI IA ou por Usuário Externo de classificação do processo segundo os Objetivos de Desenvolvimento Sustentável da ONU.';
+                    return $this->retornaIconePendencia($objProcedimentoAPI, $title);
+                }
 
-                    if (!is_null($arrObjMdIaAdmObjetivoOdsDTO)) {
-
-                        foreach ($arrObjMdIaAdmObjetivoOdsDTO as $objMdIaAdmObjetivoOdsDTO) {
-
-                            $objMdIaClassificacaoOdsDTO = $this->retornaClassificacao(array($objProcedimentoAPI->getIdProcedimento(), $objMdIaAdmObjetivoOdsDTO->getNumIdMdIaAdmObjetivoOds()));
-
-                            if (!is_null($objMdIaClassificacaoOdsDTO)) {
-
-                                $existeClassificacao = true;
-
-                                if (in_array($objMdIaClassificacaoOdsDTO->getStrStaTipoUltimoUsuario(), ['I', 'E'])) {
-                                    return $this->retornaIconePendencia($objProcedimentoAPI);
-                                }
-                            }
-                        }
-                        if (!$existeClassificacao) {
-                            return $this->retornaIconePendencia($objProcedimentoAPI);
-                        }
-                    }
+                if (!$this->verificarSeJaFoiClassificadoAlgumaVez($objProcedimentoAPI->getIdProcedimento()) && !is_null($this->consultaUnidadeAlerta())) {
+                    $title = 'IA - Alerta \nPendência de classificação do processo segundo os Objetivos de Desenvolvimento Sustentável da ONU.';
+                    return $this->retornaIconePendencia($objProcedimentoAPI, $title);
                 }
             }
         }
     }
 
-    public function montaTooltip()
+    public function montaTooltip($descricao)
     {
         $title = "IA - Alerta";
-        $descricao = "Pendência de classificação segundo os Objetivos de Desenvolvimento Sustentável da ONU ou divergência em sugestão mais recente feita pelo SEI IA ou por Usuário Externo.";
-
         $icone = "modulos/ia/imagens/md_ia_icone_alerta.svg?" . Icone::VERSAO;
 
         $img = "<a href='javascript:void(0);' " . PaginaSEI::montarTitleTooltip($descricao, $title) . " ><img src='" . $icone . "' class='imagemStatus' style='padding-top: 1px' /></a>";
@@ -204,99 +235,35 @@ class IaIntegracao extends SeiIntegracao
 
     public function montarIconeControleProcessos($arrObjProcedimentoDTO)
     {
-        if ($this->verificaAcesso(NULL)) {
-
-            if ($this->exibeTooltip()) {
-                if (!is_null($this->consultaUnidadeAlerta())) {
-
-                    $arrObjMdIaAdmObjetivoOdsDTO = $this->listaObjetivosOdsOnu();
-                    if (!is_null($arrObjMdIaAdmObjetivoOdsDTO)) {
-                        foreach ($arrObjProcedimentoDTO as $objProcedimentoDTO) {
-                            $existeClassificacao = false;
-                            foreach ($arrObjMdIaAdmObjetivoOdsDTO as $objMdIaAdmObjetivoOdsDTO) {
-
-                                $objMdIaClassificacaoOdsDTO = $this->retornaClassificacao(array($objProcedimentoDTO->getIdProcedimento(), $objMdIaAdmObjetivoOdsDTO->getNumIdMdIaAdmObjetivoOds()));
-
-                                if (!is_null($objMdIaClassificacaoOdsDTO)) {
-
-                                    $existeClassificacao = true;
-
-                                    if (in_array($objMdIaClassificacaoOdsDTO->getStrStaTipoUltimoUsuario(), ['I', 'E'])) {
-                                        $arrIcone[$objProcedimentoDTO->getIdProcedimento()][] = $this->montaTooltip();
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (!$existeClassificacao) {
-                                $arrIcone[$objProcedimentoDTO->getIdProcedimento()][] = $this->montaTooltip();
-                            }
-                        }
-                    }
-                    return $arrIcone;
-                }
-            }
-        }
-
+        return $this->montarArrIcone($arrObjProcedimentoDTO);
     }
 
     public function montarIconeAcompanhamentoEspecial($arrObjProcedimentoDTO)
     {
-
-        if ($this->verificaAcesso(NULL)) {
-
-            if ($this->exibeTooltip()) {
-                if (!is_null($this->consultaUnidadeAlerta())) {
-
-                    $arrObjMdIaAdmObjetivoOdsDTO = $this->listaObjetivosOdsOnu();
-                    if (!is_null($arrObjMdIaAdmObjetivoOdsDTO)) {
-                        foreach ($arrObjProcedimentoDTO as $objProcedimentoDTO) {
-
-                            $existeClassificacao = false;
-
-                            foreach ($arrObjMdIaAdmObjetivoOdsDTO as $objMdIaAdmObjetivoOdsDTO) {
-
-                                $objMdIaClassificacaoOdsDTO = $this->retornaClassificacao(array($objProcedimentoDTO->getIdProcedimento(), $objMdIaAdmObjetivoOdsDTO->getNumIdMdIaAdmObjetivoOds()));
-
-                                if (!is_null($objMdIaClassificacaoOdsDTO)) {
-
-                                    $existeClassificacao = true;
-
-                                    if ($objMdIaClassificacaoOdsDTO->getStrStaTipoUltimoUsuario() == "I") {
-                                        $arrIcone[$objProcedimentoDTO->getIdProcedimento()][] = $this->montaTooltip();;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!$existeClassificacao) {
-                                $arrIcone[$objProcedimentoDTO->getIdProcedimento()][] = $this->montaTooltip();
-                            }
-                        }
-                    }
-                    return $arrIcone;
-                }
-            }
-        }
+        return $this->montarArrIcone($arrObjProcedimentoDTO);
     }
 
     public function processarControlador($strAcao)
     {
         switch ($strAcao) {
-            case 'md_ia_recurso' :
+            case 'md_ia_recurso':
                 require_once dirname(__FILE__) . '/md_ia_recurso_cadastro.php';
                 return true;
-            case 'md_ia_configuracao_similaridade' :
+            case 'md_ia_ods':
+                require_once dirname(__FILE__) . '/md_ia_ods_cadastro.php';
+                return true;
+            case 'md_ia_configuracao_similaridade':
                 require_once dirname(__FILE__) . '/md_ia_adm_config_similar_cadastro.php';
                 return true;
-            case 'md_ia_adm_doc_relev_listar' :
-            case 'md_ia_adm_doc_relev_excluir' :
+            case 'md_ia_adm_doc_relev_listar':
+            case 'md_ia_adm_doc_relev_excluir':
             case 'md_ia_adm_doc_relev_desativar':
             case 'md_ia_adm_doc_relev_reativar':
                 require_once dirname(__FILE__) . '/md_ia_adm_doc_relev_lista.php';
                 return true;
-            case 'md_ia_adm_doc_relev_cadastrar' :
-            case 'md_ia_adm_doc_relev_consultar' :
-            case 'md_ia_adm_doc_relev_alterar' :
+            case 'md_ia_adm_doc_relev_cadastrar':
+            case 'md_ia_adm_doc_relev_consultar':
+            case 'md_ia_adm_doc_relev_alterar':
                 require_once dirname(__FILE__) . '/md_ia_adm_doc_relev_cadastro.php';
                 return true;
 
@@ -312,7 +279,7 @@ class IaIntegracao extends SeiIntegracao
             case 'md_ia_adm_integracao_reativar':
                 require_once dirname(__FILE__) . '/md_ia_adm_integracao_lista.php';
                 return true;
-            case 'md_ia_adm_pesq_doc_cadastro' :
+            case 'md_ia_adm_pesq_doc_cadastro':
                 require_once dirname(__FILE__) . '/md_ia_adm_pesq_doc_cadastro.php';
                 return true;
 
@@ -324,7 +291,7 @@ class IaIntegracao extends SeiIntegracao
                 require_once dirname(__FILE__) . '/md_ia_protocolos_selecionar.php';
                 return true;
 
-            case 'md_ia_adm_ods_onu' :
+            case 'md_ia_adm_ods_onu':
             case 'md_ia_adm_ods_onu_consultar':
                 require_once dirname(__FILE__) . '/md_ia_adm_ods_onu_cadastro.php';
                 return true;
@@ -341,15 +308,15 @@ class IaIntegracao extends SeiIntegracao
                 require_once dirname(__FILE__) . '/md_ia_consultar_objetivo.php';
                 return true;
 
-            case 'md_ia_adm_config_assistente_ia' :
+            case 'md_ia_adm_config_assistente_ia':
                 require_once dirname(__FILE__) . '/md_ia_adm_config_assistente_ia.php';
                 return true;
 
-            case 'md_ia_modal_orientacoes_gerais' :
+            case 'md_ia_modal_orientacoes_gerais':
                 require_once dirname(__FILE__) . '/md_ia_modal_orientacoes_gerais.php';
                 return true;
 
-            case 'md_ia_modal_configuracoes_assistente_ia' :
+            case 'md_ia_modal_configuracoes_assistente_ia':
                 require_once dirname(__FILE__) . '/md_ia_modal_configuracoes_assistente_ia.php';
                 return true;
 
@@ -357,17 +324,17 @@ class IaIntegracao extends SeiIntegracao
                 require_once dirname(__FILE__) . '/md_ia_classificar_usu_ext.php';
                 return true;
 
-            case 'md_ia_modal_chats_arquivados' :
+            case 'md_ia_modal_chats_arquivados':
                 require_once dirname(__FILE__) . '/md_ia_modal_chats_arquivados.php';
                 return true;
 
-            case 'md_ia_grupo_prompts_fav_listar' :
-            case 'md_ia_grupo_prompts_fav_excluir' :
+            case 'md_ia_grupo_prompts_fav_listar':
+            case 'md_ia_grupo_prompts_fav_excluir':
                 require_once dirname(__FILE__) . '/md_ia_grupo_prompts_fav.php';
                 return true;
 
-            case 'md_ia_grupo_prompts_fav_cadastrar' :
-            case 'md_ia_grupo_prompts_fav_alterar' :
+            case 'md_ia_grupo_prompts_fav_cadastrar':
+            case 'md_ia_grupo_prompts_fav_alterar':
                 require_once dirname(__FILE__) . '/md_ia_grupo_prompts_fav_cadastro.php';
                 return true;
 
@@ -376,9 +343,31 @@ class IaIntegracao extends SeiIntegracao
                 require_once dirname(__FILE__) . '/md_ia_prompts_favoritos_cadastro.php';
                 return true;
 
-            case 'md_ia_prompts_favoritos_excluir' :
-            case 'md_ia_prompts_favoritos_selecionar' :
+            case 'md_ia_prompts_favoritos_excluir':
+            case 'md_ia_prompts_favoritos_selecionar':
                 require_once dirname(__FILE__) . '/md_ia_prompts_favoritos.php';
+                return true;
+
+            case 'md_ia_adm_grupos_galeria_prompts':
+            case 'md_ia_grupo_galeria_prompt_excluir':
+                require_once dirname(__FILE__) . '/md_ia_grupo_galeria_prompt_lista.php';
+                return true;
+
+            case 'md_ia_grupo_galeria_prompt_cadastrar':
+            case 'md_ia_grupo_galeria_prompt_alterar':
+                require_once dirname(__FILE__) . '/md_ia_grupo_galeria_prompt_cadastro.php';
+                return true;
+
+            case 'md_ia_galeria_prompts_cadastrar':
+            case 'md_ia_galeria_prompts_alterar':
+                require_once dirname(__FILE__) . '/md_ia_galeria_prompts_cadastro.php';
+                return true;
+
+            case 'md_ia_galeria_prompts_excluir':
+            case 'md_ia_galeria_prompts_selecionar':
+            case 'md_ia_galeria_prompts_desativar':
+            case 'md_ia_galeria_prompts_reativar':
+                require_once dirname(__FILE__) . '/md_ia_galeria_prompts.php';
                 return true;
         }
 
@@ -445,6 +434,11 @@ class IaIntegracao extends SeiIntegracao
                 $xml = InfraAjax::gerarXMLSelect($objetoSerie);
                 break;
 
+            case 'md_ia_tipo_procedimento_auto_completar':
+                $arrObjTipoProcedimentoDTO = MdIaAdmObjetivoOdsINT::autoCompletarTipoProcedimento($_POST['palavras_pesquisa']);
+                $xml                       = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoProcedimentoDTO, 'IdTipoProcedimento', 'Nome');
+                break;
+
             case 'md_ia_adm_doc_relev_aplicabilidade_ajax':
                 $objetoSerie = MdIaAdmDocRelevINT::retornaSelectAplicabilidadeCadastrada($_POST);
                 $xml = InfraAjax::gerarXMLSelect($objetoSerie);
@@ -483,7 +477,7 @@ class IaIntegracao extends SeiIntegracao
                 exit();
 
             case 'md_ia_cadastrar_classificacao_ods_ajax':
-                $json = MdIaClassificacaoOdsINT::salvarClassificacaoOds($_POST);
+                $json = MdIaClassMetaOdsINT::salvarClassificacaoOds($_POST);
                 InfraAjax::enviarJSON($json);
                 exit(0);
 
@@ -519,7 +513,7 @@ class IaIntegracao extends SeiIntegracao
                 exit(0);
 
             case 'md_ia_assistente_enviar_feedback_ajax':
-                $json = MdIaConfigAssistenteINT::enviarFeedbackProcessos($_POST);
+                $json = MdIaConfigAssistenteINT::enviarFeedbackResposta($_POST);
                 InfraAjax::enviarJSON(json_encode($json));
                 exit(0);
 
@@ -573,22 +567,32 @@ class IaIntegracao extends SeiIntegracao
                 InfraAjax::enviarJSON(json_encode($json));
                 exit(0);
 
-            case 'md_ia_consultar_grupo_prompt_favorito_ajax':
-                $json = MdIaGrupoPromptsFavINT::consultarGrupoPromptFavorito($_POST);
-                InfraAjax::enviarJSON(json_encode($json));
-                exit(0);
-				
             case 'md_ia_busca_dados_integracao':
                 $json = MdIaAdmIntegracaoINT::buscaDadosIntegracao($_POST);
                 InfraAjax::enviarJSON(json_encode($json));
                 exit(0);
 
+            case 'md_ia_consultar_grupo_prompt_favorito_ajax':
+                $json = MdIaGrupoPromptsFavINT::consultarGrupoPromptFavorito($_POST);
+                InfraAjax::enviarJSON(json_encode($json));
+                exit(0);
+
+            case 'md_ia_consultar_prompt_galeria_prompts_ajax':
+                $json = MdIaGaleriaPromptsRN::consultarPromptGaleriaPrompts($_POST);
+                InfraAjax::enviarJSON(json_encode($json));
+                exit(0);
+
+            case 'md_ia_lista_ods_onu_ajax':
+                $json = MdIaClassMetaOdsINT::listaOdsOnu($_POST);
+                InfraAjax::enviarJSON(json_encode($json));
+                exit(0);
         }
         return $xml;
     }
 
     public function processarControladorWebServices($strServico)
     {
+        if ($strServico != 'md_ia_documentacao' && $strServico != 'wsia') (new IaWS())->validarPermissao();
 
         $strArq = null;
 
@@ -596,17 +600,97 @@ class IaIntegracao extends SeiIntegracao
 
             case 'wsia':
                 $strArq = 'wsia.wsdl';
+                $strArq = dirname(__FILE__) . '/ws/' . $strArq;
                 break;
+
+            case 'md_ia_documentacao':
+                if ($this->verificarPermitirSwagger()) {
+                    readfile(dirname(__FILE__) . '/ws/wsia.html');
+                    die;
+                }
+                break;
+
+            case 'md_ia_download_arquivo_documento_externo':
+                MdIaControladorWS::downloadArquivoDocumentoExterno();
+                die;
+
+            case 'md_ia_consulta_documento':
+                MdIaControladorWS::consultarDocumento();
+                die;
+
+            case 'md_ia_consulta_processo':
+                MdIaControladorWS::consultarProcesso();
+                die;
+
+            case 'md_ia_gera_hash_conteudo_documento':
+                MdIaControladorWS::gerarHashConteudoDocumento();
+                die;
+
+            case 'md_ia_lista_tipo_documento':
+                MdIaControladorWS::listarTipoDocumento();
+                die;
+
+            case 'md_ia_lista_segmentos_documentos_relevantes':
+                MdIaControladorWS::listarSegmentosDocRelevantes();
+                die;
+
+            case 'md_ia_lista_percentual_relevancia_metadados':
+                MdIaControladorWS::listarPercentualRelevanciaMetadados();
+                die;
+
+            case 'md_ia_lista_documentos_indexaveis':
+            case 'md_ia_atualiza_documentos_indexaveis':
+                MdIaControladorWS::documentosIndexaveis();
+                die;
+
+            case 'md_ia_consulta_conteudo_documento':
+                MdIaControladorWS::consultarConteudoDocumento();
+                die;
+
+            case 'md_ia_lista_processos_indexaveis':
+            case 'md_ia_atualiza_processos_indexaveis':
+                MdIaControladorWS::processosIndexaveis();
+                die;
+
+            case 'md_ia_lista_processos_indexaveis_cancelados':
+            case 'md_ia_remove_processos_indexaveis_cancelados':
+                MdIaControladorWS::processosIndexadosCancelados();
+                die;
+
+            case 'md_ia_lista_documentos_indexaveis_cancelados':
+            case 'md_ia_remove_documentos_indexaveis_cancelados':
+                MdIaControladorWS::documentosIndexadosCancelados();
+                die;
+
+            case 'md_ia_lista_documentos_elegiveis_processos_similares':
+                MdIaControladorWS::listarDocumentosRelevantesProcesso();
+                die;
+
+            case 'md_ia_consulta_historico_topico':
+                MdIaControladorWS::consultarHistoricoTopico();
+                die;
+
+            case 'md_ia_consulta_ultimo_id_message':
+                MdIaControladorWS::consultarUltimoIdMessage();
+                die;
 
             default:
                 break;
         }
 
-        if ($strArq != null) {
-            $strArq = dirname(__FILE__) . '/ws/' . $strArq;
+        return $strArq;
+    }
+
+    private function verificarPermitirSwagger()
+    {
+        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+        $paramLiberarAutoAvaliacao = $objInfraParametro->getValor('MODULO_IA_AUTORIZAR_SWAGGER', false);
+        $pertirAcessoViaParametro = false;
+        if (isset($paramLiberarAutoAvaliacao) && $paramLiberarAutoAvaliacao == 1) {
+            $pertirAcessoViaParametro = true;
         }
 
-        return $strArq;
+        return $pertirAcessoViaParametro;
     }
 
     public function excluirTipoDocumento($arrObjTpDocumento)

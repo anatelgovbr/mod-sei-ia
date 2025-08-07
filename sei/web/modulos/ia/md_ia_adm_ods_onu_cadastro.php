@@ -284,10 +284,10 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                     <div class="row">
                         <div class="col-sm-8 col-md-8 col-lg-6">
                             <label id="lblUnidadeAlerta" for="txtUnidadeAlerta" class="infraLabelObrigatorio">Unidades para alertar
-                                pendência ou divergência:</label>
+                                pendência de Classificação:</label>
                             <img align="top"
                                  src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('Apenas nas Unidades aqui listadas apresentará ícone próprio do SEI IA sobre o processo alertando pendência de classificação por pelo menos um Usuário ou divergência de classificação de Usuário frente à nova sugestão feita pela Inteligência Artificial do SEI.', 'Ajuda') ?>
+                                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('Apenas nas Unidades aqui listadas apresentará ícone próprio do SEI IA sobre o processo alertando pendência de classificação por pelo menos um Usuário.', 'Ajuda') ?>
                                  class="infraImg"/>
                             <input type="text" id="txtUnidadeAlerta" name="txtUnidadeAlerta" class="infraText form-control"
                                    tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"/>

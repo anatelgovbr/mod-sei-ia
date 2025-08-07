@@ -23,9 +23,11 @@ class MdIaAdmMetaOdsINT extends InfraINT
         $arrObjMdIaAdmMetaOdsDTO = $objMdIaAdmMetaOdsRN->listar($objMdIaAdmMetaOdsDTO);
 
         foreach ($arrObjMdIaAdmMetaOdsDTO as $objMdIaAdmMetaOdsDTO){
+            MdIaAdmClassAutTpINT::apagarListaTipoProcessoMeta($objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmMetaOds());
             $objMdIaAdmMetaOdsDTO->setStrSinForteRelacao('N');
             if (in_array($objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmMetaOds(), $metasForteRelacaoSelecionadas)) {
                 $objMdIaAdmMetaOdsDTO->setStrSinForteRelacao('S');
+                MdIaAdmClassAutTpINT::cadastrarListaTipoProcessoMeta($objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmMetaOds(), $dados["tipoProcessoMetas"]);
             }
             $objMdIaAdmMetaOdsRN->alterar($objMdIaAdmMetaOdsDTO);
         }

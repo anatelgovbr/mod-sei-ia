@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -11,6 +12,27 @@ require_once dirname(__FILE__) . '../../../../SEI.php';
 
 class MdIaClassMetaOdsRN extends InfraRN
 {
+    public static $MODULO_IA_ID_USUARIO_SISTEMA = 'MODULO_IA_ID_USUARIO_SISTEMA';
+    public static $MSG_SUCESSO_RETORNO_WS       = 'Classificação realizada com sucesso';
+    public static $MSG_ERROR_JA_CADASTRADA      = 'Meta já cadastrada';
+    public static $MSG_ERROR_JA_SUGERIDA_IA     = 'Meta já sugerida pela IA';
+    public static $MSG_ERROR_JA_SUGERIDA_UE     = 'Meta já sugerida por Usuário Externo';
+    public static $MSG_SUCESSO_RETORNO          = 'SUCCESS';
+    public static $MSG_ERROR_RETORNO            = 'ERROR';
+
+    public static $USUARIO_PADRAO         = "U";
+    public static $USUARIO_EXTERNO        = "E";
+    public static $USUARIO_IA             = "I";
+    public static $USUARIO_AGENDAMENTO    = "A";
+
+    public static $SIM = 'S';
+    public static $STR_SIM = 'Sim';
+
+    public static $NAO = 'N';
+    public static $STR_NAO = 'Não';
+
+    public static $RACIONAL_CLASS_AUTOMATICA = 'Meta atribuída automaticamente com base no tipo do processo. Essa classificação considera apenas a temática representada pelo tipo do processo, sem analisar o conteúdo dos documentos. Essa classificação pode ser removida se não corresponder ao conteúdo do processo.';
+    public static $RACIONAL_DESCLASS_AUTOMATICA = 'Meta desclassificada automaticamente com base no tipo do processo, que foi alterado nesse processo ou ocorreu alteração na administração do SEI relacionado com essa Meta e o tipo de processo correspondente. Essa desclassificação considerou apenas a temática representada pelo tipo do processo, sem analisar o conteúdo dos documentos. Essa desclassificação não impede classificação manual por usuário.';
 
     public function __construct()
     {
@@ -20,13 +42,6 @@ class MdIaClassMetaOdsRN extends InfraRN
     protected function inicializarObjInfraIBanco()
     {
         return BancoSEI::getInstance();
-    }
-
-    private function validarNumIdMdIaClassificacaoOds(MdIaClassMetaOdsDTO $objMdIaClassMetaOdsDTO, InfraException $objInfraException)
-    {
-        if (InfraString::isBolVazia($objMdIaClassMetaOdsDTO->getNumIdMdIaClassificacaoOds())) {
-            $objInfraException->adicionarValidacao('Avaliação ODS não informada.');
-        }
     }
 
     private function validarNumIdMdIaAdmMetaOds(MdIaClassMetaOdsDTO $objMdIaClassMetaOdsDTO, InfraException $objInfraException)
@@ -71,7 +86,6 @@ class MdIaClassMetaOdsRN extends InfraRN
             //Regras de Negocio
             $objInfraException = new InfraException();
 
-            $this->validarNumIdMdIaClassificacaoOds($objMdIaClassMetaOdsDTO, $objInfraException);
             $this->validarNumIdMdIaAdmMetaOds($objMdIaClassMetaOdsDTO, $objInfraException);
             $this->validarNumIdUsuario($objMdIaClassMetaOdsDTO, $objInfraException);
             $this->validarDthCadastro($objMdIaClassMetaOdsDTO, $objInfraException);
@@ -83,7 +97,6 @@ class MdIaClassMetaOdsRN extends InfraRN
             $ret = $objMdIaClassMetaOdsBD->cadastrar($objMdIaClassMetaOdsDTO);
 
             return $ret;
-
         } catch (Exception $e) {
             throw new InfraException('Erro cadastrando Meta Avaliação.', $e);
         }
@@ -92,15 +105,11 @@ class MdIaClassMetaOdsRN extends InfraRN
     protected function alterarControlado(MdIaClassMetaOdsDTO $objMdIaClassMetaOdsDTO)
     {
         try {
-
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_class_meta_ods_alterar', __METHOD__, $objMdIaClassMetaOdsDTO);
 
             //Regras de Negocio
             $objInfraException = new InfraException();
 
-            if ($objMdIaClassMetaOdsDTO->isSetNumIdMdIaClassificacaoOds()) {
-                $this->validarNumIdMdIaClassificacaoOds($objMdIaClassMetaOdsDTO, $objInfraException);
-            }
             if ($objMdIaClassMetaOdsDTO->isSetNumIdMdIaAdmMetaOds()) {
                 $this->validarNumIdMdIaAdmMetaOds($objMdIaClassMetaOdsDTO, $objInfraException);
             }
@@ -118,7 +127,6 @@ class MdIaClassMetaOdsRN extends InfraRN
 
             $objMdIaClassMetaOdsBD = new MdIaClassMetaOdsBD($this->getObjInfraIBanco());
             $objMdIaClassMetaOdsBD->alterar($objMdIaClassMetaOdsDTO);
-
         } catch (Exception $e) {
             throw new InfraException('Erro alterando Meta Avaliação.', $e);
         }
@@ -139,7 +147,6 @@ class MdIaClassMetaOdsRN extends InfraRN
             for ($i = 0; $i < count($arrObjMdIaClassMetaOdsDTO); $i++) {
                 $objMdIaClassMetaOdsBD->excluir($arrObjMdIaClassMetaOdsDTO[$i]);
             }
-
         } catch (Exception $e) {
             throw new InfraException('Erro excluindo Meta Avaliação.', $e);
         }
@@ -185,7 +192,6 @@ class MdIaClassMetaOdsRN extends InfraRN
 
 
             return $ret;
-
         } catch (Exception $e) {
             throw new InfraException('Erro listando Metas Avaliação.', $e);
         }
@@ -211,65 +217,4 @@ class MdIaClassMetaOdsRN extends InfraRN
             throw new InfraException('Erro contando Metas Avaliação.', $e);
         }
     }
-    /*
-      protected function desativarControlado($arrObjMdIaClassMetaOdsDTO){
-        try {
-
-          SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_class_meta_ods_desativar', __METHOD__, $arrObjMdIaClassMetaOdsDTO);
-
-          //Regras de Negocio
-          //$objInfraException = new InfraException();
-
-          //$objInfraException->lancarValidacoes();
-
-          $objMdIaClassMetaOdsBD = new MdIaClassMetaOdsBD($this->getObjInfraIBanco());
-          for($i=0;$i<count($arrObjMdIaClassMetaOdsDTO);$i++){
-            $objMdIaClassMetaOdsBD->desativar($arrObjMdIaClassMetaOdsDTO[$i]);
-          }
-
-        }catch(Exception $e){
-          throw new InfraException('Erro desativando Meta Avaliação.',$e);
-        }
-      }
-
-      protected function reativarControlado($arrObjMdIaClassMetaOdsDTO){
-        try {
-
-          SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_class_meta_ods_reativar', __METHOD__, $arrObjMdIaClassMetaOdsDTO);
-
-          //Regras de Negocio
-          //$objInfraException = new InfraException();
-
-          //$objInfraException->lancarValidacoes();
-
-          $objMdIaClassMetaOdsBD = new MdIaClassMetaOdsBD($this->getObjInfraIBanco());
-          for($i=0;$i<count($arrObjMdIaClassMetaOdsDTO);$i++){
-            $objMdIaClassMetaOdsBD->reativar($arrObjMdIaClassMetaOdsDTO[$i]);
-          }
-
-        }catch(Exception $e){
-          throw new InfraException('Erro reativando Meta Avaliação.',$e);
-        }
-      }
-
-      protected function bloquearControlado(MdIaClassMetaOdsDTO $objMdIaClassMetaOdsDTO){
-        try {
-
-          SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_class_meta_ods_consultar', __METHOD__, $objMdIaClassMetaOdsDTO);
-
-          //Regras de Negocio
-          //$objInfraException = new InfraException();
-
-          //$objInfraException->lancarValidacoes();
-
-          $objMdIaClassMetaOdsBD = new MdIaClassMetaOdsBD($this->getObjInfraIBanco());
-          $ret = $objMdIaClassMetaOdsBD->bloquear($objMdIaClassMetaOdsDTO);
-
-          return $ret;
-        }catch(Exception $e){
-          throw new InfraException('Erro bloqueando Meta Avaliação.',$e);
-        }
-      }
-
-     */
 }

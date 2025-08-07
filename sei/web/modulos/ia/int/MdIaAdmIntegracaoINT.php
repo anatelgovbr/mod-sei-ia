@@ -249,7 +249,6 @@ class MdIaAdmIntegracaoINT extends InfraINT
         return parent::montarSelectArrInfraDTO($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado, $arrObjMdIaAdmIntegFuncionDTO, 'IdMdIaAdmIntegFuncion', 'Nome');
     }
 
-
     public static function montarSelectNome($strPrimeiroItemValor, $strPrimeiroItemDescricao, $strValorItemSelecionado)
     {
         $objMdIaAdmIntegFuncionDTO = new MdIaAdmIntegFuncionDTO();
@@ -355,5 +354,44 @@ class MdIaAdmIntegracaoINT extends InfraINT
         $dadosIntegracao = [];
         $dadosIntegracao["operacaoWsdl"] = $objMdIaAdmIntegracaoDTO->getStrOperacaoWsdl();
         return $dadosIntegracao;
+    }
+
+    public static function recuperarGridUrls($IdMdIaAdmUrlIntegracao)
+    {
+        $objMdIaAdmUrlIntegracaoDTO = new MdIaAdmUrlIntegracaoDTO();
+        $objMdIaAdmUrlIntegracaoDTO->setNumIdAdmIaAdmIntegracao($IdMdIaAdmUrlIntegracao);
+        $objMdIaAdmUrlIntegracaoDTO->retNumIdMdIaAdmUrlIntegracao();
+        $objMdIaAdmUrlIntegracaoDTO->retNumIdAdmIaAdmIntegracao();
+        $objMdIaAdmUrlIntegracaoDTO->retStrReferencia();
+        $objMdIaAdmUrlIntegracaoDTO->retStrLabel();
+        $objMdIaAdmUrlIntegracaoDTO->retStrUrl();
+        $arrObjMdIaAdmUrlIntegracaoDTO = (new MdIaAdmUrlIntegracaoRN)->listar($objMdIaAdmUrlIntegracaoDTO);
+
+        $strCadastroUrls = '';
+        if (!empty($arrObjMdIaAdmUrlIntegracaoDTO)) {
+            $strCadastroUrls  = '<table width="100%" id="tableParametroEntrada" class="infraTable" summary="Cadastro de URLs">' . "\n";
+            $strCadastroUrls .= '<tr>';
+            $strCadastroUrls .= '<th class="infraTh" width="30%">&nbsp;Nome&nbsp;</th>' . "\n";
+            $strCadastroUrls .= '<th class="infraTh" width="80%">&nbsp;URL&nbsp;</th>' . "\n";
+            $strCadastroUrls .= '</tr>' . "\n";
+
+            foreach ($arrObjMdIaAdmUrlIntegracaoDTO as $objMdIaAdmUrlIntegracaoDTO) {
+                $strCssTr = '<tr id="cadastroUrls" class="infraTrClara">';
+                $strCadastroUrls .= $strCssTr;
+                $referencia = $objMdIaAdmUrlIntegracaoDTO->getStrReferencia();
+                $strCadastroUrls .= "<td align='left'  style='padding: 8px;' >";
+                $strCadastroUrls .= '    <label>'. $objMdIaAdmUrlIntegracaoDTO->getStrLabel() .'</label>';
+                $strCadastroUrls .= '</td>';
+                $strCadastroUrls .= "<td id='{$objMdIaAdmUrlIntegracaoDTO->getStrReferencia()}'  style='padding: 8px;' >";
+                $strCadastroUrls .= "   <div class='form-group'>";
+                $strCadastroUrls .= "       <input class='infraText form-control' type='text' name='{$referencia}' onClick='emitirAlerta()' value='" . $objMdIaAdmUrlIntegracaoDTO->getStrUrl() . "'/>";
+                $strCadastroUrls .= "   </div>";
+                $strCadastroUrls .= "</td>";
+                $strCadastroUrls .= '</tr>' . "\n";
+            }
+            $strCadastroUrls .= '</table>';
+        }
+
+        return $strCadastroUrls;
     }
 }
