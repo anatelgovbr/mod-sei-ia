@@ -3,7 +3,7 @@
 ## Requisitos
 - Requisito Mínimo é o SEI 4.1.5.
    - Não é compatível com versões anteriores e em versões mais recentes é necessário conferir antes se possui compatibilidade.
-   - Verificar valor da constante de versão do SEI no arquivo `/sei/web/SEI.php` ou, após logado no sistema, parando o mouse sobre a logo do SEI no canto superior esquerdo.
+   - Verificar valor da constante de versão no arquivo `/sei/web/SEI.php` ou, após logado no sistema, parando o mouse sobre a logo do SEI no canto superior esquerdo.
 - **Atenção**: O Módulo SEI IA somente funciona em conjunto com a instalação do [Servidor de Soluções de IA](https://github.com/anatelgovbr/sei-ia?tab=readme-ov-file "Clique e acesse").
    - Todos os detalhes constantes no [README](https://github.com/anatelgovbr/sei-ia/blob/main/README.md) e no [INSTALL](https://github.com/anatelgovbr/sei-ia/blob/main/docs/INSTALL.md) do *Servidor de Soluçõea de IA* são importantes, nessa ordem e exigindo leitura prévia integral **antes** de iniciar sua instalação.
    - Para instalar o *Servidor de Soluções de IA* é mandatório ter o Módulo SEI IA previamente instalado e configurado no SEI do ambiente correspondente. **Ou seja, antes, instale o módulo no SEI!**
