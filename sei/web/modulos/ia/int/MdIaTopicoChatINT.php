@@ -320,7 +320,6 @@ class MdIaTopicoChatINT extends InfraINT
         $objMdIaInteracaoChatDTO->retNumFeedback();
         $objMdIaInteracaoChatDTO->retNumIdMdIaInteracaoChat();
         $objMdIaInteracaoChatDTO->retNumStatusRequisicao();
-        $objMdIaInteracaoChatDTO->retNumIdMdIaPromptsFavoritos();
         $objMdIaInteracaoChatDTO->setNumIdMdIaTopicoChat($dados["id"]);
         $objMdIaInteracaoChatDTO->setOrdNumIdMdIaInteracaoChat(InfraDTO::$TIPO_ORDENACAO_ASC);
         $objMdIaInteracaoChatDTO->retDthCadastro();
@@ -348,9 +347,6 @@ class MdIaTopicoChatINT extends InfraINT
             $arrayItensInteracoes["status_requisicao"] = $itemInteracao->getNumStatusRequisicao();
             $arrayItensInteracoes["dth_cadastro"] = substr($itemInteracao->getDthCadastro(),0,19);
 
-            if (!is_null($itemInteracao->getNumIdMdIaPromptsFavoritos())) {
-                $arrayItensInteracoes["favorito"] = true;
-            }
             $arrayInteracoes[] = $arrayItensInteracoes;
         }
         return $arrayInteracoes;

@@ -98,6 +98,10 @@
             content: "Galeria de Prompts",
         });
 
+        tippy("#promptsFavoritos", {
+            content: "Prompts Favoritos",
+        });
+
         tippy("#titleBuscarWeb", {
             content: "Buscar na Web",
         });
@@ -1604,6 +1608,11 @@
         controlaPreenchimentoCampoMensagem();
         controlaTamanhoInputDigitacao();
         controlaTamanhoConteudoChat();
+        if ($(".widget-content").hasClass("expandido")) {
+            expandirAssistente();
+        } else {
+            reduzirAssistente();
+        }
     }
 
     function controlaActive(id = "") {

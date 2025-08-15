@@ -117,14 +117,14 @@
 
     function carregarPromptFavorito(idPromptFavorito) {
         var dadosMensagem = {};
-        dadosMensagem["IdMdIaInteracaoChat"] = idPromptFavorito;
+        dadosMensagem["IdMdIaPromptsFavoritos"] = idPromptFavorito;
         $.ajax({
-            url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_consultar_mensagem_ajax'); ?>',
+            url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_consultar_prompt_favorito_ajax'); ?>',
             type: 'POST', //selecionando o tipo de requisição, PUT,GET,POST,DELETE
             dataType: "json", //Tipo de dado que será enviado ao servidor
             data: dadosMensagem, // Enviando o JSON com o nome de itens
             success: function(data) {
-                mensagem = decodeHtmlEntities(data["pergunta"]);
+                mensagem = decodeHtmlEntities(data["prompt"]);
                 mensagem = getTextForTextarea(mensagem);
                 //mensagem = safe_tags(mensagem);
                 window.top.document.getElementById('mensagem').value = mensagem;

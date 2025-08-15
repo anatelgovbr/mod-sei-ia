@@ -540,10 +540,17 @@
     background-color: #007bff !important;
     margin-bottom: 5px;
 }
-#chat_ia #galeriaPrompts {
-    color: #fff;
-    background-color: #ff6f61 !important;
+#chat_ia #galeriaPrompts, #chat_ia #promptsFavoritos {
+    color: #007bff;
+    background-color: #007bff1f  !important;
+    margin-bottom: 5px;
+    border: 1px solid #007bff1f;
+}
+#chat_ia #promptsFavoritos {
     margin-bottom: 20px;
+}
+#chat_ia #galeriaPrompts:hover, #chat_ia #promptsFavoritos:hover {
+    border: 1px solid #007bff;
 }
 .topico a {
     float: right;

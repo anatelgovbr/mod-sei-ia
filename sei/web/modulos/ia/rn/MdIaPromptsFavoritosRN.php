@@ -29,13 +29,6 @@ class MdIaPromptsFavoritosRN extends InfraRN
         }
     }
 
-    private function validarNumIdMdIaInteracaoChat(MdIaPromptsFavoritosDTO $objMdIaPromptsFavoritosDTO, InfraException $objInfraException)
-    {
-        if (InfraString::isBolVazia($objMdIaPromptsFavoritosDTO->getNumIdMdIaInteracaoChat())) {
-            $objMdIaPromptsFavoritosDTO->setNumIdMdIaInteracaoChat(null);
-        }
-    }
-
     private function validarNumIdMdIaGrupoPromptsFav(MdIaPromptsFavoritosDTO $objMdIaPromptsFavoritosDTO, InfraException $objInfraException)
     {
         if (InfraString::isBolVazia($objMdIaPromptsFavoritosDTO->getNumIdMdIaGrupoPromptsFav())) {
@@ -76,7 +69,6 @@ class MdIaPromptsFavoritosRN extends InfraRN
             //Regras de Negocio
             $objInfraException = new InfraException();
 
-            $this->validarNumIdMdIaInteracaoChat($objMdIaPromptsFavoritosDTO, $objInfraException);
             $this->validarNumIdMdIaGrupoPromptsFav($objMdIaPromptsFavoritosDTO, $objInfraException);
             $this->validarStrDescricaoPrompt($objMdIaPromptsFavoritosDTO, $objInfraException);
             $this->validarDthAlteracao($objMdIaPromptsFavoritosDTO, $objInfraException);
@@ -104,9 +96,6 @@ class MdIaPromptsFavoritosRN extends InfraRN
 
             if ($objMdIaPromptsFavoritosDTO->isSetNumIdMdIaPromptsFavoritos()) {
                 $this->validarNumIdMdIaPromptsFavoritos($objMdIaPromptsFavoritosDTO, $objInfraException);
-            }
-            if ($objMdIaPromptsFavoritosDTO->isSetNumIdMdIaInteracaoChat()) {
-                $this->validarNumIdMdIaInteracaoChat($objMdIaPromptsFavoritosDTO, $objInfraException);
             }
             if ($objMdIaPromptsFavoritosDTO->isSetNumIdMdIaGrupoPromptsFav()) {
                 $this->validarNumIdMdIaGrupoPromptsFav($objMdIaPromptsFavoritosDTO, $objInfraException);
