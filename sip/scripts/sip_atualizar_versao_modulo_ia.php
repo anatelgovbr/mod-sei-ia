@@ -108,6 +108,9 @@ class MdIaAtualizadorSipRN extends InfraRN
                 case '1.0.0':
                     $this->instalarv110();
                     break;
+                case '1.1.0':
+                    $this->instalarv120();
+                    break;
                 default:
                     $this->finalizar('A VERSÃO MAIS ATUAL DO ' . $this->nomeDesteModulo . ' (v' . $this->versaoAtualDesteModulo . ') JÁ ESTÁ INSTALADA.');
                     break;
@@ -542,7 +545,14 @@ class MdIaAtualizadorSipRN extends InfraRN
 
         $this->atualizarNumeroVersao($nmVersao);
     }
-
+    
+    protected function instalarv120()
+    {
+        $nmVersao = '1.2.0';
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $nmVersao .' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+        //Atualizando parametro para controlar versao do modulo
+        $this->atualizarNumeroVersao($nmVersao);
+    }
 
     private function adicionarRecursoPerfil($numIdSistema, $numIdPerfil, $strNome, $strCaminho = null)
     {

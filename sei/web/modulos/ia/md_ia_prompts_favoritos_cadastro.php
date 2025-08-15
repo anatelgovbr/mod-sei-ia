@@ -23,6 +23,13 @@ try {
 
     SessaoSEI::getInstance()->validarPermissao('md_ia_adm_config_assist_ia_consultar');
 
+    $numIdMdIaPromptsFavoritos = '';
+    if (isset($_GET['id_md_ia_prompts_favoritos'])) {
+        $numIdMdIaPromptsFavoritos = $_GET['id_md_ia_prompts_favoritos'];
+    } else {
+        $numIdMdIaPromptsFavoritos = $_POST['hdnIdMdIaPromptsFavoritos'];
+    }
+
     $numIdMdIaGrupoPromptsFav = '';
     if (isset($_GET['id_md_ia_grupo_prompts_fav'])) {
         $numIdMdIaGrupoPromptsFav = $_GET['id_md_ia_grupo_prompts_fav'];
@@ -48,14 +55,14 @@ try {
 
             if (isset($_POST['sbmCadastrarPromptFavorito'])) {
                 try {
-                    $objMdIaPromptsFavoritosDTO->setNumIdMdIaInteracaoChat($_POST["hdnIdMdIaInteracaoChat"]);
                     $objMdIaPromptsFavoritosDTO->setNumIdMdIaGrupoPromptsFav($_POST["selGrupoPromptsFav"]);
                     $objMdIaPromptsFavoritosDTO->setStrDescricaoPrompt($_POST["txaDescricaoPrompt"]);
+                    $objMdIaPromptsFavoritosDTO->setStrPrompt($_POST["txaPrompt"]);
                     $objMdIaPromptsFavoritosDTO->setDthAlteracao(InfraData::getStrDataHoraAtual());
 
                     $objMdIaPromptsFavoritosRN = new MdIaPromptsFavoritosRN();
                     $arrObjMdIaInteracaoChatDTO = $objMdIaPromptsFavoritosRN->cadastrar($objMdIaPromptsFavoritosDTO);
-                    PaginaSEI::getInstance()->setStrMensagem('Prompt Favorito "' . $objMdIaPromptsFavoritosDTO->getNumIdMdIaInteracaoChat() . '" cadastrado com sucesso.');
+                    PaginaSEI::getInstance()->setStrMensagem('Prompt Favorito "' . $objMdIaPromptsFavoritosDTO->getNumIdMdIaPromptsFavoritos() . '" cadastrado com sucesso.');
 
                     header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_prompts_favoritos_selecionar&tipo_selecao=2&id_md_ia_grupo_prompts_fav=' . $numIdMdIaGrupoPromptsFav));
                     die;
@@ -73,15 +80,26 @@ try {
             $strDesabilitar = 'disabled="disabled"';
             $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_prompts_favoritos_selecionar&tipo_selecao=2&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
+            $objMdIaPromptsFavoritosDTO->setNumIdMdIaPromptsFavoritos($numIdMdIaPromptsFavoritos);
+            $objMdIaPromptsFavoritosDTO->retNumIdMdIaGrupoPromptsFav();
+            $objMdIaPromptsFavoritosDTO->retStrDescricaoPrompt();
+            $objMdIaPromptsFavoritosDTO->retStrPrompt();
+            $objMdIaPromptsFavoritosRN = new MdIaPromptsFavoritosRN();
+            $objMdIaPromptsFavoritosDTO = $objMdIaPromptsFavoritosRN->consultar($objMdIaPromptsFavoritosDTO);
+
+            if ($objMdIaPromptsFavoritosDTO) {
+                $numIdMdIaGrupoPromptsFav = $objMdIaPromptsFavoritosDTO->getNumIdMdIaGrupoPromptsFav();
+                $descricaoPrompt = $objMdIaPromptsFavoritosDTO->getStrDescricaoPrompt();
+                $prompt = $objMdIaPromptsFavoritosDTO->getStrPrompt();
+            }
+
             if (isset($_POST['sbmAlterarPromptFavorito'])) {
                 try {
-                    $objMdIaPromptsFavoritosDTO->setNumIdMdIaPromptsFavoritos($_POST['hdnIdMdIaPromptsFavoritos']);
-                    $objMdIaPromptsFavoritosDTO->retNumIdMdIaPromptsFavoritos();
-                    $objMdIaPromptsFavoritosRN = new MdIaPromptsFavoritosRN();
-                    $objMdIaPromptsFavoritosDTO = $objMdIaPromptsFavoritosRN->consultar($objMdIaPromptsFavoritosDTO);
-
+                    $objMdIaPromptsFavoritosDTO = new MdIaPromptsFavoritosDTO();
+                    $objMdIaPromptsFavoritosDTO->setNumIdMdIaPromptsFavoritos($numIdMdIaPromptsFavoritos);
                     $objMdIaPromptsFavoritosDTO->setNumIdMdIaGrupoPromptsFav($_POST["selGrupoPromptsFav"]);
                     $objMdIaPromptsFavoritosDTO->setStrDescricaoPrompt($_POST["txaDescricaoPrompt"]);
+                    $objMdIaPromptsFavoritosDTO->setStrPrompt($_POST["txaPrompt"]);
                     $objMdIaPromptsFavoritosDTO->setDthAlteracao(InfraData::getStrDataHoraAtual());
 
                     $objMdIaPromptsFavoritosRN->alterar($objMdIaPromptsFavoritosDTO);
@@ -124,6 +142,9 @@ PaginaSEI::getInstance()->abrirStyle();
     #lblDescricaoPrompt {position:absolute;left:0%;top:25%;width:95%;}
     #txaDescricaoPrompt {position:absolute;left:0%;top:35%;width:95%;}
     #frmNovoPromptFavorito {display: none;}
+    
+    #lblPrompt {position:absolute;left:0%;top:77%;width:95%;}
+    #txaPrompt {position:absolute;left:0%;top:87%;width:95%;}
 
 <?
 PaginaSEI::getInstance()->fecharStyle();
@@ -154,8 +175,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <label id="lblDescricaoPrompt" for="txaDescricaoPrompt" accesskey="O" class="infraLabelObrigatorio"><span class="infraTeclaAtalho">D</span>escrição Prompt:</label>
             <textarea rows="4" required name="txaDescricaoPrompt" id="txaDescricaoPrompt" class="infraTextarea" maxlength="250" onpaste="return infraLimitarTexto(this,event,250);" onkeypress="return infraLimitarTexto(this,event,250);" tabindex="<?=PaginaSEI::getInstance()->getProxTabDados()?>"><?=PaginaSEI::tratarHTML($descricaoPrompt);?></textarea>
         </div>
-        <input type="hidden" id="hdnIdMdIaInteracaoChat" name="hdnIdMdIaInteracaoChat" />
-        <input type="hidden" id="hdnIdMdIaPromptsFavoritos" name="hdnIdMdIaPromptsFavoritos" />
+        <div class="form-group">
+            <label id="lblPrompt" for="txaPrompt" accesskey="P" class="infraLabelObrigatorio"><span class="infraTeclaAtalho">P</span>rompt:</label>
+            <textarea rows="17" required name="txaPrompt" id="txaPrompt" class="infraTextarea" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?= $prompt ?></textarea>
+        </div>
+        <input type="hidden" id="hdnIdMdIaPromptsFavoritos" name="hdnIdMdIaPromptsFavoritos"  value="<?= $numIdMdIaPromptsFavoritos ?>"/>
 
         <?
 

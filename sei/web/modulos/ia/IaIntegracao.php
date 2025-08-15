@@ -169,7 +169,7 @@ class IaIntegracao extends SeiIntegracao
     {
         $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
         $objMdIaClassMetaOdsDTO->setNumIdProcedimento($idProcedimento);
-        $objMdIaClassMetaOdsDTO->setStrStaTipoUsuario([MdIaClassMetaOdsRN::$USUARIO_IA, MdIaClassMetaOdsRN::$USUARIO_EXTERNO], InfraDTO::$OPER_IN);
+        $objMdIaClassMetaOdsDTO->setStrStaTipoUsuario(array(MdIaClassMetaOdsRN::$USUARIO_IA, MdIaClassMetaOdsRN::$USUARIO_EXTERNO), InfraDTO::$OPER_IN);
         $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
         $objMdIaClassMetaOdsDTO->setNumMaxRegistrosRetorno(1);
         return (new MdIaClassMetaOdsRN())->consultar($objMdIaClassMetaOdsDTO);
@@ -179,7 +179,7 @@ class IaIntegracao extends SeiIntegracao
     {
         $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
         $objMdIaClassMetaOdsDTO->setNumIdProcedimento($idProcedimento);
-        $objMdIaClassMetaOdsDTO->setStrStaTipoUsuario(MdIaClassMetaOdsRN::$USUARIO_PADRAO);
+        $objMdIaClassMetaOdsDTO->setStrStaTipoUsuario(array(MdIaClassMetaOdsRN::$USUARIO_PADRAO, MdIaClassMetaOdsRN::$USUARIO_AGENDAMENTO), InfraDTO::$OPER_IN);
         $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
         $objMdIaClassMetaOdsDTO->setNumMaxRegistrosRetorno(1);
         $objMdIaClassMetaOdsDTO =  (new MdIaClassMetaOdsRN())->consultar($objMdIaClassMetaOdsDTO);
@@ -584,6 +584,11 @@ class IaIntegracao extends SeiIntegracao
 
             case 'md_ia_lista_ods_onu_ajax':
                 $json = MdIaClassMetaOdsINT::listaOdsOnu($_POST);
+                InfraAjax::enviarJSON(json_encode($json));
+                exit(0);
+                
+            case 'md_ia_consultar_prompt_favorito_ajax':
+                $json = MdIaPromptsFavoritosINT::consultarPromptFavorito($_POST);
                 InfraAjax::enviarJSON(json_encode($json));
                 exit(0);
         }

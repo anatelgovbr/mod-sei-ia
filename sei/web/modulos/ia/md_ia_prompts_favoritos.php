@@ -70,6 +70,7 @@ try {
     PaginaSEI::getInstance()->setTipoPagina(InfraPagina::$TIPO_PAGINA_SIMPLES);
 
     $arrComandos[] = '<button type="submit" accesskey="P" id="sbmPesquisar" name="sbmPesquisar" value="Pesquisar" class="infraButton"><span class="infraTeclaAtalho">P</span>esquisar</button>';
+    $arrComandos[] = '<button type="button" accesskey="N" id="btnPromptFavoritoNovo" value="Novo Prompt" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_prompts_favoritos_cadastrar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao']) . '\'" class="infraButton"><span class="infraTeclaAtalho">N</span>ovo</button>';
 
     if (SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_config_assist_ia_consultar')) {
         $arrComandos[] = '<button type="button" accesskey="L" id="btnGrupoPrompsFavoritosListar" value="Listar Grupos" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_grupo_prompts_fav_listar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao']) . '\'" class="infraButton"><span class="infraTeclaAtalho">L</span>istar Grupos</button>';
@@ -77,9 +78,8 @@ try {
 
     $objMdIaPromptsFavoritosDTO = new MdIaPromptsFavoritosDTO();
     $objMdIaPromptsFavoritosDTO->retNumIdMdIaPromptsFavoritos();
-    $objMdIaPromptsFavoritosDTO->retNumIdMdIaInteracaoChat();
     $objMdIaPromptsFavoritosDTO->retStrDescricaoPrompt();
-    $objMdIaPromptsFavoritosDTO->retStrPergunta();
+    $objMdIaPromptsFavoritosDTO->retStrPrompt();
     $objMdIaPromptsFavoritosDTO->retDthAlteracao();
     $objMdIaPromptsFavoritosDTO->retStrNomeGrupoFavorito();
 
@@ -97,7 +97,7 @@ try {
     if ($strPalavrasPesquisa != '') {
         $strPesquisa = '%' . $strPalavrasPesquisa . '%';
         $objMdIaPromptsFavoritosDTO->adicionarCriterio(
-            array('DescricaoPrompt', 'Pergunta'),
+            array('DescricaoPrompt', 'Prompt'),
             array(InfraDTO::$OPER_LIKE, InfraDTO::$OPER_LIKE),
             array($strPesquisa, $strPesquisa),
             array(InfraDTO::$OPER_LOGICO_OR)
@@ -111,7 +111,7 @@ try {
     $objMdIaPromptsFavoritosDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
     $objMdIaPromptsFavoritosDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
 
-    PaginaSEI::getInstance()->prepararOrdenacao($objMdIaPromptsFavoritosDTO, 'IdMdIaInteracaoChat', InfraDTO::$TIPO_ORDENACAO_DESC);
+    PaginaSEI::getInstance()->prepararOrdenacao($objMdIaPromptsFavoritosDTO, 'IdMdIaPromptsFavoritos', InfraDTO::$TIPO_ORDENACAO_DESC);
     PaginaSEI::getInstance()->prepararPaginacao($objMdIaPromptsFavoritosDTO);
 
     $objMdIaPromptsFavoritosRN = new MdIaPromptsFavoritosRN();
@@ -139,8 +139,8 @@ try {
         $strResultado .= '<caption class="infraCaption">' . PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
         $strResultado .= '<tr>';
         $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck('', 'Infra') . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh" width="20%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdIaPromptsFavoritosDTO, 'Descrição do Prompt', 'DescricaoPrompt', $arrObjMdIaPromptsFavoritosDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh" width="10%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdIaPromptsFavoritosDTO, 'Grupo', 'NomeGrupoFavorito', $arrObjMdIaPromptsFavoritosDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" width="20%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdIaPromptsFavoritosDTO, 'Descrição do Prompt', 'DescricaoPrompt', $arrObjMdIaPromptsFavoritosDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh" width="20%">Prompt</th>' . "\n";
         $strResultado .= '<th class="infraTh" width="10%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdIaPromptsFavoritosDTO, 'Data', 'Alteracao', $arrObjMdIaPromptsFavoritosDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh" width="10%">Ações</th>' . "\n";
@@ -158,18 +158,18 @@ try {
         $strResultado .= '<tr ' . $strCssTr . '>';
 
         $strResultado .= '<td valign="top" class="tdInteracao">' . PaginaSEI::getInstance()->getTrCheck($i, $arrObjMdIaPromptsFavoritosDTO[$i]->getNumIdMdIaPromptsFavoritos(), $arrObjMdIaPromptsFavoritosDTO[$i]->getStrDescricaoPrompt()) . '</td>';
-        $strResultado .= '<td align="center" valign="top" class="tdInteracao">' . nl2br(htmlspecialchars(mb_strimwidth($arrObjMdIaPromptsFavoritosDTO[$i]->getStrDescricaoPrompt(), 0, 100, "...", "ISO-8859-1"), ENT_QUOTES | ENT_SUBSTITUTE, 'ISO-8859-1', false)) . '</td>';
         $strResultado .= '<td align="center" valign="top" class="tdInteracao">' . $arrObjMdIaPromptsFavoritosDTO[$i]->getStrNomeGrupoFavorito() . '</td>';
-        $strResultado .= '<td align="center" valign="top" class="tdInteracao">' . nl2br(htmlspecialchars(mb_strimwidth($arrObjMdIaPromptsFavoritosDTO[$i]->getStrPergunta(), 0, 100, "...", "ISO-8859-1"), ENT_QUOTES | ENT_SUBSTITUTE, 'ISO-8859-1', false)) . '</td>';
+        $strResultado .= '<td align="center" valign="top" class="tdInteracao">' . nl2br(htmlspecialchars(mb_strimwidth($arrObjMdIaPromptsFavoritosDTO[$i]->getStrDescricaoPrompt(), 0, 500, "...", "ISO-8859-1"), ENT_QUOTES | ENT_SUBSTITUTE, 'ISO-8859-1', false)) . '</td>';
+        $strResultado .= '<td align="center" valign="top" class="tdInteracao">' . nl2br(htmlspecialchars(mb_strimwidth($arrObjMdIaPromptsFavoritosDTO[$i]->getStrPrompt(), 0, 500, "...", "ISO-8859-1"), ENT_QUOTES | ENT_SUBSTITUTE, 'ISO-8859-1', false)) . '</td>';
         $strResultado .= '<td align="center" valign="top" class="tdInteracao">' . $arrObjMdIaPromptsFavoritosDTO[$i]->getDthAlteracao() . '</td>';
 
 
         $strResultado .= '<td align="center" valign="top" class="tdInteracao tdAcompanhamentoUltima">';
 
-        $strResultado .= PaginaSEI::getInstance()->getAcaoTransportarItem($arrObjMdIaPromptsFavoritosDTO[$i]->getNumIdMdIaInteracaoChat(), $arrObjMdIaPromptsFavoritosDTO[$i]->getNumIdMdIaInteracaoChat());
+        $strResultado .= PaginaSEI::getInstance()->getAcaoTransportarItem($arrObjMdIaPromptsFavoritosDTO[$i]->getNumIdMdIaPromptsFavoritos(), $arrObjMdIaPromptsFavoritosDTO[$i]->getNumIdMdIaPromptsFavoritos());
 
         if ($bolAcaoAlterar) {
-            $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_prompts_favoritos_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_ia_interacao_chat=' . $arrObjMdIaPromptsFavoritosDTO[$i]->getNumIdMdIaInteracaoChat()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '" ><img src="' . PaginaSEI::getInstance()->getIconeAlterar() . '" title="Alterar Prompt Favorito" alt="Alterar Prompt Favorito" class="infraImg" /></a>&nbsp;';
+            $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_prompts_favoritos_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_ia_prompts_favoritos=' . $arrObjMdIaPromptsFavoritosDTO[$i]->getNumIdMdIaPromptsFavoritos()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '" ><img src="' . PaginaSEI::getInstance()->getIconeAlterar() . '" title="Alterar Prompt Favorito" alt="Alterar Prompt Favorito" class="infraImg" /></a>&nbsp;';
         }
 
         if ($bolAcaoExcluir) {
@@ -198,10 +198,10 @@ PaginaSEI::getInstance()->abrirStyle();
 ?>
 
 #lblSelGrupoPromptsFavoritos {position:absolute;left:0%;top:0%;}
-#selGrupoPromptsFavoritos {position:absolute;left:0%;top:18%;width:50%;}
+#selGrupoPromptsFavoritos {position:absolute;left:0%;top:40%;width:33%;}
 
-#lblPalavrasPesquisaPromptsFavoritos {position:absolute;left:0%;top:50%;width:65%;}
-#txtPalavrasPesquisaPromptsFavoritos {position:absolute;left:0%;top:68%;width:65%;}
+#lblPalavrasPesquisaPromptsFavoritos {position:absolute;left:35%;top:0%;width:65%;}
+#txtPalavrasPesquisaPromptsFavoritos {position:absolute;left:35%;top:40%;width:65%;}
 
 <?
 PaginaSEI::getInstance()->fecharStyle();
@@ -215,7 +215,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
     <?php
     PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-    PaginaSEI::getInstance()->abrirAreaDados('10em');
+    PaginaSEI::getInstance()->abrirAreaDados('5em');
     ?>
     <label id="lblSelGrupoPromptsFavoritos" for="selGrupoPromptsFavoritos" accesskey="G"
         class="infraLabelOpcional"><span class="infraTeclaAtalho">G</span>rupo:</label>

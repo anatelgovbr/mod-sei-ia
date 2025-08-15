@@ -663,9 +663,6 @@ class MdIaConfigAssistenteINT extends InfraINT
         $objMdIaInteracaoChatDTO->retStrPergunta();
         $objMdIaInteracaoChatDTO->retNumIdMessage();
         $objMdIaInteracaoChatDTO->retNumStatusRequisicao();
-        $objMdIaInteracaoChatDTO->retNumIdMdIaPromptsFavoritos();
-        $objMdIaInteracaoChatDTO->retNumIdMdIaGrupoPromptsFav();
-        $objMdIaInteracaoChatDTO->retStrDescricaoPrompt();
         $objMdIaInteracaoChatDTO->retDthCadastro();
         $interacao = $objMdIaInteracaoChatRN->consultar($objMdIaInteracaoChatDTO);
         if (!is_null($interacao)) {
@@ -679,9 +676,6 @@ class MdIaConfigAssistenteINT extends InfraINT
                     "tipo_critica" => $resposta["tipoCritica"],
                     "id_mensagem" => $interacao->getNumIdMessage(),
                     "status_requisicao" => $interacao->getNumStatusRequisicao(),
-                    "id_prompt_favorito" => $interacao->getNumIdMdIaPromptsFavoritos(),
-                    "id_grupo_favorito" => $interacao->getNumIdMdIaGrupoPromptsFav(),
-                    "descricao_prompt" => mb_convert_encoding($interacao->getStrDescricaoPrompt(), 'UTF-8', 'ISO-8859-1'),
                     "pergunta" => mb_convert_encoding($interacao->getStrPergunta(), 'UTF-8', 'ISO-8859-1'),
                     "dth_cadastro" => substr($interacao->getDthCadastro(), 0, 19)
                 );
