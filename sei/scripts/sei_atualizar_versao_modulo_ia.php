@@ -1461,13 +1461,11 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         $MdIaAdmConfigAssistIARN->alterar($MdIaAdmConfigAssistIADTO);
 
         $this->logar('CRIANDO COLUNAS id_procedimento e sta_tipo_usuario PARA md_ia_class_meta_ods e md_ia_hist_class');
-        $objInfraMetaBD->adicionarColuna('md_ia_class_meta_ods', 'sta_tipo_usuario', '' . $objInfraMetaBD->tipoTextoVariavel(1), 'not null');
-        $objInfraMetaBD->adicionarColuna('md_ia_class_meta_ods', 'id_procedimento', '' . $objInfraMetaBD->tipoNumeroGrande(), 'not null');
-        $objInfraMetaBD->adicionarChaveEstrangeira('fk5_md_ia_class_meta_ods', 'md_ia_class_meta_ods', array('id_procedimento'), 'procedimento', array('id_procedimento'));
+        $objInfraMetaBD->adicionarColuna('md_ia_class_meta_ods', 'sta_tipo_usuario', '' . $objInfraMetaBD->tipoTextoVariavel(1), 'null');
+        $objInfraMetaBD->adicionarColuna('md_ia_class_meta_ods', 'id_procedimento', '' . $objInfraMetaBD->tipoNumeroGrande(), 'null');
 
-        $objInfraMetaBD->adicionarColuna('md_ia_hist_class', 'sta_tipo_usuario', '' . $objInfraMetaBD->tipoTextoVariavel(1), 'not null');
-        $objInfraMetaBD->adicionarColuna('md_ia_hist_class', 'id_procedimento', '' . $objInfraMetaBD->tipoNumeroGrande(), 'not null');
-        $objInfraMetaBD->adicionarChaveEstrangeira('fk6_md_ia_class_meta_ods', 'md_ia_hist_class', array('id_procedimento'), 'procedimento', array('id_procedimento'));
+        $objInfraMetaBD->adicionarColuna('md_ia_hist_class', 'sta_tipo_usuario', '' . $objInfraMetaBD->tipoTextoVariavel(1), 'null');
+        $objInfraMetaBD->adicionarColuna('md_ia_hist_class', 'id_procedimento', '' . $objInfraMetaBD->tipoNumeroGrande(), 'null');
 
         $this->logar('POPULANDO AS COLUNAS');
         $sql = "SELECT * FROM md_ia_classificacao_ods";
@@ -1551,6 +1549,14 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         }
 
         $this->logar('REMOVENDO colunas e tabelas descartadas');
+
+        $objInfraMetaBD->alterarColuna('md_ia_class_meta_ods', 'sta_tipo_usuario', $objInfraMetaBD->tipoTextoVariavel(1), 'not null');
+        $objInfraMetaBD->alterarColuna('md_ia_class_meta_ods', 'id_procedimento', $objInfraMetaBD->tipoNumeroGrande(), 'not null');
+        $objInfraMetaBD->alterarColuna('md_ia_hist_class', 'sta_tipo_usuario', $objInfraMetaBD->tipoTextoVariavel(1), 'not null');
+        $objInfraMetaBD->alterarColuna('md_ia_hist_class', 'id_procedimento', $objInfraMetaBD->tipoNumeroGrande(), 'not null');
+
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk5_md_ia_class_meta_ods', 'md_ia_class_meta_ods', array('id_procedimento'), 'procedimento', array('id_procedimento'));
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk6_md_ia_hist_class', 'md_ia_hist_class', array('id_procedimento'), 'procedimento', array('id_procedimento'));
 
         $objInfraMetaBD->excluirChaveEstrangeira('md_ia_class_meta_ods', 'fk1_md_ia_class_meta_ods');
 
