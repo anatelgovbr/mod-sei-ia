@@ -1598,7 +1598,7 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
 
         $this->logar('REFATORANDO Prompts favoritos, removendo vinculação com a tabela de md_ia_interacao_chat');
-       // $objInfraMetaBD->adicionarColuna('md_ia_prompts_favoritos', 'prompt ', $objInfraMetaBD->tipoTextoGrande(), 'null');
+        $objInfraMetaBD->adicionarColuna('md_ia_prompts_favoritos', 'prompt ', $objInfraMetaBD->tipoTextoGrande(), 'null');
 
         $objMdIaPromptsFavoritosRN = new MdIaPromptsFavoritosRN();
         $objMdIaPromptsFavoritosDTO = new MdIaPromptsFavoritosDTO();
