@@ -5,10 +5,10 @@ class MdIaAtualizadorSeiRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '1.0.0';
+    private $versaoAtualDesteModulo = '1.2.0';
     private $nomeDesteModulo = 'MÓDULO IA';
     private $nomeParametroModulo = 'VERSAO_MODULO_IA';
-    private $historicoVersoes = array('1.0.0', '1.1.0');
+    private $historicoVersoes = array('1.0.0', '1.1.0', '1.2.0');
 
     public function __construct()
     {
@@ -110,7 +110,6 @@ class MdIaAtualizadorSeiRN extends InfraRN
                     $this->instalarv100();
                 case '1.0.0':
                     $this->instalarv110();
-                    break;
                 case '1.1.0':
                     $this->instalarv120();
                     break;
@@ -1597,23 +1596,27 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
 
-        $this->logar('REFATORANDO Prompts favoritos, removendo vinculação com a tabela de md_ia_interacao_chat');
-        $objInfraMetaBD->adicionarColuna('md_ia_prompts_favoritos', 'prompt ', $objInfraMetaBD->tipoTextoGrande(), 'null');
+       $this->logar('REFATORANDO Prompts favoritos, removendo vinculação com a tabela de md_ia_interacao_chat');
+        $objInfraMetaBD->adicionarColuna('md_ia_prompts_favoritos', 'prompt', $objInfraMetaBD->tipoTextoGrande(), 'null');
+
+
+        InfraDebug::getInstance()->setBolDebugInfra(true);
+
+        $promptsFavoritos = BancoSEI::getInstance()->consultarSql('select md_ia_prompts_favoritos.id_md_ia_prompts_favoritos,
+         md_ia_interacao_chat.pergunta from md_ia_prompts_favoritos 
+            INNER JOIN md_ia_interacao_chat ON md_ia_interacao_chat.id_md_ia_interacao_chat = md_ia_prompts_favoritos.id_md_ia_interacao_chat');
+
+        InfraDebug::getInstance()->setBolDebugInfra(false);
 
         $objMdIaPromptsFavoritosRN = new MdIaPromptsFavoritosRN();
-        $objMdIaPromptsFavoritosDTO = new MdIaPromptsFavoritosDTO();
-        $objMdIaPromptsFavoritosDTO->retNumIdMdIaPromptsFavoritos();
-        $objMdIaPromptsFavoritosDTO->retNumIdMdIaInteracaoChat();
-        $objMdIaPromptsFavoritosDTO->retStrPergunta();
-        $arrObjMdIaClassMetaOdsDTO = $objMdIaPromptsFavoritosRN->listar($objMdIaPromptsFavoritosDTO);
 
-        foreach($arrObjMdIaClassMetaOdsDTO as $promptsFavoritos) {
-
+        foreach ($promptsFavoritos as $promptFavorito) {
             $objMdIaPromptsFavoritosDTO = new MdIaPromptsFavoritosDTO();
-            $objMdIaPromptsFavoritosDTO->setNumIdMdIaPromptsFavoritos($promptsFavoritos->getNumIdMdIaPromptsFavoritos());
-            $objMdIaPromptsFavoritosDTO->setStrPrompt($promptsFavoritos->getStrPergunta());
+            $objMdIaPromptsFavoritosDTO->setNumIdMdIaPromptsFavoritos($promptFavorito['id_md_ia_prompts_favoritos']);
+            $objMdIaPromptsFavoritosDTO->setStrPrompt($promptFavorito['pergunta']);
             $objMdIaPromptsFavoritosRN->alterar($objMdIaPromptsFavoritosDTO);
         }
+        $objInfraMetaBD->excluirIndice('md_ia_prompts_favoritos', 'fk1_md_ia_prompts_favoritos');
         $objInfraMetaBD->excluirChaveEstrangeira('md_ia_prompts_favoritos', 'fk1_md_ia_prompts_favoritos');
         $objInfraMetaBD->excluirColuna('md_ia_prompts_favoritos', 'id_md_ia_interacao_chat');
 

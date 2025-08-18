@@ -7,10 +7,10 @@ class MdIaAtualizadorSipRN extends InfraRN
     const PARAMETRO_VERSAO_MODULO = 'VERSAO_MODULO_IA';
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '1.0.0';
+    private $versaoAtualDesteModulo = '1.2.0';
     private $nomeDesteModulo = 'MÓDULO DO IA';
     private $nomeParametroModulo = 'VERSAO_MODULO_IA';
-    private $historicoVersoes = array('1.0.0', '1.1.0');
+    private $historicoVersoes = array('1.0.0', '1.1.0', '1.2.0');
 
     public function __construct()
     {
@@ -107,7 +107,6 @@ class MdIaAtualizadorSipRN extends InfraRN
                     $this->instalarv100();
                 case '1.0.0':
                     $this->instalarv110();
-                    break;
                 case '1.1.0':
                     $this->instalarv120();
                     break;
