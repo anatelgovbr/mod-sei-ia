@@ -1616,8 +1616,8 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
             $objMdIaPromptsFavoritosDTO->setStrPrompt($promptFavorito['pergunta']);
             $objMdIaPromptsFavoritosRN->alterar($objMdIaPromptsFavoritosDTO);
         }
-        $objInfraMetaBD->excluirIndice('md_ia_prompts_favoritos', 'fk1_md_ia_prompts_favoritos');
         $objInfraMetaBD->excluirChaveEstrangeira('md_ia_prompts_favoritos', 'fk1_md_ia_prompts_favoritos');
+        $objInfraMetaBD->excluirIndice('md_ia_prompts_favoritos', 'fk1_md_ia_prompts_favoritos');
         $objInfraMetaBD->excluirColuna('md_ia_prompts_favoritos', 'id_md_ia_interacao_chat');
 
         $this->atualizarNumeroVersao($nmVersao);
