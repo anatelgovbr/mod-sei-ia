@@ -140,7 +140,7 @@ class MdIaGrupoGaleriaPromptRN extends InfraRN
     protected function consultarConectado(MdIaGrupoGaleriaPromptDTO $objMdIaGrupoGaleriaPromptDTO): ?MdIaGrupoGaleriaPromptDTO
     {
         try {
-            SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_grupos_galeria_prompts', __METHOD__, $objMdIaGrupoGaleriaPromptDTO);
+            SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_config_assist_ia_consultar', __METHOD__, $objMdIaGrupoGaleriaPromptDTO);
 
             //Regras de Negocio
             //$objInfraException = new InfraException();
@@ -162,7 +162,7 @@ class MdIaGrupoGaleriaPromptRN extends InfraRN
     protected function listarConectado(MdIaGrupoGaleriaPromptDTO $objMdIaGrupoGaleriaPromptDTO): array
     {
         try {
-            SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_grupos_galeria_prompts', __METHOD__, $objMdIaGrupoGaleriaPromptDTO);
+            SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_config_assist_ia_consultar', __METHOD__, $objMdIaGrupoGaleriaPromptDTO);
 
             //Regras de Negocio
             //$objInfraException = new InfraException();
