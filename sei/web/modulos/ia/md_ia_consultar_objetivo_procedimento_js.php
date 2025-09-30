@@ -288,17 +288,26 @@
             dataType: "json",
             data: input,
             success: function(resultado) {
+                //Todo: Verificar se possui quente marcada para mostrar ou não checkbox
                 if (window.top.document.getElementById("ifrVisualizacao") != null) {
                     var telaOdsOnu = window.top.document.getElementById("ifrVisualizacao").contentWindow.document.getElementById('telaOdsOnu');
                     window.top.document.getElementById("ifrVisualizacao").contentWindow.document.getElementById('btn-checkbox').checked = input["filtrar_forte_relacao"];
+                    var filtroNsa = window.top.document.getElementById("ifrVisualizacao").contentWindow.document.getElementById('filtroNsa');
                 } else if (window.top.document.getElementById("ifrConteudoVisualizacao") != null) {
                     var telaOdsOnu = window.top.document.getElementById('ifrConteudoVisualizacao').contentWindow.document.getElementById('ifrVisualizacao').contentWindow.document.getElementById('telaOdsOnu');
                     window.top.document.getElementById('ifrConteudoVisualizacao').contentWindow.document.getElementById('ifrVisualizacao').contentWindow.document.getElementById('btn-checkbox').checked = input["filtrar_forte_relacao"];
+                    var filtroNsa = window.top.document.getElementById('ifrConteudoVisualizacao').contentWindow.document.getElementById('ifrVisualizacao').contentWindow.document.getElementById('filtroNsa');
                 } else {
                     var telaOdsOnu = window.top.document.getElementById("telaOdsOnu");
                     window.top.document.getElementById('btn-checkbox').checked = input["filtrar_forte_relacao"];
+                    var filtroNsa = window.top.document.getElementById('filtroNsa');
                 }
-                $(telaOdsOnu).html(resultado);
+                $(telaOdsOnu).html(resultado["resultado"]);
+                if (resultado["possuiClassificacaoQuente"] == true) {
+                    filtroNsa.style.setProperty('display', 'none', 'important');
+                } else {
+                    filtroNsa.style.setProperty('display', 'flex', 'important');
+                }
                 fecharModal();
             },
             error: function(err) {
@@ -312,12 +321,13 @@
         return checkbox.checked;
     }
 
-    function atualizarListaObjetivos(obj){
+
+    function atualizarListaObjetivos(obj) {
         var trMetas = document.querySelectorAll("#tabela_ordenada > tbody > tr");
         if (obj.checked) {
             var arrIds = document.getElementById("arr-metas-forte-relacao").value.split(',');
             trMetas.forEach(function(tr) {
-                if(tr.id && !arrIds.includes(tr.id)){
+                if (tr.id && !arrIds.includes(tr.id)) {
                     tr.style.display = "none";
                 }
             });

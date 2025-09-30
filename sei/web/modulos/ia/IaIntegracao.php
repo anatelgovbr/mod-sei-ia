@@ -14,7 +14,7 @@ class IaIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '1.2.0';
+        return '1.3.0';
     }
 
     public function getInstituicao()
@@ -168,7 +168,7 @@ class IaIntegracao extends SeiIntegracao
     private function sugeridoPorUsuarioExtIntArtificial($idProcedimento)
     {
         $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
-        $objMdIaClassMetaOdsDTO->setNumIdProcedimento($idProcedimento);
+        $objMdIaClassMetaOdsDTO->setDblIdProcedimento($idProcedimento);
         $objMdIaClassMetaOdsDTO->setStrStaTipoUsuario(array(MdIaClassMetaOdsRN::$USUARIO_IA, MdIaClassMetaOdsRN::$USUARIO_EXTERNO), InfraDTO::$OPER_IN);
         $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
         $objMdIaClassMetaOdsDTO->setNumMaxRegistrosRetorno(1);
@@ -178,7 +178,7 @@ class IaIntegracao extends SeiIntegracao
     private function verificarSeJaFoiClassificadoAlgumaVez($idProcedimento)
     {
         $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
-        $objMdIaClassMetaOdsDTO->setNumIdProcedimento($idProcedimento);
+        $objMdIaClassMetaOdsDTO->setDblIdProcedimento($idProcedimento);
         $objMdIaClassMetaOdsDTO->setStrStaTipoUsuario(array(MdIaClassMetaOdsRN::$USUARIO_PADRAO, MdIaClassMetaOdsRN::$USUARIO_AGENDAMENTO), InfraDTO::$OPER_IN);
         $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
         $objMdIaClassMetaOdsDTO->setNumMaxRegistrosRetorno(1);
@@ -408,16 +408,8 @@ class IaIntegracao extends SeiIntegracao
                 break;
 
             case 'md_ia_integracao_busca_operacao_ajax':
-                if ($_POST['tipoWs'] == 'SOAP')
-                    $xml = MdIaAdmIntegracaoINT::montarOperacaoSOAP($_POST);
-                else
-                    $xml = MdIaAdmIntegracaoINT::montarOperacaoREST($_POST);
+                $xml = MdIaAdmIntegracaoINT::montarOperacaoREST($_POST);
                 break;
-
-            case 'md_ia_pesquisa_documentos_ajax':
-                $json = MdIaRecursoINT::retornaUrlModalPesquisaDocumentos($_POST);
-                InfraAjax::enviarJSON($json);
-                exit(0);
 
             case 'md_ia_pesquisa_documentos_api_ajax':
                 $json = MdIaRecursoINT::consultaPesquisaDocumento($_POST);
@@ -437,11 +429,6 @@ class IaIntegracao extends SeiIntegracao
             case 'md_ia_tipo_procedimento_auto_completar':
                 $arrObjTipoProcedimentoDTO = MdIaAdmObjetivoOdsINT::autoCompletarTipoProcedimento($_POST['palavras_pesquisa']);
                 $xml                       = InfraAjax::gerarXMLItensArrInfraDTO($arrObjTipoProcedimentoDTO, 'IdTipoProcedimento', 'Nome');
-                break;
-
-            case 'md_ia_adm_doc_relev_aplicabilidade_ajax':
-                $objetoSerie = MdIaAdmDocRelevINT::retornaSelectAplicabilidadeCadastrada($_POST);
-                $xml = InfraAjax::gerarXMLSelect($objetoSerie);
                 break;
 
             case 'md_ia_documento_relevante_validar_reativacao_ajax':
@@ -497,7 +484,18 @@ class IaIntegracao extends SeiIntegracao
                 exit(0);
 
             case 'md_ia_assistente_envia_mensagem_ajax':
-                $json = MdIaConfigAssistenteINT::enviarMensagemAssistenteIa($_POST);
+                // lê corpo raw e tenta decodificar JSON
+                $raw = file_get_contents('php://input');
+                $input = json_decode($raw, true);
+
+                if (is_array($input) && isset($input['mensagemUsuario'])) {
+                    $mensagemUsuario = $input['mensagemUsuario']; // o array que você enviou do JS
+                } else {
+                    // fallback para compatibilidade com envio form-urlencoded
+                    $mensagemUsuario = $_POST;
+                }
+
+                $json = MdIaConfigAssistenteINT::enviarMensagemAssistenteIa($mensagemUsuario);
                 InfraAjax::enviarJSON($json);
                 exit(0);
 
@@ -518,7 +516,18 @@ class IaIntegracao extends SeiIntegracao
                 exit(0);
 
             case 'md_ia_consulta_protocolo_assistente_ia_ajax':
-                $json = MdIaConfigAssistenteINT::consultaProtocolo($_POST);
+                // lê corpo raw e tenta decodificar JSON
+                $raw = file_get_contents('php://input');
+                $input = json_decode($raw, true);
+
+                if (is_array($input) && isset($input['protocolo'])) {
+                    $protocolo = $input['protocolo']; // o array que você enviou do JS
+                } else {
+                    // fallback para compatibilidade com envio form-urlencoded
+                    $protocolo = $_POST;
+                }
+
+                $json = MdIaConfigAssistenteINT::consultaProtocolo($protocolo);
                 InfraAjax::enviarJSON(json_encode($json));
                 exit(0);
 
@@ -534,11 +543,6 @@ class IaIntegracao extends SeiIntegracao
 
             case 'md_ia_consultar_mensagem_ajax':
                 $json = MdIaConfigAssistenteINT::consultarMensagem($_POST);
-                InfraAjax::enviarJSON(json_encode($json));
-                exit(0);
-
-            case 'md_ia_adicionar_topico_ajax':
-                $json = MdIaTopicoChatINT::adicionarTopico();
                 InfraAjax::enviarJSON(json_encode($json));
                 exit(0);
 
@@ -586,9 +590,14 @@ class IaIntegracao extends SeiIntegracao
                 $json = MdIaClassMetaOdsINT::listaOdsOnu($_POST);
                 InfraAjax::enviarJSON(json_encode($json));
                 exit(0);
-                
+
             case 'md_ia_consultar_prompt_favorito_ajax':
                 $json = MdIaPromptsFavoritosINT::consultarPromptFavorito($_POST);
+                InfraAjax::enviarJSON(json_encode($json));
+                exit(0);
+
+            case 'md_ia_atualiza_nao_se_aplica_ods_onu_ajax':
+                $json = MdIaOdsOnuNsaINT::atualizaNaoSeAplicaOdsOnu($_POST);
                 InfraAjax::enviarJSON(json_encode($json));
                 exit(0);
         }
@@ -756,5 +765,26 @@ class IaIntegracao extends SeiIntegracao
         ];
 
         return $arr;
+    }
+
+    public function excluirProcesso(ProcedimentoAPI $objProcedimentoAPI)
+    {
+        $MdIaHistClassDTO = new MdIaHistClassDTO();
+        $MdIaHistClassRN = new MdIaHistClassRN();
+        $MdIaHistClassDTO->setDblIdProcedimento($objProcedimentoAPI->getIdProcedimento());
+        $MdIaHistClassDTO->retTodos();
+        $arrMdIaHistClassDTO = $MdIaHistClassRN->listar($MdIaHistClassDTO);
+        if ($arrMdIaHistClassDTO) {
+            $MdIaHistClassRN->excluir($arrMdIaHistClassDTO);
+        }
+
+        $MdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
+        $MdIaClassMetaOdsRN = new MdIaClassMetaOdsRN();
+        $MdIaClassMetaOdsDTO->setDblIdProcedimento($objProcedimentoAPI->getIdProcedimento());
+        $MdIaClassMetaOdsDTO->retTodos();
+        $arrMdIaClassMetaOdsDTO = $MdIaClassMetaOdsRN->listar($MdIaClassMetaOdsDTO);
+        if ($arrMdIaClassMetaOdsDTO) {
+            $MdIaClassMetaOdsRN->excluir($arrMdIaClassMetaOdsDTO);
+        }
     }
 }

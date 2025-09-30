@@ -35,7 +35,7 @@ class IaWS extends MdIaUtilWS
         }
     }
 
-    public function consultarOperacaoConsultarDocumento()
+    public static function consultarOperacaoConsultarDocumento()
     {
 
         $objServicoRN = new ServicoRN();
@@ -72,7 +72,7 @@ class IaWS extends MdIaUtilWS
         }
     }
 
-    private function listarAnexosDocumento($idDocumento)
+    private static function listarAnexosDocumento($idDocumento)
     {
         $objAnexoDTO = new AnexoDTO();
         $objAnexoDTO->retNumIdAnexo();
@@ -88,11 +88,11 @@ class IaWS extends MdIaUtilWS
         return $objAnexoRN->listarRN0218($objAnexoDTO);
     }
 
-    public function downloadArquivoDocumentoExterno($parametros)
+    public static function downloadArquivoDocumentoExterno($parametros)
     {
         try {
 
-            $this->consultarOperacaoConsultarDocumento();
+            self::consultarOperacaoConsultarDocumento();
 
             $objProtocoloDTO = new ProtocoloDTO();
             $objProtocoloDTO->retStrStaProtocolo();
@@ -123,7 +123,7 @@ class IaWS extends MdIaUtilWS
                         try {
                             SeiINT::download($anexo);
                         } catch (Exception $e) {
-                            return $this->retornoErro($e->getMessage(), 404);
+                            return self::retornoErro($e->getMessage(), 404);
                         }
                     } elseif (count($arrObjAnexoDTO) > 1) {
                         // Lógica para múltiplos anexos
@@ -138,7 +138,7 @@ class IaWS extends MdIaUtilWS
                 throw new Exception('Documento não encontrado.', 404);
             }
         } catch (Exception $e) {
-            return $this->retornoErro($e->getMessage(), $e->getCode());
+            return self::retornoErro($e->getMessage(), $e->getCode());
         }
     }
 
@@ -206,7 +206,7 @@ class IaWS extends MdIaUtilWS
                     'DataInclusao'            => $documentoDTO->getDtaInclusaoProtocolo(),
                     'NomeTipoDocumento'       => $this->tratarEncodeString($documentoDTO->getStrNomeSerie()),
                     'StaTipoDocumento'        => $documentoDTO->getStrStaDocumento(),
-                    'NomeArquivo'             => $this->tratarEncodeString($nomeArquivoAnexo),
+                    'NomeArquivo'             => $nomeArquivoAnexo,
                     'NumeroProcesso'          => $documentoDTO->getStrProtocoloProcedimentoFormatado(),
                     'IdDocumento'             => (int) $documentoDTO->getDblIdDocumento()
                 ];
@@ -221,11 +221,11 @@ class IaWS extends MdIaUtilWS
         }
     }
 
-    public function consultarProcesso($parametros)
+    public static function consultarProcesso($parametros)
     {
         try {
 
-            $this->consultarOperacaoConsultarDocumento();
+            self::consultarOperacaoConsultarDocumento();
 
             $arrIdProcessos = array_map('intval', array_map('trim', explode(',', $parametros['IdProcedimentos'])));
 
@@ -249,16 +249,16 @@ class IaWS extends MdIaUtilWS
             foreach ($arrprotocoloDTO as $protocoloDTO) {
                 $retorno[] = [
                     'NumeroProcesso'                => $protocoloDTO->getStrProtocoloFormatado(),
-                    'EspecificacaoProcesso'             => $this->tratarEncodeString($protocoloDTO->getStrDescricao()),
+                    'EspecificacaoProcesso'             => self::tratarEncodeString($protocoloDTO->getStrDescricao()),
                     'IdTipoProcesso'                    => $protocoloDTO->getNumIdTipoProcedimentoProcedimento(),
-                    'TipoProcesso'                      => $this->tratarEncodeString($protocoloDTO->getStrNomeTipoProcedimentoProcedimento()),
+                    'TipoProcesso'                      => self::tratarEncodeString($protocoloDTO->getStrNomeTipoProcedimentoProcedimento()),
                     'IdUnidadeGeradoraProcesso'         => $protocoloDTO->getNumIdUnidadeGeradora(),
-                    'SiglaUnidadeGeradoraProcesso'      => $this->tratarEncodeString($protocoloDTO->getStrSiglaUnidadeGeradora()),
-                    'DescricaoUnidadeGeradoraProcesso'  => $this->tratarEncodeString($protocoloDTO->getStrDescricaoUnidadeGeradora()),
-                    'ProcessosFilhoRelacionado'         => $this->buscarProcessoFilho($protocoloDTO->getDblIdProtocolo()),
-                    'ProcessosPaiRelacionado'           => $this->buscarProcessoPai($protocoloDTO->getDblIdProtocolo()),
-                    'IdProcessosAnexados'               => $this->buscarProcessoAnexado($protocoloDTO->getDblIdProtocolo()),
-                    'Interessados'                      => $this->buscarInteressadosPorProcedimento($protocoloDTO->getDblIdProtocolo()),
+                    'SiglaUnidadeGeradoraProcesso'      => self::tratarEncodeString($protocoloDTO->getStrSiglaUnidadeGeradora()),
+                    'DescricaoUnidadeGeradoraProcesso'  => self::tratarEncodeString($protocoloDTO->getStrDescricaoUnidadeGeradora()),
+                    'ProcessosFilhoRelacionado'         => self::buscarProcessoFilho($protocoloDTO->getDblIdProtocolo()),
+                    'ProcessosPaiRelacionado'           => self::buscarProcessoPai($protocoloDTO->getDblIdProtocolo()),
+                    'IdProcessosAnexados'               => self::buscarProcessoAnexado($protocoloDTO->getDblIdProtocolo()),
+                    'Interessados'                      => self::buscarInteressadosPorProcedimento($protocoloDTO->getDblIdProtocolo()),
                     'IdProcedimento'             => (int) $protocoloDTO->getDblIdProtocolo()
                 ];
             }
@@ -268,15 +268,15 @@ class IaWS extends MdIaUtilWS
                 'data' => $retorno
             ];
         } catch (Exception $e) {
-            return $this->retornoErro($e->getMessage(), $e->getCode());
+            return self::retornoErro($e->getMessage(), $e->getCode());
         }
     }
 
-    public function gerarHashConteudoDocumento($parametros)
+    public static function gerarHashConteudoDocumento($parametros)
     {
         try {
 
-            $this->consultarOperacaoConsultarDocumento();
+            self::consultarOperacaoConsultarDocumento();
 
             if (!$parametros['IdDocumento']) {
                 throw new Exception('IdDocumento é um parametro obrigatório.');
@@ -312,9 +312,9 @@ class IaWS extends MdIaUtilWS
                         $objAnexoDTO->retStrHash();
                         $objAnexoDTO->setDblIdProtocolo($documentoDTO->getDblIdDocumento());
                         $objAnexoDTO = (new AnexoRN())->consultarRN0736($objAnexoDTO);
-                        $hashDocumentoExterno = $this->tratarEncodeString($objAnexoDTO->getStrHash());
+                        $hashDocumentoExterno = self::tratarEncodeString($objAnexoDTO->getStrHash());
                     } else {
-                        $dthMaxAtualizacaoDocumento = $this->buscarDthMaxAtualizacaoDocumento($documentoDTO->getDblIdDocumento());
+                        $dthMaxAtualizacaoDocumento = self::buscarDthMaxAtualizacaoDocumento($documentoDTO->getDblIdDocumento());
                     }
 
                     $hashContent = md5(
@@ -335,11 +335,11 @@ class IaWS extends MdIaUtilWS
                 'data' => $retorno
             ];
         } catch (Exception $e) {
-            return $this->retornoErro($e->getMessage(), $e->getCode());
+            return self::retornoErro($e->getMessage(), $e->getCode());
         }
     }
 
-    public function listarTipoDocumento()
+    public static function listarTipoDocumento()
     {
         try {
             $SerieDTO = new SerieDTO();
@@ -358,7 +358,7 @@ class IaWS extends MdIaUtilWS
             foreach ($arrSerieDTO as $SerieDTO) {
                 $retorno[] = [
                     'IdTipoDocumento' => (int) $SerieDTO->getNumIdSerie(),
-                    'TipoDocumento' => $this->tratarEncodeString($SerieDTO->getStrNome())
+                    'TipoDocumento' => self::tratarEncodeString($SerieDTO->getStrNome())
                 ];
             }
 
@@ -367,15 +367,15 @@ class IaWS extends MdIaUtilWS
                 'data' => $retorno
             ];
         } catch (Exception $e) {
-            return $this->retornoErro($e->getMessage(), $e->getCode());
+            return self::retornoErro($e->getMessage(), $e->getCode());
         }
     }
 
-    public function listarSegmentosDocRelevantes()
+    public static function listarSegmentosDocRelevantes()
     {
         try {
 
-            $this->consultarOperacaoConsultarDocumento();
+            self::consultarOperacaoConsultarDocumento();
 
             $MdIaAdmSegDocRelevDTO = new MdIaAdmSegDocRelevDTO();
             $MdIaAdmSegDocRelevDTO->retNumIdMdIaAdmDocRelev();
@@ -383,10 +383,10 @@ class IaWS extends MdIaUtilWS
             $MdIaAdmSegDocRelevDTO->retNumPercentualRelevancia();
             $MdIaAdmSegDocRelevDTO->retNumIdSerie();
 
-            $arrMdIaAdmSegDocRelevDTO = $this->listaSegDocumentosRelevantes();
+            $arrMdIaAdmSegDocRelevDTO = self::listaSegDocumentosRelevantes();
 
             if (empty($arrMdIaAdmSegDocRelevDTO)) {
-                return $this->retornoErro('Nenhum segmento de documento relevante encontrado.', 404, false);
+                return self::retornoErro('Nenhum segmento de documento relevante encontrado.', 404, false);
             }
 
             $retorno = [];
@@ -404,11 +404,11 @@ class IaWS extends MdIaUtilWS
                 'data' => $retorno
             ];
         } catch (Exception $e) {
-            return $this->retornoErro($e->getMessage(), $e->getCode());
+            return self::retornoErro($e->getMessage(), $e->getCode());
         }
     }
 
-    public function listarPercentualRelevanciaMetadados()
+    public static function listarPercentualRelevanciaMetadados()
     {
         try {
 
@@ -425,7 +425,7 @@ class IaWS extends MdIaUtilWS
             $retorno = [];
             foreach ($arrMdIaAdmSegDocRelevDTO as $MdIaAdmSegDocRelevDTO) {
                 $retorno[] = [
-                    'Metadado'   => $this->tratarEncodeString($MdIaAdmSegDocRelevDTO->getStrMetadado()),
+                    'Metadado'   => self::tratarEncodeString($MdIaAdmSegDocRelevDTO->getStrMetadado()),
                     'Relevancia' => (int) $MdIaAdmSegDocRelevDTO->getNumPercentualRelevancia()
                 ];
             }
@@ -435,20 +435,20 @@ class IaWS extends MdIaUtilWS
                 'data' => $retorno
             ];
         } catch (Exception $e) {
-            return $this->retornoErro($e->getMessage(), $e->getCode());
+            return self::retornoErro($e->getMessage(), $e->getCode());
         }
     }
 
-    public function consultarConteudoDocumento($parametros)
+    public static function consultarConteudoDocumento($parametros)
     {
         try {
 
-            $this->consultarOperacaoConsultarDocumento();
+            self::consultarOperacaoConsultarDocumento();
 
-            $retorno = $this->retornarConteudoDocumentoInterno($parametros['IdDocumento']);
+            $retorno = self::retornarConteudoDocumentoInterno($parametros['IdDocumento']);
 
             if (!$retorno) {
-                $retorno = $this->montarRetornoConteudoDocumentoExterno($parametros['IdDocumento']);
+                $retorno = self::montarRetornoConteudoDocumentoExterno($parametros['IdDocumento']);
             }
 
             return [
@@ -456,7 +456,7 @@ class IaWS extends MdIaUtilWS
                 'data' => $retorno
             ];
         } catch (Exception $e) {
-            return $this->retornoErro($e->getMessage(), $e->getCode());
+            return self::retornoErro($e->getMessage(), $e->getCode());
         }
     }
 
@@ -515,7 +515,7 @@ class IaWS extends MdIaUtilWS
         }
     }
 
-    public function listarDocumentosRelevantesProcesso($params)
+    public static function listarDocumentosRelevantesProcesso($params)
     {
 
         try {
@@ -538,7 +538,7 @@ class IaWS extends MdIaUtilWS
             $arrObjDocumentoDTO = (new MdIaDocumentoRN())->listar($objMdIaDocumentoDTO);
 
             foreach ($arrObjDocumentoDTO as $objDocumentoDTO) {
-                if ($this->consultarDocumentosRelevante($objDocumentoDTO)) {
+                if (self::consultarDocumentosRelevante($objDocumentoDTO)) {
                     if ($objDocumentoDTO->getStrStaDocumento() == DocumentoRN::$TD_EXTERNO) {
                         $extensaoAnexo = end(explode('.', $objDocumentoDTO->getStrNomeAnexo()));
                         if (in_array($extensaoAnexo, $arrExtensoesPermitidas)) {
@@ -550,16 +550,12 @@ class IaWS extends MdIaUtilWS
                 }
             }
 
-            if (empty($arrIdDocumento)) {
-                throw new Exception('Nenhum Documento encontrado.', 404);
-            }
-
             return [
                 'status' => 'success',
                 'data' => $arrIdDocumento
             ];
         } catch (Exception $e) {
-            return $this->retornoErro($e->getMessage(), $e->getCode());
+            return self::retornoErro($e->getMessage(), $e->getCode());
         }
     }
 
@@ -812,7 +808,7 @@ class IaWS extends MdIaUtilWS
         }
     }
 
-    private function retornarConteudoDocumentoInterno($idDocumento)
+    private static function retornarConteudoDocumentoInterno($idDocumento)
     {
         $retorno = null;
 
@@ -839,7 +835,7 @@ class IaWS extends MdIaUtilWS
             }
             $retorno = [
                 'TipoConteudo'  => "text/html",
-                'ConteudoDocumento'     => $this->tratarEncodeString($conteudoDocumento),
+                'ConteudoDocumento'     => self::tratarEncodeString($conteudoDocumento),
                 'IdAnexos' => $IdAnexos
             ];
         }
@@ -847,17 +843,17 @@ class IaWS extends MdIaUtilWS
         return $retorno;
     }
 
-    private function montarRetornoConteudoDocumentoExterno($idDocumento)
+    private static function montarRetornoConteudoDocumentoExterno($idDocumento)
     {
-        $documento = $this->consultarConteudoDocumentoSolr($idDocumento);
+        $documento = self::consultarConteudoDocumentoSolr($idDocumento);
 
         return [
-            'TipoConteudo'  => $this->tratarEncodeString($documento->arr[0]->str[0]),
-            'ConteudoDocumento'     => $this->tratarEncodeString(mb_convert_encoding($documento->arr[1]->str[0], 'ISO-8859-1', 'UTF-8')),
+            'TipoConteudo'  => self::tratarEncodeString($documento->arr[0]->str[0]),
+            'ConteudoDocumento'     => self::tratarEncodeString(mb_convert_encoding($documento->arr[1]->str[0], 'ISO-8859-1', 'UTF-8')),
         ];
     }
 
-    private function listaSegDocumentosRelevantes()
+    private static function listaSegDocumentosRelevantes()
     {
         $MdIaAdmSegDocRelevDTO = new MdIaAdmSegDocRelevDTO();
         $MdIaAdmSegDocRelevDTO->retNumIdMdIaAdmDocRelev();
@@ -868,7 +864,7 @@ class IaWS extends MdIaUtilWS
         return (new MdIaAdmSegDocRelevRN())->listar($MdIaAdmSegDocRelevDTO);
     }
 
-    private function consultarDocumentosRelevante($documentoDTO)
+    private static function consultarDocumentosRelevante($documentoDTO)
     {
         $retorno = false;
 
@@ -892,7 +888,7 @@ class IaWS extends MdIaUtilWS
         return $retorno;
     }
 
-    private function buscarProcessoFilho($idProtocolo)
+    private static function buscarProcessoFilho($idProtocolo)
     {
         $protocoloProtocoloRN = new RelProtocoloProtocoloRN();
         $relProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
@@ -901,10 +897,10 @@ class IaWS extends MdIaUtilWS
         $relProtocoloProtocoloDTO->retDblIdProtocolo1();
         $arrRelProtocoloProtocoloDTO = $protocoloProtocoloRN->listarRN0187($relProtocoloProtocoloDTO);
 
-        return $this->buscarDadosProcessoRelacionado(InfraArray::converterArrInfraDTO($arrRelProtocoloProtocoloDTO, 'IdProtocolo1'));
+        return self::buscarDadosProcessoRelacionado(InfraArray::converterArrInfraDTO($arrRelProtocoloProtocoloDTO, 'IdProtocolo1'));
     }
 
-    private function buscarProcessoPai($idProtocolo)
+    private static function buscarProcessoPai($idProtocolo)
     {
         $protocoloProtocoloRN = new RelProtocoloProtocoloRN();
         $relProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
@@ -913,10 +909,10 @@ class IaWS extends MdIaUtilWS
         $relProtocoloProtocoloDTO->retDblIdProtocolo2();
         $arrRelProtocoloProtocoloDTO = $protocoloProtocoloRN->listarRN0187($relProtocoloProtocoloDTO);
 
-        return $this->buscarDadosProcessoRelacionado(InfraArray::converterArrInfraDTO($arrRelProtocoloProtocoloDTO, 'IdProtocolo2'));
+        return self::buscarDadosProcessoRelacionado(InfraArray::converterArrInfraDTO($arrRelProtocoloProtocoloDTO, 'IdProtocolo2'));
     }
 
-    private function buscarProcessoAnexado($idProtocolo)
+    private static function buscarProcessoAnexado($idProtocolo)
     {
         $protocoloProtocoloRN = new RelProtocoloProtocoloRN();
         $relProtocoloProtocoloDTO = new RelProtocoloProtocoloDTO();
@@ -928,7 +924,7 @@ class IaWS extends MdIaUtilWS
         return InfraArray::converterArrInfraDTO($arrRelProtocoloProtocoloDTO, 'IdProtocolo2');
     }
 
-    private function buscarInteressadosPorProcedimento($idProtocolo)
+    private static function buscarInteressadosPorProcedimento($idProtocolo)
     {
         $objParticipanteDTO = new ParticipanteDTO();
         $objParticipanteDTO->retNumIdContato();
@@ -941,15 +937,15 @@ class IaWS extends MdIaUtilWS
         $retorno = [];
         foreach ($arrObjParticipanteDTO as $objParticipanteDTO) {
             $retorno[] = [
-                'IdInteressado' => (int) $this->tratarEncodeString($objParticipanteDTO->getNumIdContato()),
-                'NomeInteressado'      => $this->tratarEncodeString($objParticipanteDTO->getStrNomeContato())
+                'IdInteressado' => (int) self::tratarEncodeString($objParticipanteDTO->getNumIdContato()),
+                'NomeInteressado'      => self::tratarEncodeString($objParticipanteDTO->getStrNomeContato())
             ];
         }
 
         return $retorno;
     }
 
-    private function buscarDadosProcessoRelacionado($arrIdProtocolo)
+    private static function buscarDadosProcessoRelacionado($arrIdProtocolo)
     {
         if (empty($arrIdProtocolo)) {
             return null;
@@ -968,8 +964,8 @@ class IaWS extends MdIaUtilWS
 
         foreach ($arrProtocoloDTO as $protocoloDTO) {
             $retorno[] = [
-                'SiglaUnidadeGeradoraProcesso' => $this->tratarEncodeString($protocoloDTO->getStrSiglaUnidadeGeradora()),
-                'Especificacao'                => $this->tratarEncodeString($protocoloDTO->getStrDescricao())
+                'SiglaUnidadeGeradoraProcesso' => self::tratarEncodeString($protocoloDTO->getStrSiglaUnidadeGeradora()),
+                'Especificacao'                => self::tratarEncodeString($protocoloDTO->getStrDescricao())
             ];
         }
 
@@ -1063,10 +1059,10 @@ class IaWS extends MdIaUtilWS
         return array("registros" => $registros, "quantidadeRegistrosTotal" => $quantidadeRegistrosTotal);
     }
 
-    public function retornoErro($msg, $codigoErro, $log = true)
+    public static function retornoErro($msg, $codigoErro, $log = true)
     {
         if ($log) {
-            $this->gravarLogSei($msg, $codigoErro);
+            self::gravarLogSei($msg, $codigoErro);
         }
         $erroMensagem = mb_convert_encoding($msg, 'UTF-8', 'ISO-8859-1');
         header('Content-Type: text/html; charset=utf-8');
@@ -1077,12 +1073,12 @@ class IaWS extends MdIaUtilWS
         ];
     }
 
-    private function tratarEncodeString($string)
+    private static function tratarEncodeString($string)
     {
         return mb_convert_encoding($string, 'UTF-8', 'ISO-8859-1');
     }
 
-    private function consultarConteudoDocumentoSolr($idDocumento)
+    private static function consultarConteudoDocumentoSolr($idDocumento)
     {
 
         $queryParams = [];
@@ -1098,8 +1094,7 @@ class IaWS extends MdIaUtilWS
         $parametros->q = $queryString;
         $parametros->start = 0;
         $parametros->rows = 1;
-
-        $urlBusca = ConfiguracaoSEI::getInstance()->getValor('Solr', 'Servidor') . '/' . ConfiguracaoSEI::getInstance()->getValor('Solr', 'CoreProtocolos') . '/select?' . http_build_query($parametros) . '&hl=true&hl.snippets=2&hl.fl=content&hl.fragsize=100&hl.maxAnalyzedChars=1048576&hl.alternateField=content&hl.maxAlternateFieldLength=100&fl=id_proc,content,content_type';
+        $urlBusca = self::obterUrlSolAuth() . '/' . ConfiguracaoSEI::getInstance()->getValor('Solr', 'CoreProtocolos') . '/select?' . http_build_query($parametros) . '&hl=true&hl.snippets=2&hl.fl=content&hl.fragsize=100&hl.maxAnalyzedChars=1048576&hl.alternateField=content&hl.maxAlternateFieldLength=100&fl=id_proc,content,content_type';
 
         // Faz a requisição HTTP ao Solr
         $resultados = file_get_contents($urlBusca);
@@ -1115,8 +1110,24 @@ class IaWS extends MdIaUtilWS
         return current($registros);
     }
 
+    public static function obterUrlSolAuth()
+    {
+        $strUrl = parse_url(ConfiguracaoSEI::getInstance()->getValor('Solr', 'Servidor'));
+        if (
+            ConfiguracaoSEI::getInstance()->isSetValor('Solr', 'Usuario') && ConfiguracaoSEI::getInstance()->getValor('Solr', 'Usuario') != null
+            &&
+            ConfiguracaoSEI::getInstance()->isSetValor('Solr', 'Senha') && ConfiguracaoSEI::getInstance()->getValor('Solr', 'Senha') != null
+        ) {
+            return $strUrl['scheme'] . '://' . ConfiguracaoSEI::getInstance()->getValor('Solr', 'Usuario') . ':' . ConfiguracaoSEI::getInstance()->getValor(
+                'Solr',
+                'Senha'
+            ) . '@' . $strUrl['host'] . (isset($strUrl['port']) ? ':' . $strUrl['port'] : '') . (isset($strUrl['path']) ? $strUrl['path'] : '');
+        } else {
+            return $strUrl['scheme'] . '://' . $strUrl['host'] . (isset($strUrl['port']) ? ':' . $strUrl['port'] : '') . (isset($strUrl['path']) ? $strUrl['path'] : '');
+        }
+    }
 
-    private function gravarLogSei($mensagem, $codigoErro)
+    private static function gravarLogSei($mensagem, $codigoErro)
     {
         $log = "00001 - ERRO DE RECURSO NA API DO SEI IA \n";
         $log .= "00002 - PARAMETROS DA OPERAÇÃO: \n";

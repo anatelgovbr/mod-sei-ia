@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -11,7 +12,7 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdIaAdmMetaOdsINT extends InfraINT
 {
-    public function salvarConfiguracaoMetas($dados)
+    public static function salvarConfiguracaoMetas($dados)
     {
         $metasForteRelacaoSelecionadas = explode(",", $dados["hdnInfraItensSelecionados"]);
 
@@ -22,7 +23,7 @@ class MdIaAdmMetaOdsINT extends InfraINT
         $objMdIaAdmMetaOdsDTO->retStrSinForteRelacao();
         $arrObjMdIaAdmMetaOdsDTO = $objMdIaAdmMetaOdsRN->listar($objMdIaAdmMetaOdsDTO);
 
-        foreach ($arrObjMdIaAdmMetaOdsDTO as $objMdIaAdmMetaOdsDTO){
+        foreach ($arrObjMdIaAdmMetaOdsDTO as $objMdIaAdmMetaOdsDTO) {
             MdIaAdmClassAutTpINT::apagarListaTipoProcessoMeta($objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmMetaOds());
             $objMdIaAdmMetaOdsDTO->setStrSinForteRelacao('N');
             if (in_array($objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmMetaOds(), $metasForteRelacaoSelecionadas)) {

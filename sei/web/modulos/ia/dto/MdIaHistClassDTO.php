@@ -38,7 +38,7 @@ class MdIaHistClassDTO extends InfraDTO
 
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'StaTipoUsuario', 'sta_tipo_usuario');
 
-        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdProcedimento', 'id_procedimento');
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DBL, 'IdProcedimento', 'id_procedimento');
 
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdMdIaHistClassSugest', 'id_md_ia_hist_class_sugest');
 

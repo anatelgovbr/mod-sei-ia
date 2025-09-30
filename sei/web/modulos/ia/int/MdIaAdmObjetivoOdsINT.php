@@ -11,7 +11,7 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdIaAdmObjetivoOdsINT extends InfraINT
 {
-	public function consultarObjetivoProcedimento($dados)
+	public static function consultarObjetivoProcedimento($dados)
 	{
 
 		$teveAlgumaSugestaoIa = "N";
@@ -54,7 +54,7 @@ class MdIaAdmObjetivoOdsINT extends InfraINT
 
 			$objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
 			$objMdIaClassMetaOdsDTO->setNumIdMdIaAdmMetaOds($objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmMetaOds());
-			$objMdIaClassMetaOdsDTO->setNumIdProcedimento($dados["idProcedimento"]);
+			$objMdIaClassMetaOdsDTO->setDblIdProcedimento($dados["idProcedimento"]);
 			$objMdIaClassMetaOdsDTO->retStrStaTipoUsuario();
 			$objMdIaClassMetaOdsDTO->retNumIdMdIaAdmMetaOds();
 			$objMdIaClassMetaOdsDTO->retStrRacional();
@@ -108,7 +108,7 @@ class MdIaAdmObjetivoOdsINT extends InfraINT
 		return mb_convert_encoding($html, 'UTF-8', 'ISO-8859-1');
 	}
 
-	private function forteRelacao($filtrarForteRelacao, $metaForteRelacao)
+	private static function forteRelacao($filtrarForteRelacao, $metaForteRelacao)
 	{
 		$hidenForteRelacao = '';
 		if ($filtrarForteRelacao) {
@@ -117,7 +117,7 @@ class MdIaAdmObjetivoOdsINT extends InfraINT
 		return $hidenForteRelacao;
 	}
 
-	private function montarHTMLCabecalho($objMdIaAdmObjetivoOdsDTO)
+	private static function montarHTMLCabecalho($objMdIaAdmObjetivoOdsDTO)
 	{
 
 		$html = "";
@@ -151,7 +151,7 @@ class MdIaAdmObjetivoOdsINT extends InfraINT
 		return $html;
 	}
 
-	private function montarHTMLTopoTabela($dados)
+	private static function montarHTMLTopoTabela($dados)
 	{
 		$txtAjuda = "Ao realizar a classificação ou desclassificação de qualquer Meta é obrigatório o preenchimento do campo Racional. Ao realizar a Confirmação ou Não Confirmação de sugestão do SEI IA também é obrigatório o preenchimento do campo Racional.
   
@@ -179,7 +179,7 @@ A classificação por especialistas com preenchimento obrigatório de Racional �
 		return $html;
 	}
 
-	private function montarTdCheckbox($i, $objMdIaAdmMetaOdsDTO, $itemMarcadoAvaliacao)
+	private static function montarTdCheckbox($i, $objMdIaAdmMetaOdsDTO, $itemMarcadoAvaliacao)
 	{
 		$html = '';
 		$html .= "<td valign='top' style='vertical-align: middle;'>
@@ -188,7 +188,7 @@ A classificação por especialistas com preenchimento obrigatório de Racional �
 		return $html;
 	}
 
-	private function montarTdIdentificacao($itemSugerido, $i, $objMdIaAdmMetaOdsDTO)
+	private static function montarTdIdentificacao($itemSugerido, $i, $objMdIaAdmMetaOdsDTO)
 	{
 		$txtAjudaIa = 'A classificação desta Meta é apenas uma sugestão realizada pela Inteligência Artificial do SEI. Não é, ainda, uma classificação efetiva nessa Meta.
 
@@ -236,7 +236,7 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		}
 	}
 
-	private function montarTdDescricao($objMdIaAdmMetaOdsDTO)
+	private static function montarTdDescricao($objMdIaAdmMetaOdsDTO)
 	{
 		$html = "";
 		$html .= "<td>" . $objMdIaAdmMetaOdsDTO->getStrDescricaoMeta() . "</td>";
@@ -244,7 +244,7 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		return $html;
 	}
 
-	private function montarTdRacional($sugestaoIa, $i, $disabled, $txtRacional)
+	private static function montarTdRacional($sugestaoIa, $i, $disabled, $txtRacional)
 	{
 		$html = "";
 		if (self::avaliacaoEspecializada()) {
@@ -267,7 +267,7 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		return $html;
 	}
 
-	private function montarHTMLRodapeTabla($numRegistros, $dados, $teveAlgumaSugestaoIa, $arrayItensMarcados, $itensSugeridos)
+	private static  function montarHTMLRodapeTabla($numRegistros, $dados, $teveAlgumaSugestaoIa, $arrayItensMarcados, $itensSugeridos)
 	{
 		$html = "
                     </tbody>
@@ -286,10 +286,10 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		return $html;
 	}
 
-	public function consultarHistObjetivo($dados)
+	public static function consultarHistObjetivo($dados)
 	{
 		$objMdIaHistClassDTO = new MdIaHistClassDTO();
-		$objMdIaHistClassDTO->setNumIdProcedimento($dados["idProcedimento"]);
+		$objMdIaHistClassDTO->setDblIdProcedimento($dados["idProcedimento"]);
 		$objMdIaHistClassDTO->setNumIdMdIaAdmObjetivoOds($dados["idObjetivo"]);
 		$objMdIaHistClassDTO->setOrdDthCadastro(InfraDTO::$TIPO_ORDENACAO_DESC);
 		$objMdIaHistClassDTO->retStrNomeUsuario();
@@ -365,8 +365,9 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		return $arrObjTipoProcedimentoDTO;
 	}
 
-	public function consultarObjetivo($dados)
+	public static function consultarObjetivo($dados)
 	{
+
 		$arrayItensMarcados = [];
 
 		$objMdIaAdmObjetivoOdsDTO = new MdIaAdmObjetivoOdsDTO();
@@ -389,7 +390,6 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		$arrObjMdIaAdmMetaOdsDTO = $objMdIaAdmMetaOdsRN->listar($objMdIaAdmMetaOdsDTO);
 
 		$strCaptionTabela = "Metas";
-
 
 		$descricaoObjetivo = "";
 		$descricaoObjetivo .= "<div class='col-12'>";
@@ -473,13 +473,15 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		return mb_convert_encoding($html, 'UTF-8', 'ISO-8859-1');
 	}
 
-	private function recuperarTipoProcessoClassificacaoAutomatica($IdMdIaAdmMetaOds)
+	private static function recuperarTipoProcessoClassificacaoAutomatica($IdMdIaAdmMetaOds)
 	{
 		$MdIaAdmClassAutTpDTO = new MdIaAdmClassAutTpDTO();
 		$MdIaAdmClassAutTpDTO->setNumIdMdIaAdmMetaOds($IdMdIaAdmMetaOds);
 		$MdIaAdmClassAutTpDTO->retNumIdTipoProcedimento();
 		$MdIaAdmClassAutTpDTO->retStrNomeTipoProcedimento();
 		$arrMdIaAdmClassAutTpDTO = (new MdIaAdmClassAutTpRN())->listar($MdIaAdmClassAutTpDTO);
+
+		$strItensSelTipoProcessos = "";
 
 		foreach ($arrMdIaAdmClassAutTpDTO as $MdIaAdmClassAutTpDTO) {
 			$strItensSelTipoProcessos .= "<option value='" . $MdIaAdmClassAutTpDTO->getNumIdTipoProcedimento() .  "'>" . $MdIaAdmClassAutTpDTO->getStrNomeTipoProcedimento() . "</option>";
@@ -488,7 +490,7 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		return $strItensSelTipoProcessos;
 	}
 
-	public function avaliacaoEspecializada()
+	public static function avaliacaoEspecializada()
 	{
 		$objMdIaAdmOdsOnuDTO = new MdIaAdmOdsOnuDTO();
 		$objMdIaAdmOdsOnuDTO->retStrSinExibirAvaliacao();
@@ -497,7 +499,7 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		return $objMdIaAdmOdsOnuDTO->getStrSinExibirAvaliacao() == 'S' ? true : false;
 	}
 
-	private function getOperacao($operacao)
+	private static function getOperacao($operacao)
 	{
 		switch ($operacao) {
 			case MdIaHistClassRN::$OPERACAO_INSERT:
@@ -515,12 +517,8 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		}
 	}
 
-	public function classificarOdsWS($idProcedimento, $meta, $idUsuario = null, $staTipoUsuario)
+	public static function classificarOdsWS($idProcedimento, $meta, $idUsuario, $staTipoUsuario)
 	{
-
-		$objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-		$idUsuario = $idUsuario ? $idUsuario : $objInfraParametro->getValor(MdIaClassMetaOdsRN::$MODULO_IA_ID_USUARIO_SISTEMA, false);
-
 		// Recupera a Meta para utilizar na Classificação
 		$objMdIaAdmMetaOdsDTO = new MdIaAdmMetaOdsDTO();
 		$objMdIaAdmMetaOdsDTO->setStrIdentificacaoMeta($meta);
@@ -535,7 +533,7 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		return self::classificarMeta($idUsuario, $idProcedimento, $objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmMetaOds(), $staTipoUsuario);
 	}
 
-	private function classificarMeta($idUsuario, $idProcedimento, $idMeta, $staTipoUsuario)
+	private static function classificarMeta($idUsuario, $idProcedimento, $idMeta, $staTipoUsuario)
 	{
 
 		$verificacao = self::verificarExistenciaClassificacao($idProcedimento, $idMeta, $staTipoUsuario);
@@ -554,7 +552,7 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		$objMdIaClassMetaOdsDTO->setStrSinSugestaoAceita('S');
 		$objMdIaClassMetaOdsDTO->setDthCadastro(InfraData::getStrDataHoraAtual());
 		$objMdIaClassMetaOdsDTO->setStrRacional(null);
-		$objMdIaClassMetaOdsDTO->setNumIdProcedimento($idProcedimento);
+		$objMdIaClassMetaOdsDTO->setDblIdProcedimento($idProcedimento);
 		$objMdIaClassMetaOdsDTO->setStrStaTipoUsuario($staTipoUsuario);
 		(new MdIaClassMetaOdsRN())->cadastrar($objMdIaClassMetaOdsDTO);
 
@@ -571,7 +569,7 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		if (array_key_exists('tipoOperacao', $verificacao) && $verificacao['tipoOperacao'] == MdIaHistClassRN::$OPERACAO_SOBRESCRITA) {
 
 			$objMdIaHistClassDTO = new MdIaHistClassDTO();
-			$objMdIaHistClassDTO->setNumIdProcedimento($idProcedimento);
+			$objMdIaHistClassDTO->setDblIdProcedimento($idProcedimento);
 			$objMdIaHistClassDTO->setNumIdMdIaAdmMetaOds($idMeta);
 			$objMdIaHistClassDTO->setStrStaTipoUsuario(UsuarioRN::$TU_SISTEMA);
 			$objMdIaHistClassDTO->setStrOperacao("I");
@@ -584,17 +582,32 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 
 		self::cadastrarHistorico($paramHistorico);
 
+		self::removerNsaAplica($idProcedimento);
+
 		$retorno['status'] = MdIaClassMetaOdsRN::$MSG_SUCESSO_RETORNO;
 		$retorno['message'] = MdIaClassMetaOdsRN::$MSG_SUCESSO_RETORNO_WS;
 
 		return $retorno;
 	}
 
-	private function cadastrarHistorico($param)
+	private static function removerNsaAplica($idProcedimento)
+	{
+		$objMdIaOdsOnuNsaDTO = new MdIaOdsOnuNsaDTO();
+		$objMdIaOdsOnuNsaRN = new MdIaOdsOnuNsaRN();
+		$objMdIaOdsOnuNsaDTO->setDblIdProcedimento($idProcedimento);
+		$objMdIaOdsOnuNsaDTO->retDblIdProcedimento();
+		$registro = $objMdIaOdsOnuNsaRN->consultar($objMdIaOdsOnuNsaDTO);
+
+		if ($registro) {
+			$objMdIaOdsOnuNsaRN->excluir([$registro]);
+		}
+	}
+
+	private static function cadastrarHistorico($param)
 	{
 
 		$objMdIaHistClassDTO = new MdIaHistClassDTO();
-		$objMdIaHistClassDTO->setNumIdProcedimento($param['IdProcedimento']);
+		$objMdIaHistClassDTO->setDblIdProcedimento($param['IdProcedimento']);
 		$objMdIaHistClassDTO->setNumIdMdIaAdmMetaOds($param['IdMeta']);
 		$objMdIaHistClassDTO->setStrOperacao($param['Operacao']);
 		$objMdIaHistClassDTO->setNumIdUsuario($param['IdUsuario']);
@@ -610,7 +623,7 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		(new MdIaHistClassRN())->cadastrar($objMdIaHistClassDTO);
 	}
 
-	private function verificarExistenciaClassificacao($idProcedimento, $idMeta, $staTipoUsuario)
+	private static function verificarExistenciaClassificacao($idProcedimento, $idMeta, $staTipoUsuario)
 	{
 
 		$verificacao = [];
@@ -646,11 +659,11 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		return $verificacao;
 	}
 
-	private function buscarMetaClassificada($idProcedimento, $idMeta)
+	private static function buscarMetaClassificada($idProcedimento, $idMeta)
 	{
 
 		$objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
-		$objMdIaClassMetaOdsDTO->setNumIdProcedimento($idProcedimento);
+		$objMdIaClassMetaOdsDTO->setDblIdProcedimento($idProcedimento);
 		$objMdIaClassMetaOdsDTO->setNumIdMdIaAdmMetaOds($idMeta);
 		$objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
 		$objMdIaClassMetaOdsDTO->retStrStaTipoUsuario();
@@ -659,10 +672,10 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 	}
 
 	// verifica pelo historico se em algum momento a classificacao da meta já foi sugerido pela IA
-	private function verificarSeJaFoiSugeridoPelaIa($idProcedimento, $idMeta)
+	private static function verificarSeJaFoiSugeridoPelaIa($idProcedimento, $idMeta)
 	{
 		$objMdIaHistClassDTO = new MdIaHistClassDTO();
-		$objMdIaHistClassDTO->setNumIdProcedimento($idProcedimento);
+		$objMdIaHistClassDTO->setDblIdProcedimento($idProcedimento);
 		$objMdIaHistClassDTO->setNumIdMdIaAdmMetaOds($idMeta);
 		$objMdIaHistClassDTO->setStrStaTipoUsuario(MdIaClassMetaOdsRN::$USUARIO_IA);
 		$objMdIaHistClassDTO->retNumIdMdIaHistClass();
@@ -670,7 +683,7 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		return $objMdIaHistClassDTO ? true : false;
 	}
 
-	public function arrIdsObjetivosForteRelacao()
+	public static function arrIdsObjetivosForteRelacao()
 	{
 		$arrIdsObjetivosForteRelacao = [];
 		$objMdIaAdmMetaOdsDTO = new MdIaAdmMetaOdsDTO();
@@ -688,7 +701,7 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		return $arrIdsObjetivosForteRelacao;
 	}
 
-	public function arrIdsMetasForteRelacao()
+	public static function arrIdsMetasForteRelacao()
 	{
 		$arrIdsMetasForteRelacao = [];
 
@@ -705,7 +718,7 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		return $arrIdsMetasForteRelacao;
 	}
 
-	public function consultarObjetivoParaClassificacaoUsuExt($dados)
+	public static function consultarObjetivoParaClassificacaoUsuExt($dados)
 	{
 
 		$metasPreSelecionadas = [];
@@ -803,7 +816,7 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		return mb_convert_encoding($html, 'UTF-8', 'ISO-8859-1');
 	}
 
-	public function consultarObjetivoSelecionados($dados)
+	public static function consultarObjetivoSelecionados($dados)
 	{
 		$arrMetasSelecionadas = explode(",", $dados['itensSelecionados']);
 
@@ -822,7 +835,7 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		return $arrIdObjetivos;
 	}
 
-	public function salvarMetasSelecionadasSessao($dados)
+	public static function salvarMetasSelecionadasSessao($dados)
 	{
 
 		$arrMetasSelecionadas = explode(",", $dados['itensSelecionados']);
@@ -830,7 +843,7 @@ Nos dois casos (Confirmar e Não Confirmar), deve preencher o Racional com os fu
 		return 'sucess';
 	}
 
-	public function consultarMetasSelecionadasSessao()
+	public static function consultarMetasSelecionadasSessao()
 	{
 
 		$listaMetas = '';

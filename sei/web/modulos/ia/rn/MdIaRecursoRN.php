@@ -41,6 +41,7 @@ class MdIaRecursoRN extends InfraRN
                 CURLOPT_RETURNTRANSFER => 1,
                 CURLOPT_URL => $urlConsulta,
                 CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 0,
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT
             ]);
 
@@ -92,6 +93,7 @@ class MdIaRecursoRN extends InfraRN
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_URL => $urlOperacao,
                 CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 0,
                 CURLOPT_POSTFIELDS => $dadosEnviados[0],
                 CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT
@@ -142,6 +144,7 @@ class MdIaRecursoRN extends InfraRN
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_URL => $urlOperacao,
                 CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 0,
                 CURLOPT_POSTFIELDS => $dadosEnviados[0],
                 CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT
@@ -225,6 +228,7 @@ class MdIaRecursoRN extends InfraRN
                 CURLOPT_RETURNTRANSFER => 1,
                 CURLOPT_URL => $urlOperacao,
                 CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 0,
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT
             ]);
 
@@ -323,7 +327,7 @@ class MdIaRecursoRN extends InfraRN
         }
     }
 
-    public function verificarSelecaoDocumentoAlvo(DocumentoDTO $objDocumentoDTO)
+    public static function verificarSelecaoDocumentoAlvo(DocumentoDTO $objDocumentoDTO)
     {
         try {
 

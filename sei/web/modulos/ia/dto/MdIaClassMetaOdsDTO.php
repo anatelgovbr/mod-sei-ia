@@ -36,7 +36,7 @@
 
             $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'StaTipoUsuario', 'sta_tipo_usuario');
 
-            $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'IdProcedimento', 'id_procedimento');
+            $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DBL, 'IdProcedimento', 'id_procedimento');
 
             $this->adicionarAtributoTabelaRelacionada(InfraDTO::$PREFIXO_NUM, 'IdMdIaAdmObjetivoOds', 'id_md_ia_adm_objetivo_ods', 'md_ia_adm_meta_ods');
 

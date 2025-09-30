@@ -213,7 +213,7 @@ class MdIaControladorWS extends MdIaUtilWS
         self::printResult($response);
     }
 
-    private function printResult($response)
+    private static function printResult($response)
     {
         echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR);
     }

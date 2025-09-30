@@ -15,7 +15,12 @@ class MdIaConfigAssistenteINT extends InfraINT
 
     public static function montarCssChat()
     {
-        $css = '<link rel="stylesheet" type="text/css" href="modulos/ia/lib/highlight.js/atom-one-light.css" />';
+        $css = '';
+        if (version_compare(VERSAO_INFRA, '2.29.0') >= 0 && $_REQUEST['acao'] == "editor_montar") {
+            $css .= '<link rel="stylesheet" type="text/css" href="/infra_css/bootstrap/bootstrap-5.3.1.min.css" />';
+            $css .= '<link rel="stylesheet" type="text/css" href="/infra_css//bootstrap/bootstrap-migracao-4-5.css" />';
+        }
+        $css .= '<link rel="stylesheet" type="text/css" href="modulos/ia/lib/highlight.js/atom-one-light.css" />';
         $css .= '<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_chat.css" />';
         if (version_compare(VERSAO_INFRA, '2.23.8') >= 0) {
             $css .= "
@@ -54,7 +59,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         return preg_replace('/\s+/', ' ', $html);
     }
 
-    public function enviarMensagemAssistenteIa($mensagem)
+    public static function enviarMensagemAssistenteIa($mensagem)
     {
         $objMdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();
         $objMdIaAdmConfigAssistIADTO->retStrSystemPrompt();
@@ -79,6 +84,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         $dadosMensagem["id_usuario"] = SessaoSEI::getInstance()->getNumIdUsuario();
         $dadosMensagem["system_prompt"] = addslashes(mb_convert_encoding($systemPrompt, 'UTF-8', 'ISO-8859-1'));
         $dadosMensagem["use_thinking"] = $mensagem["refletir"];
+        $dadosMensagem["use_websearch"] = $mensagem["buscarWeb"];
         if ($mensagem["dadosCitacoes"] != "") {
             if (!is_null($mensagem["dadosCitacoes"][0]["relacaoProtocolos"])) {
                 //QUANDO CITA PROCESSO ENTRA AQUI
@@ -172,14 +178,14 @@ class MdIaConfigAssistenteINT extends InfraINT
         return $interacao->getNumIdMdIaInteracaoChat();
     }
 
-    public function executarConsultaWebService($parametros)
+    public static function executarConsultaWebService($parametros)
     {
         $commandJob = 'php ' . dirname(__FILE__) . '/MdIaConsultaWebserviceINT.php ' . $parametros;
         $command = $commandJob . ' > /dev/null 2>&1 & echo $!';
         exec($command, $op);
     }
 
-    public function consultarDisponibilidadeApi()
+    public static function consultarDisponibilidadeApi()
     {
         $objMdIaConfigAssistenteRN = new MdIaConfigAssistenteRN();
         $urlApi = $objMdIaConfigAssistenteRN->retornarUrlApi();
@@ -191,7 +197,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         return $retornoMensagem;
     }
 
-    public function calcularConsumoDiarioToken()
+    public static function calcularConsumoDiarioToken()
     {
         $retornoMensagem["extrapolouLimiteTokens"] = false;
         $retornoMensagem["quantidadeTokensUsados"] = 0;
@@ -226,7 +232,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         return $retornoMensagem;
     }
 
-    public function enviarFeedbackResposta($feedback)
+    public static function enviarFeedbackResposta($feedback)
     {
         $objMdIaConfigAssistenteRN = new MdIaConfigAssistenteRN();
         $urlApi = $objMdIaConfigAssistenteRN->retornarUrlApi();
@@ -250,7 +256,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         return $retornoMensagem[1];
     }
 
-    public function consultaProtocoloDocumento($documento)
+    public static function consultaProtocoloDocumento($documento)
     {
         $objProtocoloDTO = new ProtocoloDTO();
         $objProtocoloDTO->retStrStaProtocolo();
@@ -263,7 +269,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         return $objProtocoloDTO;
     }
 
-    public function consultaDocumento($documento)
+    public static function consultaDocumento($documento)
     {
         $objDocumentoRN = new DocumentoRN();
         $objDocumentoDTO = new DocumentoDTO();
@@ -278,7 +284,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         return $objDocumentoDTO;
     }
 
-    public function retornaProtocoloLimpo($citacao)
+    public static function retornaProtocoloLimpo($citacao)
     {
         // Verifica se quer pesquisar em um intervalo de paginas do documento
         if (preg_match('/#[0-9]+\[[0-9]+(:[0-9]+)?]/', $citacao)) {
@@ -290,7 +296,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         return array("documento" => $documento, "paginas" => $paginas);
     }
 
-    public function verificaCriticaNCitacoes($protocolo, $documento)
+    public static function verificaCriticaNCitacoes($protocolo, $documento)
     {
         foreach ($protocolo['documento'] as $citacoes) {
             $retornoProtocoloLimpo = self::retornaProtocoloLimpo($citacoes);
@@ -307,7 +313,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         return ["result" => "false", "mensagem" => mb_convert_encoding("Não é permitida a interação com mais de um protocolo de processo.", 'UTF-8', 'ISO-8859-1')];
     }
 
-    public function capturaExtensaoDocumento($documento)
+    public static function capturaExtensaoDocumento($documento)
     {
         $objAnexoDTO = (new MdIaConfigAssistenteRN())->consultarAnexo($documento);
         $extensaoArquivo = pathinfo($objAnexoDTO->getStrNome(), PATHINFO_EXTENSION);
@@ -315,7 +321,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         return $extensaoArquivo;
     }
 
-    public function consultaProtocolo($protocolo)
+    public static function consultaProtocolo($protocolo)
     {
 
         $documento = $paginas = null;
@@ -513,19 +519,45 @@ class MdIaConfigAssistenteINT extends InfraINT
                         }
                     }
                 } catch (Exception $e) {
-                    if ($e->getArrObjInfraValidacao()) {
-                        if (current($e->getArrObjInfraValidacao())->getStrDescricao()) {
-                            return ["result" => "false", "mensagem" => mb_convert_encoding(current($e->getArrObjInfraValidacao())->getStrDescricao(), 'UTF-8', 'ISO-8859-1')];
-                        }
-                    } else {
-                        return ["result" => "false", "mensagem" => mb_convert_encoding($e->getMessage(), 'UTF-8', 'ISO-8859-1')];
-                    }
+                    throw new InfraException('Erro consultando protocolos de citação.', $e);
                 }
             }
         }
         return $retornoDocumentos;
     }
 
+
+    public static function listaProtocolosUtilizados($protocolo)
+    {
+        foreach ($protocolo['documento'] as $citacao) {
+            $retornoProtocoloLimpo = self::retornaProtocoloLimpo($citacao);
+            $documento = $retornoProtocoloLimpo["documento"];
+            if (!is_null($documento)) {
+                try {
+                    $objProtocoloDTO = self::consultaProtocoloDocumento($documento);
+                    if (!is_null($objProtocoloDTO)) {
+                        if (!is_null($objProtocoloDTO)) {
+                            if ($objProtocoloDTO->getStrStaProtocolo() == ProtocoloRN::$TP_PROCEDIMENTO) {
+                                $idProcesso = $objProtocoloDTO->getDblIdProtocolo();
+                                $linkAcesso = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador.php?acao=procedimento_trabalhar&amp;id_procedimento=' . $objProtocoloDTO->getDblIdProtocolo();
+                                return array(["result" => "true", "idDocumento" => $idProcesso, "linkAcesso" => $linkAcesso, "relacaoProtocolos" => "", "idProcedimento" => $idProcesso, "citacaoRealizada" => "#" . $documento]);
+                            } else {
+                                $idProcedimento = $objProtocoloDTO->getDblIdProcedimentoDocumento();
+                                $idDocumento["id_documento"] = $objProtocoloDTO->getDblIdProtocolo();
+                                $linkAcesso = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador.php?acao=procedimento_trabalhar&amp;id_procedimento=' . $objProtocoloDTO->getDblIdProcedimentoDocumento() . '&amp;id_documento=' . $objProtocoloDTO->getDblIdProtocolo();
+                            }
+                            $retornoDocumentos[] = ["result" => "true", "idDocumento" => $idDocumento, "linkAcesso" => $linkAcesso, "idProcedimento" => $idProcedimento, "citacaoRealizada" => "#" . $documento];
+                        } else {
+                            return ["result" => "false", "mensagem" => mb_convert_encoding("O protocolo citado #" . $documento . " não existe no SEI.", 'UTF-8', 'ISO-8859-1')];
+                        }
+                    }
+                } catch (Exception $e) {
+                    throw new InfraException('Erro consultando protocolos de citação.', $e);
+                }
+            }
+        }
+        return $retornoDocumentos;
+    }
     public static function consultarIndexacaoSolr($idDocumento)
     {
         $queryParams = [];
@@ -541,7 +573,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         $parametros->start = 0;
         $parametros->rows = 1;
 
-        $urlBusca = ConfiguracaoSEI::getInstance()->getValor('Solr', 'Servidor') . '/' . ConfiguracaoSEI::getInstance()->getValor('Solr', 'CoreProtocolos') . '/select?' . http_build_query($parametros) . '&hl=true&hl.snippets=2&hl.fl=content&hl.fragsize=100&hl.maxAnalyzedChars=1048576&hl.alternateField=content&hl.maxAlternateFieldLength=100&fl=id_proc,content,content_type';
+        $urlBusca = IaWS::obterUrlSolAuth() . '/' .  ConfiguracaoSEI::getInstance()->getValor('Solr', 'CoreProtocolos') . '/select?' . http_build_query($parametros) . '&hl=true&hl.snippets=2&hl.fl=content&hl.fragsize=100&hl.maxAnalyzedChars=1048576&hl.alternateField=content&hl.maxAlternateFieldLength=100&fl=id_proc,content,content_type';
         // Faz a requisição HTTP ao Solr
         $resultados = file_get_contents($urlBusca);
         $xml = simplexml_load_string($resultados);
@@ -550,7 +582,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         }
         return true;
     }
-    public function geraLogExcedeuJanelaContexto($dadosEnviados)
+    public static function geraLogExcedeuJanelaContexto($dadosEnviados)
     {
         if ($dadosEnviados["protocolo"] == "false") {
             $protocoloIndicado = "";
@@ -595,13 +627,8 @@ class MdIaConfigAssistenteINT extends InfraINT
                     break;
 
                 case '400':
-                    if (strpos($mensagemOriginal, 'ultrapassou o limite estabelecido') !== false) {
-                        $resposta = "O tamanho do conteúdo do tópico atual (memória+prompt+conteúdos referenciados) ultrapassou o limite suportado pela IA. Considere abrir novo tópico, decompor o novo prompt em tarefas menores ou diminuir a quantidade de conteúdo referenciado nele.";
-                        $tipo = "warning";
-                    } else {
-                        $resposta = "Tivemos um erro inesperado. O administrador do sistema já foi informado sobre o erro.";
-                        $tipo = "error";
-                    }
+                    $resposta = "Tivemos um erro inesperado. O administrador do sistema já foi informado sobre o erro.";
+                    $tipo = "error";
                     break;
 
                 case '403':
@@ -633,7 +660,7 @@ class MdIaConfigAssistenteINT extends InfraINT
                     break;
 
                 case '413':
-                    if (strpos($mensagemOriginal, 'Tamanho do contexto excedido') !== false || strpos($mensagemOriginal, 'A resposta do modelo ficou muito longa e foi truncada') !== false || strpos($mensagemOriginal, 'Texto muito longo') !== false) {
+                    if (strpos($mensagemOriginal, 'A resposta do modelo ficou muito longa e foi truncada') !== false || strpos($mensagemOriginal, 'Texto muito longo') !== false) {
                         $resposta = "O tamanho da resposta para seu prompt ultrapassou o limite suportado pela IA. Considere decompor seu prompt ou diminuir a quantidade de conteúdo referenciado.";
                     } else {
                         $resposta = "O tamanho do conteúdo do tópico atual (memória+prompt+conteúdos referenciados) ultrapassou o limite suportado pela IA. Considere abrir novo tópico, decompor o novo prompt em tarefas menores ou diminuir a quantidade de conteúdo referenciado nele.";
@@ -653,7 +680,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         return array("resposta" => $resposta, "tipoCritica" => $tipo);
     }
 
-    public function consultarMensagem($dadosEnviados)
+    public static function consultarMensagem($dadosEnviados)
     {
         $objMdIaInteracaoChatRN = new MdIaInteracaoChatRN();
         $objMdIaInteracaoChatDTO = new MdIaInteracaoChatDTO();

@@ -37,6 +37,7 @@ class MdIaConfigAssistenteRN extends InfraRN
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT_MS => '5000',
                 CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 0,
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'GET',
@@ -118,6 +119,7 @@ class MdIaConfigAssistenteRN extends InfraRN
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_URL => $dadosEnviados[1],
                 CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 0,
                 CURLOPT_POSTFIELDS => $dadosEnviados[0],
                 CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT

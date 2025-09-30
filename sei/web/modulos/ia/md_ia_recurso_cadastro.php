@@ -103,6 +103,9 @@ PaginaSEI::getInstance()->abrirHead();
 PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
+?>
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_comum.css" />
+<?php
 PaginaSEI::getInstance()->abrirStyle();
 include_once('md_ia_recurso_cadastro_css.php');
 PaginaSEI::getInstance()->fecharStyle();
@@ -153,7 +156,7 @@ if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
                     <div class="row">
                         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                             <?php
-                            if ($itensSimilares->recommendation != "" && $itensSimilares != "404") {
+                            if ($itensSimilares != "404") {
                             ?>
                                 <table class="infraTable " id="tabela_ordenada" aria-describedby="Tabela de Processos Similares">
                                     <thead>
@@ -179,60 +182,64 @@ if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
                                     <tbody>
                                         <?php
                                         $contador = 0;
-                                        $idRecommendation = $itensSimilares->id;
-                                        foreach ($itensSimilares->recommendation as $arrayItemSimilar) {
+                                        if (!is_null($itensSimilares)) {
+                                            $idRecommendation = $itensSimilares->id;
+                                            if ($itensSimilares->recommendation != "") {
+                                                foreach ($itensSimilares->recommendation as $arrayItemSimilar) {
 
-                                            $objProcedimentoDTO = new ProcedimentoDTO();
-                                            $objProcedimentoDTO->retDblIdProcedimento();
-                                            $objProcedimentoDTO->retStrProtocoloProcedimentoFormatado();
-                                            $objProcedimentoDTO->retStrNomeTipoProcedimento();
-                                            $objProcedimentoDTO->setDblIdProcedimento($arrayItemSimilar->id_protocolo);
+                                                    $objProcedimentoDTO = new ProcedimentoDTO();
+                                                    $objProcedimentoDTO->retDblIdProcedimento();
+                                                    $objProcedimentoDTO->retStrProtocoloProcedimentoFormatado();
+                                                    $objProcedimentoDTO->retStrNomeTipoProcedimento();
+                                                    $objProcedimentoDTO->setDblIdProcedimento($arrayItemSimilar->id_protocolo);
 
-                                            $objProcedimentoDTO = $objProcedimentoRN->consultarRN0201($objProcedimentoDTO);
-                                            if (!is_null($objProcedimentoDTO)) {
-                                                $contador++;
+                                                    $objProcedimentoDTO = $objProcedimentoRN->consultarRN0201($objProcedimentoDTO);
+                                                    if (!is_null($objProcedimentoDTO)) {
+                                                        $contador++;
                                         ?>
-                                                <tr data-index="<?= $contador ?>" data-position="<?= $contador ?>">
-                                                    <td class="idRanking">
-                                                        <?= $contador ?><em class="gg-arrows-v mr-2"></em>
-                                                        <input type="hidden" id="hdnRanking<?= $contador ?>"
-                                                            name="hdnRanking<?= $contador ?>" value="<?= $contador ?>" />
-                                                    </td>
-                                                    <td>
-                                                        <a target="_blank"
-                                                            href="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=procedimento_trabalhar&id_procedimento=' . $arrayItemSimilar->id_protocolo) ?> "><?= $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() ?></a>
-                                                        <input type="hidden" id="hdnIdProtRecomend<?= $contador ?>"
-                                                            name="hdnIdProtRecomend<?= $contador ?>"
-                                                            value="<?= $arrayItemSimilar->id_protocolo ?>" />
-                                                    </td>
-                                                    <td>
-                                                        <?= $objProcedimentoDTO->getStrNomeTipoProcedimento() ?>
-                                                        <input type="hidden" id="hdnDescProtRecomend<?= $contador ?>"
-                                                            name="hdnDescProtRecomend<?= $contador ?>"
-                                                            value="<?= $objProcedimentoDTO->getStrNomeTipoProcedimento() ?>" />
-                                                    </td>
-                                                    <td class="text-center" style="padding-left: 20px; padding-right: 20px">
-                                                        <div class="rounded-pill p-2 d-flex justify-content-around align-items-center"
-                                                            style="background: #EEE;">
-                                                            <span class="btn_thumbs up bubbly-button"></span><span
-                                                                style="color:#BBB">|</span>
-                                                            <span class="btn_thumbs down bubbly-button"></span>
-                                                            <input type="hidden" class="hdnAproved" id="hdnLike<?= $contador ?>"
-                                                                name="hdnLike<?= $contador ?>" value="" />
-                                                        </div>
-                                                    </td>
-                                                    <?php
-                                                    if ($exibirRacional == "1") {
-                                                    ?>
-                                                        <td>
-                                                            <input type="text" class="form-control" id="txtRacional<?= $contador ?>"
-                                                                name="txtRacional<?= $contador ?>" maxlength="250" />
-                                                        </td>
-                                                    <?php
-                                                    }
-                                                    ?>
-                                                </tr>
+                                                        <tr data-index="<?= $contador ?>" data-position="<?= $contador ?>">
+                                                            <td class="idRanking">
+                                                                <?= $contador ?><em class="gg-arrows-v mr-2"></em>
+                                                                <input type="hidden" id="hdnRanking<?= $contador ?>"
+                                                                    name="hdnRanking<?= $contador ?>" value="<?= $contador ?>" />
+                                                            </td>
+                                                            <td>
+                                                                <a target="_blank"
+                                                                    href="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=procedimento_trabalhar&id_procedimento=' . $arrayItemSimilar->id_protocolo) ?> "><?= $objProcedimentoDTO->getStrProtocoloProcedimentoFormatado() ?></a>
+                                                                <input type="hidden" id="hdnIdProtRecomend<?= $contador ?>"
+                                                                    name="hdnIdProtRecomend<?= $contador ?>"
+                                                                    value="<?= $arrayItemSimilar->id_protocolo ?>" />
+                                                            </td>
+                                                            <td>
+                                                                <?= $objProcedimentoDTO->getStrNomeTipoProcedimento() ?>
+                                                                <input type="hidden" id="hdnDescProtRecomend<?= $contador ?>"
+                                                                    name="hdnDescProtRecomend<?= $contador ?>"
+                                                                    value="<?= $objProcedimentoDTO->getStrNomeTipoProcedimento() ?>" />
+                                                            </td>
+                                                            <td class="text-center" style="padding-left: 20px; padding-right: 20px">
+                                                                <div class="rounded-pill p-2 d-flex justify-content-around align-items-center"
+                                                                    style="background: #EEE;">
+                                                                    <span class="btn_thumbs up bubbly-button"></span><span
+                                                                        style="color:#BBB">|</span>
+                                                                    <span class="btn_thumbs down bubbly-button"></span>
+                                                                    <input type="hidden" class="hdnAproved" id="hdnLike<?= $contador ?>"
+                                                                        name="hdnLike<?= $contador ?>" value="" />
+                                                                </div>
+                                                            </td>
+                                                            <?php
+                                                            if ($exibirRacional == "1") {
+                                                            ?>
+                                                                <td>
+                                                                    <input type="text" class="form-control" id="txtRacional<?= $contador ?>"
+                                                                        name="txtRacional<?= $contador ?>" maxlength="250" />
+                                                                </td>
+                                                            <?php
+                                                            }
+                                                            ?>
+                                                        </tr>
                                         <?php
+                                                    }
+                                                }
                                             }
                                         }
                                         ?>

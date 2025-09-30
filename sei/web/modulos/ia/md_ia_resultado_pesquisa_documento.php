@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -37,7 +38,6 @@ try {
     $objMdIaAdmPesqDocDTO = $objMdIaAdmPesqDocRN->consultar($objMdIaAdmPesqDocDTO);
 
     $parametrosUrl = str_replace("*", "&", $_GET["parametrosUrl"]);
-
 } catch (Exception $e) {
     PaginaSEI::getInstance()->processarExcecao($e);
 }
@@ -48,6 +48,9 @@ PaginaSEI::getInstance()->abrirHead();
 PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ');
 PaginaSEI::getInstance()->montarStyle();
+?>
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_comum.css" />
+<?php
 PaginaSEI::getInstance()->abrirStyle();
 include_once('md_ia_recurso_cadastro_css.php');
 PaginaSEI::getInstance()->fecharStyle();
@@ -57,37 +60,37 @@ PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
-    <div id="divTituloModal" class="infraBarraLocalizacao"><?= $objMdIaAdmPesqDocDTO->getStrNomeSecao() ?></div>
-    <form id="frmMdIaPesquisaDocumento" method="post"
-          action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
-        <?
-        PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-        //PaginaSEI::getInstance()->montarAreaValidacao();
-        ?>
-        <div id="divMsg" style="display:none;">
-            <div class="alert" role="alert">
-                <label></label>
-            </div>
+<div id="divTituloModal" class="infraBarraLocalizacao"><?= $objMdIaAdmPesqDocDTO->getStrNomeSecao() ?></div>
+<form id="frmMdIaPesquisaDocumento" method="post"
+    action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
+    <?
+    PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
+    //PaginaSEI::getInstance()->montarAreaValidacao();
+    ?>
+    <div id="divMsg" style="display:none;">
+        <div class="alert" role="alert">
+            <label></label>
         </div>
-        <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 text-justify">
-                <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12" id="resultado_processamento">
-                        <div class="d-flex justify-content-center align-items-center">
-                            <img src="../../../infra_css/svg/aguarde.svg" alt="" style="d-inline-block">
-                            <span>Pesquisando...</span>
-                        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 text-justify">
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12" id="resultado_processamento">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <img src="../../../infra_css/svg/aguarde.svg" alt="" style="d-inline-block">
+                        <span>Pesquisando...</span>
                     </div>
                 </div>
-                <br/>
             </div>
+            <br />
         </div>
-        <?
-        //PaginaSEI::getInstance()->montarAreaDebug();
-        PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
-        ?>
-    </form>
     </div>
+    <?
+    //PaginaSEI::getInstance()->montarAreaDebug();
+    PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
+    ?>
+</form>
+</div>
 <?
 require_once "md_ia_resultado_pesquisa_documento_js.php";
 ?>

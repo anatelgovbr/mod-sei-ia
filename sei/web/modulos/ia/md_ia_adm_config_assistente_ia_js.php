@@ -84,7 +84,7 @@
                 buscarOperacoeWs(params);
             },
             error: function(err) {
-                callback("Ocorreu um erro ao verificar se o elemento já foi cadastrado.");
+                montaOperacao(err);
             }
         });
     }

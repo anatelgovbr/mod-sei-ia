@@ -70,7 +70,7 @@ class MdIaTopicoChatINT extends InfraINT
         return $idTopico;
     }
 
-    public function verificaSessaoTopico()
+    public static function verificaSessaoTopico()
     {
         $objMdIaTopicoChatDTO = new MdIaTopicoChatDTO();
         $objMdIaTopicoChatRN = new MdIaTopicoChatRN();
@@ -94,32 +94,32 @@ class MdIaTopicoChatINT extends InfraINT
         return SessaoSEI::getInstance()->getAtributo('MD_IA_ID_TOPICO_CHAT_IA');
     }
 
-    public function infraDataAtual()
+    public static function infraDataAtual()
     {
         return date("d/m/Y");
     }
 
-    public function infraCalcularDataDias($data, $dias)
+    public static function infraCalcularDataDias($data, $dias)
     {
         $date = DateTime::createFromFormat("d/m/Y", $data);
         $date->modify("$dias days");
         return $date->format("d/m/Y");
     }
 
-    public function infraCalcularDataMeses($data, $meses)
+    public static function infraCalcularDataMeses($data, $meses)
     {
         $date = DateTime::createFromFormat("d/m/Y", $data);
         $date->modify("$meses months");
         return $date->format("d/m/Y");
     }
 
-    public function infraCalcularDataFinalMes($data)
+    public static function infraCalcularDataFinalMes($data)
     {
         $date = DateTime::createFromFormat("d/m/Y", $data);
         return $date->format("t/m/Y"); // 't' retorna o último dia do mês
     }
 
-    public function retornaPeriodos()
+    public static function retornaPeriodos()
     {
         $dataAtual = new DateTime();
 
@@ -196,7 +196,7 @@ class MdIaTopicoChatINT extends InfraINT
         return $dateTime;
     }
 
-    public function definePeriodoTopico($dataBase, $periodos)
+    public static function definePeriodoTopico($dataBase, $periodos)
     {
         // Converte a data base para um objeto DateTime
         $dataBaseObj = DateTime::createFromFormat('d/m/Y H:i:s', $dataBase);
@@ -214,7 +214,7 @@ class MdIaTopicoChatINT extends InfraINT
         return "maisAntigos";
     }
 
-    public function listarTopicos()
+    public static function listarTopicos()
     {
         $objMdIaTopicoChatDTO = new MdIaTopicoChatDTO();
         $objMdIaTopicoChatRN = new MdIaTopicoChatRN();
@@ -282,7 +282,7 @@ class MdIaTopicoChatINT extends InfraINT
         return $arrayRetorno;
     }
 
-    public function listarProcedimentosPrompt($prompt)
+    public static function listarProcedimentosPrompt($prompt)
     {
         $documentos = [];
         preg_match_all('/#\S*(?=\s|$|\n)/', $prompt, $matches);
@@ -302,12 +302,12 @@ class MdIaTopicoChatINT extends InfraINT
         }
         $protocolo["documento"] = $documentos;
         $protocolo["consultaTopico"] = true;
-        $citacoes = MdIaConfigAssistenteINT::consultaProtocolo($protocolo);
+        $citacoes = MdIaConfigAssistenteINT::listaProtocolosUtilizados($protocolo);
 
         return $citacoes;
     }
 
-    public function selecionarTopico($dados)
+    public static function selecionarTopico($dados)
     {
         if ($dados["id"] != "" && !is_null($dados["id"])) {
             SessaoSEI::getInstance()->setAtributo('MD_IA_ID_TOPICO_CHAT_IA', $dados["id"]);
@@ -345,7 +345,7 @@ class MdIaTopicoChatINT extends InfraINT
             $arrayItensInteracoes["dadosCitacoes"] = $arrayProcedimentos;
             $arrayItensInteracoes["id_interacao"] = $itemInteracao->getNumIdMdIaInteracaoChat();
             $arrayItensInteracoes["status_requisicao"] = $itemInteracao->getNumStatusRequisicao();
-            $arrayItensInteracoes["dth_cadastro"] = substr($itemInteracao->getDthCadastro(),0,19);
+            $arrayItensInteracoes["dth_cadastro"] = substr($itemInteracao->getDthCadastro(), 0, 19);
 
             $arrayInteracoes[] = $arrayItensInteracoes;
         }
@@ -353,7 +353,7 @@ class MdIaTopicoChatINT extends InfraINT
     }
 
 
-    public function renomearTopico($dados)
+    public static function renomearTopico($dados)
     {
 
         $objMdIaTopicoChatDTO = new MdIaTopicoChatDTO();
@@ -365,7 +365,7 @@ class MdIaTopicoChatINT extends InfraINT
         return true;
     }
 
-    public function arquivarTopico($dados)
+    public static function arquivarTopico($dados)
     {
 
         $objMdIaTopicoChatDTO = new MdIaTopicoChatDTO();
@@ -378,7 +378,7 @@ class MdIaTopicoChatINT extends InfraINT
         return true;
     }
 
-    public function desarquivarTopico($dados)
+    public static function desarquivarTopico($dados)
     {
 
         $objMdIaTopicoChatDTO = new MdIaTopicoChatDTO();

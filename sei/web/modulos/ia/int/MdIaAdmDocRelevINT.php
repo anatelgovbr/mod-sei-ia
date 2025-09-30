@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -19,7 +20,7 @@ class MdIaAdmDocRelevINT extends InfraINT
         $objSerieDTO->retNumIdSerie();
         $objSerieDTO->retStrNome();
         $objSerieDTO->setStrSinAtivo("S");
-        if($selAplicabilidade["aplicabilidade"] == "I") {
+        if ($selAplicabilidade["aplicabilidade"] == "I") {
             $objSerieDTO->adicionarCriterio(array('StaAplicabilidade', 'StaAplicabilidade', 'StaAplicabilidade'), array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL), array('I', 'T', 'F'), array(InfraDTO::$OPER_LOGICO_OR, InfraDTO::$OPER_LOGICO_OR));
         } else {
             $objSerieDTO->adicionarCriterio(array('StaAplicabilidade', 'StaAplicabilidade'), array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL), array('E', 'T'), InfraDTO::$OPER_LOGICO_OR);
@@ -30,11 +31,12 @@ class MdIaAdmDocRelevINT extends InfraINT
         $arrObjSerieDTO = $objSerieRN->listarRN0646($objSerieDTO);
         return parent::montarSelectArrInfraDTO(null, null, $selAplicabilidade["valorItemSelecionado"], $arrObjSerieDTO, 'IdSerie', 'Nome');
     }
-    public static function verificarItemAdicionado($dados) {
+    public static function verificarItemAdicionado($dados)
+    {
         $arrTipoProcessoEspecifico = PaginaSEI::getInstance()->getArrItensTabelaDinamica($dados['hdnIdTpProcesso']);
 
         $itensAdicionados = array();
-        if($dados['hdnIdTpProcesso'] != "") {
+        if ($dados['hdnIdTpProcesso'] != "") {
             foreach ($arrTipoProcessoEspecifico as $tpProcesso) {
                 $objMdIaAdmDocRelevDTO = new MdIaAdmDocRelevDTO();
                 $objMdIaAdmDocRelevDTO->retStrNomeTipoProcedimento();
@@ -44,15 +46,15 @@ class MdIaAdmDocRelevINT extends InfraINT
                 $objMdIaAdmDocRelevDTO->adicionarCriterio(array('IdTipoProcedimento', 'IdTipoProcedimento'), array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL), array($tpProcesso[0], null), InfraDTO::$OPER_LOGICO_OR);
                 $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
                 $arrObjMdIaAdmDocRelevDTO = $objMdIaAdmDocRelevRN->listar($objMdIaAdmDocRelevDTO);
-                foreach($arrObjMdIaAdmDocRelevDTO as $documentoRelevanteJaAdicionado) {
-                    $itensAdicionados[] = utf8_encode($documentoRelevanteJaAdicionado->getStrNomeTipoProcedimento());
+                foreach ($arrObjMdIaAdmDocRelevDTO as $documentoRelevanteJaAdicionado) {
+                    $itensAdicionados[] = mb_convert_encoding($documentoRelevanteJaAdicionado->getStrNomeTipoProcedimento(), 'UTF-8', 'ISO-8859-1');
                 }
             }
-            if(!empty($itensAdicionados)) {
+            if (!empty($itensAdicionados)) {
                 return $itensAdicionados;
             }
         }
-        if($dados['hdnIdTpProcesso'] == "") {
+        if ($dados['hdnIdTpProcesso'] == "") {
             $objMdIaAdmDocRelevDTO = new MdIaAdmDocRelevDTO();
             $objMdIaAdmDocRelevDTO->retStrNomeTipoProcedimento();
             $objMdIaAdmDocRelevDTO->setNumIdSerie($dados['selTipoDocumento']);
@@ -60,10 +62,10 @@ class MdIaAdmDocRelevINT extends InfraINT
             $objMdIaAdmDocRelevDTO->setStrSinAtivo("S");
             $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
             $arrObjMdIaAdmDocRelevDTO = $objMdIaAdmDocRelevRN->listar($objMdIaAdmDocRelevDTO);
-            foreach($arrObjMdIaAdmDocRelevDTO as $documentoRelevanteJaAdicionado) {
-                $itensAdicionados[] = utf8_encode($documentoRelevanteJaAdicionado->getStrNomeTipoProcedimento());
+            foreach ($arrObjMdIaAdmDocRelevDTO as $documentoRelevanteJaAdicionado) {
+                $itensAdicionados[] = mb_convert_encoding($documentoRelevanteJaAdicionado->getStrNomeTipoProcedimento(), 'UTF-8', 'ISO-8859-1');
             }
-            if(!empty($itensAdicionados)) {
+            if (!empty($itensAdicionados)) {
                 return $itensAdicionados;
             }
         }
@@ -98,7 +100,8 @@ class MdIaAdmDocRelevINT extends InfraINT
         $arrObjMdIaAdmDocRelevDTO = $objMdIaAdmDocRelevRN->listar($objMdIaAdmDocRelevDTO);
         return parent::montarSelectArrInfraDTO(0, "Todos os Tipos de Processo", $tipoDocumento["valorItemSelecionado"], $arrObjMdIaAdmDocRelevDTO, 'IdTipoProcedimento', 'NomeTipoProcedimento');
     }
-    public static function retornaComboboxTipoDocumento($dados) {
+    public static function retornaComboboxTipoDocumento($dados)
+    {
         $objMdIaAdmDocRelevDTO = new MdIaAdmDocRelevDTO();
         $objMdIaAdmDocRelevDTO->retNumIdSerie();
         $objMdIaAdmDocRelevDTO->retStrNomeSerie();
@@ -109,7 +112,8 @@ class MdIaAdmDocRelevINT extends InfraINT
         $arrObjMdIaAdmDocRelevDTO = $objMdIaAdmDocRelevRN->listar($objMdIaAdmDocRelevDTO);
         return parent::montarSelectArrInfraDTO(0, "Selecione uma opção", $dados["selTipoDocumento"], $arrObjMdIaAdmDocRelevDTO, 'IdSerie', 'NomeSerie');
     }
-    public static function retornaComboboxTipoProcessos($dados) {
+    public static function retornaComboboxTipoProcessos($dados)
+    {
 
 
         $objMdIaAdmDocRelevDTO = new MdIaAdmDocRelevDTO();
@@ -122,21 +126,22 @@ class MdIaAdmDocRelevINT extends InfraINT
         $arrObjMdIaAdmDocRelevDTO = $objMdIaAdmDocRelevRN->listar($objMdIaAdmDocRelevDTO);
 
         $arrayTiposProcessoCorrigido = array();
-        foreach($arrObjMdIaAdmDocRelevDTO as $objMdIaAdmDocRelevDTO) {
-            if(is_null($objMdIaAdmDocRelevDTO->getNumIdTipoProcedimento())) {
+        foreach ($arrObjMdIaAdmDocRelevDTO as $objMdIaAdmDocRelevDTO) {
+            if (is_null($objMdIaAdmDocRelevDTO->getNumIdTipoProcedimento())) {
                 $objMdIaAdmDocRelevDTO->setStrNomeTipoProcedimento("Todos os Tipos de Processo");
             }
             array_push($arrayTiposProcessoCorrigido, $objMdIaAdmDocRelevDTO);
         }
         return parent::montarSelectArrInfraDTO(0, "Selecione uma opção", $dados["selTipoProcesso"], $arrayTiposProcessoCorrigido, 'IdTipoProcedimento', 'NomeTipoProcedimento');
     }
-    public static function validarReativacao($dados) {
+    public static function validarReativacao($dados)
+    {
 
         $arrayIds = explode(",", $dados["id"]);
-        if(!is_array($arrayIds)) {
+        if (!is_array($arrayIds)) {
             $arrayIds = array($dados["id"]);
         }
-        foreach($arrayIds as $idDocumentoRelevante) {
+        foreach ($arrayIds as $idDocumentoRelevante) {
             $objMdIaAdmDocRelevDTO = new MdIaAdmDocRelevDTO();
             $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
             $objMdIaAdmDocRelevDTO->setNumIdMdIaAdmDocRelev($idDocumentoRelevante);
@@ -145,7 +150,7 @@ class MdIaAdmDocRelevINT extends InfraINT
             $objMdIaAdmDocRelevDTO->retStrAplicabilidade();
             $objMdIaAdmDocRelevDTO->retStrNomeTipoProcedimento();
             $documentoRelevanteSelecionado = $objMdIaAdmDocRelevRN->consultar($objMdIaAdmDocRelevDTO);
-            if($documentoRelevanteSelecionado->getNumIdTipoProcedimento() > 0) {
+            if ($documentoRelevanteSelecionado->getNumIdTipoProcedimento() > 0) {
                 $objMdIaAdmDocRelevDTO = new MdIaAdmDocRelevDTO();
                 $objMdIaAdmDocRelevDTO->retNumIdMdIaAdmDocRelev();
                 $objMdIaAdmDocRelevDTO->setNumIdSerie($documentoRelevanteSelecionado->getNumIdSerie());
@@ -155,8 +160,8 @@ class MdIaAdmDocRelevINT extends InfraINT
                 $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
                 $arrObjMdIaAdmDocRelevDTO = $objMdIaAdmDocRelevRN->contar($objMdIaAdmDocRelevDTO);
 
-                if($arrObjMdIaAdmDocRelevDTO > 0) {
-                    return array("result" => utf8_encode($documentoRelevanteSelecionado->getStrNomeTipoProcedimento()));
+                if ($arrObjMdIaAdmDocRelevDTO > 0) {
+                    return array("result" => mb_convert_encoding($documentoRelevanteSelecionado->getStrNomeTipoProcedimento(), 'UTF-8', 'ISO-8859-1'));
                 }
             } else {
                 $objMdIaAdmDocRelevDTO = new MdIaAdmDocRelevDTO();
@@ -167,17 +172,17 @@ class MdIaAdmDocRelevINT extends InfraINT
                 $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
                 $arrObjMdIaAdmDocRelevDTO = $objMdIaAdmDocRelevRN->contar($objMdIaAdmDocRelevDTO);
 
-                if($arrObjMdIaAdmDocRelevDTO > 0) {
+                if ($arrObjMdIaAdmDocRelevDTO > 0) {
                     return array("result" => "todos");
                 }
             }
-
         }
 
         return array("result" => "false");
     }
-    public static function verificarItemAdicionadoDesativado($dados) {
-        if($dados['hdnIdTpProcesso'] != "") {
+    public static function verificarItemAdicionadoDesativado($dados)
+    {
+        if ($dados['hdnIdTpProcesso'] != "") {
             $arrTipoProcessoEspecifico = PaginaSEI::getInstance()->getArrItensTabelaDinamica($dados['hdnIdTpProcesso']);
             foreach ($arrTipoProcessoEspecifico as $tipoProcessoEspecifico) {
                 $objMdIaAdmDocRelevDTO = new MdIaAdmDocRelevDTO();
@@ -188,8 +193,8 @@ class MdIaAdmDocRelevINT extends InfraINT
                 $objMdIaAdmDocRelevDTO->setStrSinAtivo("N");
                 $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
                 $arrObjMdIaAdmDocRelevDTO = $objMdIaAdmDocRelevRN->listar($objMdIaAdmDocRelevDTO);
-                if($arrObjMdIaAdmDocRelevDTO) {
-                    return array("result" => utf8_encode("O Tipo de Processo Específico <strong>".$arrObjMdIaAdmDocRelevDTO[0]->getStrNomeTipoProcedimento()."</strong> já existe no cadastro de Documentos Relevantes, porém se encontra com a situação desativado. Para utilizar o mesmo você deve realizar a reativação do Processo Específico informado."));
+                if ($arrObjMdIaAdmDocRelevDTO) {
+                    return array("result" => mb_convert_encoding("O Tipo de Processo Específico <strong>" . $arrObjMdIaAdmDocRelevDTO[0]->getStrNomeTipoProcedimento() . "</strong> já existe no cadastro de Documentos Relevantes, porém se encontra com a situação desativado. Para utilizar o mesmo você deve realizar a reativação do Processo Específico informado.", 'UTF-8', 'ISO-8859-1'));
                 }
             }
         } else {
@@ -201,8 +206,8 @@ class MdIaAdmDocRelevINT extends InfraINT
             $objMdIaAdmDocRelevDTO->setStrSinAtivo("N");
             $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
             $arrObjMdIaAdmDocRelevDTO = $objMdIaAdmDocRelevRN->listar($objMdIaAdmDocRelevDTO);
-            if($arrObjMdIaAdmDocRelevDTO) {
-                return array("result" => utf8_encode("A Aplicabilidade combinada com o Tipo de Documento informado já existe no cadastro de Documentos Relevantes sendo Relevante para todos os Tipos de Processos, porém se encontra com a situação desativado. Para utilizar o mesmo você deve realizar a reativação."));
+            if ($arrObjMdIaAdmDocRelevDTO) {
+                return array("result" => mb_convert_encoding("A Aplicabilidade combinada com o Tipo de Documento informado já existe no cadastro de Documentos Relevantes sendo Relevante para todos os Tipos de Processos, porém se encontra com a situação desativado. Para utilizar o mesmo você deve realizar a reativação.", 'UTF-8', 'ISO-8859-1'));
             }
         }
         return array("result" => "false");

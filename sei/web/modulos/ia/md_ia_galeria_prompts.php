@@ -166,7 +166,7 @@ try {
         );
     }
 
-    if ($numIdMdIaGrupoGaleriaPrompt > 0) {
+    if (is_numeric($numIdMdIaGrupoGaleriaPrompt) && (int)$numIdMdIaGrupoGaleriaPrompt > 0) {
         $objMdIaGaleriaPromptsDTO->setNumIdMdIaGrupoGaleriaPrompt($numIdMdIaGrupoGaleriaPrompt);
     }
     if ($SelSinAtivo == "") {
@@ -188,6 +188,7 @@ try {
     PaginaSEI::getInstance()->prepararPaginacao($objMdIaGaleriaPromptsDTO);
 
     $objMdIaGaleriaPromptsRN = new MdIaGaleriaPromptsRN();
+
     $arrObjMdIaGaleriaPromptsDTO = $objMdIaGaleriaPromptsRN->listar($objMdIaGaleriaPromptsDTO);
 
     PaginaSEI::getInstance()->processarPaginacao($objMdIaGaleriaPromptsDTO);
@@ -195,7 +196,7 @@ try {
 
     if ($numRegistros > 0) {
 
-        $bolPermiteEdicao = SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_config_assist_ia_consultar');
+        $bolPossuiPermissaoAssistente = SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_config_assist_ia_consultar');
 
         $bolAcaoModerador = SessaoSEI::getInstance()->verificarPermissao('md_ia_galeria_prompt_moderador');
 
@@ -250,8 +251,7 @@ try {
     $strItensSelAtivos = MdIaGrupoGaleriaPromptINT::montarSelectSinAtivo('S', 'Ativos', $SelSinAtivo);
 
     for ($i = 0; $i < $numRegistros; $i++) {
-
-        if (($arrObjMdIaGaleriaPromptsDTO[$i]->getNumIdUnidade() == SessaoSEI::getInstance()->getNumIdUnidadeAtual() || $bolAcaoModerador) && $bolPermiteEdicao) {
+        if (($arrObjMdIaGaleriaPromptsDTO[$i]->getNumIdUnidade() == SessaoSEI::getInstance()->getNumIdUnidadeAtual() || $bolAcaoModerador) && $bolPossuiPermissaoAssistente) {
             $bolPermiteEdicao = true;
         } else {
             $bolPermiteEdicao = false;
