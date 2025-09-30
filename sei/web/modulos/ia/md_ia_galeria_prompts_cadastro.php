@@ -170,7 +170,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         <textarea rows="4" required name="txaDescricaoPrompt" id="txaDescricaoPrompt" class="infraTextarea" maxlength="500" onpaste="return infraLimitarTexto(this,event,500);" onkeypress="return infraLimitarTexto(this,event,500);" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?= $descricaoPrompt ?></textarea>
     </div>
     <div class="form-group">
-        <label id="lblPrompt" for="txaPrompt" accesskey="P" class="infraLabelObrigatorio"><span class="infraTeclaAtalho">P</span>rompt:</label>
+        <label id="lblPrompt" for="txaPrompt" class="infraLabelObrigatorio">Prompt:</label>
         <textarea rows="18" required name="txaPrompt" id="txaPrompt" class="infraTextarea" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?= $prompt ?></textarea>
     </div>
     <input type="hidden" id="hdnIdMdIaGaleriaPrompts" name="hdnIdMdIaGaleriaPrompts" value="<?= $numIdMdIaGaleriaPrompts ?>" />

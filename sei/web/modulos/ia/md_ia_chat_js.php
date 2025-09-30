@@ -1,3 +1,11 @@
+<script>
+    if (typeof jQuery === 'undefined') {
+        var s = document.createElement('script');
+        s.src = "/infra_js/jquery/jquery-3.7.0.min.js";
+        document.head.appendChild(s);
+    }
+</script>
+
 <script type="text/javascript">
     <?php require_once dirname(__FILE__) . '/lib/gpt-tokenizer/cl100k_base.js'; ?>
 </script>
@@ -9,22 +17,6 @@
 <script src="modulos/ia/lib/purify/purify.js"></script>
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function(event) {
-        /* document.getElementById("botaoTransferir").style.display = 'none';
-         if(document.getElementById("ifrVisualizacao")) {
-             document.getElementById("ifrVisualizacao").onload = function () {
-                 var funcaoAcionada = false;
-                 if (document.getElementById("ifrVisualizacao").contentWindow.document.getElementById('ifrArvoreHtml')) {
-                     document.getElementById("ifrVisualizacao").contentWindow.document.getElementById('ifrArvoreHtml').onmouseover = function () {
-                         if (!funcaoAcionada) {
-                             funcaoAcionada = true;
-                             acionarListener();
-                         }
-                     };
-                 }
-             };
-         } else if(document.getElementById("frmEditor")) {
-             acionarListenerEditor();
-         }*/
         $('.send-message-input').on('keydown input', function(event) {
             // ENTER sem Shift ? enviar
             if (event.type === 'keydown' && event.key === 'Enter' && !event.shiftKey) {
@@ -102,7 +94,7 @@
             content: "Prompts Favoritos",
         });
 
-        tippy("#titleBuscarWeb", {
+        tippy("#botaoBuscarWeb", {
             content: "Buscar na Web",
         });
 
@@ -512,8 +504,11 @@
             $.ajax({
                 url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_consulta_protocolo_assistente_ia_ajax'); ?>',
                 type: 'POST',
+                contentType: 'application/json; charset=utf-8', // importante
                 dataType: "json",
-                data: protocolo,
+                data: JSON.stringify({
+                    protocolo: protocolo
+                }),
                 async: false,
                 success: function(dadosCitacoes) {
                     if (!Array.isArray(dadosCitacoes)) {
@@ -709,11 +704,19 @@
         } else {
             mensagemUsuario["refletir"] = false;
         }
+        if ($("#botaoBuscarWeb").hasClass("botaoAcaoAssistenteIAAtivado")) {
+            mensagemUsuario["buscarWeb"] = true;
+        } else {
+            mensagemUsuario["buscarWeb"] = false;
+        }
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_assistente_envia_mensagem_ajax'); ?>',
             type: 'POST', //selecionando o tipo de requisição, PUT,GET,POST,DELETE
+            contentType: 'application/json; charset=utf-8',
             dataType: "json", //Tipo de dado que será enviado ao servidor
-            data: mensagemUsuario, // Enviando o JSON com o nome de itens
+            data: JSON.stringify({
+                mensagemUsuario: mensagemUsuario
+            }), // mensagemUsuario é seu objeto/array
             success: function(data) {
                 if (data["error"]) {
                     $("#botaoEnviarMensagem").addClass("limiteDiarioExcedido");
@@ -904,37 +907,248 @@
 
     }
 
-    function insereCitacaoFonte(divfilho) {
-        // Seleciona os elementos
-        elementosCopiarResposta = divfilho.querySelectorAll('.AssistenteSEIIAfonteResposta');
 
-        // Aplica o popover nos elementos encontrados
+    // Função que inicializa popovers para os elementos dentro de divfilho
+    function insereCitacaoFonte(divfilho) {
+
+        // Inicialização única: helpers e handlers globais
+        if (!window._assistente_citacao_init) {
+            window._assistente_citacao_init = true;
+
+            // Escapa HTML (evita XSS se o texto vier do servidor)
+            window._escapeHtmlAssistente = function(unsafe) {
+                if (unsafe == null) return '';
+                return String(unsafe)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            };
+
+            // handler do clique (substitui seu atual)
+            $(document).on('click', '.AssistenteSEIIAfonteResposta', function(e) {
+                e.preventDefault();
+                var $btn = $(this);
+                // fecha os outros
+                $('.AssistenteSEIIAfonteResposta').not($btn).popover('hide');
+
+                // tecla: toggle do popover do botão clicado
+                $btn.popover('toggle');
+
+                // quando abrir, ajusta o tamanho conforme a classe .widget-content.expandido
+                $btn.off('shown.bs.popover._assistente').on('shown.bs.popover._assistente', function() {
+                    // pega o popover criado pelo Bootstrap
+                    var pop = $btn.data('bs.popover');
+                    var $popEl = $('#' + $btn.attr('aria-describedby'));
+                    if (!$popEl || $popEl.length === 0) return;
+
+                    // decide os tamanhos conforme estado
+                    var isExpanded = $(".widget-content").hasClass("expandido");
+                    var maxW = isExpanded ? "500px" : "350px";
+                    var maxH = isExpanded ? "181px" : "150px";
+                    var maxHBody = isExpanded ? "150px" : "100px";
+
+                    // aplica com !important usando style.setProperty
+                    $popEl.each(function() {
+                        this.style.setProperty('max-width', maxW, 'important');
+                        this.style.setProperty('max-height', maxH, 'important');
+                        // corpo do popover
+                        var body = this.querySelector('.popover-body');
+                        if (body) body.style.setProperty('max-height', maxHBody, 'important');
+                    });
+
+                    // força recálculo do popper (posicionamento correto após o resize do popover)
+                    try {
+                        var inst = pop && (pop._popper || pop._popperInstance || pop._popper);
+                        if (inst) {
+                            if (typeof inst.scheduleUpdate === 'function') inst.scheduleUpdate();
+                            if (typeof inst.update === 'function') inst.update();
+                        }
+                    } catch (err) {
+                        /* ignore */
+                    }
+                });
+            });
+
+
+            // Delegated: abrir via teclado (Enter / Space)
+            $(document).on('keydown', '.AssistenteSEIIAfonteResposta', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    $(this).trigger('click');
+                }
+            });
+
+            // Não deixar clique dentro do popover "fechar" imediatamente (permite seleção)
+            $(document).on('mousedown', '.popoverChatIa', function(e) {
+                e.stopPropagation();
+            });
+
+            // Fechar ao clicar fora
+            $(document).on('click', function(e) {
+                if ($(e.target).closest('.AssistenteSEIIAfonteResposta').length === 0 &&
+                    $(e.target).closest('.popoverChatIa').length === 0) {
+                    $('.AssistenteSEIIAfonteResposta').popover('hide');
+                }
+            });
+
+            // Esc para fechar
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    $('.AssistenteSEIIAfonteResposta').popover('hide');
+                }
+            });
+
+            /* === Novos handlers para evitar popovers "órfãos" ao navegar/trocar página === */
+
+            // 1) Fechar ao clicar em links de navegação comuns (ajuste seletores se necessário)
+            $(document).on('click', '.sidebar a, .navbar a, .menu a, .main-nav a, .left-sidebar a', function() {
+                $('.AssistenteSEIIAfonteResposta').popover('hide');
+            });
+
+            // 2) Intercepta pushState / replaceState em SPAs e dispara evento locationchange
+            (function(history) {
+                var push = history.pushState;
+                history.pushState = function() {
+                    var ret = push.apply(history, arguments);
+                    window.dispatchEvent(new Event('locationchange'));
+                    return ret;
+                };
+                var replace = history.replaceState;
+                history.replaceState = function() {
+                    var ret = replace.apply(history, arguments);
+                    window.dispatchEvent(new Event('locationchange'));
+                    return ret;
+                };
+            })(window.history);
+
+            window.addEventListener('popstate', function() {
+                window.dispatchEvent(new Event('locationchange'));
+            });
+            window.addEventListener('locationchange', function() {
+                $('.AssistenteSEIIAfonteResposta').popover('hide');
+            });
+
+            // 3) MutationObserver para limpar popovers órfãos quando triggers forem removidos/substituídos
+            //    (evita popovers que "voam" para o topo)
+            if (!window._assistente_popover_observer) {
+                window._assistente_popover_observer = new MutationObserver(function(mutations) {
+                    // percorre popovers existentes e verifica se existe trigger associado
+                    $('.popoverChatIa').each(function() {
+                        var $pop = $(this);
+                        var popId = $pop.attr('id');
+                        if (!popId) return;
+
+                        // procura trigger que possua aria-describedby apontando para esse popover
+                        var $trigger = $('[aria-describedby="' + popId + '"]');
+
+                        // se não existir trigger ou trigger não estiver mais no DOM, removemos o popover
+                        if ($trigger.length === 0 || !document.body.contains($trigger[0])) {
+                            // tenta esconder com bootstrap caso trigger exista (seguro)
+                            if ($trigger.length) {
+                                try {
+                                    $trigger.popover('hide');
+                                } catch (e) {
+                                    /* ignore */
+                                }
+                            }
+                            // remove o popover da DOM
+                            $pop.remove();
+                        }
+                    });
+                });
+
+                // observa mudanças no body (subtree true pega alterações profundas)
+                window._assistente_popover_observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+
+            // 4) fechar popovers ao recarregar / sair da página (opcional, mas útil)
+            $(window).on('beforeunload', function() {
+                $('.AssistenteSEIIAfonteResposta').popover('hide');
+            });
+        } // fim init único
+
+
+        // --- Agora processa os elementos dentro de divfilho ---
+        var elementosCopiarResposta = divfilho.querySelectorAll('.AssistenteSEIIAfonteResposta');
+
         elementosCopiarResposta.forEach(function(elemento) {
             var texto = elemento.getAttribute('title');
-            elemento.removeAttribute('title'); // Remove o atributo title original
-            if (!texto) return; // Evita erro caso não tenha título
+            // remove title nativo para evitar tooltip do browser
+            elemento.removeAttribute('title');
+            if (!texto) return;
 
-            let partes = texto.split(' | ');
-            let titulo = partes[0] || 'Sem título';
-            let restante = partes[1] || '';
+            // Separar título | restante (suporta múltiplos '|' juntando o resto)
+            var partes = texto.split(' | ');
+            var titulo = partes[0] || 'Sem título';
+            var restante = partsToString(partes);
 
-            // Adiciona os atributos diretamente no elemento
-            //elemento.setAttribute('title', titulo);
-            //elemento.setAttribute('data-content', restante);
-            elemento.setAttribute('data-content', titulo);
+            // tornar focável para acessibilidade (se ainda não for)
+            if (!elemento.hasAttribute('tabindex')) elemento.setAttribute('tabindex', '0');
 
-            // Inicializa o popover do Bootstrap
-            $(elemento).popover({
-                trigger: 'focus', // Ativado ao clicar (pode mudar para hover se quiser)
-                placement: 'top', // Posição do popover
-                html: true, // Permite HTML dentro do popover
-                delay: {
-                    show: 500,
-                    hide: 100
-                } // Atraso na exibição
-            });
+            // remover popover anterior se houver (recria)
+            try {
+                $(elemento).popover('dispose');
+            } catch (e) {
+                /* ignore */
+            }
+
+            // decide se há texto
+            var temTexto = String(restante).trim().length > 0;
+
+            // escolhe template (quando sem texto, usamos template sem .popover-body)
+            var templateComBody = '<div class="popover popoverChatIa" role="tooltip"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body"></div></div>';
+            // template sem corpo ? só header e seta (evita espaço em branco)
+            var templateSoTitulo = '<div class="popover popoverChatIa popoverChatIa-only-title" role="tooltip"><div class="arrow"></div><h3 class="popover-header"></h3></div>';
+
+            if (temTexto) {
+                $(elemento).popover({
+                    trigger: 'manual',
+                    placement: 'top',
+                    html: true,
+                    container: 'body',
+                    sanitize: true, // seguro: conteúdo é escapado e só usamos <br> para quebras
+                    title: '<strong>' + window._escapeHtmlAssistente(titulo) + '</strong>',
+                    content: function() {
+                        // escapamos e convertemos quebras de linha em <br>
+                        return '<div class="quote-text">' + window._escapeHtmlAssistente(restante).replace(/\n/g, '<br>') + '</div>';
+                    },
+                    template: templateComBody,
+                    delay: {
+                        show: 200,
+                        hide: 100
+                    }
+                });
+            } else {
+                // somente título ? sem corpo (template sem body)
+                $(elemento).popover({
+                    trigger: 'manual',
+                    placement: 'top',
+                    html: true,
+                    container: 'body',
+                    sanitize: true,
+                    title: '<strong>' + window._escapeHtmlAssistente(titulo) + '</strong>',
+                    content: '', // nada no body
+                    template: templateSoTitulo,
+                    delay: {
+                        show: 150,
+                        hide: 80
+                    }
+                });
+            }
         });
+
+        // helper: concatena as partes (mantendo ' | ' extras se houver)
+        function partsToString(parts) {
+            if (!parts || parts.length <= 1) return '';
+            return parts.slice(1).join(' | ');
+        }
     }
+
 
     function insereCritica(data, divfilho, divpai, dthCadastro) {
         var id_mensagem = data['id_mensagem'];
@@ -1292,6 +1506,7 @@
         $("#conteudoChat .blocoMensagem").css({
             "min-width": "91%"
         });
+
         controlaTamanhoConteudoChat();
     }
 
@@ -1306,16 +1521,20 @@
         if (display == "expandido") {
             if (document.getElementById('navInfraBarraNavegacao')) {
                 var reducaoAlturaChat = (document.getElementById('navInfraBarraNavegacao').clientHeight) + 30;
+            } else if (document.getElementsByClassName('infra-editor__documento').length > 0) {
+                var reducaoAlturaChat = 138;
             } else {
                 var reducaoAlturaChat = 83;
             }
         } else {
             if (document.getElementById("ifrVisualizacao") && document.getElementById('navInfraBarraNavegacao') && document.getElementById("ifrVisualizacao").contentWindow.document.getElementById("divArvoreAcoes")) {
-                var reducaoAlturaChat = (document.getElementById('navInfraBarraNavegacao').clientHeight) + document.getElementById("ifrVisualizacao").contentWindow.document.getElementById("divArvoreAcoes").clientHeight + 101;
+                var reducaoAlturaChat = (document.getElementById('navInfraBarraNavegacao').clientHeight) + document.getElementById("ifrVisualizacao").contentWindow.document.getElementById("divArvoreAcoes").clientHeight + 62;
+            } else if (document.getElementsByClassName('infra-editor__documento').length > 0) {
+                var reducaoAlturaChat = 170;
             } else if (document.getElementById('navInfraBarraNavegacao')) {
-                var reducaoAlturaChat = (document.getElementById('navInfraBarraNavegacao').clientHeight) + 147;
+                var reducaoAlturaChat = (document.getElementById('navInfraBarraNavegacao').clientHeight) + 74;
             } else {
-                var reducaoAlturaChat = 250;
+                var reducaoAlturaChat = 125;
             }
         }
         var alturaRealChat = parseInt($(window).height()) - parseInt(reducaoAlturaChat);
@@ -1323,7 +1542,7 @@
             "height": alturaRealChat + "px"
         });
         var alturaConteudoChat = alturaRealChat - document.getElementsByClassName('widget-title')[0].clientHeight - document.getElementById('lugarInteracaoUsuario').clientHeight - 56;
-        var alturaPainelTopico = alturaRealChat - document.getElementsByClassName('widget-title')[0].clientHeight - 70;
+        var alturaPainelTopico = alturaRealChat - document.getElementsByClassName('widget-title')[0].clientHeight - 160;
         $("#listagemTopicos").css({
             "height": alturaPainelTopico + "px"
         });
@@ -1331,7 +1550,8 @@
         var larguraConteudoChat = document.getElementById('conteudoChat').clientWidth;
         var larguraTotal = parseInt(larguraPainelTopicos) + parseInt(larguraConteudoChat);
         if ($(window).width() < larguraTotal) {
-            var larguraDesejada = (parseInt(larguraTotal) - parseInt($(window).width())) + 150;
+            var larguraDesejada = (parseInt(larguraTotal) - parseInt($(window).width())) + 212;
+            console.log(larguraDesejada);
             $("#conteudoChat").css({
                 "width": larguraDesejada
             });
@@ -1405,7 +1625,7 @@
         $("#conversa").html("");
         $("#mensagem").val("");
         $("#botaoRefletir").removeClass('botaoAcaoAssistenteIAAtivado');
-        $("#titleBuscarWeb").removeClass('botaoAcaoAssistenteIAAtivado');
+        $("#botaoBuscarWeb").removeClass('botaoAcaoAssistenteIAAtivado');
         insereCards(divpai);
         insereBoasVindas(divpai, divfilho);
         controlaPreenchimentoCampoMensagem();
@@ -1567,7 +1787,7 @@
                 if (limparCampos) {
                     $("#mensagem").val("");
                     $("#botaoRefletir").removeClass('botaoAcaoAssistenteIAAtivado');
-                    $("#titleBuscarWeb").removeClass('botaoAcaoAssistenteIAAtivado');
+                    $("#botaoBuscarWeb").removeClass('botaoAcaoAssistenteIAAtivado');
                 }
                 if (data != "") {
                     insereBoasVindas(divpai, divfilho);

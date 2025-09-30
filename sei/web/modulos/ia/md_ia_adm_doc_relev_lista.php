@@ -334,6 +334,9 @@ PaginaSEI::getInstance()->abrirHead();
 PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
+?>
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_comum.css" />
+<?php
 PaginaSEI::getInstance()->abrirStyle();
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();

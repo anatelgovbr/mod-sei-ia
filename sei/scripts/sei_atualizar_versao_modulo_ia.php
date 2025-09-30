@@ -5,10 +5,10 @@ class MdIaAtualizadorSeiRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '1.2.0';
+    private $versaoAtualDesteModulo = '1.3.0';
     private $nomeDesteModulo = 'MÓDULO IA';
     private $nomeParametroModulo = 'VERSAO_MODULO_IA';
-    private $historicoVersoes = array('1.0.0', '1.1.0', '1.2.0');
+    private $historicoVersoes = array('1.0.0', '1.1.0', '1.2.0', '1.3.0');
 
     public function __construct()
     {
@@ -112,6 +112,8 @@ class MdIaAtualizadorSeiRN extends InfraRN
                     $this->instalarv110();
                 case '1.1.0':
                     $this->instalarv120();
+                case '1.2.0':
+                    $this->instalarv130();
                     break;
                 default:
                     $this->finalizar('A VERSÃO MAIS ATUAL DO ' . $this->nomeDesteModulo . ' (v' . $this->versaoAtualDesteModulo . ') JÁ ESTÁ INSTALADA.');
@@ -1596,7 +1598,7 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
 
-       $this->logar('REFATORANDO Prompts favoritos, removendo vinculação com a tabela de md_ia_interacao_chat');
+        $this->logar('REFATORANDO Prompts favoritos, removendo vinculação com a tabela de md_ia_interacao_chat');
         $objInfraMetaBD->adicionarColuna('md_ia_prompts_favoritos', 'prompt', $objInfraMetaBD->tipoTextoGrande(), 'null');
 
 
@@ -1616,9 +1618,35 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
             $objMdIaPromptsFavoritosDTO->setStrPrompt($promptFavorito['pergunta']);
             $objMdIaPromptsFavoritosRN->alterar($objMdIaPromptsFavoritosDTO);
         }
+
         $objInfraMetaBD->excluirChaveEstrangeira('md_ia_prompts_favoritos', 'fk1_md_ia_prompts_favoritos');
         $objInfraMetaBD->excluirIndice('md_ia_prompts_favoritos', 'fk1_md_ia_prompts_favoritos');
         $objInfraMetaBD->excluirColuna('md_ia_prompts_favoritos', 'id_md_ia_interacao_chat');
+
+        $this->atualizarNumeroVersao($nmVersao);
+    }
+
+    protected function instalarv130()
+    {
+        $nmVersao = '1.3.0';
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSAO ' . $nmVersao . ' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+        $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+
+        $this->logar('CRIANDO A TABELA md_ia_ods_onu_nsa');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_ods_onu_nsa (
+            id_procedimento ' . $objInfraMetaBD->tipoNumeroGrande() . ' NOT NULL,
+            id_usuario ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            id_unidade ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            dth_cadastro ' . $objInfraMetaBD->tipoDataHora() . ' NULL
+        )');
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_ia_ods_onu_nsa', 'pk_md_ia_ods_onu_nsa', array('id_procedimento'));
+
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_ia_ods_onu_nsa', 'md_ia_ods_onu_nsa', array('id_usuario'), 'usuario', array('id_usuario'));
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_ia_ods_onu_nsa', 'md_ia_ods_onu_nsa', array('id_unidade'), 'unidade', array('id_unidade'));
 
         $this->atualizarNumeroVersao($nmVersao);
     }

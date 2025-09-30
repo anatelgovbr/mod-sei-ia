@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -11,42 +12,6 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdIaAdmIntegracaoINT extends InfraINT
 {
-
-    public static function montarOperacaoSOAP($data)
-    {
-        $enderecoWSDL = $data['urlServico'];
-        $xml = "<operacoes>\n";
-        try {
-            if (!filter_var($enderecoWSDL, FILTER_VALIDATE_URL) || !InfraUtil::isBolUrlValida($enderecoWSDL, FILTER_VALIDATE_URL))
-                throw new InfraException("Endereço do WebService inválido.");
-
-            if ($data['tipoWs'] != 'SOAP')
-                throw new InfraException('O tipo de integração informado deve ser do tipo SOAP.');
-
-            $client = new MdIaSoapClienteRN($enderecoWSDL, 'wsdl');
-            $client->setSoapVersion($data['versaoSoap']);
-            $operacaoArr = $client->getFunctions();
-
-            if (empty($operacaoArr)) {
-                $xml .= "<success>false</success>\n";
-                $xml .= "<msg>Não existe operação.</msg>\n";
-                $xml .= "</operacoes>\n";
-                return $xml;
-            }
-
-            $xml .= "<success>true</success>\n";
-            asort($operacaoArr);
-            foreach ($operacaoArr as $key => $operacao) {
-                $xml .= "<operacao key='{$key}'>{$operacao}</operacao>\n";
-            }
-            $xml .= '</operacoes>';
-            return $xml;
-
-        } catch (Exception $e) {
-            throw new InfraException("Erro Operação SOAP: {$e->getMessage()}", $e);
-        }
-    }
-
     public static function getDadosServicoREST($post)
     {
 
@@ -70,6 +35,7 @@ class MdIaAdmIntegracaoINT extends InfraINT
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => 0,       // ignora verificação do nome do host (0 desabilita, 2 habilita)
             CURLOPT_TIMEOUT_MS => '5000',
             CURLOPT_CUSTOMREQUEST => $post['tipoRequisicao'],
         ]);
@@ -126,56 +92,172 @@ class MdIaAdmIntegracaoINT extends InfraINT
             }
             $xml .= '</operacoes>';
             return $xml;
-
         } catch (Exception $e) {
             throw new InfraException("Erro Operação REST: {$e->getMessage()}", $e);
         }
+    }
+
+    private static function getRefName($ref)
+    {
+        if (!is_string($ref)) return null;
+        $parts = explode('/', $ref);
+        return end($parts);
     }
 
     private static function filtrarJSON($arrJson)
     {
         $arrDados = [];
 
-        foreach ($arrJson as $k => $v) {
-            if ($k == 'paths') {
-                foreach ($v as $k1 => $v1) {
-                    //monta dados de entrada
-                    $arrItem = (array)$v1->post->parameters[0]->schema;
-                    $arrItem = explode('/', $arrItem['$ref']);
-                    $strAcao = end($arrItem);
-                    $arrDados['operacoes'][$k1]['parametros']['entrada']['nome'] = $strAcao;
+        // pega as definições/schemas tanto para swagger v2 (definitions) quanto openapi v3 (components.schemas)
+        $arrSchemas = [];
+        if (isset($arrJson->components) && isset($arrJson->components->schemas)) {
+            $arrSchemas = (array) $arrJson->components->schemas;
+        } elseif (isset($arrJson->definitions)) {
+            $arrSchemas = (array) $arrJson->definitions;
+        }
 
-                    $arrDD = (array)$arrJson->definitions;
-                    foreach ($arrDD as $k2 => $v2) {
-                        if ($k2 == $strAcao) {
-                            $arrParam = (array)$v2->properties;
-                            foreach ($arrParam as $k3 => $v3) {
-                                $arrDados['operacoes'][$k1]['parametros']['entrada']['valores'][] = $k3;
+        if (empty($arrJson->paths) || !is_object($arrJson->paths)) {
+            return json_encode($arrDados);
+        }
+
+        foreach ($arrJson->paths as $path => $pathObj) {
+            // cada $pathObj pode ter vários métodos (get, post, put, ...)
+            foreach ($pathObj as $method => $operation) {
+                $method = strtolower($method);
+
+                // --- ENTRADA ---
+                $entradaNome = null;
+                $entradaValores = [];
+
+                // 1) parâmetros (query/path) -> OpenAPI2/3: array de parameters
+                if (!empty($operation->parameters) && is_array($operation->parameters)) {
+                    foreach ($operation->parameters as $param) {
+                        // se o parâmetro referencia um schema por $ref
+                        if (isset($param->schema) && isset($param->schema->{'$ref'})) {
+                            $ref = self::getRefName($param->schema->{'$ref'});
+                            if ($ref) {
+                                $entradaNome = $ref;
+                                if (isset($arrSchemas[$ref]) && isset($arrSchemas[$ref]->properties)) {
+                                    foreach ((array) $arrSchemas[$ref]->properties as $prop => $_) {
+                                        $entradaValores[] = $prop;
+                                    }
+                                }
                             }
-                        }
-                    }
-
-                    //monta dados de saida
-                    $arrItem = (array)$v1->post->responses->{200}->schema;
-                    if (empty($arrItem['$ref'])) $arrItem = (array)$v1->post->responses->{200}->schema->items;
-                    $arrItem = explode('/', $arrItem['$ref']);
-                    $strAcao = end($arrItem);
-                    $arrDados['operacoes'][$k1]['parametros']['saida']['nome'] = $strAcao;
-
-                    $arrDD = (array)$arrJson->definitions;
-                    foreach ($arrDD as $k2 => $v2) {
-                        if ($k2 == $strAcao) {
-                            $arrParam = (array)$v2->properties;
-                            foreach ($arrParam as $k3 => $v3) {
-                                $arrDados['operacoes'][$k1]['parametros']['saida']['valores'][] = $k3;
+                        } else {
+                            // parâmetro simples (query/path) -> usa o nome do parâmetro
+                            if (isset($param->name)) {
+                                $entradaValores[] = $param->name;
                             }
                         }
                     }
                 }
+
+                // 2) requestBody (OpenAPI3) -> content -> application/json -> schema
+                if (empty($entradaNome) && isset($operation->requestBody)) {
+                    $schema = null;
+                    if (isset($operation->requestBody->content)) {
+                        $contentArr = (array) $operation->requestBody->content;
+                        // tenta application/json primeiro, senão pega o primeiro content disponível
+                        if (isset($operation->requestBody->content->{'application/json'}->schema)) {
+                            $schema = $operation->requestBody->content->{'application/json'}->schema;
+                        } else {
+                            $first = reset($contentArr);
+                            if ($first && isset($first->schema)) {
+                                $schema = $first->schema;
+                            }
+                        }
+                    }
+                    if ($schema) {
+                        if (isset($schema->{'$ref'})) {
+                            $ref = self::getRefName($schema->{'$ref'});
+                            $entradaNome = $ref;
+                            if (isset($arrSchemas[$ref]) && isset($arrSchemas[$ref]->properties)) {
+                                foreach ((array) $arrSchemas[$ref]->properties as $prop => $_) {
+                                    $entradaValores[] = $prop;
+                                }
+                            }
+                        } elseif (isset($schema->properties)) {
+                            foreach ((array) $schema->properties as $prop => $_) {
+                                $entradaValores[] = $prop;
+                            }
+                        }
+                    }
+                }
+
+                // --- SAÍDA ---
+                $saidaNome = null;
+                $saidaValores = [];
+
+                if (isset($operation->responses)) {
+                    // preferimos 200, senão pega primeiro response disponível
+                    $resp = null;
+                    if (isset($operation->responses->{200})) {
+                        $resp = $operation->responses->{200};
+                    } else {
+                        $resArr = (array) $operation->responses;
+                        $firstResp = reset($resArr);
+                        if ($firstResp) $resp = $firstResp;
+                    }
+
+                    if ($resp) {
+                        // OpenAPI3: responses->{200}->content->{application/json}->schema
+                        if (isset($resp->content)) {
+                            $contentArr = (array) $resp->content;
+                            if (isset($resp->content->{'application/json'}->schema)) {
+                                $schema = $resp->content->{'application/json'}->schema;
+                            } else {
+                                $first = reset($contentArr);
+                                $schema = ($first && isset($first->schema)) ? $first->schema : null;
+                            }
+                        } elseif (isset($resp->schema)) { // swagger v2 style
+                            $schema = $resp->schema;
+                        } else {
+                            $schema = null;
+                        }
+
+                        if (isset($schema)) {
+                            // caso $ref direto
+                            if (isset($schema->{'$ref'})) {
+                                $ref = self::getRefName($schema->{'$ref'});
+                                $saidaNome = $ref;
+                                if ($ref && isset($arrSchemas[$ref]) && isset($arrSchemas[$ref]->properties)) {
+                                    foreach ((array) $arrSchemas[$ref]->properties as $prop => $_) {
+                                        $saidaValores[] = $prop;
+                                    }
+                                }
+                            } elseif (isset($schema->items) && isset($schema->items->{'$ref'})) {
+                                // array de itens -> items.$ref
+                                $ref = self::getRefName($schema->items->{'$ref'});
+                                $saidaNome = $ref;
+                                if ($ref && isset($arrSchemas[$ref]) && isset($arrSchemas[$ref]->properties)) {
+                                    foreach ((array) $arrSchemas[$ref]->properties as $prop => $_) {
+                                        $saidaValores[] = $prop;
+                                    }
+                                }
+                            } elseif (isset($schema->properties)) {
+                                // schema inline
+                                foreach ((array) $schema->properties as $prop => $_) {
+                                    $saidaValores[] = $prop;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // normaliza arrays (remove nulos e duplicates)
+                $entradaValores = array_values(array_unique(array_filter($entradaValores)));
+                $saidaValores = array_values(array_unique(array_filter($saidaValores)));
+
+                $arrDados['operacoes'][$path]['parametros']['entrada']['nome'] = $entradaNome;
+                $arrDados['operacoes'][$path]['parametros']['entrada']['valores'] = $entradaValores;
+                $arrDados['operacoes'][$path]['parametros']['saida']['nome'] = $saidaNome;
+                $arrDados['operacoes'][$path]['parametros']['saida']['valores'] = $saidaValores;
             }
         }
+
         return json_encode($arrDados);
     }
+
 
     private static function trataRetornoCurl($ret)
     {
@@ -345,7 +427,8 @@ class MdIaAdmIntegracaoINT extends InfraINT
                 throw new InfraException('Tipo de Ação não declarado na função.');
         }
     }
-    public function buscaDadosIntegracao($dados) {
+    public static function buscaDadosIntegracao($dados)
+    {
         $objMdIaAdmIntegracaoDTO = new MdIaAdmIntegracaoDTO();
         $objMdIaAdmIntegracaoRN = new MdIaAdmIntegracaoRN();
         $objMdIaAdmIntegracaoDTO->setNumIdMdIaAdmIntegFuncion($dados["idIntegracao"]);
@@ -380,7 +463,7 @@ class MdIaAdmIntegracaoINT extends InfraINT
                 $strCadastroUrls .= $strCssTr;
                 $referencia = $objMdIaAdmUrlIntegracaoDTO->getStrReferencia();
                 $strCadastroUrls .= "<td align='left'  style='padding: 8px;' >";
-                $strCadastroUrls .= '    <label>'. $objMdIaAdmUrlIntegracaoDTO->getStrLabel() .'</label>';
+                $strCadastroUrls .= '    <label>' . $objMdIaAdmUrlIntegracaoDTO->getStrLabel() . '</label>';
                 $strCadastroUrls .= '</td>';
                 $strCadastroUrls .= "<td id='{$objMdIaAdmUrlIntegracaoDTO->getStrReferencia()}'  style='padding: 8px;' >";
                 $strCadastroUrls .= "   <div class='form-group'>";

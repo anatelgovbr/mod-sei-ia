@@ -28,7 +28,7 @@ class MdIaAgendamentoAutomaticoRN extends InfraRN
 
         try {
             ini_set('max_execution_time', '18000');
-            ini_set('memory_limit', '0');
+            ini_set('memory_limit', '-1');
 
             InfraDebug::getInstance()->setBolLigado(true);
             InfraDebug::getInstance()->setBolDebugInfra(false);
@@ -41,23 +41,24 @@ class MdIaAgendamentoAutomaticoRN extends InfraRN
             //BUSCAR OS DADOS PARA COMPARACAO E ATUALIZACAO
             $listaAtual = $this->buscarHashProcessosRelevantes();
             $listaSalva = $this->listaProcessosIndexacao();
+            if (!is_null($listaAtual)) {
+                InfraDebug::getInstance()->gravar('Quantidade de processos : ' . count($listaAtual));
 
-            InfraDebug::getInstance()->gravar('Quantidade de processos : ' . count($listaAtual));
-
-            // ATUALIZAR REGISTROS EXISTENTES
-            foreach ($listaAtual as $idProcedimento => $hash) {
-                if ($listaSalva[$idProcedimento]) {
-                    if ($listaSalva[$idProcedimento]['hash'] != $hash) {
-                        $this->atualizarRegistroProcessoIndexado($idProcedimento, $hash);
+                // ATUALIZAR REGISTROS EXISTENTES
+                foreach ($listaAtual as $idProcedimento => $hash) {
+                    if ($listaSalva[$idProcedimento]) {
+                        if ($listaSalva[$idProcedimento]['hash'] != $hash) {
+                            $this->atualizarRegistroProcessoIndexado($idProcedimento, $hash);
+                        }
+                        unset($listaSalva[$idProcedimento]);
+                        unset($listaAtual[$idProcedimento]);
                     }
-                    unset($listaSalva[$idProcedimento]);
-                    unset($listaAtual[$idProcedimento]);
                 }
-            }
 
-            // CADASTRAR REGISTROS NOVOS
-            foreach ($listaAtual as $idProcedimento => $hash) {
-                $this->cadastrarRegistroProcessoIndexado($idProcedimento, $hash);
+                // CADASTRAR REGISTROS NOVOS
+                foreach ($listaAtual as $idProcedimento => $hash) {
+                    $this->cadastrarRegistroProcessoIndexado($idProcedimento, $hash);
+                }
             }
 
             // CANCELAR REGISTROS REMOVIDOS
@@ -330,7 +331,7 @@ class MdIaAgendamentoAutomaticoRN extends InfraRN
 
         try {
             ini_set('max_execution_time', '18000');
-            ini_set('memory_limit', '0');
+            ini_set('memory_limit', '-1');
 
             InfraDebug::getInstance()->setBolLigado(true);
             InfraDebug::getInstance()->setBolDebugInfra(false);
@@ -452,9 +453,9 @@ class MdIaAgendamentoAutomaticoRN extends InfraRN
 
     protected function classificarMetasOdsTiposProcessosControlado()
     {
-        try{
+        try {
             ini_set('max_execution_time', '18000');
-            ini_set('memory_limit','0');
+            ini_set('memory_limit', '-1');
 
             InfraDebug::getInstance()->setBolLigado(true);
             InfraDebug::getInstance()->setBolDebugInfra(false);
@@ -467,16 +468,16 @@ class MdIaAgendamentoAutomaticoRN extends InfraRN
             (new MdIaClassMetaOdsINT())->classificarAuto();
 
             $numSeg = InfraUtil::verificarTempoProcessamento($numSeg);
-            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: '.$numSeg.' s');
+            InfraDebug::getInstance()->gravar('TEMPO TOTAL DE EXECUCAO: ' . $numSeg . ' s');
             InfraDebug::getInstance()->gravar('FIM');
 
-            LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(),InfraLog::$INFORMACAO);
-        }catch(Exception $e){
+            LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);
+        } catch (Exception $e) {
             InfraDebug::getInstance()->setBolLigado(false);
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->setBolEcho(false);
 
-            throw new InfraException('Erro classificar metas ODS.',$e);
+            throw new InfraException('Erro classificar metas ODS.', $e);
         }
     }
 }

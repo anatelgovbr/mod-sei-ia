@@ -12,7 +12,7 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdIaClassMetaOdsINT extends InfraINT
 {
-    function salvarClassificacaoOds($dados)
+    public static function salvarClassificacaoOds($dados)
     {
         $metasSelecionadasAnteriormente = explode(",", $dados["hdnHistoricoSelecionados"]);
         $metasSelecionadas = explode(",", $dados["hdnInfraItensSelecionados"]);
@@ -56,7 +56,7 @@ class MdIaClassMetaOdsINT extends InfraINT
             if (is_numeric($itemAdicionado)) {
 
                 $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
-                $objMdIaClassMetaOdsDTO->setNumIdProcedimento($dados["hdnIdProcedimento"]);
+                $objMdIaClassMetaOdsDTO->setDblIdProcedimento($dados["hdnIdProcedimento"]);
                 $objMdIaClassMetaOdsDTO->setNumIdMdIaAdmMetaOds($itemAdicionado);
                 $objMdIaClassMetaOdsDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
                 $objMdIaClassMetaOdsDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
@@ -66,7 +66,7 @@ class MdIaClassMetaOdsINT extends InfraINT
                 (new MdIaClassMetaOdsRN())->cadastrar($objMdIaClassMetaOdsDTO);
 
                 $objMdIaHistClassDTO = new MdIaHistClassDTO();
-                $objMdIaHistClassDTO->setNumIdProcedimento($dados["hdnIdProcedimento"]);
+                $objMdIaHistClassDTO->setDblIdProcedimento($dados["hdnIdProcedimento"]);
                 $objMdIaHistClassDTO->setNumIdMdIaAdmMetaOds($itemAdicionado);
                 $objMdIaHistClassDTO->setStrOperacao(MdIaHistClassRN::$OPERACAO_INSERT);
                 $objMdIaHistClassDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
@@ -90,7 +90,7 @@ class MdIaClassMetaOdsINT extends InfraINT
             $objMdIaClassMetaOdsDTO->retDthCadastro();
             $objMdIaClassMetaOdsDTO->retStrSinSugestaoAceita();
             $objMdIaClassMetaOdsDTO->retStrRacional();
-            $objMdIaClassMetaOdsDTO->setNumIdProcedimento($dados["hdnIdProcedimento"]);
+            $objMdIaClassMetaOdsDTO->setDblIdProcedimento($dados["hdnIdProcedimento"]);
             $objMdIaClassMetaOdsDTO->setNumIdMdIaAdmMetaOds($sugestaoAceita);
             $objMdIaClassMetaOdsDTO->setOrdDthCadastro(InfraDTO::$TIPO_ORDENACAO_DESC);
             $objMdIaClassMetaOdsDTO->setNumMaxRegistrosRetorno(1);
@@ -109,7 +109,7 @@ class MdIaClassMetaOdsINT extends InfraINT
 
                 $objMdIaHistClassDTO = new MdIaHistClassDTO();
                 $objMdIaHistClassDTO->retNumIdMdIaHistClass();
-                $objMdIaHistClassDTO->setNumIdProcedimento($dados["hdnIdProcedimento"]);
+                $objMdIaHistClassDTO->setDblIdProcedimento($dados["hdnIdProcedimento"]);
                 $objMdIaHistClassDTO->setNumIdMdIaAdmMetaOds($sugestaoAceita);
                 $objMdIaHistClassDTO->setStrStaTipoUsuario([MdIaClassMetaOdsRN::$USUARIO_IA, MdIaClassMetaOdsRN::$USUARIO_EXTERNO], InfraDTO::$OPER_IN);
                 $objMdIaHistClassDTO->setStrOperacao(MdIaHistClassRN::$OPERACAO_INSERT);
@@ -120,7 +120,7 @@ class MdIaClassMetaOdsINT extends InfraINT
                 if ($itemHistoricoSugerido) {
 
                     $objMdIaHistClassDTO = new MdIaHistClassDTO();
-                    $objMdIaHistClassDTO->setNumIdProcedimento($dados["hdnIdProcedimento"]);
+                    $objMdIaHistClassDTO->setDblIdProcedimento($dados["hdnIdProcedimento"]);
                     $objMdIaHistClassDTO->setNumIdMdIaAdmMetaOds($sugestaoAceita);
                     $objMdIaHistClassDTO->setStrOperacao(MdIaHistClassRN::$OPERACAO_CONFIRMACAO);
                     $objMdIaHistClassDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
@@ -143,7 +143,7 @@ class MdIaClassMetaOdsINT extends InfraINT
             if (is_numeric($itemRemovido)) {
 
                 $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
-                $objMdIaClassMetaOdsDTO->setNumIdProcedimento($dados["hdnIdProcedimento"]);
+                $objMdIaClassMetaOdsDTO->setDblIdProcedimento($dados["hdnIdProcedimento"]);
                 $objMdIaClassMetaOdsDTO->setNumIdMdIaAdmMetaOds($itemRemovido);
                 $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
                 $itemASerRemovido = (new MdIaClassMetaOdsRN())->listar($objMdIaClassMetaOdsDTO);
@@ -152,7 +152,7 @@ class MdIaClassMetaOdsINT extends InfraINT
                     (new MdIaClassMetaOdsRN())->excluir($itemASerRemovido);
 
                     $objMdIaHistClassDTO = new MdIaHistClassDTO();
-                    $objMdIaHistClassDTO->setNumIdProcedimento($dados["hdnIdProcedimento"]);
+                    $objMdIaHistClassDTO->setDblIdProcedimento($dados["hdnIdProcedimento"]);
                     $objMdIaHistClassDTO->setNumIdMdIaAdmMetaOds($itemRemovido);
                     $objMdIaHistClassDTO->setStrOperacao(MdIaHistClassRN::$OPERACAO_DELETE);
                     $objMdIaHistClassDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
@@ -172,7 +172,7 @@ class MdIaClassMetaOdsINT extends InfraINT
 
 
             $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
-            $objMdIaClassMetaOdsDTO->setNumIdProcedimento($dados["hdnIdProcedimento"]);
+            $objMdIaClassMetaOdsDTO->setDblIdProcedimento($dados["hdnIdProcedimento"]);
             $objMdIaClassMetaOdsDTO->setNumIdMdIaAdmMetaOds($sugestaoRecusada);
             $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
             $sugestaoARecusar = (new MdIaClassMetaOdsRN())->listar($objMdIaClassMetaOdsDTO);
@@ -183,7 +183,7 @@ class MdIaClassMetaOdsINT extends InfraINT
 
                 $objMdIaHistClassDTO = new MdIaHistClassDTO();
                 $objMdIaHistClassDTO->retNumIdMdIaHistClass();
-                $objMdIaHistClassDTO->setNumIdProcedimento($dados["hdnIdProcedimento"]);
+                $objMdIaHistClassDTO->setDblIdProcedimento($dados["hdnIdProcedimento"]);
                 $objMdIaHistClassDTO->setNumIdMdIaAdmMetaOds($sugestaoRecusada);
                 $objMdIaHistClassDTO->setStrOperacao(MdIaHistClassRN::$OPERACAO_INSERT);
                 $objMdIaHistClassDTO->setStrStaTipoUsuario([MdIaClassMetaOdsRN::$USUARIO_IA, MdIaClassMetaOdsRN::$USUARIO_EXTERNO], InfraDTO::$OPER_IN);
@@ -194,7 +194,7 @@ class MdIaClassMetaOdsINT extends InfraINT
                 if ($itemHistoricoSugerido) {
 
                     $objMdIaHistClassDTO = new MdIaHistClassDTO();
-                    $objMdIaHistClassDTO->setNumIdProcedimento($dados["hdnIdProcedimento"]);
+                    $objMdIaHistClassDTO->setDblIdProcedimento($dados["hdnIdProcedimento"]);
                     $objMdIaHistClassDTO->setNumIdMdIaAdmMetaOds($sugestaoRecusada);
                     $objMdIaHistClassDTO->setStrOperacao(MdIaHistClassRN::$OPERACAO_NAO_CONFIRMACAO);
                     $objMdIaHistClassDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
@@ -216,34 +216,36 @@ class MdIaClassMetaOdsINT extends InfraINT
             $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
             $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
             $objMdIaClassMetaOdsDTO->retStrRacional();
-            $objMdIaClassMetaOdsDTO->setNumIdProcedimento($dados["hdnIdProcedimento"]);
+            $objMdIaClassMetaOdsDTO->setDblIdProcedimento($dados["hdnIdProcedimento"]);
             $objMdIaClassMetaOdsDTO->setNumIdMdIaAdmObjetivoOds($dados["hdnIdObjetivo"]);
             $objMdIaClassMetaOdsDTO->setNumIdMdIaAdmMetaOds($itemAtualizacaoRacional);
             $objMdIaClassMetaOdsDTO->setNumMaxRegistrosRetorno(1);
             $itemAtualizar = (new MdIaClassMetaOdsRN())->consultar($objMdIaClassMetaOdsDTO);
+            if ($itemAtualizar) {
 
-            if ($itemAtualizar->getStrRacional() != self::encodeCaracteres($dados["racionais"]["txaRacional_" . $itemAtualizacaoRacional])) {
+                if ($itemAtualizar->getStrRacional() != self::encodeCaracteres($dados["racionais"]["txaRacional_" . $itemAtualizacaoRacional])) {
 
-                $idMdIaClassMetaOds = $itemAtualizar->getNumIdMdIaClassMetaOds();
+                    $idMdIaClassMetaOds = $itemAtualizar->getNumIdMdIaClassMetaOds();
 
-                $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
-                $objMdIaClassMetaOdsDTO->setNumIdMdIaClassMetaOds($idMdIaClassMetaOds);
-                $objMdIaClassMetaOdsDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
-                $objMdIaClassMetaOdsDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
-                $objMdIaClassMetaOdsDTO->setDthCadastro(InfraData::getStrDataHoraAtual());
-                $objMdIaClassMetaOdsDTO->setStrRacional(self::encodeCaracteres($dados["racionais"]["txaRacional_" . $itemAtualizacaoRacional]));
-                (new MdIaClassMetaOdsRN())->alterar($objMdIaClassMetaOdsDTO);
+                    $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
+                    $objMdIaClassMetaOdsDTO->setNumIdMdIaClassMetaOds($idMdIaClassMetaOds);
+                    $objMdIaClassMetaOdsDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
+                    $objMdIaClassMetaOdsDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+                    $objMdIaClassMetaOdsDTO->setDthCadastro(InfraData::getStrDataHoraAtual());
+                    $objMdIaClassMetaOdsDTO->setStrRacional(self::encodeCaracteres($dados["racionais"]["txaRacional_" . $itemAtualizacaoRacional]));
+                    (new MdIaClassMetaOdsRN())->alterar($objMdIaClassMetaOdsDTO);
 
-                $objMdIaHistClassDTO = new MdIaHistClassDTO();
-                $objMdIaHistClassDTO->setNumIdProcedimento($dados["hdnIdProcedimento"]);
-                $objMdIaHistClassDTO->setNumIdMdIaAdmMetaOds($itemAtualizacaoRacional);
-                $objMdIaHistClassDTO->setStrOperacao(MdIaHistClassRN::$OPERACAO_ATUALIZACAO);
-                $objMdIaHistClassDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
-                $objMdIaHistClassDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
-                $objMdIaHistClassDTO->setDthCadastro(InfraData::getStrDataHoraAtual());
-                $objMdIaHistClassDTO->setStrRacional(self::encodeCaracteres($dados["racionais"]["txaRacional_" . $itemAtualizacaoRacional]));
-                $objMdIaHistClassDTO->setStrStaTipoUsuario(MdIaClassMetaOdsRN::$USUARIO_PADRAO);
-                (new MdIaHistClassRN())->cadastrar($objMdIaHistClassDTO);
+                    $objMdIaHistClassDTO = new MdIaHistClassDTO();
+                    $objMdIaHistClassDTO->setDblIdProcedimento($dados["hdnIdProcedimento"]);
+                    $objMdIaHistClassDTO->setNumIdMdIaAdmMetaOds($itemAtualizacaoRacional);
+                    $objMdIaHistClassDTO->setStrOperacao(MdIaHistClassRN::$OPERACAO_ATUALIZACAO);
+                    $objMdIaHistClassDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
+                    $objMdIaHistClassDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+                    $objMdIaHistClassDTO->setDthCadastro(InfraData::getStrDataHoraAtual());
+                    $objMdIaHistClassDTO->setStrRacional(self::encodeCaracteres($dados["racionais"]["txaRacional_" . $itemAtualizacaoRacional]));
+                    $objMdIaHistClassDTO->setStrStaTipoUsuario(MdIaClassMetaOdsRN::$USUARIO_PADRAO);
+                    (new MdIaHistClassRN())->cadastrar($objMdIaHistClassDTO);
+                }
             }
         }
     }
@@ -259,6 +261,7 @@ class MdIaClassMetaOdsINT extends InfraINT
     {
 
         $resultado = "";
+        $possuiClassificacaoQuente = false;
         $objMdIaAdmObjetivoOdsDTO = new MdIaAdmObjetivoOdsDTO();
         $objMdIaAdmObjetivoOdsDTO->retNumIdMdIaAdmObjetivoOds();
         $objMdIaAdmObjetivoOdsDTO->retStrNomeOds();
@@ -276,7 +279,7 @@ class MdIaClassMetaOdsINT extends InfraINT
             $sinExisteSugestaoIA = false;
 
             $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
-            $objMdIaClassMetaOdsDTO->setNumIdProcedimento($dados['id_procedimento']);
+            $objMdIaClassMetaOdsDTO->setDblIdProcedimento($dados['id_procedimento']);
             $objMdIaClassMetaOdsDTO->setNumIdMdIaAdmObjetivoOds($idObjetivo);
             $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
             $objMdIaClassMetaOdsDTO->retStrStaTipoUsuario();
@@ -296,6 +299,7 @@ class MdIaClassMetaOdsINT extends InfraINT
                         $sinExisteSugestaoIA = true;
                         break;
                 }
+                $possuiClassificacaoQuente = true;
             }
 
             if (count($arrObjMdIaClassMetaOdsDTO) == 0 && MdIaHistClassINT::existeHistorico($dados['id_procedimento'], $idObjetivo)) {
@@ -327,7 +331,7 @@ class MdIaClassMetaOdsINT extends InfraINT
                 </a>
             </div>';
         }
-        return mb_convert_encoding($resultado, 'ISO-8859-1', 'UTF-8');
+        return array("resultado" => mb_convert_encoding($resultado, 'ISO-8859-1', 'UTF-8'), "possuiClassificacaoQuente" => $possuiClassificacaoQuente);
     }
 
     public function classificarAuto()
@@ -340,7 +344,7 @@ class MdIaClassMetaOdsINT extends InfraINT
         $idUsuarioIA = $objInfraParametro->getValor(MdIaClassMetaOdsRN::$MODULO_IA_ID_USUARIO_SISTEMA, false);
 
         if (!$idUsuarioIA) {
-            throw new InfraException('Usuario_IA não encontrado nos parametro MODULO_IA_ID_USUARIO_SISTEMA.', $e);
+            throw new InfraException('Usuario_IA não encontrado nos parametro MODULO_IA_ID_USUARIO_SISTEMA.');
         }
 
         $this->classificarMetas($arrTipoProcessoMetas, $idUsuarioIA);
@@ -418,7 +422,7 @@ class MdIaClassMetaOdsINT extends InfraINT
     private function verificarSeJaFoiCadastradoPorPessoa($idProcedimento, $idMeta)
     {
         $objMdIaHistClassDTO = new MdIaHistClassDTO();
-        $objMdIaHistClassDTO->setNumIdProcedimento($idProcedimento);
+        $objMdIaHistClassDTO->setDblIdProcedimento($idProcedimento);
         $objMdIaHistClassDTO->setNumIdMdIaAdmMetaOds($idMeta);
         $objMdIaHistClassDTO->setOrdDthCadastro(InfraDTO::$TIPO_ORDENACAO_DESC);
         $objMdIaHistClassDTO->setNumMaxRegistrosRetorno(1);
@@ -430,7 +434,7 @@ class MdIaClassMetaOdsINT extends InfraINT
     private function verificarSeJaFoiCadastradoPeloAgendamento($idProcedimento, $idMeta)
     {
         $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
-        $objMdIaClassMetaOdsDTO->setNumIdProcedimento($idProcedimento);
+        $objMdIaClassMetaOdsDTO->setDblIdProcedimento($idProcedimento);
         $objMdIaClassMetaOdsDTO->setNumIdMdIaAdmMetaOds($idMeta);
         $objMdIaClassMetaOdsDTO->setStrStaTipoUsuario(MdIaClassMetaOdsRN::$USUARIO_AGENDAMENTO);
         $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
@@ -440,7 +444,7 @@ class MdIaClassMetaOdsINT extends InfraINT
     private function cadastrarClassificacaoMeta($params)
     {
         $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
-        $objMdIaClassMetaOdsDTO->setNumIdProcedimento($params['idProcedimento']);
+        $objMdIaClassMetaOdsDTO->setDblIdProcedimento($params['idProcedimento']);
         $objMdIaClassMetaOdsDTO->setNumIdMdIaAdmMetaOds($params['idMeta']);
         $objMdIaClassMetaOdsDTO->setNumIdUsuario($params['idUsuario']);
         $objMdIaClassMetaOdsDTO->setDthCadastro(InfraData::getStrDataHoraAtual());
@@ -453,7 +457,7 @@ class MdIaClassMetaOdsINT extends InfraINT
     private function cadastrarHistClassificacaoMeta($params)
     {
         $objMdIaHistClassDTO = new MdIaHistClassDTO();
-        $objMdIaHistClassDTO->setNumIdProcedimento($params['idProcedimento']);
+        $objMdIaHistClassDTO->setDblIdProcedimento($params['idProcedimento']);
         $objMdIaHistClassDTO->setNumIdMdIaAdmMetaOds($params['idMeta']);
         $objMdIaHistClassDTO->setStrOperacao($params['operacao']);
         $objMdIaHistClassDTO->setNumIdUsuario($params['idUsuario']);
@@ -469,7 +473,7 @@ class MdIaClassMetaOdsINT extends InfraINT
         $MdIaClassMetaOdsRN = new MdIaClassMetaOdsRN();
         $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
         $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
-        $objMdIaClassMetaOdsDTO->setNumIdProcedimento($params['idProcedimento']);
+        $objMdIaClassMetaOdsDTO->setDblIdProcedimento($params['idProcedimento']);
         $objMdIaClassMetaOdsDTO->setNumIdMdIaAdmMetaOds($params['idMeta']);
         $objMdIaClassMetaOdsDTO->setStrStaTipoUsuario([MdIaClassMetaOdsRN::$USUARIO_IA, MdIaClassMetaOdsRN::$USUARIO_EXTERNO], InfraDTO::$OPER_IN);
         $objMdIaClassMetaOdsDTO = $MdIaClassMetaOdsRN->consultar($objMdIaClassMetaOdsDTO);
@@ -489,7 +493,7 @@ class MdIaClassMetaOdsINT extends InfraINT
         $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
         $objMdIaClassMetaOdsDTO->setStrStaTipoUsuario(MdIaClassMetaOdsRN::$USUARIO_AGENDAMENTO);
         $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
-        $objMdIaClassMetaOdsDTO->retNumIdProcedimento();
+        $objMdIaClassMetaOdsDTO->retDblIdProcedimento();
         $objMdIaClassMetaOdsDTO->retNumIdMdIaAdmMetaOds();
         $objMdIaClassMetaOdsDTO->retNumIdTipoProcedimento();
         $arrObjMdIaClassMetaOdsDTO = $MdIaClassMetaOdsRN->listar($objMdIaClassMetaOdsDTO);
@@ -500,7 +504,7 @@ class MdIaClassMetaOdsINT extends InfraINT
 
             if (!(isset($arrTipoProcessoMetas[$idTipoProcesso]) && in_array($idMeta, $arrTipoProcessoMetas[$idTipoProcesso]))) {
                 $params = [
-                    'idProcedimento'  => $objMdIaClassMetaOdsDTO->getNumIdProcedimento(),
+                    'idProcedimento'  => $objMdIaClassMetaOdsDTO->getDblIdProcedimento(),
                     'idMeta'          => $objMdIaClassMetaOdsDTO->getNumIdMdIaAdmMetaOds(),
                     'idUsuario'       => $idUsuarioIA,
                     'idUnidade'       => null,

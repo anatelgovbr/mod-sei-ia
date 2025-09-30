@@ -127,6 +127,9 @@ PaginaSEI::getInstance()->abrirHead();
 PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
+?>
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_comum.css" />
+<?php
 PaginaSEI::getInstance()->abrirStyle();
 include_once('md_ia_adm_config_assistente_ia_css.php');
 PaginaSEI::getInstance()->fecharStyle();
@@ -208,14 +211,14 @@ No SIP, o recurso associado ao Assistente é o "md_ia_adm_config_assist_ia_consu
                 name="ajuda" <?= PaginaSEI::montarTitleTooltip($msgBuscarNaWeb, 'Ajuda') ?>
                 class="infraImg" alt="Ícone de Ajuda" />
             <div class="infraDivRadio">
-                <input type="radio" id="ativarBuscarWeb" disabled utlCampoObrigatorio="o" name="rdnBuscarWeb"
+                <input type="radio" id="ativarBuscarWeb" utlCampoObrigatorio="o" name="rdnBuscarWeb"
                     value="S" class="infraRadio" <?= $buscarWebAtivar ?>>
                 <label id="lblAtivarBuscarWeb" name="lblAtivarBuscarWeb" for="ativarBuscarWeb"
                     class="infraLabelOpcional infraLabelRadio">Ativar</label>
             </div>
 
             <div class="infraDivRadio">
-                <input type="radio" disabled id="desativarBuscarWeb" utlCampoObrigatorio="o" name="rdnBuscarWeb" value="N"
+                <input type="radio" id="desativarBuscarWeb" utlCampoObrigatorio="o" name="rdnBuscarWeb" value="N"
                     class="infraRadio" <?= $buscarWebDesativar ?>>
                 <label id="lblDesativarBuscarWeb" name="lblDesativarBuscarWeb"
                     for="desativarBuscarWeb"
@@ -309,7 +312,7 @@ Somente será aplicado limite a maior sobre os usuários indicados no campo mais
                                         <div class="input-group">
                                             <select id="selUsuarioTeste" name="selUsuarioTeste" size="10" multiple="multiple"
                                                 class="infraSelect form-control"
-                                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados ?>">
+                                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>">
                                                 <?= $strItensSelUsuarios ?>
                                             </select>
                                             <div class="botoes ml-1">

@@ -7,10 +7,10 @@ class MdIaAtualizadorSipRN extends InfraRN
     const PARAMETRO_VERSAO_MODULO = 'VERSAO_MODULO_IA';
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '1.2.0';
+    private $versaoAtualDesteModulo = '1.3.0';
     private $nomeDesteModulo = 'MÓDULO DO IA';
     private $nomeParametroModulo = 'VERSAO_MODULO_IA';
-    private $historicoVersoes = array('1.0.0', '1.1.0', '1.2.0');
+    private $historicoVersoes = array('1.0.0', '1.1.0', '1.2.0', '1.3.0');
 
     public function __construct()
     {
@@ -109,6 +109,8 @@ class MdIaAtualizadorSipRN extends InfraRN
                     $this->instalarv110();
                 case '1.1.0':
                     $this->instalarv120();
+                case '1.2.0':
+                    $this->instalarv130();
                     break;
                 default:
                     $this->finalizar('A VERSÃO MAIS ATUAL DO ' . $this->nomeDesteModulo . ' (v' . $this->versaoAtualDesteModulo . ') JÁ ESTÁ INSTALADA.');
@@ -544,12 +546,64 @@ class MdIaAtualizadorSipRN extends InfraRN
 
         $this->atualizarNumeroVersao($nmVersao);
     }
-    
+
     protected function instalarv120()
     {
         $nmVersao = '1.2.0';
-        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO '. $nmVersao .' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $nmVersao . ' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
         //Atualizando parametro para controlar versao do modulo
+        $this->atualizarNumeroVersao($nmVersao);
+    }
+
+    protected function instalarv130()
+    {
+        $nmVersao = '1.3.0';
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $nmVersao . ' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
+
+        $objSistemaRN = new SistemaRN();
+        $objPerfilRN = new PerfilRN();
+        $objMenuRN = new MenuRN();
+        $objItemMenuRN = new ItemMenuRN();
+
+        $objSistemaDTO = new SistemaDTO();
+        $objSistemaDTO->retNumIdSistema();
+        $objSistemaDTO->setStrSigla('SEI');
+
+        $objSistemaDTO = $objSistemaRN->consultar($objSistemaDTO);
+
+        if ($objSistemaDTO == null) {
+            throw new InfraException('Sistema SEI não encontrado.');
+        }
+
+        $numIdSistemaSei = $objSistemaDTO->getNumIdSistema();
+
+        //Perfil Básico
+        $objPerfilDTO = new PerfilDTO();
+        $objPerfilDTO->retNumIdPerfil();
+        $objPerfilDTO->setNumIdSistema($numIdSistemaSei);
+        $objPerfilDTO->setStrNome('Básico');
+        $objPerfilDTO = $objPerfilRN->consultar($objPerfilDTO);
+
+        if ($objPerfilDTO == null) {
+            throw new InfraException('Perfil Básico do sistema SEI não encontrado.');
+        }
+
+        $numIdPerfilSeiBasico = $objPerfilDTO->getNumIdPerfil();
+
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_ia_ods_onu_nsa_cadastrar');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_ia_ods_onu_nsa_excluir');
+        $this->adicionarRecursoPerfil($numIdSistemaSei, $numIdPerfilSeiBasico, 'md_ia_ods_onu_nsa_consultar');
+
+        $arrAuditoria = array();
+
+        array_push(
+            $arrAuditoria,
+            '\'md_ia_ods_onu_nsa_cadastrar\'',
+            '\'md_ia_ods_onu_nsa_excluir\'',
+            '\'md_ia_ods_onu_nsa_consultar\''
+        );
+        $this->_cadastrarAuditoria($numIdSistemaSei, $arrAuditoria);
+
         $this->atualizarNumeroVersao($nmVersao);
     }
 

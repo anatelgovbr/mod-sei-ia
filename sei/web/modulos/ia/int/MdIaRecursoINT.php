@@ -12,7 +12,7 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdIaRecursoINT extends InfraINT
 {
-    function enviarFeedbackProcessos($dados)
+    public static function enviarFeedbackProcessos($dados)
     {
         $objMdIaRecursoRN = new MdIaRecursoRN();
 
@@ -40,7 +40,7 @@ class MdIaRecursoINT extends InfraINT
         $objMdIaSimilaridadeDTO = $objMdIaRecursoRN->submeteSimilaridade(array(json_encode($arrayAvaliacao), $objSaidaConsultarProcedimentoAPI));
         return $objMdIaSimilaridadeDTO;
     }
-    function enviarFeedbackDocumentos($dados)
+    public static function enviarFeedbackDocumentos($dados)
     {
         $objMdIaRecursoRN = new MdIaRecursoRN();
 
@@ -67,7 +67,7 @@ class MdIaRecursoINT extends InfraINT
         return $objMdIaPesquisaDocumentoDTO;
     }
 
-    public function consultaPesquisaDocumento($dados)
+    public static function consultaPesquisaDocumento($dados)
     {
         $objMdIaAdmPesqDocDTO = new MdIaAdmPesqDocDTO();
         $objMdIaAdmPesqDocDTO->retNumQtdProcessListagem();
@@ -236,7 +236,7 @@ class MdIaRecursoINT extends InfraINT
         return json_encode(mb_convert_encoding($topoTabela . $registrosPesquisa . $rodapeTabela, 'UTF-8', 'ISO-8859-1'));
     }
 
-    public function listarDocumentosProcesso($idProcedimento)
+    public static function listarDocumentosProcesso($idProcedimento)
     {
         //Carregar dados do cabeçalho
         $objProcedimentoDTO = new ProcedimentoDTO();

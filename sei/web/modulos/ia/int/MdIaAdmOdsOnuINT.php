@@ -33,7 +33,7 @@ class MdIaAdmOdsOnuINT extends InfraINT
         return parent::montarSelectArrInfraDTO(null, null, null, $objRetorno, 'IdUnidade', 'UnidadeAlerta');
     }
 
-    public function getPeticionamentoMenorVersaoRequerida()
+    public static function getPeticionamentoMenorVersaoRequerida()
     {
         return '4.3.0';
     }

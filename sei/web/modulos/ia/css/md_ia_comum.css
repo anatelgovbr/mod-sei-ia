@@ -1,0 +1,46 @@
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.alert {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+
+.input-group-sm>.custom-select,
+.input-group-sm>.form-control:not(textarea) {
+    height: calc(1.5em + .5rem + 2px);
+}
+
+.input-group-sm>.custom-select,
+.input-group-sm>.form-control,
+.input-group-sm>.input-group-append>.btn,
+.input-group-sm>.input-group-append>.input-group-text,
+.input-group-sm>.input-group-prepend>.btn,
+.input-group-sm>.input-group-prepend>.input-group-text {
+    padding: .25rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+}
+
+.form-control {
+    -moz-appearance: auto;
+    appearance: auto;
+}
+
+div.infraBarraLocalizacao {
+    margin: 5px 0 2px 0;
+    padding: 2px 0.25rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-align: left;
+    width: fit-content;
+}
+
+.float-left {
+    float: left !important;
+}

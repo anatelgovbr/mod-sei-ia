@@ -12,10 +12,10 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdIaHistClassINT extends InfraINT
 {
-	public function existeHistorico($idProcedimento, $idObjetivo)
+    public static function existeHistorico($idProcedimento, $idObjetivo)
     {
         $objMdIaHistClassDTO = new MdIaHistClassDTO();
-        $objMdIaHistClassDTO->setNumIdProcedimento($idProcedimento);
+        $objMdIaHistClassDTO->setDblIdProcedimento($idProcedimento);
         $objMdIaHistClassDTO->setNumIdMdIaAdmObjetivoOds($idObjetivo);
         $objMdIaHistClassDTO->retNumIdMdIaHistClass();
         $arrMdIaHistClassDTO = (new MdIaHistClassRN())->listar($objMdIaHistClassDTO);

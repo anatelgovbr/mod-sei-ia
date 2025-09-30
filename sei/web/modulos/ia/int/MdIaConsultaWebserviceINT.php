@@ -5,7 +5,7 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdIaConsultaWebserviceINT extends InfraRN
 {
-    const TIME_OUT = '600000';
+    const TIME_OUT = '900000';
     private $numSeg = 0;
 
     public function __construct()
@@ -61,6 +61,7 @@ class MdIaConsultaWebserviceINT extends InfraRN
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_URL => $urlApi["linkEndpoint"],
                 CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 0,
                 CURLOPT_POSTFIELDS => $interacao->getStrInputPrompt(),
                 CURLOPT_HTTPHEADER => array('Content-Type:application/json', 'Content-Length: ' . strlen($interacao->getStrInputPrompt())),
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT
