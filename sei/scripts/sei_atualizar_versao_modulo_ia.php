@@ -1502,7 +1502,7 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
                 $arrObjMdIaClassMetaOdsDTO = $objMdIaClassMetaOdsRN->listar($objMdIaClassMetaOdsDTO);
 
                 foreach ($arrObjMdIaClassMetaOdsDTO as $objMdIaClassMetaOdsDTO) {
-                    $objMdIaClassMetaOdsDTO->setNumIdProcedimento($classificacaoOds['id_procedimento']);
+                    $objMdIaClassMetaOdsDTO->setDblIdProcedimento($classificacaoOds['id_procedimento']);
                     $objMdIaClassMetaOdsRN->alterar($objMdIaClassMetaOdsDTO);
                 }
             }
@@ -1523,7 +1523,7 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
                 $arrObjMdIaHistClassDTO = $objMdIaHistClassRN->listar($objMdIaHistClassDTO);
 
                 foreach ($arrObjMdIaHistClassDTO as $objMdIaHistClassDTO) {
-                    $objMdIaHistClassDTO->setNumIdProcedimento($classificacaoOds['id_procedimento']);
+                    $objMdIaHistClassDTO->setDblIdProcedimento($classificacaoOds['id_procedimento']);
                     $objMdIaHistClassRN->alterar($objMdIaHistClassDTO);
                 }
             }
