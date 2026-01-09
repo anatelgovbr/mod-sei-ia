@@ -104,7 +104,7 @@ try {
         );
     }
 
-    if ($numIdMdIaGrupoPromptsFav > 0) {
+    if (is_numeric($numIdMdIaGrupoPromptsFav) && (int)$numIdMdIaGrupoPromptsFav > 0) {        
         $objMdIaPromptsFavoritosDTO->setNumIdMdIaGrupoPromptsFav($numIdMdIaGrupoPromptsFav);
     }
 
