@@ -34,6 +34,7 @@ class MdIaConsultaWebserviceINT extends InfraRN
     {
         return BancoSEI::getInstance();
     }
+
     protected function enviarMensagemAssistenteIaConectado($idInteracao)
     {
         try {
@@ -58,111 +59,142 @@ class MdIaConsultaWebserviceINT extends InfraRN
 
             $curl = curl_init();
             curl_setopt_array($curl, [
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_URL => $urlApi["linkEndpoint"],
+                CURLOPT_URL => $urlApi['linkEndpoint'],
+                CURLOPT_RETURNTRANSFER => false, // streaming
                 CURLOPT_SSL_VERIFYPEER => false,
                 CURLOPT_SSL_VERIFYHOST => 0,
+                CURLOPT_POST => true,
+                CURLOPT_HTTPHEADER => [
+                    'Content-Type: application/json',
+                    'Accept: text/event-stream',
+                ],
                 CURLOPT_POSTFIELDS => $interacao->getStrInputPrompt(),
-                CURLOPT_HTTPHEADER => array('Content-Type:application/json', 'Content-Length: ' . strlen($interacao->getStrInputPrompt())),
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT
             ]);
 
-            $response = curl_exec($curl);
+            $respostaParcial = '';
+            $metadataString = [];
 
-            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            $idMensagem = "";
-            $totalTokens = "";
+            // -----------------------------------------
+            // CALLBACK: Processa o streaming linha a linha
+            // -----------------------------------------
+            curl_setopt($curl, CURLOPT_WRITEFUNCTION, function ($ch, $data) use (&$respostaParcial, &$metadataString, $objMdIaInteracaoChatRN, $idInteracao) {
 
-            $this->numSeg = InfraUtil::verificarTempoProcessamento($this->numSeg);
+                $linhas = explode("\n", $data);
 
-            // Substitui a vírgula por um ponto
-            $tempoExecucao = str_replace(",", ".", $this->numSeg);
+                $objMdIaInteracaoChatDTO = new MdIaInteracaoChatDTO();
+                $objMdIaInteracaoChatDTO->setNumIdMdIaInteracaoChat($idInteracao);
 
-            // Converte o número para um inteiro
-            $tempoExecucaoInteiro = intval($tempoExecucao);
+                foreach ($linhas as $linha) {
+                    $linha = trim($linha);
+                    if ($linha === '') continue;
 
-            $objResponse = json_decode($response);
-            $idMensagem = $objResponse->id_message;
+                    if (substr($linha, 0, 1) === ':') continue;
 
-            if ($httpcode == "200") {
-                $response = mb_convert_encoding($objResponse->choices[0]->message->content, 'HTML-ENTITIES', 'UTF-8');
-                $resposta = iconv("UTF-8", "ISO-8859-1//TRANSLIT//IGNORE", $response);
-                $totalTokens = $objResponse->usage->total_tokens;
-            } else {
-                $resposta = iconv("UTF-8", "ISO-8859-1//TRANSLIT", $response);
+                    if (substr($linha, 0, 5) === 'data:') {
 
-                $mensagemApresentadaUsuario = MdIaConfigAssistenteINT::retornaMensagemAmigavelUsuario($httpcode, $resposta);
+                        $json = trim(substr($linha, 5));
+                        if ($json === '') continue;
 
-                $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-                $paramLiberarAutoAvaliacao = $objInfraParametro->getValor('MODULO_IA_LOGAR_WARNING', false);
+                        $payload = json_decode($json, true);
+                        if (!is_array($payload) || !isset($payload['type'])) {
+                            continue;
+                        }
 
-                if ($mensagemApresentadaUsuario["tipoCritica"] == "error" || $paramLiberarAutoAvaliacao) {
-                    $strAssunto = "ERRO DE RECURSO NO ENVIO DE MENSAGEM DO ASSISTENTE DO SEI IA";
-                    $log = "00001 - ERRO DE RECURSO NO ENVIO DE MENSAGEM DO ASSISTENTE DO SEI IA \n";
-                    $log .= "00002 - Usuario: " . $topico->getStrNomeUsuario() . " - Unidade: " . $topico->getStrSiglaUsuario() . " \n";
-                    $log .= "00003 - Endpoint do Recurso: " . $urlApi["linkEndpoint"] . " \n";
-                    $log .= "00004 - Tipo de Indisponibilidade: " . $httpcode . " \n";
-                    $log .= "00005 - Mensagem retornada pelo Servidor: " . $resposta . " \n";
-                    $log .= "00006 - Mensagem apresentada ao usuário: " . $mensagemApresentadaUsuario["resposta"] . " \n";
-                    $log .= "00007 - ID da interação no SEI: " . $idInteracao . " \n";
-                    $log .= "00008 - ID da interação na Solução de IA: " . $idMensagem . " \n";
-                    $log .= "00009 - Data e hora: " . InfraData::getStrDataHoraAtual() . " \n";
-                    $log .= "00010 - Tempo de Execução: " . $tempoExecucaoInteiro . " segundos \n";
-                    $log .= "00011 - FIM \n";
-                    LogSEI::getInstance()->gravar($log, InfraLog::$INFORMACAO);
+                        switch ($payload['type']) {
 
-                    $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+                            case 'content':
+                                $token = $payload['data'] ?? '';
+                                if ($token !== '') {
+                                    $token = mb_convert_encoding($token, 'HTML-ENTITIES', 'UTF-8');
+                                    $respostaParcial .= iconv("UTF-8", "ISO-8859-1//TRANSLIT//IGNORE", $token);
+                                    $objMdIaInteracaoChatDTO->setStrResposta($respostaParcial);
+                                    $objMdIaInteracaoChatRN->alterar($objMdIaInteracaoChatDTO);
+                                }
+                                break;
 
-                    $strDe = SessaoSEIExterna::getInstance()->getStrSiglaSistema() . "<" . $objInfraParametro->getValor('SEI_EMAIL_SISTEMA') . ">";
-                    $strPara = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR');
-                    $strConteudo = nl2br($log);
-                    InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo, 'text/html');
+                            case 'metadata':
+                                $metadataString = $payload['data'] ?? [];
+
+                                if ($metadataString) {
+                                    $objMdIaInteracaoChatDTO->setNumIdMessage($metadataString['id_message']);
+                                    $objMdIaInteracaoChatDTO->setNumTotalTokens($metadataString['usage']['total_tokens']);
+                                    $objMdIaInteracaoChatRN->alterar($objMdIaInteracaoChatDTO);
+                                }
+                                break;
+
+                            case 'end':
+                                break;
+                        }
+                    }
                 }
+
+                return strlen($data);
+            });
+
+            curl_exec($curl);
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            $this->numSeg = InfraUtil::verificarTempoProcessamento($this->numSeg);
+            $tempoExecucao = str_replace(",", ".", $this->numSeg);
+            $tempoExecucaoInteiro = intval($tempoExecucao);
+            curl_close($curl);
+
+            if ($httpcode !== 200) {
+                $this->tratarCodigoDiferente200($metadataString, $topico, $urlApi['linkEndpoint'], $httpcode, $idInteracao, $tempoExecucaoInteiro);
             }
 
-            $objMdIaInteracaoChatRN = new MdIaInteracaoChatRN();
-            $objMdIaInteracaoChatDTO = new MdIaInteracaoChatDTO();
-            $objMdIaInteracaoChatDTO->setNumIdMdIaInteracaoChat($idInteracao);
-            $objMdIaInteracaoChatDTO->setStrResposta($resposta);
-            $objMdIaInteracaoChatDTO->setNumIdMessage($idMensagem);
-            $objMdIaInteracaoChatDTO->setNumTotalTokens($totalTokens);
-            $objMdIaInteracaoChatDTO->setNumTempoExecucao($tempoExecucaoInteiro);
-            $objMdIaInteracaoChatDTO->setNumStatusRequisicao($httpcode);
-            $objMdIaInteracaoChatRN->alterar($objMdIaInteracaoChatDTO);
+            // Atualiza final com sucesso
+            $dtoFinal = new MdIaInteracaoChatDTO();
+            $dtoFinal->setNumIdMdIaInteracaoChat($idInteracao);
+            $dtoFinal->setNumTempoExecucao($tempoExecucaoInteiro);
+            $dtoFinal->setNumStatusRequisicao($httpcode);
+            $objMdIaInteracaoChatRN->alterar($dtoFinal);
         } catch (Exception $e) {
 
-            $this->numSeg = InfraUtil::verificarTempoProcessamento($this->numSeg);
-
-            // Substitui a vírgula por um ponto
-            $tempoExecucao = str_replace(",", ".", $this->numSeg);
-
-            // Converte o número para um inteiro
+            $tempoExecucao = microtime(true) - ($inicio ?? microtime(true));
             $tempoExecucaoInteiro = intval($tempoExecucao);
 
-            $objMdIaInteracaoChatRN = new MdIaInteracaoChatRN();
             $objMdIaInteracaoChatDTO = new MdIaInteracaoChatDTO();
-
             $objMdIaInteracaoChatDTO->setNumIdMdIaInteracaoChat($idInteracao);
             $objMdIaInteracaoChatDTO->setStrResposta("Ocorreu um erro no Assistente de IA.");
             $objMdIaInteracaoChatDTO->setNumTempoExecucao($tempoExecucaoInteiro);
+
             $objMdIaInteracaoChatRN->alterar($objMdIaInteracaoChatDTO);
 
+            LogSEI::getInstance()->gravar("Erro no streaming IA: " . $e->getMessage(), InfraLog::$ERRO);
+        }
+    }
+
+    private function tratarCodigoDiferente200($metadataString, $topico, $urlApi, $httpcode, $idInteracao, $tempoExecucaoInteiro)
+    {
+        $resposta = iconv("UTF-8", "ISO-8859-1//TRANSLIT", $metadataString['choices'][0]['message']['content']);
+
+        $mensagemApresentadaUsuario = MdIaConfigAssistenteINT::retornaMensagemAmigavelUsuario($httpcode, $resposta);
+
+        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+        $paramLiberarAutoAvaliacao = $objInfraParametro->getValor('MODULO_IA_LOGAR_WARNING', false);
+
+        if ($mensagemApresentadaUsuario["tipoCritica"] == "error" || $paramLiberarAutoAvaliacao) {
+            $strAssunto = "ERRO DE RECURSO NO ENVIO DE MENSAGEM DO ASSISTENTE DO SEI IA";
             $log = "00001 - ERRO DE RECURSO NO ENVIO DE MENSAGEM DO ASSISTENTE DO SEI IA \n";
             $log .= "00002 - Usuario: " . $topico->getStrNomeUsuario() . " - Unidade: " . $topico->getStrSiglaUsuario() . " \n";
-            $log .= "00003 - Endpoint do Recurso: " . $urlApi["linkEndpoint"] . " \n";
+            $log .= "00003 - Endpoint do Recurso: " . $urlApi . " \n";
             $log .= "00004 - Tipo de Indisponibilidade: " . $httpcode . " \n";
-            $log .= "00005 - Mensagem retornada pelo Servidor: " . mb_convert_encoding($resposta, 'ISO-8859-1', 'UTF-8') . " \n";
-            $log .= "00006 - FIM \n";
+            $log .= "00005 - Mensagem retornada pelo Servidor: " . $resposta . " \n";
+            $log .= "00006 - Mensagem apresentada ao usuário: " . $mensagemApresentadaUsuario["resposta"] . " \n";
+            $log .= "00007 - ID da interação no SEI: " . $idInteracao . " \n";
+            $log .= "00008 - ID da interação na Solução de IA: " . $metadataString['id_message'] . " \n";
+            $log .= "00009 - Data e hora: " . InfraData::getStrDataHoraAtual() . " \n";
+            $log .= "00010 - Tempo de Execução: " . $tempoExecucaoInteiro . " segundos \n";
+            $log .= "00011 - FIM \n";
             LogSEI::getInstance()->gravar($log, InfraLog::$INFORMACAO);
 
             $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
 
             $strDe = SessaoSEIExterna::getInstance()->getStrSiglaSistema() . "<" . $objInfraParametro->getValor('SEI_EMAIL_SISTEMA') . ">";
             $strPara = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR');
-            $strAssunto = "ERRO DE RECURSO NO ENVIO DE MENSAGEM DO ASSISTENTE DO SEI IA";
-            $strConteudo = $log;
-            InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
-            return false;
+            $strConteudo = nl2br($log);
+            InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo, 'text/html');
         }
     }
 }

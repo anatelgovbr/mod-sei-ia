@@ -46,7 +46,20 @@ class MdIaTopicoChatRN extends InfraRN
             if (strlen($objMdIaTopicoChatDTO->getStrNome()) > 80) {
                 $objInfraException->adicionarValidacao(' possui tamanho superior a 80 caracteres.');
             }
+
+            if ($this->contemPayloadAtivo($objMdIaTopicoChatDTO->getStrNome())) {
+                $objInfraException->adicionarValidacao(' possui conteúdo inválido para nome de tópico.');
+            }
         }
+    }
+
+    private function contemPayloadAtivo($texto)
+    {
+        if (InfraString::isBolVazia($texto)) {
+            return false;
+        }
+
+        return preg_match('/<\s*script\b|on\w+\s*=|javascript\s*:/i', $texto) === 1;
     }
 
     private function validarDthCadastro(MdIaTopicoChatDTO $objMdIaTopicoChatDTO, InfraException $objInfraException)

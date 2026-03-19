@@ -40,7 +40,7 @@
     visibility: hidden;
     opacity: 0;
     transition: .4s;
-    width: 360px;
+    width: 451px;
     height: 44.1rem;
     overflow: hidden;
     border-radius: 5px;
@@ -699,7 +699,7 @@
 
 #chat_ia #galeriaPrompts,
 #chat_ia #promptsFavoritos {
-    color: #007bff;
+    color: #007bff !important;
     background-color: #007bff1f !important;
     margin-bottom: 5px;
     border: 1px solid #007bff1f;
@@ -985,6 +985,7 @@
     margin: 0 3px;
     border-radius: 25px;
     box-shadow: none;
+    font-size: 1rem;
 }
 
 #chat_ia .botoesInferiores button:hover {
@@ -1256,19 +1257,6 @@
     font-size: .8125rem;
 }
 
-#chat_ia .botoesInferiores button {
-    font-size: 1rem;
-}
-
-@media (max-width: 992px) {
-    #chat_ia .expandido #conteudoChat .blocoMensagem {
-        min-width: 97% !important;
-    }
-
-    #chat_ia .expandido #conteudoChat .blocoMensagem .output {
-        width: 100%;
-    }
-}
 
 @media (max-width: 992px) {
     #chat_ia .expandido #conteudoChat .blocoMensagem {
@@ -1303,12 +1291,17 @@
     }
 
     #chat_ia .expandido .botoesInferiores #buscarWeb,
-    #chat_ia .expandido .botoesInferiores #refletir {
+    #chat_ia .expandido .botoesInferiores #refletir,
+    #chat_ia .expandido .botoesInferiores #memoriaTopico {
+        display: none !important;
+    }
+
+    #memoriaTopico {
         display: none !important;
     }
 
     #chat_ia .expandido .botoesInferiores button {
-        padding: 6px;
+        padding: 4px;
     }
 
     #chat_ia .expandido .botoesInferiores #botoesInferioresDireito button,
@@ -1359,5 +1352,26 @@
 
     #chat_ia .expandido .acoesTopico {
         width: 65px;
+    }
+
+    #chat_ia .buttonSize {
+        height: 27px;
+        width: 27px;
+    }
+
+    #chat_ia .expandido .botoesInferiores #botoesInferioresEsquerdo {
+        width: 48%;
+    }
+
+    #chat_ia .expandido .botoesInferiores #botoesInferioresDireito {
+        width: 52%;
+    }
+
+    #chat_ia .widget-content {
+        width: 360px;
+    }
+
+    #chat_ia .botoesInferiores button {
+        margin: 0 1px;
     }
 }

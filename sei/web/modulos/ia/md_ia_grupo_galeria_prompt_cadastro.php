@@ -45,7 +45,7 @@ try {
                     $objMdIaGrupoGaleriaPromptRN = new MdIaGrupoGaleriaPromptRN();
                     $objMdIaGrupoGaleriaPromptDTO = $objMdIaGrupoGaleriaPromptRN->cadastrar($objMdIaGrupoGaleriaPromptDTO);
                     PaginaSEI::getInstance()->adicionarMensagem('Grupo de Galeria de Prompts "' . $objMdIaGrupoGaleriaPromptDTO->getNumIdMdIaGrupoGaleriaPrompt() . '" cadastradO com sucesso.');
-                    header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . PaginaSEI::GET('acao')));
+                    header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . PaginaSEI::GET('acao') . '&id_md_ia_grupo_galeria_prompt=' . $objMdIaGrupoGaleriaPromptDTO->getNumIdMdIaGrupoGaleriaPrompt() . PaginaSEI::getInstance()->montarAncora($objMdIaGrupoGaleriaPromptDTO->getNumIdMdIaGrupoGaleriaPrompt())));
                     die;
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
@@ -72,30 +72,18 @@ try {
                 $objMdIaGrupoGaleriaPromptDTO->setStrNomeGrupo(PaginaSEI::POST('txtNomeGrupo'));
             }
 
-            $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . PaginaSEI::GET('acao')) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
+            $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . PaginaSEI::GET('acao') . PaginaSEI::getInstance()->montarAncora($objMdIaGrupoGaleriaPromptDTO->getNumIdMdIaGrupoGaleriaPrompt())) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
             if (isset($_POST['sbmAlterarMdIaGrupoGaleriaPrompt'])) {
                 try {
                     $objMdIaGrupoGaleriaPromptRN = new MdIaGrupoGaleriaPromptRN();
                     $objMdIaGrupoGaleriaPromptRN->alterar($objMdIaGrupoGaleriaPromptDTO);
                     PaginaSEI::getInstance()->adicionarMensagem('Grupo de Galeria de Prompts "' . $objMdIaGrupoGaleriaPromptDTO->getNumIdMdIaGrupoGaleriaPrompt() . '" alteradO com sucesso.');
-                    header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . PaginaSEI::GET('acao')));
+                    header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . PaginaSEI::GET('acao') . '&id_md_ia_grupo_galeria_prompt=' . $objMdIaGrupoGaleriaPromptDTO->getNumIdMdIaGrupoGaleriaPrompt() . PaginaSEI::getInstance()->montarAncora($objMdIaGrupoGaleriaPromptDTO->getNumIdMdIaGrupoGaleriaPrompt())));
                     die;
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
                 }
-            }
-            break;
-
-        case 'md_ia_grupo_galeria_prompt_consultar':
-            $strTitulo = 'Consultar Grupo de Galeria de Prompts';
-            $arrComandos[] = '<button type="button" accesskey="F" name="btnFechar" value="Fechar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . PaginaSEI::GET('acao')) . '\';" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
-            $objMdIaGrupoGaleriaPromptDTO->setBolExclusaoLogica(false);
-            $objMdIaGrupoGaleriaPromptDTO->retTodos();
-            $objMdIaGrupoGaleriaPromptRN = new MdIaGrupoGaleriaPromptRN();
-            $objMdIaGrupoGaleriaPromptDTO = $objMdIaGrupoGaleriaPromptRN->consultar($objMdIaGrupoGaleriaPromptDTO);
-            if ($objMdIaGrupoGaleriaPromptDTO === null) {
-                throw new InfraException("Registro não encontrado.");
             }
             break;
 

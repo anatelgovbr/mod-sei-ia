@@ -25,8 +25,27 @@ try {
     // Links para consulta Ajax
     $strLinkValidarWsdl = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_integracao_busca_operacao_ajax');
 
-    // Instancia classes RN e DTO
     $objMdIaAdmIntegracaoDTO = new MdIaAdmIntegracaoDTO();
+
+    if ($_GET['id_md_ia_adm_integracao'] || $_POST["hdnIdMdIaAdmIntegracao"]) {
+        $id_md_ia_adm_integracao = $_GET['id_md_ia_adm_integracao'] ? $_GET['id_md_ia_adm_integracao'] : $_POST["hdnIdMdIaAdmIntegracao"];
+        // Instancia classes RN e DTO
+
+        $objMdIaAdmIntegracaoDTO->setNumIdMdIaAdmIntegracao($id_md_ia_adm_integracao);
+        $objMdIaAdmIntegracaoDTO->setBolExclusaoLogica(false);
+        $objMdIaAdmIntegracaoDTO->retStrNome();
+        $objMdIaAdmIntegracaoDTO->retStrOperacaoWsdl();
+        $objMdIaAdmIntegracaoDTO->retNumIdMdIaAdmIntegFuncion();
+        $objMdIaAdmIntegracaoDTO->retStrTipoIntegracao();
+        $objMdIaAdmIntegracaoDTO->retNumFormatoResposta();
+        $objMdIaAdmIntegracaoDTO->retNumMetodoRequisicao();
+        $objMdIaAdmIntegracaoDTO->retNumMetodoAutenticacao();
+        $objMdIaAdmIntegracaoDTO->retNumIdMdIaAdmIntegracao();
+        $objMdIaAdmIntegracaoRN = new MdIaAdmIntegracaoRN();
+        $objMdIaAdmIntegracaoDTO = $objMdIaAdmIntegracaoRN->consultar($objMdIaAdmIntegracaoDTO);
+
+        $strCadastroUrls = (new MdIaAdmIntegracaoINT())->recuperarGridUrls($id_md_ia_adm_integracao);
+    }
 
     $objMdIaAdmIntegracaoRN = new MdIaAdmIntegracaoRN();
 
@@ -85,26 +104,6 @@ try {
             $arrComandos[] = '<button type="submit" accesskey="S" name="sbmAlterarMdIaAdmIntegracao" value="Salvar" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>';
             $strDesabilitar = 'disabled="disabled"';
 
-            if (isset($_GET['id_md_ia_adm_integracao'])) {
-                $idIntegracao = $_GET['id_md_ia_adm_integracao'];
-            } else {
-                $idIntegracao = $_POST["hdnIdMdIaAdmIntegracao"];
-            }
-
-            $objMdIaAdmIntegracaoDTO->setNumIdMdIaAdmIntegracao($idIntegracao);
-
-            $objMdIaAdmIntegracaoDTO->retStrNome();
-            $objMdIaAdmIntegracaoDTO->retStrOperacaoWsdl();
-            $objMdIaAdmIntegracaoDTO->retNumIdMdIaAdmIntegFuncion();
-            $objMdIaAdmIntegracaoDTO->retStrTipoIntegracao();
-            $objMdIaAdmIntegracaoDTO->retNumFormatoResposta();
-            $objMdIaAdmIntegracaoDTO->retNumMetodoRequisicao();
-            $objMdIaAdmIntegracaoDTO->retNumMetodoAutenticacao();
-            $objMdIaAdmIntegracaoDTO->retNumIdMdIaAdmIntegracao();
-
-            $objMdIaAdmIntegracaoRN = new MdIaAdmIntegracaoRN();
-            $objMdIaAdmIntegracaoDTO = $objMdIaAdmIntegracaoRN->consultar($objMdIaAdmIntegracaoDTO);
-
             $strItensSelMdIaIntegFuncionalid = MdIaAdmIntegracaoINT::montarSelectNome('null', '&nbsp;', $objMdIaAdmIntegracaoDTO->getNumIdMdIaAdmIntegFuncion());
 
             if ($objMdIaAdmIntegracaoDTO == null) {
@@ -123,7 +122,7 @@ try {
                 }
             }
 
-            $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($objMdIaAdmIntegracaoDTO->getNumIdMdIaAdmIntegracao())) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
+            $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . '&id_md_ia_adm_integracao=' . $objMdIaAdmIntegracaoDTO->getNumIdMdIaAdmIntegracao() . PaginaSEI::getInstance()->montarAncora($objMdIaAdmIntegracaoDTO->getNumIdMdIaAdmIntegracao())) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
 
             if ($tpFuncionalidade == "1" || $tpFuncionalidade == "2") {
@@ -149,25 +148,12 @@ try {
                     PaginaSEI::getInstance()->processarExcecao($e);
                 }
             }
-            $strCadastroUrls = (new MdIaAdmIntegracaoINT())->recuperarGridUrls($_GET['id_md_ia_adm_integracao']);
             break;
 
         case 'md_ia_adm_integracao_consultar':
             $strTipoAcao = 'consultar';
             $strTitulo = 'Consultar Mapeamento de Integração';
-            $arrComandos[] = '<button type="button" accesskey="F" name="btnFechar" value="Fechar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . PaginaSEI::getInstance()->montarAncora($_GET['id_md_ia_adm_integracao'])) . '\';" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
-            $objMdIaAdmIntegracaoDTO->setNumIdMdIaAdmIntegracao($_GET['id_md_ia_adm_integracao']);
-            $objMdIaAdmIntegracaoDTO->setBolExclusaoLogica(false);
-            $objMdIaAdmIntegracaoDTO->retStrNome();
-            $objMdIaAdmIntegracaoDTO->retStrOperacaoWsdl();
-            $objMdIaAdmIntegracaoDTO->retNumIdMdIaAdmIntegFuncion();
-            $objMdIaAdmIntegracaoDTO->retStrTipoIntegracao();
-            $objMdIaAdmIntegracaoDTO->retNumFormatoResposta();
-            $objMdIaAdmIntegracaoDTO->retNumMetodoRequisicao();
-            $objMdIaAdmIntegracaoDTO->retNumMetodoAutenticacao();
-            $objMdIaAdmIntegracaoDTO->retNumIdMdIaAdmIntegracao();
-            $objMdIaAdmIntegracaoRN = new MdIaAdmIntegracaoRN();
-            $objMdIaAdmIntegracaoDTO = $objMdIaAdmIntegracaoRN->consultar($objMdIaAdmIntegracaoDTO);
+            $arrComandos[] = '<button type="button" accesskey="F" name="btnFechar" value="Fechar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . '&id_md_ia_adm_integracao=' . $objMdIaAdmIntegracaoDTO->getNumIdMdIaAdmIntegracao() . PaginaSEI::getInstance()->montarAncora($objMdIaAdmIntegracaoDTO->getNumIdMdIaAdmIntegracao())) . '\';" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
 
             $strItensSelMdIaIntegFuncionalid = MdIaAdmIntegracaoINT::montarSelectNome('null', '&nbsp;', $objMdIaAdmIntegracaoDTO->getNumIdMdIaAdmIntegFuncion());
 

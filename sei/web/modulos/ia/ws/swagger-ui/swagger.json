@@ -84,7 +84,6 @@
         }
       }
     },
-
     "/md_ia_consulta_documento": {
       "get": {
         "tags": [
@@ -163,7 +162,10 @@
               "items": {
                 "type": "integer"
               },
-              "example": [14980855, 14980856]
+              "example": [
+                14980855,
+                14980856
+              ]
             },
             "style": "form",
             "explode": false
@@ -243,7 +245,6 @@
         }
       }
     },
-
     "/md_ia_consulta_processo": {
       "get": {
         "tags": [
@@ -292,7 +293,10 @@
               "items": {
                 "type": "integer"
               },
-              "example": [8668395, 11801078]
+              "example": [
+                8668395,
+                11801078
+              ]
             },
             "style": "form",
             "explode": false
@@ -377,10 +381,13 @@
                           },
                           "IdProcessosAnexados ": {
                             "type": "array",
-                              "items": {
-                                "type": "string",
-                                "example": ["15350461", "15350462"]
-                              }
+                            "items": {
+                              "type": "string",
+                              "example": [
+                                "15350461",
+                                "15350462"
+                              ]
+                            }
                           },
                           "Interessados ": {
                             "type": "array",
@@ -415,7 +422,6 @@
         }
       }
     },
-
     "/md_ia_gera_hash_conteudo_documento": {
       "get": {
         "tags": [
@@ -464,7 +470,11 @@
               "items": {
                 "type": "integer"
               },
-              "example": [14816896, 14816897, 14816898]
+              "example": [
+                14816896,
+                14816897,
+                14816898
+              ]
             },
             "style": "form",
             "explode": false
@@ -512,7 +522,6 @@
         }
       }
     },
-
     "/md_ia_lista_tipo_documento": {
       "get": {
         "tags": [
@@ -594,7 +603,6 @@
         }
       }
     },
-
     "/md_ia_lista_segmentos_documentos_relevantes": {
       "get": {
         "tags": [
@@ -684,7 +692,6 @@
         }
       }
     },
-
     "/md_ia_lista_percentual_relevancia_metadados": {
       "get": {
         "tags": [
@@ -763,7 +770,6 @@
         }
       }
     },
-
     "/md_ia_lista_documentos_indexaveis": {
       "get": {
         "tags": [
@@ -869,7 +875,111 @@
         }
       }
     },
-
+    "/md_ia_lista_documentos_vetorizaveis": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Listar documentos elegíveis para vetorização",
+        "description": "Endpoint para listar documentos elegíveis para vetorização na Solução de IA.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_lista_documentos_vetorizaveis"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "QuantidadeRegistros",
+            "in": "query",
+            "description": "Quantidade de registros.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "default": "100"
+            }
+          },
+          {
+            "name": "IdUltimoRegistro",
+            "in": "query",
+            "description": "ID do último registro.",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "IdDocumentos": {
+                          "type": "integer",
+                          "example": "[12345, 12346]"
+                        },
+                        "QuantidadeRegistrosTotal": {
+                          "type": "integer",
+                          "example": 140000
+                        },
+                        "QuantidadeRegistrosEntregue": {
+                          "type": "integer",
+                          "example": 100
+                        },
+                        "IdUltimoRegistroEntregue": {
+                          "type": "integer",
+                          "example": 12345
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
     "/md_ia_atualiza_documentos_indexaveis": {
       "put": {
         "tags": [
@@ -949,7 +1059,85 @@
         }
       }
     },
-    
+    "/md_ia_atualiza_documentos_vetorizaveis": {
+      "put": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Atualizar status de vetorização de documentos",
+        "description": "Endpoint para sinalizar que o documento foi vetorizado pela Solução de IA.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_atualiza_documentos_vetorizaveis"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "IdDocumento",
+            "in": "query",
+            "description": "Id do Documento.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 219079
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Status atualizado com sucesso."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
     "/md_ia_lista_documentos_indexaveis_cancelados": {
       "get": {
         "tags": [
@@ -1055,8 +1243,6 @@
         }
       }
     },
-
-    
     "/md_ia_remove_documentos_indexaveis_cancelados": {
       "delete": {
         "tags": [
@@ -1136,7 +1322,6 @@
         }
       }
     },
-
     "/md_ia_consulta_conteudo_documento": {
       "get": {
         "tags": [
@@ -1228,7 +1413,6 @@
         }
       }
     },
-
     "/md_ia_lista_processos_indexaveis": {
       "get": {
         "tags": [
@@ -1334,7 +1518,111 @@
         }
       }
     },
-
+    "/md_ia_lista_processos_vetorizaveis": {
+      "get": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Listar processos elegíveis para vetorização",
+        "description": "Endpoint para listar processos elegíveis para vetorização na Solução de IA.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_lista_processos_vetorizaveis"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "QuantidadeRegistros",
+            "in": "query",
+            "description": "Quantidade de registros.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "default": "100"
+            }
+          },
+          {
+            "name": "IdUltimoRegistro",
+            "in": "query",
+            "description": "ID do último registro.",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "IdProcedimentos": {
+                          "type": "integer",
+                          "example": "[12345, 12346]"
+                        },
+                        "QuantidadeRegistrosTotal": {
+                          "type": "integer",
+                          "example": 140000
+                        },
+                        "QuantidadeRegistrosEntregue": {
+                          "type": "integer",
+                          "example": 100
+                        },
+                        "IdUltimoRegistroEntregue": {
+                          "type": "integer",
+                          "example": 12345
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
     "/md_ia_atualiza_processos_indexaveis": {
       "put": {
         "tags": [
@@ -1414,7 +1702,85 @@
         }
       }
     },
-
+    "/md_ia_atualiza_processos_vetorizaveis": {
+      "put": {
+        "tags": [
+          "Operações"
+        ],
+        "summary": "Atualizar status de vetorização de processos",
+        "description": "Endpoint para sinalizar que o processo foi vetorizado pela Solução de IA.",
+        "parameters": [
+          {
+            "name": "servico",
+            "in": "query",
+            "description": "Nome do serviço a ser executado.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "md_ia_atualiza_processos_vetorizaveis"
+            }
+          },
+          {
+            "name": "SiglaSistema",
+            "in": "query",
+            "description": "Sigla do sistema solicitante.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "Usuario_IA"
+            }
+          },
+          {
+            "name": "IdentificacaoServico",
+            "in": "query",
+            "description": "Identificação única do serviço.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "1ad5be0dd4296ebc07007090397641f36f4e405e157e0600ee02047151e5ea0dcd9eb2c4"
+            }
+          },
+          {
+            "name": "IdProcedimento",
+            "in": "query",
+            "description": "Id do Procedimento.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 219079
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida com detalhes do documento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Status atualizado com sucesso."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida. Parâmetros obrigatórios ausentes ou incorretos."
+          },
+          "404": {
+            "description": "Documento não encontrado."
+          }
+        }
+      }
+    },
     "/md_ia_lista_processos_indexaveis_cancelados": {
       "get": {
         "tags": [
@@ -1520,7 +1886,6 @@
         }
       }
     },
-
     "/md_ia_remove_processos_indexaveis_cancelados": {
       "delete": {
         "tags": [
@@ -1600,7 +1965,6 @@
         }
       }
     },
-
     "/md_ia_lista_documentos_elegiveis_processos_similares": {
       "get": {
         "tags": [
@@ -1667,7 +2031,16 @@
                       "items": {
                         "type": "integer"
                       },
-                      "example": [2884, 2885, 2886, 2887, 2888, 2889, 2890, 2891]
+                      "example": [
+                        2884,
+                        2885,
+                        2886,
+                        2887,
+                        2888,
+                        2889,
+                        2890,
+                        2891
+                      ]
                     }
                   }
                 }
@@ -1683,7 +2056,6 @@
         }
       }
     },
-
     "/md_ia_consulta_historico_topico": {
       "get": {
         "tags": [
@@ -1780,7 +2152,6 @@
         }
       }
     },
-
     "/md_ia_consulta_ultimo_id_message": {
       "get": {
         "tags": [
@@ -1837,7 +2208,9 @@
                       "items": {
                         "type": "integer"
                       },
-                      "example": [1409526]
+                      "example": [
+                        1409526
+                      ]
                     }
                   }
                 }

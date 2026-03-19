@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -29,7 +30,12 @@ class MdIaProcIndexaveisDTO extends InfraDTO
 
         $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DTH, 'Indexacao', 'dth_indexacao');
 
-        $this->configurarPK('IdProcedimento', InfraDTO::$TIPO_PK_INFORMADO);
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'SinProcessoAberto', 'sin_processo_aberto');
 
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'SinVetorizado', 'sin_vetorizado');
+
+        $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_DTH, 'Vetorizacao', 'dth_vetorizacao');
+
+        $this->configurarPK('IdProcedimento', InfraDTO::$TIPO_PK_INFORMADO);
     }
 }

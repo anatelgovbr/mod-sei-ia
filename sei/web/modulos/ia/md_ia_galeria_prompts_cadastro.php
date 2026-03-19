@@ -33,6 +33,16 @@ try {
 
     $objMdIaGaleriaPromptsDTO = new MdIaGaleriaPromptsDTO();
 
+    if ($numIdMdIaGaleriaPrompts) {
+        $objMdIaGaleriaPromptsDTO->setNumIdMdIaGaleriaPrompts($numIdMdIaGaleriaPrompts);
+        $objMdIaGaleriaPromptsDTO->retNumIdMdIaGaleriaPrompts();
+        $objMdIaGaleriaPromptsDTO->retNumIdMdIaGrupoGaleriaPrompt();
+        $objMdIaGaleriaPromptsDTO->retStrPrompt();
+        $objMdIaGaleriaPromptsDTO->retStrDescricao();
+        $objMdIaGaleriaPromptsRN = new MdIaGaleriaPromptsRN();
+        $objMdIaGaleriaPromptsDTO = $objMdIaGaleriaPromptsRN->consultar($objMdIaGaleriaPromptsDTO);
+    }
+
     $strDesabilitar = '';
 
     $arrComandos = array();
@@ -61,7 +71,7 @@ try {
                     $arrObjMdIaGaleriaPromptsDTO = $objMdIaGaleriaPromptsRN->cadastrar($objMdIaGaleriaPromptsDTO);
                     PaginaSEI::getInstance()->setStrMensagem('Prompt "' . $objMdIaGaleriaPromptsDTO->getNumIdMdIaGaleriaPrompts() . '" publicado na Galeria de Prompts com sucesso.');
 
-                    header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_galeria_prompts_selecionar&tipo_selecao=2&id_md_ia_grupo_galeria_prompt=' . $numIdMdIaGrupoGaleriaPrompts));
+                    header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . '&id_md_ia_galeria_prompts=' . $objMdIaGaleriaPromptsDTO->getNumIdMdIaGaleriaPrompts() . PaginaSEI::getInstance()->montarAncora($objMdIaGaleriaPromptsDTO->getNumIdMdIaGaleriaPrompts())));
                     die;
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
@@ -75,15 +85,7 @@ try {
 
             $arrComandos[] = '<button type="submit" accesskey="A" name="sbmAlterarPromptGaleriaPrompts" value="Alterar" class="infraButton"><span class="infraTeclaAtalho">A</span>lterar</button>';
             $strDesabilitar = 'disabled="disabled"';
-            $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_galeria_prompts_selecionar&tipo_selecao=2&acao_origem=' . $_GET['acao']) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
-
-            $objMdIaGaleriaPromptsDTO->setNumIdMdIaGaleriaPrompts($numIdMdIaGaleriaPrompts);
-            $objMdIaGaleriaPromptsDTO->retNumIdMdIaGaleriaPrompts();
-            $objMdIaGaleriaPromptsDTO->retNumIdMdIaGrupoGaleriaPrompt();
-            $objMdIaGaleriaPromptsDTO->retStrPrompt();
-            $objMdIaGaleriaPromptsDTO->retStrDescricao();
-            $objMdIaGaleriaPromptsRN = new MdIaGaleriaPromptsRN();
-            $objMdIaGaleriaPromptsDTO = $objMdIaGaleriaPromptsRN->consultar($objMdIaGaleriaPromptsDTO);
+            $arrComandos[] = '<button type="button" accesskey="C" name="btnCancelar" id="btnCancelar" value="Cancelar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_galeria_prompts_selecionar&tipo_selecao=2&acao_origem=' . $_GET['acao'] . '&id_md_ia_galeria_prompts=' . $objMdIaGaleriaPromptsDTO->getNumIdMdIaGaleriaPrompts() . PaginaSEI::getInstance()->montarAncora($objMdIaGaleriaPromptsDTO->getNumIdMdIaGaleriaPrompts())) . '\';" class="infraButton"><span class="infraTeclaAtalho">C</span>ancelar</button>';
 
             if ($objMdIaGaleriaPromptsDTO) {
                 $numIdMdIaGrupoGaleriaPrompts = $objMdIaGaleriaPromptsDTO->getNumIdMdIaGrupoGaleriaPrompt();
@@ -103,7 +105,7 @@ try {
                     $objMdIaGaleriaPromptsRN->alterar($objMdIaGaleriaPromptsDTO);
                     PaginaSEI::getInstance()->setStrMensagem('Prompt "' . $objMdIaGaleriaPromptsDTO->getNumIdMdIaGaleriaPrompts() . '" alterado com sucesso.');
 
-                    header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_galeria_prompts_selecionar&tipo_selecao=2&id_md_ia_grupo_galeria_prompt=' . $numIdMdIaGrupoGaleriaPrompts));
+                    header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . '&id_md_ia_galeria_prompts=' . $objMdIaGaleriaPromptsDTO->getNumIdMdIaGaleriaPrompts() . PaginaSEI::getInstance()->montarAncora($objMdIaGaleriaPromptsDTO->getNumIdMdIaGaleriaPrompts())));
                     die;
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
@@ -167,11 +169,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     </div>
     <div class="form-group">
         <label id="lblDescricaoPrompt" for="txaDescricaoPrompt" accesskey="D" class="infraLabelObrigatorio"><span class="infraTeclaAtalho">D</span>escrição Prompt:</label>
-        <textarea rows="4" required name="txaDescricaoPrompt" id="txaDescricaoPrompt" class="infraTextarea" maxlength="500" onpaste="return infraLimitarTexto(this,event,500);" onkeypress="return infraLimitarTexto(this,event,500);" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?= $descricaoPrompt ?></textarea>
+        <textarea rows="4" required name="txaDescricaoPrompt" id="txaDescricaoPrompt" class="infraTextarea" maxlength="500" onpaste="return infraLimitarTexto(this,event,500);" onkeypress="return infraLimitarTexto(this,event,500);" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?= PaginaSEI::tratarHTML($descricaoPrompt) ?></textarea>
     </div>
     <div class="form-group">
         <label id="lblPrompt" for="txaPrompt" class="infraLabelObrigatorio">Prompt:</label>
-        <textarea rows="18" required name="txaPrompt" id="txaPrompt" class="infraTextarea" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?= $prompt ?></textarea>
+        <textarea rows="18" required name="txaPrompt" id="txaPrompt" class="infraTextarea" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?= PaginaSEI::tratarHTML($prompt) ?></textarea>
     </div>
     <input type="hidden" id="hdnIdMdIaGaleriaPrompts" name="hdnIdMdIaGaleriaPrompts" value="<?= $numIdMdIaGaleriaPrompts ?>" />
 
@@ -184,6 +186,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 </form>
 <?php
 require_once "md_ia_galeria_prompts_cadastro_js.php";
+require_once "md_ia_chat_js.php";
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>

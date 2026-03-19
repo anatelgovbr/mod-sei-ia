@@ -12,6 +12,40 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdIaTopicoChatINT extends InfraINT
 {
+    private static function consultarTopicoSessaoAtual($idTopico, $sinAtivo = null)
+    {
+        if (InfraString::isBolVazia($idTopico) || !is_numeric($idTopico)) {
+            return null;
+        }
+
+        $objMdIaTopicoChatDTO = new MdIaTopicoChatDTO();
+        $objMdIaTopicoChatRN = new MdIaTopicoChatRN();
+        $objMdIaTopicoChatDTO->retNumIdMdIaTopicoChat();
+        $objMdIaTopicoChatDTO->retNumIdUsuario();
+        $objMdIaTopicoChatDTO->retNumIdUnidade();
+        $objMdIaTopicoChatDTO->retStrSinAtivo();
+        $objMdIaTopicoChatDTO->setNumIdMdIaTopicoChat((int)$idTopico);
+
+        $topico = $objMdIaTopicoChatRN->consultar($objMdIaTopicoChatDTO);
+
+        if (is_null($topico)) {
+            return null;
+        }
+
+        if ($topico->getNumIdUsuario() != SessaoSEI::getInstance()->getNumIdUsuario()) {
+            return null;
+        }
+
+        if ($topico->getNumIdUnidade() != SessaoSEI::getInstance()->getNumIdUnidadeAtual()) {
+            return null;
+        }
+
+        if (!InfraString::isBolVazia($sinAtivo) && $topico->getStrSinAtivo() != $sinAtivo) {
+            return null;
+        }
+
+        return $topico;
+    }
     public static function criarTopicoChat()
     {
         $objMdIaTopicoChatDTO = new MdIaTopicoChatDTO();
@@ -76,12 +110,17 @@ class MdIaTopicoChatINT extends InfraINT
         $objMdIaTopicoChatRN = new MdIaTopicoChatRN();
 
         $objMdIaTopicoChatDTO->retNumIdMdIaTopicoChat();
+        $objMdIaTopicoChatDTO->retNumIdUsuario();
+        $objMdIaTopicoChatDTO->retNumIdUnidade();
+        $objMdIaTopicoChatDTO->retStrSinAtivo();
         $objMdIaTopicoChatDTO->setNumIdMdIaTopicoChat(SessaoSEI::getInstance()->getAtributo('MD_IA_ID_TOPICO_CHAT_IA'));
-        $objMdIaTopicoChatDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
-        $objMdIaTopicoChatDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
-        $objMdIaTopicoChatDTO->setStrSinAtivo("S");
-
         $topicoCadastrado = $objMdIaTopicoChatRN->consultar($objMdIaTopicoChatDTO);
+        if (!is_null($topicoCadastrado)
+            && ($topicoCadastrado->getNumIdUsuario() != SessaoSEI::getInstance()->getNumIdUsuario()
+                || $topicoCadastrado->getNumIdUnidade() != SessaoSEI::getInstance()->getNumIdUnidadeAtual()
+                || $topicoCadastrado->getStrSinAtivo() != "S")) {
+            $topicoCadastrado = null;
+        }
         if (empty($topicoCadastrado)) {
 
             SessaoSEI::getInstance()->removerAtributo('MD_IA_ID_TOPICO_CHAT_IA');
@@ -309,9 +348,15 @@ class MdIaTopicoChatINT extends InfraINT
 
     public static function selecionarTopico($dados)
     {
-        if ($dados["id"] != "" && !is_null($dados["id"])) {
-            SessaoSEI::getInstance()->setAtributo('MD_IA_ID_TOPICO_CHAT_IA', $dados["id"]);
+        $idTopico = isset($dados["id"]) ? $dados["id"] : null;
+        $topico = self::consultarTopicoSessaoAtual($idTopico, "S");
+
+        if (is_null($topico)) {
+            return array();
         }
+
+        $idTopico = $topico->getNumIdMdIaTopicoChat();
+        SessaoSEI::getInstance()->setAtributo('MD_IA_ID_TOPICO_CHAT_IA', $idTopico);
         $objMdIaInteracaoChatDTO = new MdIaInteracaoChatDTO();
         $objMdIaInteracaoChatRN = new MdIaInteracaoChatRN();
         $objMdIaInteracaoChatDTO->retNumIdMessage();
@@ -320,7 +365,10 @@ class MdIaTopicoChatINT extends InfraINT
         $objMdIaInteracaoChatDTO->retNumFeedback();
         $objMdIaInteracaoChatDTO->retNumIdMdIaInteracaoChat();
         $objMdIaInteracaoChatDTO->retNumStatusRequisicao();
-        $objMdIaInteracaoChatDTO->setNumIdMdIaTopicoChat($dados["id"]);
+        $objMdIaInteracaoChatDTO->retNumTempoExecucao();
+        $objMdIaInteracaoChatDTO->setNumIdMdIaTopicoChat($idTopico);
+        $objMdIaInteracaoChatDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
+        $objMdIaInteracaoChatDTO->setNumIdUnidadeTopico(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
         $objMdIaInteracaoChatDTO->setOrdNumIdMdIaInteracaoChat(InfraDTO::$TIPO_ORDENACAO_ASC);
         $objMdIaInteracaoChatDTO->retDthCadastro();
 
@@ -346,6 +394,7 @@ class MdIaTopicoChatINT extends InfraINT
             $arrayItensInteracoes["id_interacao"] = $itemInteracao->getNumIdMdIaInteracaoChat();
             $arrayItensInteracoes["status_requisicao"] = $itemInteracao->getNumStatusRequisicao();
             $arrayItensInteracoes["dth_cadastro"] = substr($itemInteracao->getDthCadastro(), 0, 19);
+            $arrayItensInteracoes["tempo_execucao"] = $itemInteracao->getNumTempoExecucao();
 
             $arrayInteracoes[] = $arrayItensInteracoes;
         }
@@ -355,11 +404,15 @@ class MdIaTopicoChatINT extends InfraINT
 
     public static function renomearTopico($dados)
     {
+        $topico = self::consultarTopicoSessaoAtual($dados["id_topico"]);
+        if (is_null($topico)) {
+            return false;
+        }
 
         $objMdIaTopicoChatDTO = new MdIaTopicoChatDTO();
         $objMdIaTopicoChatRN = new MdIaTopicoChatRN();
 
-        $objMdIaTopicoChatDTO->setNumIdMdIaTopicoChat($dados["id_topico"]);
+        $objMdIaTopicoChatDTO->setNumIdMdIaTopicoChat($topico->getNumIdMdIaTopicoChat());
         $objMdIaTopicoChatDTO->setStrNome($dados["nome_topico"]);
         $objMdIaTopicoChatRN->alterar($objMdIaTopicoChatDTO);
         return true;
@@ -367,11 +420,15 @@ class MdIaTopicoChatINT extends InfraINT
 
     public static function arquivarTopico($dados)
     {
+        $topico = self::consultarTopicoSessaoAtual($dados["id_topico"], "S");
+        if (is_null($topico)) {
+            return false;
+        }
 
         $objMdIaTopicoChatDTO = new MdIaTopicoChatDTO();
         $objMdIaTopicoChatRN = new MdIaTopicoChatRN();
 
-        $objMdIaTopicoChatDTO->setNumIdMdIaTopicoChat($dados["id_topico"]);
+        $objMdIaTopicoChatDTO->setNumIdMdIaTopicoChat($topico->getNumIdMdIaTopicoChat());
         $objMdIaTopicoChatDTO->setStrSinAtivo("N");
         $objMdIaTopicoChatRN->alterar($objMdIaTopicoChatDTO);
         SessaoSEI::getInstance()->removerAtributo('MD_IA_ID_TOPICO_CHAT_IA');
@@ -380,11 +437,15 @@ class MdIaTopicoChatINT extends InfraINT
 
     public static function desarquivarTopico($dados)
     {
+        $topico = self::consultarTopicoSessaoAtual($dados["id_topico"], "N");
+        if (is_null($topico)) {
+            return false;
+        }
 
         $objMdIaTopicoChatDTO = new MdIaTopicoChatDTO();
         $objMdIaTopicoChatRN = new MdIaTopicoChatRN();
 
-        $objMdIaTopicoChatDTO->setNumIdMdIaTopicoChat($dados["id_topico"]);
+        $objMdIaTopicoChatDTO->setNumIdMdIaTopicoChat($topico->getNumIdMdIaTopicoChat());
         $objMdIaTopicoChatDTO->setStrSinAtivo("S");
         $objMdIaTopicoChatRN->alterar($objMdIaTopicoChatDTO);
         SessaoSEI::getInstance()->removerAtributo('MD_IA_ID_TOPICO_CHAT_IA');

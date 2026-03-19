@@ -33,6 +33,7 @@ try {
     switch ($_GET['acao']) {
         case 'md_ia_modal_chats_arquivados':
             $strTitulo = 'Tópicos Arquivados';
+            $tabelaTopicosArquivados = '';
 
             $objMdIaTopicoChatDTO = new MdIaTopicoChatDTO();
             $objMdIaTopicoChatDTO->retNumIdMdIaTopicoChat();
@@ -41,6 +42,7 @@ try {
             $objMdIaTopicoChatDTO->setStrSinAtivo("N");
             $objMdIaTopicoChatDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
             $objMdIaTopicoChatDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+            $objMdIaTopicoChatDTO->setOrdDthCadastro(InfraDTO::$TIPO_ORDENACAO_DESC);
             $objMdIaTopicoChatRN = new MdIaTopicoChatRN();
             $numRegistros = $objMdIaTopicoChatRN->contar($objMdIaTopicoChatDTO);
 
@@ -48,10 +50,10 @@ try {
 
             foreach ($arrTopicosArquivados as $topicoArquivado) {
                 $tabelaTopicosArquivados .= "<tr>";
-                $tabelaTopicosArquivados .= "<td class='text-left'>" . $topicoArquivado->getStrNome() . "</td>";
-                $tabelaTopicosArquivados .= "<td class='text-center'>" . $topicoArquivado->getDthCadastro() . "</td>";
+                $tabelaTopicosArquivados .= "<td class='text-left'>" . PaginaSEI::tratarHTML($topicoArquivado->getStrNome()) . "</td>";
+                $tabelaTopicosArquivados .= "<td class='text-center'>" . PaginaSEI::tratarHTML($topicoArquivado->getDthCadastro()) . "</td>";
                 $tabelaTopicosArquivados .= "<td class='text-center'>";
-                $tabelaTopicosArquivados .= "<a class='arquivo' title='Desarquivar Tópico' onclick='desarquivarTopico(" . $topicoArquivado->getNumIdMdIaTopicoChat() . ")'><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 512 512'><path d='M121 32C91.6 32 66 52 58.9 80.5L1.9 308.4C.6 313.5 0 318.7 0 323.9V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V323.9c0-5.2-.6-10.4-1.9-15.5l-57-227.9C446 52 420.4 32 391 32H121zm0 64H391l48 192H387.8c-12.1 0-23.2 6.8-28.6 17.7l-14.3 28.6c-5.4 10.8-16.5 17.7-28.6 17.7H195.8c-12.1 0-23.2-6.8-28.6-17.7l-14.3-28.6c-5.4-10.8-16.5-17.7-28.6-17.7H73L121 96z'/></svg></a>";
+                $tabelaTopicosArquivados .= "<a class='arquivo' title='Desarquivar Tópico' onclick='desarquivarTopico(" . (int)$topicoArquivado->getNumIdMdIaTopicoChat() . ")'><svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 512 512'><path d='M121 32C91.6 32 66 52 58.9 80.5L1.9 308.4C.6 313.5 0 318.7 0 323.9V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V323.9c0-5.2-.6-10.4-1.9-15.5l-57-227.9C446 52 420.4 32 391 32H121zm0 64H391l48 192H387.8c-12.1 0-23.2 6.8-28.6 17.7l-14.3 28.6c-5.4 10.8-16.5 17.7-28.6 17.7H195.8c-12.1 0-23.2-6.8-28.6-17.7l-14.3-28.6c-5.4-10.8-16.5-17.7-28.6-17.7H73L121 96z'/></svg></a>";
                 $tabelaTopicosArquivados .= "</td>";
                 $tabelaTopicosArquivados .= "</tr>";
             }

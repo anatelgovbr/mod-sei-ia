@@ -94,6 +94,10 @@
             content: "Prompts Favoritos",
         });
 
+        tippy("#botaoMemoriaTopico", {
+            content: "Utilizar memória do tópico",
+        });
+
         tippy("#botaoBuscarWeb", {
             content: "Buscar na Web",
         });
@@ -357,6 +361,64 @@
     function safe_tags(str) {
         return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
+    function criarIconeTopicoSvg() {
+        var template = document.createElement('template');
+        template.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path d="M160 368c26.5 0 48 21.5 48 48v16l72.5-54.4c8.3-6.2 18.4-9.6 28.8-9.6H448c8.8 0 16-7.2 16-16V64c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16V352c0 8.8 7.2 16 16 16h96zm48 124l-.2 .2-5.1 3.8-17.1 12.8c-4.8 3.6-11.3 4.2-16.8 1.5s-8.8-8.2-8.8-14.3V474.7v-6.4V468v-4V416H112 64c-35.3 0-64-28.7-64-64V64C0 28.7 28.7 0 64 0H448c35.3 0 64 28.7 64 64V352c0 35.3-28.7 64-64 64H309.3L208 492z"/></svg>';
+        return template.content.firstElementChild;
+    }
+
+    function criarElementoTopico(topico, ativo) {
+        var idTopico = parseInt(topico["idTopico"], 10);
+        var nomeTopico = topico["nome"] == null ? '' : String(topico["nome"]);
+        var classeTopico = ativo ? 'topico active' : 'topico';
+        var classeBotao = ativo ? 'nav-link text-left active' : 'nav-link text-left';
+
+        var $topico = $('<div>').addClass(classeTopico).attr({
+            onmouseover: 'mostrarAcoesTopico(this)',
+            onmouseout: 'ocultarAcoesTopico(this)'
+        });
+
+        var $linkSeleciona = $('<a>')
+            .addClass('selecionaTopico')
+            .on('click', function() {
+                selecionaTopico(idTopico);
+            });
+
+        var $botao = $('<button>')
+            .addClass(classeBotao)
+            .attr({
+                id: 'topico' + idTopico,
+                'data-toggle': 'pill',
+                'data-target': 'topico' + idTopico,
+                type: 'button',
+                role: 'tab',
+                'aria-controls': 'topico' + idTopico,
+                'aria-selected': 'false'
+            });
+
+        $botao.append(criarIconeTopicoSvg());
+        $botao.append(document.createTextNode(nomeTopico));
+
+        $linkSeleciona.append($botao);
+        $topico.append($linkSeleciona);
+
+        var $acoesTopico = $('<div>').addClass('acoesTopico').attr('id', 'acoesTopico' + idTopico);
+
+        var $acaoArquivar = $('<a>').addClass('arquivo').on('click', function() {
+            arquivarTopico(idTopico);
+        });
+        $acaoArquivar.append('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path d="M121 32C91.6 32 66 52 58.9 80.5L1.9 308.4C.6 313.5 0 318.7 0 323.9V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V323.9c0-5.2-.6-10.4-1.9-15.5l-57-227.9C446 52 420.4 32 391 32H121zm0 64H391l48 192H387.8c-12.1 0-23.2 6.8-28.6 17.7l-14.3 28.6c-5.4 10.8-16.5 17.7-28.6 17.7H195.8c-12.1 0-23.2-6.8-28.6-17.7l-14.3-28.6c-5.4-10.8-16.5-17.7-28.6-17.7H73L121 96z"/></svg>');
+
+        var $acaoRenomear = $('<a>').addClass('rename').on('click', function() {
+            editarTopico(idTopico);
+        });
+        $acaoRenomear.append('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z"/></svg>');
+
+        $acoesTopico.append($acaoArquivar, $acaoRenomear);
+        $topico.append($acoesTopico);
+
+        return $topico;
+    }
 
     function resolveItensEnvioMensagem(mensagem, dadosCitacoes = "", idInteracao = "", favorito = "", dthCadastro) {
 
@@ -584,9 +646,6 @@
                 dataType: "json", //Tipo de dado que será enviado ao servidor
                 data: info,
                 async: true,
-                success: function(data) {
-                    console.log(data);
-                },
                 error: function(err) {
                     console.log(err);
                 }
@@ -704,11 +763,19 @@
         } else {
             mensagemUsuario["refletir"] = false;
         }
+
         if ($("#botaoBuscarWeb").hasClass("botaoAcaoAssistenteIAAtivado")) {
             mensagemUsuario["buscarWeb"] = true;
         } else {
             mensagemUsuario["buscarWeb"] = false;
         }
+
+        if ($("#botaoMemoriaTopico").hasClass("botaoAcaoAssistenteIAAtivado")) {
+            mensagemUsuario["skipMemory"] = false;
+        } else {
+            mensagemUsuario["skipMemory"] = true;
+        }
+
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_assistente_envia_mensagem_ajax'); ?>',
             type: 'POST', //selecionando o tipo de requisição, PUT,GET,POST,DELETE
@@ -725,13 +792,12 @@
                 } else {
                     if ($("#topicoTemporario").val() == "true") {
                         $("#topicoTemporario").val("false");
-                        listarTopicos();
-                    } else {
-                        var idMdIaInteracaoChat = data;
-                        setTimeout(function() {
-                            aguardandoResposta(idMdIaInteracaoChat, divfilho, divpai);
-                        }, 5000);
                     }
+
+                    var idMdIaInteracaoChat = data;
+                    setTimeout(function() {
+                        aguardandoResposta(idMdIaInteracaoChat, divfilho, divpai);
+                    }, 500);
                 }
             },
             error: function(err) {
@@ -773,84 +839,10 @@
         return decoded;
     }
 
-    function decodeHtmlEntities(encodedString) {
-
-        // 1) Decodifica entidades HTML
-        const tmp = document.createElement('textarea');
-        tmp.innerHTML = encodedString;
-        let decoded = tmp.value;
-
-        // 2) Escapa ONLY tags desconhecidas
-        decoded = decoded.replace(
-            /<\/?([a-zA-Z][\w-]*)\b([^>]*)>/g,
-            (match, tagName) => {
-                const el = document.createElement(tagName);
-                if (el instanceof HTMLUnknownElement) {
-                    return match
-                        .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;');
-                }
-                return match;
-            }
-        );
-
-        // 3) Parseia o HTML ?protegido? e remove scripts/atributos XSS,
-        //    mas agora PRESERVA o onclick
-        const doc = new DOMParser().parseFromString(decoded, 'text/html');
-        (function walk(node) {
-            let child = node.firstChild;
-            while (child) {
-                const next = child.nextSibling;
-                if (child.nodeType === Node.ELEMENT_NODE) {
-                    if (['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED'].includes(child.tagName)) {
-                        node.removeChild(child);
-                    } else {
-                        Array.from(child.attributes).forEach(attr => {
-                            const name = attr.name.toLowerCase();
-                            const value = attr.value;
-
-                            // ? MANTÉM onclick
-                            if (name === 'onclick') {
-                                return;
-                            }
-                            // remove qualquer outro on*  
-                            if (/^on/.test(name)) {
-                                child.removeAttribute(attr.name);
-                            }
-                            // remove javascript:? em href/src
-                            else if (/^javascript:/i.test(value)) {
-                                child.removeAttribute(attr.name);
-                            }
-                        });
-                        walk(child);
-                    }
-                }
-                child = next;
-            }
-        })(doc.body);
-
-        // 4) Sanitiza com DOMPurify, permitindo explicitamente onclick
-        const sanitized = DOMPurify.sanitize(doc.body.innerHTML, {
-            ADD_ATTR: ['onclick']
-        });
-
-        // 5) Conserta possíveis &amp;gt;
-        var resposta = sanitized.replace(/&amp;gt;/g, '>');
-        resposta = resposta.replace(/\n/g, "<br>");
-        resposta = resposta.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
-        resposta = cleanUpBreaks(resposta);
-        return resposta;
-    }
-
-    function cleanUpBreaks(html) {
-        return html
-            // 1) remove <br> antes ou depois de tags de bloco, incluindo <table>, <thead>, <tbody>, <tr>, <th>, <td>
-            .replace(
-                /(<\/?(?:h[1-6]|p|ul|ol|li|table|thead|tbody|tr|th|td)[^>]*>)[ \t\r\n]*(?:<br\s*\/?>[ \t\r\n]*)+/gi,
-                '$1'
-            )
-            // 2) remove <br> sobrando no fim do documento
-            .replace(/(?:<br\s*\/?>[ \t\r\n]*)+$/gi, '');
+    function stripHtml(html) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || '';
     }
 
     function insereResposta(data, divfilho, divpai, dthCadastro) {
@@ -860,6 +852,7 @@
         var mensagem = data['resposta'];
         var mensagemParseada = markdownToHTML(mensagem, id_mensagem);
         mensagem = safe_tags(mensagem);
+        mensagem = stripHtml(mensagem);
 
         var respostaMontada = '' +
             '<div class="mensagemIdentificador">' +
@@ -1183,17 +1176,34 @@
         dadosMensagem["IdMdIaInteracaoChat"] = idMdIaInteracaoChat;
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_consultar_mensagem_ajax'); ?>',
-            type: 'POST', //selecionando o tipo de requisição, PUT,GET,POST,DELETE
-            dataType: "json", //Tipo de dado que será enviado ao servidor
-            data: dadosMensagem, // Enviando o JSON com o nome de itens
+            type: 'POST',
+            dataType: "json",
+            data: dadosMensagem,
             success: function(data) {
                 if (data["result"] == "true") {
                     $("#botaoEnviarMensagem").removeClass("aguardandoResposta");
                     listarTopicos();
                 } else {
+
+                    if (data.resposta && data.resposta.resposta && data.resposta.resposta.trim() !== "") {
+                        var outputElement = divfilho.querySelector('.output');
+
+                        if (outputElement) {
+                            var textoBruto = data.resposta.resposta;
+                            var txtArea = document.createElement("textarea");
+                            txtArea.innerHTML = textoBruto;
+
+                            var textoDecodificado = txtArea.value;
+
+                            var idTemporario = -1;
+                            var textoFormatado = markdownToHTML(textoDecodificado, idTemporario);
+                            outputElement.innerHTML = textoFormatado + '<span>.</span><span>.</span><span>.</span>';
+                        }
+                    }
+
                     setTimeout(function() {
                         aguardandoResposta(idMdIaInteracaoChat, divfilho, divpai);
-                    }, 5000);
+                    }, 500);
                 }
 
             },
@@ -1384,9 +1394,6 @@
             dataType: "json", //Tipo de dado que será enviado ao servidor
             data: feeedbackUsuario, // Enviando o JSON com o nome de itens
             async: true,
-            success: function(data) {
-                console.log(data);
-            },
             error: function(err) {
                 console.log(err);
             }
@@ -1454,6 +1461,9 @@
         $("#conteudoChat").css({
             "width": "85%"
         });
+        $("#memoriaTopico").css({
+            "display": "block"
+        });
         $("#buscarWeb").css({
             "display": "block"
         });
@@ -1467,9 +1477,16 @@
     }
 
     function reduzirAssistente() {
-        $(".widget-content").css({
-            "width": "360px"
-        });
+        if (parseInt($(window).width()) < 576) {
+            $(".widget-content").css({
+                "width": "360px"
+            });
+        } else {
+            $(".widget-content").css({
+                "width": "451px"
+            });
+        }
+
         $("#reduzirAssistente").css({
             "display": "none"
         });
@@ -1496,6 +1513,9 @@
         });
         $("#conteudoChat").css({
             "width": "100%"
+        });
+        $("#memoriaTopico").css({
+            "display": "none"
         });
         $("#buscarWeb").css({
             "display": "none"
@@ -1551,7 +1571,6 @@
         var larguraTotal = parseInt(larguraPainelTopicos) + parseInt(larguraConteudoChat);
         if ($(window).width() < larguraTotal) {
             var larguraDesejada = (parseInt(larguraTotal) - parseInt($(window).width())) + 212;
-            console.log(larguraDesejada);
             $("#conteudoChat").css({
                 "width": larguraDesejada
             });
@@ -1624,6 +1643,7 @@
         var divfilho = document.createElement('div');
         $("#conversa").html("");
         $("#mensagem").val("");
+        $("#botaoMemoriaTopico").addClass('botaoAcaoAssistenteIAAtivado');
         $("#botaoRefletir").removeClass('botaoAcaoAssistenteIAAtivado');
         $("#botaoBuscarWeb").removeClass('botaoAcaoAssistenteIAAtivado');
         insereCards(divpai);
@@ -1722,12 +1742,11 @@
 
                             // Iterar sobre os tópicos dentro deste período
                             topicos.forEach(function(topico) {
-                                // Renderizar o tópico
                                 if (topico["ativo"] == false) {
-                                    divPai.append('<div class="topico" onmouseover="mostrarAcoesTopico(this)" onmouseout="ocultarAcoesTopico(this)"><a onclick="selecionaTopico(' + topico["idTopico"] + ')" class="selecionaTopico"><button class="nav-link text-left" id="topico' + topico["idTopico"] + '" data-toggle="pill" data-target="topico' + topico["idTopico"] + '" type="button" role="tab" aria-controls="topico' + topico["idTopico"] + '" aria-selected="false"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path d="M160 368c26.5 0 48 21.5 48 48v16l72.5-54.4c8.3-6.2 18.4-9.6 28.8-9.6H448c8.8 0 16-7.2 16-16V64c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16V352c0 8.8 7.2 16 16 16h96zm48 124l-.2 .2-5.1 3.8-17.1 12.8c-4.8 3.6-11.3 4.2-16.8 1.5s-8.8-8.2-8.8-14.3V474.7v-6.4V468v-4V416H112 64c-35.3 0-64-28.7-64-64V64C0 28.7 28.7 0 64 0H448c35.3 0 64 28.7 64 64V352c0 35.3-28.7 64-64 64H309.3L208 492z"/></svg>' + topico["nome"] + '</button></a><div class="acoesTopico" id="acoesTopico' + topico["idTopico"] + '"><a class="arquivo" onclick="arquivarTopico(' + topico["idTopico"] + ')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path d="M121 32C91.6 32 66 52 58.9 80.5L1.9 308.4C.6 313.5 0 318.7 0 323.9V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V323.9c0-5.2-.6-10.4-1.9-15.5l-57-227.9C446 52 420.4 32 391 32H121zm0 64H391l48 192H387.8c-12.1 0-23.2 6.8-28.6 17.7l-14.3 28.6c-5.4 10.8-16.5 17.7-28.6 17.7H195.8c-12.1 0-23.2-6.8-28.6-17.7l-14.3-28.6c-5.4-10.8-16.5-17.7-28.6-17.7H73L121 96z"/></svg></a><a class="rename" onclick="editarTopico(' + topico["idTopico"] + ')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z"/></svg></a></div></div>');
+                                    divPai.append(criarElementoTopico(topico, false));
                                 } else {
                                     topicoAtivo = topico["idTopico"];
-                                    divPai.append('<div class="topico active" onmouseover="mostrarAcoesTopico(this)" onmouseout="ocultarAcoesTopico(this)"><a onclick="selecionaTopico(' + topico["idTopico"] + ')" class="selecionaTopico"><button class="nav-link text-left active" id="topico' + topico["idTopico"] + '" data-toggle="pill" data-target="topico' + topico["idTopico"] + '" type="button" role="tab" aria-controls="topico' + topico["idTopico"] + '" aria-selected="false"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path d="M160 368c26.5 0 48 21.5 48 48v16l72.5-54.4c8.3-6.2 18.4-9.6 28.8-9.6H448c8.8 0 16-7.2 16-16V64c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16V352c0 8.8 7.2 16 16 16h96zm48 124l-.2 .2-5.1 3.8-17.1 12.8c-4.8 3.6-11.3 4.2-16.8 1.5s-8.8-8.2-8.8-14.3V474.7v-6.4V468v-4V416H112 64c-35.3 0-64-28.7-64-64V64C0 28.7 28.7 0 64 0H448c35.3 0 64 28.7 64 64V352c0 35.3-28.7 64-64 64H309.3L208 492z"/></svg>' + topico["nome"] + '</button></a><div class="acoesTopico" id="acoesTopico' + topico["idTopico"] + '"><a class="arquivo" onclick="arquivarTopico(' + topico["idTopico"] + ')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path d="M121 32C91.6 32 66 52 58.9 80.5L1.9 308.4C.6 313.5 0 318.7 0 323.9V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V323.9c0-5.2-.6-10.4-1.9-15.5l-57-227.9C446 52 420.4 32 391 32H121zm0 64H391l48 192H387.8c-12.1 0-23.2 6.8-28.6 17.7l-14.3 28.6c-5.4 10.8-16.5 17.7-28.6 17.7H195.8c-12.1 0-23.2-6.8-28.6-17.7l-14.3-28.6c-5.4-10.8-16.5-17.7-28.6-17.7H73L121 96z"/></svg></a><a class="rename" onclick="editarTopico(' + topico["idTopico"] + ')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z"/></svg></a></div></div>');
+                                    divPai.append(criarElementoTopico(topico, true));
                                 }
                             });
                         }
@@ -1786,6 +1805,7 @@
                 $("#conversa").html("");
                 if (limparCampos) {
                     $("#mensagem").val("");
+                    $("#botaoMemoriaTopico").addClass('botaoAcaoAssistenteIAAtivado');
                     $("#botaoRefletir").removeClass('botaoAcaoAssistenteIAAtivado');
                     $("#botaoBuscarWeb").removeClass('botaoAcaoAssistenteIAAtivado');
                 }
@@ -1794,21 +1814,37 @@
                     data.forEach(function(interacao) {
                         resolveItensEnvioMensagem(interacao["pergunta"], interacao["dadosCitacoes"], interacao["id_interacao"], interacao["favorito"], interacao['dth_cadastro']);
                         var divfilho = document.createElement('div');
-                        if (interacao["resposta"] != "" || interacao["status_requisicao"] > 0) {
-                            if (interacao["status_requisicao"] == "200" && interacao["resposta"] != "") {
-                                insereResposta(interacao, divfilho, divpai, interacao['dth_cadastro']);
-                                if (interacao["feedback"] >= '1') {
-                                    abrirEstrelinhas(interacao["id_mensagem"]);
-                                    habilitaEstrelinhas(interacao["id_mensagem"], interacao["feedback"]);
-                                }
-                            } else {
-                                insereCritica(interacao, divfilho, divpai, interacao['dth_cadastro']);
+
+                        if (interacao["status_requisicao"] == "200" && interacao["resposta"] != "") {
+
+                            insereResposta(interacao, divfilho, divpai, interacao['dth_cadastro']);
+
+                            if (interacao["feedback"] >= '1') {
+                                abrirEstrelinhas(interacao["id_mensagem"]);
+                                habilitaEstrelinhas(interacao["id_mensagem"], interacao["feedback"]);
                             }
+
+                        } else if (interacao["status_requisicao"] > 0 && (interacao["status_requisicao"] != "200" || interacao["tempo_execucao"] > 0)) {
+
+                            insereCritica(interacao, divfilho, divpai, interacao['dth_cadastro']);
+
                         } else {
-                            carregandoResposta(divpai);
+                            if (divfilho.parentNode == divpai && divfilho.innerHTML == "") {
+                                divpai.removeChild(divfilho);
+                            }
+
+                            var divLoading = carregandoResposta(divpai);
+
+                            if (interacao["resposta"] != "") {
+                                var outputElement = divLoading.querySelector('.output');
+                                if (outputElement) {
+                                    outputElement.innerHTML = decodeHtmlEntitiesPergunta(interacao["resposta"]) + '<span>.</span><span>.</span><span>.</span>';
+                                }
+                            }
+
                             setTimeout(function() {
-                                aguardandoResposta(interacao["id_interacao"], divfilho, divpai);
-                            }, 5000);
+                                aguardandoResposta(interacao["id_interacao"], divLoading, divpai);
+                            }, 500);
                         }
                     });
                 } else {
@@ -1889,26 +1925,24 @@
         // Adiciona um evento para restaurar o botão quando o input perder o foco
         inputEditavel.blur(function() {
             // Obtém o valor do input
-            var iconeTopico = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 512 512\"><path d=\"M160 368c26.5 0 48 21.5 48 48v16l72.5-54.4c8.3-6.2 18.4-9.6 28.8-9.6H448c8.8 0 16-7.2 16-16V64c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16V352c0 8.8 7.2 16 16 16h96zm48 124l-.2 .2-5.1 3.8-17.1 12.8c-4.8 3.6-11.3 4.2-16.8 1.5s-8.8-8.2-8.8-14.3V474.7v-6.4V468v-4V416H112 64c-35.3 0-64-28.7-64-64V64C0 28.7 28.7 0 64 0H448c35.3 0 64 28.7 64 64V352c0 35.3-28.7 64-64 64H309.3L208 492z\"/></svg>";
-            var novoConteudo = iconeTopico + $(this).val();
+            var novoNomeTopico = $(this).val();
 
             var dadosTopico = {};
             dadosTopico["id_topico"] = id;
-            dadosTopico["nome_topico"] = $(this).val();
+            dadosTopico["nome_topico"] = novoNomeTopico;
             $.ajax({
                 url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_renomear_topico'); ?>',
                 type: 'POST', //selecionando o tipo de requisição, PUT,GET,POST,DELETE
                 dataType: "json", //Tipo de dado que será enviado ao servidor
                 data: dadosTopico, // Enviando o JSON com o nome de itens
-                success: function(data) {
-                    console.log("ok");
-                },
                 error: function(err) {
                     console.log(err);
                 }
             });
             // Cria um novo botão com o valor atualizado e os mesmos atributos
-            var novoBotao = $("<button>").addClass("nav-link text-left").html(novoConteudo).attr(atributosObj);
+            var novoBotao = $("<button>").addClass("nav-link text-left").attr(atributosObj);
+            novoBotao.append(criarIconeTopicoSvg());
+            novoBotao.append(document.createTextNode(novoNomeTopico));
             // Substitui o input pelo botão
             $(this).replaceWith(novoBotao);
             $("#acoesTopico" + id).removeClass('topicoEmEdicao');
@@ -1974,5 +2008,17 @@
         const seg = pad(d.getSeconds());
 
         return `${dia}/${mes}/${ano} ${hora}:${min}:${seg}`;
+    }
+
+    function getTextForTextarea(sanitizedHtml) {
+        // converte eventuais <br> em \n
+        let text = sanitizedHtml.replace(/<br\s*\/?>/gi, '\n');
+        // opcional: se quiser preservar tabs
+        //text = text.replace(/&nbsp;/g, '\t');
+
+        // aí sim tira o resto das tags, mas mantendo \n intactos
+        const tmp = document.createElement('div');
+        tmp.innerHTML = text;
+        return tmp.textContent; // contém as quebras de linha reais
     }
 </script>

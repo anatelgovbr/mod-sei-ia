@@ -5,10 +5,10 @@ class MdIaAtualizadorSeiRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '1.3.0';
+    private $versaoAtualDesteModulo = '1.4.0';
     private $nomeDesteModulo = 'MÓDULO IA';
     private $nomeParametroModulo = 'VERSAO_MODULO_IA';
-    private $historicoVersoes = array('1.0.0', '1.1.0', '1.2.0', '1.3.0');
+    private $historicoVersoes = array('1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0');
 
     public function __construct()
     {
@@ -114,6 +114,8 @@ class MdIaAtualizadorSeiRN extends InfraRN
                     $this->instalarv120();
                 case '1.2.0':
                     $this->instalarv130();
+                case '1.3.0':
+                    $this->instalarv140();
                     break;
                 default:
                     $this->finalizar('A VERSÃO MAIS ATUAL DO ' . $this->nomeDesteModulo . ' (v' . $this->versaoAtualDesteModulo . ') JÁ ESTÁ INSTALADA.');
@@ -1647,6 +1649,138 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
 
         $objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_ia_ods_onu_nsa', 'md_ia_ods_onu_nsa', array('id_usuario'), 'usuario', array('id_usuario'));
         $objInfraMetaBD->adicionarChaveEstrangeira('fk2_md_ia_ods_onu_nsa', 'md_ia_ods_onu_nsa', array('id_unidade'), 'unidade', array('id_unidade'));
+
+        $this->atualizarNumeroVersao($nmVersao);
+    }
+
+    protected function instalarv140()
+    {
+        $nmVersao = '1.4.0';
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSAO ' . $nmVersao . ' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+        $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+
+        $objInfraMetaBD->adicionarColuna('md_ia_proc_indexaveis', 'sin_processo_aberto', $objInfraMetaBD->tipoTextoVariavel(1), 'null');
+        $objInfraMetaBD->adicionarColuna('md_ia_proc_indexaveis', 'sin_vetorizado', $objInfraMetaBD->tipoTextoVariavel(1), 'not null');
+        $objInfraMetaBD->adicionarColuna('md_ia_proc_indexaveis', 'dth_vetorizacao', $objInfraMetaBD->tipoDataHora(), 'null');
+
+        BancoSEI::getInstance()->executarSql("UPDATE md_ia_proc_indexaveis set sin_vetorizado =  'N'");
+
+        $objInfraMetaBD->adicionarColuna('md_ia_doc_indexaveis', 'sin_processo_aberto', $objInfraMetaBD->tipoTextoVariavel(1), 'null');
+        $objInfraMetaBD->adicionarColuna('md_ia_doc_indexaveis', 'sin_vetorizado', $objInfraMetaBD->tipoTextoVariavel(1), 'not null');
+        $objInfraMetaBD->adicionarColuna('md_ia_doc_indexaveis', 'dth_vetorizacao', $objInfraMetaBD->tipoDataHora(), 'null');
+        $objInfraMetaBD->adicionarColuna('md_ia_doc_indexaveis', 'hash', $objInfraMetaBD->tipoTextoVariavel(32), 'null');
+
+        BancoSEI::getInstance()->executarSql("UPDATE md_ia_doc_indexaveis set sin_vetorizado =  'N'");
+
+        $objMdIaAdmUrlIntegracaoDTO = new MdIaAdmUrlIntegracaoDTO();
+        $MdIaAdmUrlIntegracaoRN = new MdIaAdmUrlIntegracaoRN();
+        $objMdIaAdmUrlIntegracaoDTO->setNumIdMdIaAdmUrlIntegracao(8);
+        $objMdIaAdmUrlIntegracaoDTO->retNumIdMdIaAdmUrlIntegracao();
+        $objMdIaAdmUrlIntegracaoDTO->retNumIdAdmIaAdmIntegracao();
+        $objMdIaAdmUrlIntegracaoDTO->retStrReferencia();
+        $objMdIaAdmUrlIntegracaoDTO->retStrLabel();
+        $objMdIaAdmUrlIntegracaoDTO->retStrUrl();
+        $objMdIaAdmUrlIntegracaoDTO = $MdIaAdmUrlIntegracaoRN->consultar($objMdIaAdmUrlIntegracaoDTO);
+        $objMdIaAdmUrlIntegracaoDTO->setStrUrl(':8088/llm_lang/stream');
+        $MdIaAdmUrlIntegracaoRN->alterar($objMdIaAdmUrlIntegracaoDTO);
+
+        $system_promp = '"Sou um Assistente de IA integrado ao Sistema Eletrônico de Informações (SEI) da @descricao_orgao_origem@ (@sigla_orgao_origem@)."';
+
+        $mdIaAdmConfigAssistIARN = new MdIaAdmConfigAssistIARN();
+        $mdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();
+        $mdIaAdmConfigAssistIADTO->setNumIdMdIaAdmConfigAssistIA(1);
+        $mdIaAdmConfigAssistIADTO->setStrSystemPrompt($system_promp);
+        $mdIaAdmConfigAssistIARN->alterar($mdIaAdmConfigAssistIADTO);
+
+        // alterando agendamentos existentes
+
+        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+        SessaoInfra::setObjInfraSessao(SessaoSEI::getInstance());
+
+        $infraAgendamentoTarefaRN = new InfraAgendamentoTarefaRN();
+
+        $infraAgendamentoTarefaDTO = new InfraAgendamentoTarefaDTO();
+        $infraAgendamentoTarefaDTO->retTodos();
+        $infraAgendamentoTarefaDTO->setStrComando('MdIaAgendamentoAutomaticoRN::atualizarListaProcedimentosRelevantes');
+        $infraAgendamentoTarefaDTO->setBolExclusaoLogica(false);
+        $arrAgendamentoEouv = $infraAgendamentoTarefaRN->listar($infraAgendamentoTarefaDTO);
+        if (count($arrAgendamentoEouv) > 0) {
+            $infraAgendamentoTarefaRN->excluir($arrAgendamentoEouv);
+        }
+
+        $infraAgendamentoTarefaRN = new InfraAgendamentoTarefaRN();
+
+        $infraAgendamentoTarefaDTO = new InfraAgendamentoTarefaDTO();
+        $infraAgendamentoTarefaDTO->retTodos();
+        $infraAgendamentoTarefaDTO->setStrComando('MdIaAgendamentoAutomaticoRN::atualizarListaDocsElegiveisPesquisaDocumentos');
+        $infraAgendamentoTarefaDTO->setBolExclusaoLogica(false);
+        $arrAgendamentoEouv = $infraAgendamentoTarefaRN->listar($infraAgendamentoTarefaDTO);
+        if (count($arrAgendamentoEouv) > 0) {
+            $infraAgendamentoTarefaRN->excluir($arrAgendamentoEouv);
+        }
+
+        $strDescricao = 'Agendamento responsável por atualizar lista procedimentos relevantes a serem indexados pelo Solr do IA.';
+        $strComando = 'MdIaAgendamentoAutomaticoRN::atualizarListaProcedimentosRelevantesProcessosConcluidos';
+        $strPeriodicidadeComplemento = '02';
+        $this->_cadastrarNovoAgendamento($strDescricao, $strComando, $strPeriodicidadeComplemento, InfraAgendamentoTarefaRN::$PERIODICIDADE_EXECUCAO_HORA);
+
+
+        $strDescricao = 'Agendamento responsável por atualizar lista de documentos relevantes a serem indexados pelo Solr do IA.';
+        $strComando = 'MdIaAgendamentoAutomaticoRN::atualizarListaDocsElegiveisPesquisaDocumentosProcessosConcluidos';
+        $strPeriodicidadeComplemento = '01';
+        $this->_cadastrarNovoAgendamento($strDescricao, $strComando, $strPeriodicidadeComplemento, InfraAgendamentoTarefaRN::$PERIODICIDADE_EXECUCAO_HORA);
+
+        $strDescricao = 'Agendamento responsável por atualizar lista procedimentos relevantes a serem indexados pelo Solr do IA.';
+        $strComando = 'MdIaAgendamentoAutomaticoRN::atualizarListaProcedimentosRelevantesProcessosAbertos';
+        $strPeriodicidadeComplemento = '17';
+        $this->_cadastrarNovoAgendamento($strDescricao, $strComando, $strPeriodicidadeComplemento, InfraAgendamentoTarefaRN::$PERIODICIDADE_EXECUCAO_MINUTO);
+
+
+        $strDescricao = 'Agendamento responsável por atualizar lista de documentos relevantes a serem indexados pelo Solr do IA.';
+        $strComando = 'MdIaAgendamentoAutomaticoRN::atualizarListaDocsElegiveisPesquisaDocumentosProcessosAbertos';
+        $strPeriodicidadeComplemento = '03';
+        $this->_cadastrarNovoAgendamento($strDescricao, $strComando, $strPeriodicidadeComplemento, InfraAgendamentoTarefaRN::$PERIODICIDADE_EXECUCAO_MINUTO);
+
+        $strDescricao = 'Agendamento responsável por enviar para Anatel dados de versão do módulo de Inteligência Artificial e do SEI instalado.';
+        $strComando = 'MdIaAgendamentoAutomaticoRN::EnviarDadosSistemaModulo';
+        $strPeriodicidadeComplemento = '1/0';
+        $this->_cadastrarNovoAgendamento($strDescricao, $strComando, $strPeriodicidadeComplemento, InfraAgendamentoTarefaRN::$PERIODICIDADE_EXECUCAO_DIA_SEMANA);
+
+        $mdIaAdmObjetivoOdsRN = new MdIaAdmObjetivoOdsRN();
+        $mdIaAdmObjetivoOdsDTO = new MdIaAdmObjetivoOdsDTO();
+        $mdIaAdmObjetivoOdsDTO->setNumIdMdIaAdmObjetivoOds(18);
+        $mdIaAdmObjetivoOdsDTO->setNumIdMdIaAdmOdsOnu(1);
+        $mdIaAdmObjetivoOdsDTO->setStrNomeOds('Promoção da Igualdade Étnico-racial');
+        $mdIaAdmObjetivoOdsDTO->setStrDescricaoOds('O ODS 18 é um Objetivo de Desenvolvimento Sustentável que visa eliminar o racismo e a discriminação étnico-racial contra povos indígenas, afrodescendentes e grupos populacionais afetados por múltiplas formas de discriminação.');
+        $mdIaAdmObjetivoOdsDTO->setStrIconeOds('SDG-18.png');
+        $mdIaAdmObjetivoOdsRN->cadastrar($mdIaAdmObjetivoOdsDTO);
+
+        $arrMdIaAdmMetaOds = [
+            ['id_md_ia_adm_objetivo_ods' => '18', 'ordem' => '1', 'identificacao_meta' => '18.1', 'descricao_meta' => 'Trabalho - Eliminar o racismo e a discriminação, tanto direta quanto indireta, bem como nas formas múltipla ou agravada, e a intolerância correlata contra os povos indígenas e afrodescendentes nos ambientes públicos e privados de trabalho.'],
+            ['id_md_ia_adm_objetivo_ods' => '18', 'ordem' => '2', 'identificacao_meta' => '18.2', 'descricao_meta' => 'Segurança Pública - Eliminar todas as formas de violência contra povos indígenas e afrodescendentes nas esferas pública e privada, levando em conta suas interseccionalidades, em particular o homicídio das juventudes, feminicídio e os resultantes de homofobia e transfobia.'],
+            ['id_md_ia_adm_objetivo_ods' => '18', 'ordem' => '3', 'identificacao_meta' => '18.3', 'descricao_meta' => 'Justiça - Garantir aos povos indígenas e afrodescendentes tratamento digno, justo e equânime perante os órgãos do sistema de justiça, de segurança pública e administrativos do Estado, assegurando a efetivação e a ampliação do acesso à justiça e o devido processo legal.'],
+            ['id_md_ia_adm_objetivo_ods' => '18', 'ordem' => '4', 'identificacao_meta' => '18.4', 'descricao_meta' => 'Representatividade - Garantir a representatividade equitativa dos povos indígenas e afrodescendentes nas instâncias, colegiados e órgãos de Estado e no quadro de pessoal de empresas públicas e privadas, levando em conta a interseccionalidade.'],
+            ['id_md_ia_adm_objetivo_ods' => '18', 'ordem' => '5', 'identificacao_meta' => '18.5', 'descricao_meta' => 'Reparação - Promover a reparação integral das violações socioeconômica e cultural, das perdas territoriais e dos impactos ambientais nos territórios dos povos indígenas e afrodescendentes, especialmente os integrantes de comunidades tradicionais, favelas e comunidades urbanas, garantindo o direito à memória, verdade e justiça.<br><br>18.5.1. Proteger o patrimônio cultural, artístico e religioso dos povos indígenas e afrodescendentes garantindo-lhes os recursos necessários para o resgate, preservação e reconhecimento das memórias e das histórias de seus ancestrais e para o desenvolvimento de linguagens artísticas plurais nos territórios onde vivem.<br><br>18.5.2. Preservar as formas de vivência e convivência estabelecidas pelos povos indígenas e afrodescendentes, bem como sua cosmovisão, liberdade de expressão cultural e religiosa.'],
+            ['id_md_ia_adm_objetivo_ods' => '18', 'ordem' => '6', 'identificacao_meta' => '18.6', 'descricao_meta' => 'Habitação - Assegurar moradias adequadas, seguras e sustentáveis aos povos indígenas e afrodescendentes, incluindo comunidades tradicionais, favelas e comunidades urbanas, com garantia de equipamentos e serviços públicos de qualidade, com especial atenção à população em situação de rua.'],
+            ['id_md_ia_adm_objetivo_ods' => '18', 'ordem' => '7', 'identificacao_meta' => '18.7', 'descricao_meta' => 'Saúde - Assegurar o acesso à saúde de qualidade, não discriminatória, para os povos indígenas e afrodescendentes, bem como o respeito às suas culturas e saberes ancestrais, garantido o fortalecimento da saúde pública.'],
+            ['id_md_ia_adm_objetivo_ods' => '18', 'ordem' => '8', 'identificacao_meta' => '18.8', 'descricao_meta' => 'Educação - Assegurar a educação de qualidade e não discriminatória aos afrodescendentes, quilombolas e povos indígenas, bem como o respeito às suas culturas e histórias, garantido o fortalecimento da educação pública.<br><br>18.8.1. Garantir o respeito à diversidade linguística, com estabelecimento de políticas linguísticas por parte do Estado, que assegurem o reconhecimento, o uso, o registro, a preservação, vitalização e revitalização das línguas dos povos indígenas.<br><br>18.8.2. Assegurar a inclusão obrigatória de ações de educação antirracista e sobre as culturas e histórias dos povos indígenas e quilombolas, por meio de currículos e estratégias formativas em todos os níveis educacionais.'],
+            ['id_md_ia_adm_objetivo_ods' => '18', 'ordem' => '9', 'identificacao_meta' => '18.9', 'descricao_meta' => 'Território e Saberes - Promover o reconhecimento dos saberes dos povos indígenas e afrodescendentes e garantir-lhes a participação nos processos de tomada de decisão na execução de grandes obras e empreendimentos que afetam seus territórios, na exploração econômica da biodiversidade e no acesso ao patrimônio genético e ao conhecimento tradicional associado.<br><br>18.9.1. Assegurar o reconhecimento dos povos indígenas e afrodescendentes como guardiões da biodiversidade e garantir suas demandas e direitos na agenda de acesso ao patrimônio genético e ao conhecimento tradicional associado e na repartição de benefícios.<br><br>18.9.2. Assegurar a justa repartição de benefícios em obras e empreendimentos em territórios ocupados por povos indígenas e afrodescendentes preservando sua ampla autonomia e autodeterminação.'],
+            ['id_md_ia_adm_objetivo_ods' => '18', 'ordem' => '10', 'identificacao_meta' => '18.10', 'descricao_meta' => 'Xenofobia - Eliminar a xenofobia e assegurar que todas as metas anteriores, quando cabíveis, sejam refletidas também no tratamento de imigrantes indígenas e afrodescendentes.'],
+        ];
+        
+        $mdIaAdmMetaOdsRN = new MdIaAdmMetaOdsRN();
+        foreach ($arrMdIaAdmMetaOds as $chave => $tipo) {
+            $mdIaAdmMetaOdsDTO = new MdIaAdmMetaOdsDTO();
+            $mdIaAdmMetaOdsDTO->setNumIdMdIaAdmObjetivoOds($tipo['id_md_ia_adm_objetivo_ods']);
+            $mdIaAdmMetaOdsDTO->setNumOrdem($tipo['ordem']);
+            $mdIaAdmMetaOdsDTO->setStrIdentificacaoMeta($tipo['identificacao_meta']);
+            $mdIaAdmMetaOdsDTO->setStrDescricaoMeta($tipo['descricao_meta']);
+            $mdIaAdmMetaOdsDTO->setStrSinForteRelacao("N");
+            $mdIaAdmMetaOdsRN->cadastrar($mdIaAdmMetaOdsDTO);
+        }
 
         $this->atualizarNumeroVersao($nmVersao);
     }

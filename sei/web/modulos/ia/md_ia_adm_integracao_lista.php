@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -28,66 +29,6 @@ try {
     $btnLinkNovo = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_adm_integracao_cadastrar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao']);
 
     switch ($_GET['acao']) {
-        case 'md_ia_adm_integracao_excluir':
-            try {
-                $arrStrIds = PaginaSEI::getInstance()->getArrStrItensSelecionados();
-                $arrObjMdIaIntegracaoDTO = array();
-                for ($i = 0; $i < count($arrStrIds); $i++) {
-                    $objMdIaIntegracaoDTO = new MdIaAdmIntegracaoDTO();
-                    $objMdIaIntegracaoDTO->setNumIdMdIaAdmIntegracao($arrStrIds[$i]);
-                    $arrObjMdIaIntegracaoDTO[] = $objMdIaIntegracaoDTO;
-                }
-                $objMdIaIntegracaoRN = new MdIaAdmIntegracaoRN();
-                $objMdIaIntegracaoRN->excluir($arrObjMdIaIntegracaoDTO);
-                PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
-            } catch (Exception $e) {
-                PaginaSEI::getInstance()->processarExcecao($e);
-            }
-            header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao_origem'] . '&acao_origem=' . $_GET['acao']));
-            die;
-
-        case 'md_ia_adm_integracao_desativar':
-            try {
-                $arrStrIds = PaginaSEI::getInstance()->getArrStrItensSelecionados();
-                $arrObjMdIaAdmIntegracaoDTO = array();
-                for ($i = 0; $i < count($arrStrIds); $i++) {
-                    $objMdIaAdmIntegracaoDTO = new MdIaAdmIntegracaoDTO();
-                    $objMdIaAdmIntegracaoDTO->setNumIdMdIaAdmIntegracao($arrStrIds[$i]);
-                    $objMdIaAdmIntegracaoDTO->setStrSinAtivo('N');
-                    $arrObjMdIaAdmIntegracaoDTO[] = $objMdIaAdmIntegracaoDTO;
-                }
-                $objMdIaAdmIntegracaoRN = new MdIaAdmIntegracaoRN();
-                $objMdIaAdmIntegracaoRN->desativar($arrObjMdIaAdmIntegracaoDTO);
-                PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
-            } catch (Exception $e) {
-                PaginaSEI::getInstance()->processarExcecao($e);
-            }
-            header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao_origem'] . '&acao_origem=' . $_GET['acao']));
-            die;
-
-        case 'md_ia_adm_integracao_reativar':
-            $strTitulo = 'Reativar Integrações';
-            if ($_GET['acao_confirmada'] == 'sim') {
-                try {
-                    $arrStrIds = PaginaSEI::getInstance()->getArrStrItensSelecionados();
-                    $arrObjMdIaAdmIntegracaoDTO = array();
-                    for ($i = 0; $i < count($arrStrIds); $i++) {
-                        $objMdIaAdmIntegracaoDTO = new MdIaAdmIntegracaoDTO();
-                        $objMdIaAdmIntegracaoDTO->setNumIdMdIaAdmIntegracao($arrStrIds[$i]);
-                        $objMdIaAdmIntegracaoDTO->setStrSinAtivo('S');
-                        $arrObjMdIaAdmIntegracaoDTO[] = $objMdIaAdmIntegracaoDTO;
-                    }
-                    $objMdIaAdmIntegracaoRN = new MdIaAdmIntegracaoRN();
-                    $objMdIaAdmIntegracaoRN->reativar($arrObjMdIaAdmIntegracaoDTO);
-                    PaginaSEI::getInstance()->adicionarMensagem('Operação realizada com sucesso.');
-                } catch (Exception $e) {
-                    PaginaSEI::getInstance()->processarExcecao($e);
-                }
-                header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao_origem'] . '&acao_origem=' . $_GET['acao']));
-                die;
-            }
-            break;
-
         case 'md_ia_adm_integracao_selecionar':
             $strTitulo = PaginaSEI::getInstance()->getTituloSelecao('Selecionar Integração', 'Selecionar Integrações');
 
@@ -123,12 +64,6 @@ try {
     $objMdIaAdmIntegracaoDTO->retNumIdMdIaAdmIntegFuncion();
     $objMdIaAdmIntegracaoDTO->retStrSinAtivo();
 
-    if ($_GET['acao'] == 'md_ia_adm_integracao_reativar') {
-        //Lista somente inativos
-        $objMdIaAdmIntegracaoDTO->setBolExclusaoLogica(false);
-        $objMdIaAdmIntegracaoDTO->setStrSinAtivo('N');
-    }
-
     PaginaSEI::getInstance()->prepararOrdenacao($objMdIaAdmIntegracaoDTO, 'Nome', InfraDTO::$TIPO_ORDENACAO_ASC);
     PaginaSEI::getInstance()->prepararPaginacao($objMdIaAdmIntegracaoDTO);
 
@@ -147,52 +82,18 @@ try {
         $bolCheck = false;
 
         if ($_GET['acao'] == 'md_ia_adm_integracao_selecionar') {
-            $bolAcaoReativar = false;
             $bolAcaoConsultar = SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_integracao_consultar');
             $bolAcaoAlterar = SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_integracao_alterar');
             $bolAcaoImprimir = false;
-            $bolAcaoExcluir = false;
-            $bolAcaoDesativar = false;
             $bolCheck = true;
-        } else if ($_GET['acao'] == 'md_ia_adm_integracao_reativar') {
-            $bolAcaoReativar = SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_integracao_reativar');
-            $bolAcaoConsultar = SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_integracao_consultar');
-            $bolAcaoAlterar = false;
-            $bolAcaoExcluir = SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_integracao_excluir');
-            $bolAcaoDesativar = false;
         } else {
-            $bolAcaoReativar = SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_integracao_reativar');
             $bolAcaoConsultar = SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_integracao_consultar');
             $bolAcaoAlterar = SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_integracao_alterar');
-            $bolAcaoExcluir = SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_integracao_excluir');
-            $bolAcaoDesativar = SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_integracao_desativar');
-        }
-
-        if ($bolAcaoDesativar) {
             $bolCheck = true;
-            $arrComandos[] = '<button type="button" accesskey="t" id="btnDesativar" value="Desativar" onclick="acaoDesativacaoMultipla();" class="infraButton">Desa<span class="infraTeclaAtalho">t</span>ivar</button>';
-            $strLinkDesativar = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_adm_integracao_desativar&acao_origem=' . $_GET['acao']);
         }
 
-        if ($bolAcaoReativar) {
-            $bolCheck = true;
-            $arrComandos[] = '<button type="button" accesskey="R" id="btnReativar" value="Reativar" onclick="acaoReativacaoMultipla();" class="infraButton"><span class="infraTeclaAtalho">R</span>eativar</button>';
-            $strLinkReativar = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_adm_integracao_reativar&acao_origem=' . $_GET['acao'] . '&acao_confirmada=sim');
-        }
-
-        if ($bolAcaoExcluir) {
-            $bolCheck = true;
-            $arrComandos[] = '<button type="button" accesskey="E" id="btnExcluir" value="Excluir" onclick="acaoExclusaoMultipla();" class="infraButton"><span class="infraTeclaAtalho">E</span>xcluir</button>';
-            $strLinkExcluir = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_adm_integracao_excluir&acao_origem=' . $_GET['acao']);
-        }
-
-        if ($_GET['acao'] != 'md_ia_adm_integracao_reativar') {
-            $strSumarioTabela = 'Tabela de Integrações.';
-            $strCaptionTabela = 'Integrações';
-        } else {
-            $strSumarioTabela = 'Tabela de Integrações Inatives.';
-            $strCaptionTabela = 'Integrações Inatives';
-        }
+        $strSumarioTabela = 'Tabela de Integrações.';
+        $strCaptionTabela = 'Integrações';
 
         $strResultado .= '<table width="99%" class="infraTable" summary="' . $strSumarioTabela . '">' . "\n";
         $strResultado .= '<caption class="infraCaption">' . PaginaSEI::getInstance()->gerarCaptionTabela($strCaptionTabela, $numRegistros) . '</caption>';
@@ -230,23 +131,6 @@ try {
                 $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_adm_integracao_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_ia_adm_integracao=' . $arrObjMdIaAdmIntegracaoDTO[$i]->getNumIdMdIaAdmIntegracao()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeAlterar() . '" title="Alterar Integração" alt="Alterar Integração" class="infraImg" /></a>&nbsp;';
             }
 
-            if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir) {
-                $strId = $arrObjMdIaAdmIntegracaoDTO[$i]->getNumIdMdIaAdmIntegracao();
-                $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript($arrObjMdIaAdmIntegracaoDTO[$i]->getStrNome());
-            }
-
-            if ($bolAcaoDesativar && $arrObjMdIaAdmIntegracaoDTO[$i]->getStrSinAtivo() == 'S') {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeDesativar() . '" title="Desativar Integração" alt="Desativar Integração" class="infraImg" /></a>&nbsp;';
-            }
-
-            if ($bolAcaoReativar && $arrObjMdIaAdmIntegracaoDTO[$i]->getStrSinAtivo() == 'N') {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoReativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeReativar() . '" title="Reativar Integração" alt="Reativar Integração" class="infraImg" /></a>&nbsp;';
-            }
-
-            if ($bolAcaoExcluir) {
-                $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoExcluir(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeExcluir() . '" title="Excluir Integração" alt="Excluir Integração" class="infraImg" /></a>&nbsp;';
-            }
-
             $strResultado .= '</td></tr>' . "\n";
         }
         $strResultado .= '</table>';
@@ -257,10 +141,9 @@ try {
         $arrComandos[] = '<button type="button" accesskey="F" id="btnFechar" value="Fechar" onclick="location.href=\'' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao']) . '\'" class="infraButton"><span class="infraTeclaAtalho">F</span>echar</button>';
     }
     $funcionalidadesDisponiveis = MdIaAdmIntegracaoINT::montarSelectFuncionalidade('null', '&nbsp;', '');;
-    if(empty($funcionalidadesDisponiveis)) {
+    if (empty($funcionalidadesDisponiveis)) {
         $strBloquearNovoCadastro = true;
     }
-
 } catch (Exception $e) {
     PaginaSEI::getInstance()->processarExcecao($e);
 }
@@ -280,17 +163,17 @@ PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
-    <form id="frmMdIaAdmIntegracaoLista" method="post"
-          action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
-        <?
-        PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-        PaginaSEI::getInstance()->abrirAreaDados();
-        PaginaSEI::getInstance()->fecharAreaDados();
-        PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
-        //PaginaSEI::getInstance()->montarAreaDebug();
-        PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
-        ?>
-    </form>
+<form id="frmMdIaAdmIntegracaoLista" method="post"
+    action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
+    <?
+    PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
+    PaginaSEI::getInstance()->abrirAreaDados();
+    PaginaSEI::getInstance()->fecharAreaDados();
+    PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
+    //PaginaSEI::getInstance()->montarAreaDebug();
+    PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
+    ?>
+</form>
 
 <?
 require_once "md_ia_adm_integracao_lista_js.php";

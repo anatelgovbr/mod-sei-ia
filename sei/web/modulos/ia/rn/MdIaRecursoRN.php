@@ -267,66 +267,6 @@ class MdIaRecursoRN extends InfraRN
         }
     }
 
-    public function exibeFuncionalidade($bolConsideraChatIa)
-    {
-
-        $bolAcaoRecursoIa = SessaoSEI::getInstance()->verificarPermissao('md_ia_recurso');
-
-        $bolExibirFuncionalidade = false;
-
-        if ($bolAcaoRecursoIa) {
-            $objMdIaAdmConfigSimilarDTO = new MdIaAdmConfigSimilarDTO();
-            $objMdIaAdmConfigSimilarDTO->retStrSinExibirFuncionalidade();
-            $objMdIaAdmConfigSimilarRN = new MdIaAdmConfigSimilarRN();
-            $objMdIaAdmConfigSimilarDTO = $objMdIaAdmConfigSimilarRN->consultar($objMdIaAdmConfigSimilarDTO);
-
-            if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
-                $bolExibirFuncionalidade = true;
-                return $bolExibirFuncionalidade;
-            }
-
-            $objMdIaAdmPesqDocDTO = new MdIaAdmPesqDocDTO();
-            $objMdIaAdmPesqDocDTO->setNumIdMdIaAdmPesqDoc(1);
-            $objMdIaAdmPesqDocDTO->retStrSinExibirFuncionalidade();
-            $objMdIaAdmPesqDocRN = new MdIaAdmPesqDocRN();
-            $objMdIaAdmPesqDocDTO = $objMdIaAdmPesqDocRN->consultar($objMdIaAdmPesqDocDTO);
-
-            if ($objMdIaAdmPesqDocDTO) {
-                if ($objMdIaAdmPesqDocDTO->getStrSinExibirFuncionalidade() == "S") {
-                    $bolExibirFuncionalidade = true;
-                    return $bolExibirFuncionalidade;
-                }
-            }
-
-            $objMdIaAdmOdsOnuDTO = new MdIaAdmOdsOnuDTO();
-            $objMdIaAdmOdsOnuDTO->retStrSinExibirFuncionalidade();
-            $objMdIaAdmOdsOnuRN = new MdIaAdmOdsOnuRN();
-            $objMdIaAdmOdsOnuDTO = $objMdIaAdmOdsOnuRN->consultar($objMdIaAdmOdsOnuDTO);
-
-            if ($objMdIaAdmOdsOnuDTO) {
-                if ($objMdIaAdmOdsOnuDTO->getStrSinExibirFuncionalidade() == "S") {
-                    $bolExibirFuncionalidade = true;
-                    return $bolExibirFuncionalidade;
-                }
-            }
-        }
-        $bolAcaoChatIa = SessaoSEI::getInstance()->verificarPermissao('md_ia_adm_config_assist_ia_consultar');
-
-        if ($bolConsideraChatIa && $bolAcaoChatIa) {
-            $objMdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();
-            $objMdIaAdmConfigAssistIADTO->retStrSinExibirFuncionalidade();
-            $objMdIaAdmConfigAssistIARN = new MdIaAdmConfigAssistIARN();
-            $objMdIaAdmConfigAssistIADTO = $objMdIaAdmConfigAssistIARN->consultar($objMdIaAdmConfigAssistIADTO);
-
-            if ($objMdIaAdmConfigAssistIADTO) {
-                if ($objMdIaAdmConfigAssistIADTO->getStrSinExibirFuncionalidade() == "S") {
-                    $bolExibirFuncionalidade = true;
-                    return $bolExibirFuncionalidade;
-                }
-            }
-        }
-    }
-
     public static function verificarSelecaoDocumentoAlvo(DocumentoDTO $objDocumentoDTO)
     {
         try {

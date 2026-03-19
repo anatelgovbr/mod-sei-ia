@@ -12,6 +12,27 @@
 - Se já tiver instalado versão principal com a execução dos scripts de banco do módulo no SEI e no SIP, **em versões intermediárias basta sobrescrever os códigos** e não precisa executar os scripts de banco novamente.
    - Atualizações de versões intermediárias são melhorias apenas de código e são identificadas com o incremento somente do terceiro dígito da versão (p. ex. v4.1.1, v4.1.2) e não envolve execução de scripts de banco.
 
+## ⚠️ Configurações Obrigatórias do PHP (Apache e CLI)
+
+Antes de executar qualquer script de instalação ou atualização do Módulo SEI IA, **é obrigatório conferir as configurações do PHP tanto no ambiente Web (Apache/php-fpm) quanto no PHP CLI, já descristas no Manual de Instalação do SEI**.
+
+É comum que o PHP utilizado pelo Apache carregue um `php.ini` diferente do PHP utilizado em linha de comando. Caso as configurações não estejam alinhadas, os scripts poderão falhar ou o módulo poderá apresentar comportamento inesperado.
+
+### Diretivas que devem ser conferidas
+
+| Diretiva               | Valor                | Observação |
+|------------------------|----------------------|------------|
+| include_path           | /opt/infra/infra_php | Adicionar o diretório da InfraPHP. |
+| default_charset        | ISO-8859-1           |            |
+| session.gc_maxlifetime | 28800                | Tempo de sessão (ex.: 28800 = 8 horas). |
+| short_open_tag         | 1                    |            |
+| default_socket_timeout | 60                   |            |
+| max_input_vars         | 1000                 |            |
+| html_errors            | 0                    |            |
+| post_max_size          | 201M                 | Estes valores dependem do tamanho máximo permitido para arquivos externos (PDF, planilhas, imagens, vídeos, etc.). Os valores de exemplo são para upload de até 200 MB. O `post_max_size` deve ser ligeiramente maior que `upload_max_filesize`. Além dessas configurações, é necessário alterar o parâmetro `SEI_TAM_MB_DOC_EXTERNO` na tabela de parâmetros do SEI (ver seção "Configuração SEI"). |
+| upload_max_filesize    | 200M                 |            |
+| session.cookie_secure  | 1                    | Opcional. Indica que o cookie de sessão trafegará somente via HTTPS. Antes de ativar, garantir que todos os links do SEI utilizem o prefixo `https://` (intranet, atalhos, acessos externos, integrações, etc.). Caso o usuário clique em um link `http://` estando logado, a sessão será perdida. |
+
 ## Procedimentos para Instalação
 1. Fazer backup dos bancos de dados do SEI e do SIP.
 2. Carregar no servidor os arquivos do módulo nas pastas correspondentes nos servidores do SEI e do SIP.
@@ -58,4 +79,4 @@
 ## Erros ou Sugestões
 1. [Abrir Issue](https://github.com/anatelgovbr/mod-sei-ia/issues) no repositório do GitHub do módulo se ocorrer erro na execução dos scripts de banco do módulo no SEI ou no SIP acima.
 2. [Abrir Issue](https://github.com/anatelgovbr/mod-sei-ia/issues) no repositório do GitHub do módulo se ocorrer erro na operação do módulo.
-3. Na abertura da Issue utilizar o modelo **"1 - Reportar Erro"**.
+3. Na abertura da Issue utilizar o modelo **"1 - Reportar Erro"**. 

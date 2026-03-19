@@ -81,7 +81,7 @@ try {
                 $objMdIaAdmMetaOdsRN = new MdIaAdmMetaOdsRN();
                 $quantidadeMetas = $objMdIaAdmMetaOdsRN->contar($objMdIaAdmMetaOdsDTO);
 
-                $tabelaObjetivoOds .= "<tr>";
+                $tabelaObjetivoOds .= "<tr id='obj_ods_" . $objMdIaAdmObjetivoOdsDTO->getNumIdMdIaAdmObjetivoOds() . "'>";
                 $tabelaObjetivoOds .= "<td class='text-center'>" . $objMdIaAdmObjetivoOdsDTO->getNumIdMdIaAdmObjetivoOds() . "</td>";
                 $tabelaObjetivoOds .= "<td class='text-left'>" . $objMdIaAdmObjetivoOdsDTO->getStrNomeOds() . "</td>";
                 $tabelaObjetivoOds .= "<td class='text-left'>" . $objMdIaAdmObjetivoOdsDTO->getStrDescricaoOds() . "</td>";
