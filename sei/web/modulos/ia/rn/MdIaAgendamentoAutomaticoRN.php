@@ -714,9 +714,7 @@ class MdIaAgendamentoAutomaticoRN extends InfraRN
     protected function EnviarDadosSistemaModuloConectado(): void
     {
         try {
-            $config = ConfiguracaoSEI::getInstance()->getValor('SEI');
-
-            if ($config['producao'] === false) {
+            if (!ConfiguracaoSEI::getInstance()->getValor('SEI', 'Producao', false, false)) {
                 return;
             }
 
