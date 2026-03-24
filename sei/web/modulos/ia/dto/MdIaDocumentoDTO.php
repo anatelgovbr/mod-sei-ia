@@ -137,7 +137,7 @@ class MdIaDocumentoDTO extends InfraDTO
 
         $this->configurarFK('IdDocumento', 'protocolo d', 'd.id_protocolo');
         $this->configurarFK('IdDocumento', 'anexo a', 'a.id_protocolo', InfraDTO::$TIPO_FK_OPCIONAL);
-        $this->configurarFK('IdDocumento', 'assinatura', 'id_documento AND assinatura.sin_ativo = "S"', InfraDTO::$TIPO_FK_OPCIONAL);
+        $this->configurarFK('IdDocumento', 'assinatura', "id_documento AND assinatura.sin_ativo = 'S'", InfraDTO::$TIPO_FK_OPCIONAL);
         $this->configurarFK('IdProcedimento', 'protocolo p', 'p.id_protocolo');
         $this->configurarFK('IdProtocoloProcedimento', 'procedimento', 'id_procedimento');
     }
