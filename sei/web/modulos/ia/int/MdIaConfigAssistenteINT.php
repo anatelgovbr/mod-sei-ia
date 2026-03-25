@@ -85,6 +85,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         $dadosMensagem["system_prompt"] = addslashes(mb_convert_encoding($systemPrompt, 'UTF-8', 'ISO-8859-1'));
         $dadosMensagem["use_thinking"] = $mensagem["refletir"];
         $dadosMensagem["use_websearch"] = $mensagem["buscarWeb"];
+        $dadosMensagem["skip_memory"] = $mensagem["skipMemory"];
         if ($mensagem["dadosCitacoes"] != "") {
             if (!is_null($mensagem["dadosCitacoes"][0]["relacaoProtocolos"])) {
                 //QUANDO CITA PROCESSO ENTRA AQUI
@@ -207,13 +208,12 @@ class MdIaConfigAssistenteINT extends InfraINT
         $objMdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();
         $objMdIaAdmConfigAssistIADTO->retNumLimiteGeralTokens();
         $objMdIaAdmConfigAssistIADTO->retNumLimiteMaiorUsuariosTokens();
-        $objMdIaAdmConfigAssistIADTO->setNumIdMdIaAdmConfigAssistIA(1);
+        $objMdIaAdmConfigAssistIADTO->setNumMaxRegistrosRetorno(1);
         $configAssistIa = $objMdIaAdmConfigAssistIARN->consultar($objMdIaAdmConfigAssistIADTO);
 
         $objMdIaAdmCfgAssiIaUsuRN = new MdIaAdmCfgAssiIaUsuRN();
         $objMdIaAdmCfgAssiIaUsuDTO = new MdIaAdmCfgAssiIaUsuDTO();
         $objMdIaAdmCfgAssiIaUsuDTO->retNumIdMdIaAdmConfigAssistIA();
-        $objMdIaAdmCfgAssiIaUsuDTO->setNumIdMdIaAdmCfgAssiIaUsu(1);
         $objMdIaAdmCfgAssiIaUsuDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
         $usuarioLimiteMaior = $objMdIaAdmCfgAssiIaUsuRN->consultar($objMdIaAdmCfgAssiIaUsuDTO);
 
@@ -276,11 +276,28 @@ class MdIaConfigAssistenteINT extends InfraINT
         $objDocumentoDTO->retDblIdDocumento();
         $objDocumentoDTO->retStrStaEstadoProtocolo();
         $objDocumentoDTO->retNumIdUnidadeGeradoraProtocolo();
-        $objDocumentoDTO->retStrSinPublicado();
-        $objDocumentoDTO->retStrSinAssinado();
+        $objDocumentoDTO->retDblIdProcedimento();
         $objDocumentoDTO->retStrNomeArvore();
         $objDocumentoDTO->setStrProtocoloDocumentoFormatado($documento);
         $objDocumentoDTO = $objDocumentoRN->consultarRN0005($objDocumentoDTO);
+
+        $objProcedimentoDTO = new ProcedimentoDTO();
+        $objProcedimentoDTO->setDblIdProcedimento($objDocumentoDTO->getDblIdProcedimento());
+        $objProcedimentoDTO->setStrSinDocTodos('S');
+        $objProcedimentoDTO->setArrDblIdProtocoloAssociado(array($objDocumentoDTO->getDblIdDocumento()));
+
+        $objProcedimentoRN = new ProcedimentoRN();
+        $arrObjProcedimentoDTO = $objProcedimentoRN->listarCompleto($objProcedimentoDTO);
+
+        $objProcedimentoDTO = $arrObjProcedimentoDTO[0];
+
+        $arrObjRelProtocoloProtocoloDTO = $objProcedimentoDTO->getArrObjRelProtocoloProtocoloDTO();
+
+        $objDocumentoInfoAdicionais = $arrObjRelProtocoloProtocoloDTO[0]->getObjProtocoloDTO2();
+
+        $objDocumentoDTO->setStrSinPublicado($objDocumentoInfoAdicionais->getStrSinPublicado());
+        $objDocumentoDTO->setStrSinAssinado($objDocumentoInfoAdicionais->getStrSinAssinado());
+
         return $objDocumentoDTO;
     }
 
@@ -346,58 +363,58 @@ class MdIaConfigAssistenteINT extends InfraINT
                             $pag_doc_init = $paginas[0];
                             $pag_doc_end = isset($paginas[1]) ? $paginas[1] : $paginas[0];
                         }
-                        if (!is_null($objProtocoloDTO)) {
-                            if ($objProtocoloDTO->getStrStaProtocolo() == ProtocoloRN::$TP_PROCEDIMENTO) {
-                                if (count($protocolo['documento']) > 1) {
-                                    return (self::verificaCriticaNCitacoes($protocolo, $documento));
-                                } else {
-                                    if ($sigiloso) {
-                                        if (!$protocolo["consultaTopico"]) {
-                                            if (($protocolo["acao_origem"] != "usuario_validar_acesso" && $protocolo["acao_origem"] != "arvore_visualizar" && $protocolo["acao_origem"] != "procedimento_gerar")
-                                                || $protocolo["id_procedimento"] != $objProtocoloDTO->getDblIdProtocolo()
-                                            ) {
-                                                return ["result" => "false", "mensagem" => mb_convert_encoding("Para interagir com o Assistente IA em documentos de Processos com o nível de acesso Sigiloso é necessário que você tenha o acesso e esteja dentro do processo desejado.", 'UTF-8', 'ISO-8859-1')];
-                                            }
+                        if ($objProtocoloDTO->getStrStaProtocolo() == ProtocoloRN::$TP_PROCEDIMENTO) {
+                            if (count($protocolo['documento']) > 1) {
+                                return (self::verificaCriticaNCitacoes($protocolo, $documento));
+                            } else {
+                                if ($sigiloso) {
+                                    if (!$protocolo["consultaTopico"]) {
+                                        if (($protocolo["acao_origem"] != "usuario_validar_acesso" && $protocolo["acao_origem"] != "arvore_visualizar" && $protocolo["acao_origem"] != "procedimento_gerar")
+                                            || $protocolo["id_procedimento"] != $objProtocoloDTO->getDblIdProtocolo()
+                                        ) {
+                                            return ["result" => "false", "mensagem" => mb_convert_encoding("Para interagir com o Assistente IA em documentos de Processos com o nível de acesso Sigiloso é necessário que você tenha o acesso e esteja dentro do processo desejado.", 'UTF-8', 'ISO-8859-1')];
                                         }
                                     }
-                                    $arr = MdIaRecursoINT::listarDocumentosProcesso($objProtocoloDTO->getDblIdProtocolo());
+                                }
+                                $arr = MdIaRecursoINT::listarDocumentosProcesso($objProtocoloDTO->getDblIdProtocolo());
 
-                                    $objProcedimentoDTO = $arr[0];
+                                $objProcedimentoDTO = $arr[0];
 
-                                    $arrObjRelProtocoloProtocoloDTO = $objProcedimentoDTO->getArrObjRelProtocoloProtocoloDTO();
+                                $arrObjRelProtocoloProtocoloDTO = $objProcedimentoDTO->getArrObjRelProtocoloProtocoloDTO();
 
-                                    $arrayProcessos = [];
-                                    $arrayProcessos[] = $arrObjRelProtocoloProtocoloDTO;
-                                    $objMdIaRecursoRN = new MdIaRecursoRN();
+                                $arrayProcessos = [];
+                                $arrayProcessos[] = $arrObjRelProtocoloProtocoloDTO;
+                                $objMdIaRecursoRN = new MdIaRecursoRN();
 
-                                    foreach ($arrObjRelProtocoloProtocoloDTO as $objRelProtocoloProtocoloDTO) {
-                                        if ($objRelProtocoloProtocoloDTO->getStrStaAssociacao() == RelProtocoloProtocoloRN::$TA_PROCEDIMENTO_ANEXADO) {
+                                foreach ($arrObjRelProtocoloProtocoloDTO as $objRelProtocoloProtocoloDTO) {
+                                    if ($objRelProtocoloProtocoloDTO->getStrStaAssociacao() == RelProtocoloProtocoloRN::$TA_PROCEDIMENTO_ANEXADO) {
 
-                                            $objProcedimentoDTOAnexado = $objRelProtocoloProtocoloDTO->getObjProtocoloDTO2();
+                                        $objProcedimentoDTOAnexado = $objRelProtocoloProtocoloDTO->getObjProtocoloDTO2();
 
-                                            $arr = MdIaRecursoINT::listarDocumentosProcesso($objProcedimentoDTOAnexado->getDblIdProcedimento());
+                                        $arr = MdIaRecursoINT::listarDocumentosProcesso($objProcedimentoDTOAnexado->getDblIdProcedimento());
 
-                                            $objProcedimentoDTO = $arr[0];
+                                        $objProcedimentoDTO = $arr[0];
 
-                                            $arrObjRelProtocoloProtocoloDTO = $objProcedimentoDTO->getArrObjRelProtocoloProtocoloDTO();
-                                            $arrayProcessos[] = $arrObjRelProtocoloProtocoloDTO;
-                                        }
+                                        $arrObjRelProtocoloProtocoloDTO = $objProcedimentoDTO->getArrObjRelProtocoloProtocoloDTO();
+                                        $arrayProcessos[] = $arrObjRelProtocoloProtocoloDTO;
                                     }
-                                    foreach ($arrayProcessos as $processos) {
-                                        foreach ($processos as $documentoConsiderado) {
-                                            if ($documentoConsiderado->getStrStaAssociacao() == RelProtocoloProtocoloRN::$TA_DOCUMENTO_ASSOCIADO) {
-                                                $objDocumentoDTO = $documentoConsiderado->getObjProtocoloDTO2();
-                                                if ($objMdIaRecursoRN->verificarSelecaoDocumentoAlvo($objDocumentoDTO)) {
-                                                    if ($objDocumentoDTO->getStrStaProtocoloProtocolo() == ProtocoloRN::$TP_DOCUMENTO_RECEBIDO) {
+                                }
+                                foreach ($arrayProcessos as $processos) {
+                                    foreach ($processos as $documentoConsiderado) {
+                                        if ($documentoConsiderado->getStrStaAssociacao() == RelProtocoloProtocoloRN::$TA_DOCUMENTO_ASSOCIADO) {
+                                            $objDocumentoDTO = $documentoConsiderado->getObjProtocoloDTO2();
+                                            if ($objMdIaRecursoRN->verificarSelecaoDocumentoAlvo($objDocumentoDTO)) {
+                                                if ($objDocumentoDTO->getStrStaProtocoloProtocolo() == ProtocoloRN::$TP_DOCUMENTO_RECEBIDO) {
 
-                                                        $extensaoArquivo = self::capturaExtensaoDocumento($objDocumentoDTO->getDblIdDocumento());
+                                                    $extensaoArquivo = self::capturaExtensaoDocumento($objDocumentoDTO->getDblIdDocumento());
 
-                                                        if (in_array($extensaoArquivo, $arrExtensoesAceitas)) {
-                                                            $idProtocolo["id_documento"] = $objDocumentoDTO->getDblIdDocumento();
-                                                            $idProtocolo["id_procedimento"] = $objDocumentoDTO->getDblIdProcedimento();
-                                                            $idProtocolo["download_ext"] = $download_ext;
-                                                            $protocolosConsiderados[] = $objDocumentoDTO->getStrProtocoloDocumentoFormatado();
-                                                            $protocoloFormatado = $documento;
+                                                    if (in_array($extensaoArquivo, $arrExtensoesAceitas)) {
+                                                        $idProtocolo["id_documento"] = $objDocumentoDTO->getDblIdDocumento();
+                                                        $idProtocolo["id_procedimento"] = $objDocumentoDTO->getDblIdProcedimento();
+                                                        $idProtocolo["download_ext"] = $download_ext;
+                                                        $protocolosConsiderados[] = $objDocumentoDTO->getStrProtocoloDocumentoFormatado();
+                                                        $protocoloFormatado = $documento;
+                                                        if (!in_array($extensaoArquivo, ['html', 'htm'])) {
                                                             $indexacao = self::consultarIndexacaoSolr($objDocumentoDTO->getDblIdDocumento());
                                                             if (!$indexacao && !$sigiloso) {
                                                                 $objIndexacaoRN = new IndexacaoRN();
@@ -409,97 +426,101 @@ class MdIaConfigAssistenteINT extends InfraINT
                                                                 }
                                                                 return ["result" => "false", "mensagem" => mb_convert_encoding("O documento externo é recente e ainda está pendente de indexação interna pelo SEI. Espere de 1 a 2 minutos para poder interagir.", 'UTF-8', 'ISO-8859-1')];
                                                             }
-                                                            $idProtocolosConsiderados[] = $idProtocolo;
+                                                        } else {
+                                                            $idProtocolo["download_ext"] = true;
                                                         }
-                                                    } else {
-                                                        $idProtocolo["id_documento"] = $objDocumentoDTO->getDblIdDocumento();
-                                                        $idProtocolo["id_procedimento"] = $objDocumentoDTO->getDblIdProcedimento();
-                                                        $idProtocolo["download_ext"] = false;
-                                                        $protocolosConsiderados[] = $objDocumentoDTO->getStrProtocoloDocumentoFormatado();
                                                         $idProtocolosConsiderados[] = $idProtocolo;
                                                     }
+                                                } else {
+                                                    $idProtocolo["id_documento"] = $objDocumentoDTO->getDblIdDocumento();
+                                                    $idProtocolo["id_procedimento"] = $objDocumentoDTO->getDblIdProcedimento();
+                                                    $idProtocolo["download_ext"] = false;
+                                                    $protocolosConsiderados[] = $objDocumentoDTO->getStrProtocoloDocumentoFormatado();
+                                                    $idProtocolosConsiderados[] = $idProtocolo;
                                                 }
                                             }
                                         }
                                     }
-                                    if (!$sigiloso) {
-                                        try {
-                                            $objEntradaConsultarProcedimentoAPI = new EntradaConsultarProcedimentoAPI();
-                                            $objEntradaConsultarProcedimentoAPI->setProtocoloProcedimento($documento);
-                                            $objSaidaConsultarProcedimentoAPI = (new SeiRN())->consultarProcedimento($objEntradaConsultarProcedimentoAPI);
-
-                                            $idProcesso = $objSaidaConsultarProcedimentoAPI->getIdProcedimento();
-                                            $linkAcesso = $objSaidaConsultarProcedimentoAPI->getLinkAcesso();
-                                        } catch (Exception $e) {
-                                        }
-                                    } else {
-                                        $idProcesso = $objProtocoloDTO->getDblIdProtocolo();
-                                        $linkAcesso = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador.php?acao=procedimento_trabalhar&amp;id_procedimento=' . $objProtocoloDTO->getDblIdProtocolo();
-                                    }
-
-                                    if (!is_null($protocolosConsiderados)) {
-                                        return array(["result" => "true", "idDocumento" => $idProcesso, "linkAcesso" => $linkAcesso, "relacaoProtocolos" => json_encode($idProtocolosConsiderados), "idProcedimento" => $idProcesso, "citacaoRealizada" => "#" . $documento]);
-                                    } else {
-                                        return ["result" => "false", "mensagem" => mb_convert_encoding("Unidade [" . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . "] não possui acesso a nenhum documento do processo nº [" . $documento . "] ", 'UTF-8', 'ISO-8859-1')];
-                                    }
-                                }
-                            } else {
-                                if (!is_null($paginas)) {
-                                    $pag_doc_init = $paginas[0];
-                                    $pag_doc_end = isset($paginas[1]) ? $paginas[1] : $paginas[0];
                                 }
                                 if (!$sigiloso) {
-                                    $objEntradaConsultarDocumentoAPI = new EntradaConsultarDocumentoAPI();
-                                    $objEntradaConsultarDocumentoAPI->setProtocoloDocumento($documento);
-                                    $objSaidaConsultarDocumentoAPI = (new SeiRN())->consultarDocumento($objEntradaConsultarDocumentoAPI);
+                                    try {
+                                        $objEntradaConsultarProcedimentoAPI = new EntradaConsultarProcedimentoAPI();
+                                        $objEntradaConsultarProcedimentoAPI->setProtocoloProcedimento($documento);
+                                        $objSaidaConsultarProcedimentoAPI = (new SeiRN())->consultarProcedimento($objEntradaConsultarProcedimentoAPI);
 
-                                    $idDocumento["id_documento"] = $objSaidaConsultarDocumentoAPI->getIdDocumento();
-                                    $linkAcesso = $objSaidaConsultarDocumentoAPI->getLinkAcesso();
-                                    $idProcedimento = $objSaidaConsultarDocumentoAPI->getIdProcedimento();
-                                    $protocoloFormatado = $objSaidaConsultarDocumentoAPI->getProcedimentoFormatado();
-                                    $idDocumento["download_ext"] = $download_ext;
-                                    $idDocumento["pag_doc_init"] = $pag_doc_init;
-                                    $idDocumento["pag_doc_end"] = $pag_doc_end;
+                                        $idProcesso = $objSaidaConsultarProcedimentoAPI->getIdProcedimento();
+                                        $linkAcesso = $objSaidaConsultarProcedimentoAPI->getLinkAcesso();
+                                    } catch (Exception $e) {
+                                    }
                                 } else {
-                                    if (!$protocolo["consultaTopico"]) {
-                                        if (($protocolo["acao_origem"] != "usuario_validar_acesso" && $protocolo["acao_origem"] != "arvore_visualizar" && $protocolo["acao_origem"] != "procedimento_gerar")
-                                            || $protocolo["id_procedimento"] != $objProtocoloDTO->getDblIdProcedimentoDocumento()
-                                        ) {
-                                            return ["result" => "false", "mensagem" => mb_convert_encoding("Para interagir com o Assistente IA em documentos de Processos com o nível de acesso Sigiloso é necessário que você tenha o acesso e esteja dentro do processo desejado.", 'UTF-8', 'ISO-8859-1')];
-                                        }
-                                    }
-
-                                    $objDocumentoDTO = self::consultaDocumento($documento);
-                                    $retornoPermissaoAcesso = MdIaRecursoRN::verificarSelecaoDocumentoAlvo($objDocumentoDTO);
-                                    if (!$retornoPermissaoAcesso) {
-                                        return ["result" => "false", "mensagem" => mb_convert_encoding("Unidade [" . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . "] não possui acesso ao documento [" . $documento . "].", 'UTF-8', 'ISO-8859-1')];
-                                    }
-                                    $linkAcesso = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador.php?acao=procedimento_trabalhar&amp;id_procedimento=' . $objProtocoloDTO->getDblIdProcedimentoDocumento() . '&amp;id_documento=' . $objProtocoloDTO->getDblIdProtocolo();
-                                    $idDocumento["id_documento"] = $objProtocoloDTO->getDblIdProtocolo();
-                                    if ($objProtocoloDTO->getStrStaProtocolo() == ProtocoloRN::$TP_DOCUMENTO_GERADO) {
-                                        $idDocumento["download_ext"] = false;
-                                    } else {
-                                        $idDocumento["download_ext"] = $download_ext;
-                                    }
-                                    $idDocumento["pag_doc_init"] = $pag_doc_init;
-                                    $idDocumento["pag_doc_end"] = $pag_doc_end;
-                                    $idProcedimento = $objProtocoloDTO->getDblIdProcedimentoDocumento();
+                                    $idProcesso = $objProtocoloDTO->getDblIdProtocolo();
+                                    $linkAcesso = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador.php?acao=procedimento_trabalhar&amp;id_procedimento=' . $objProtocoloDTO->getDblIdProtocolo();
                                 }
+
+                                if (!is_null($protocolosConsiderados)) {
+                                    return array(["result" => "true", "idDocumento" => $idProcesso, "linkAcesso" => $linkAcesso, "relacaoProtocolos" => json_encode($idProtocolosConsiderados), "idProcedimento" => $idProcesso, "citacaoRealizada" => "#" . $documento]);
+                                } else {
+                                    return ["result" => "false", "mensagem" => mb_convert_encoding("Unidade [" . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . "] não possui acesso a nenhum documento do processo nº [" . $documento . "] ", 'UTF-8', 'ISO-8859-1')];
+                                }
+                            }
+                        } else {
+                            if (!is_null($paginas)) {
+                                $pag_doc_init = $paginas[0];
+                                $pag_doc_end = isset($paginas[1]) ? $paginas[1] : $paginas[0];
+                            }
+                            if (!$sigiloso) {
+                                $objEntradaConsultarDocumentoAPI = new EntradaConsultarDocumentoAPI();
+                                $objEntradaConsultarDocumentoAPI->setProtocoloDocumento($documento);
+                                $objSaidaConsultarDocumentoAPI = (new SeiRN())->consultarDocumento($objEntradaConsultarDocumentoAPI);
+
+                                $idDocumento["id_documento"] = $objSaidaConsultarDocumentoAPI->getIdDocumento();
+                                $linkAcesso = $objSaidaConsultarDocumentoAPI->getLinkAcesso();
+                                $idProcedimento = $objSaidaConsultarDocumentoAPI->getIdProcedimento();
+                                $protocoloFormatado = $objSaidaConsultarDocumentoAPI->getProcedimentoFormatado();
+                                $idDocumento["download_ext"] = $download_ext;
+                                $idDocumento["pag_doc_init"] = $pag_doc_init;
+                                $idDocumento["pag_doc_end"] = $pag_doc_end;
+                            } else {
+                                if (!$protocolo["consultaTopico"]) {
+                                    if (($protocolo["acao_origem"] != "usuario_validar_acesso" && $protocolo["acao_origem"] != "arvore_visualizar" && $protocolo["acao_origem"] != "procedimento_gerar")
+                                        || $protocolo["id_procedimento"] != $objProtocoloDTO->getDblIdProcedimentoDocumento()
+                                    ) {
+                                        return ["result" => "false", "mensagem" => mb_convert_encoding("Para interagir com o Assistente IA em documentos de Processos com o nível de acesso Sigiloso é necessário que você tenha o acesso e esteja dentro do processo desejado.", 'UTF-8', 'ISO-8859-1')];
+                                    }
+                                }
+
+                                $objDocumentoDTO = self::consultaDocumento($documento);
+                                $retornoPermissaoAcesso = MdIaRecursoRN::verificarSelecaoDocumentoAlvo($objDocumentoDTO);
+                                if (!$retornoPermissaoAcesso) {
+                                    return ["result" => "false", "mensagem" => mb_convert_encoding("Unidade [" . SessaoSEI::getInstance()->getStrSiglaUnidadeAtual() . "] não possui acesso ao documento [" . $documento . "].", 'UTF-8', 'ISO-8859-1')];
+                                }
+                                $linkAcesso = ConfiguracaoSEI::getInstance()->getValor('SEI', 'URL') . '/controlador.php?acao=procedimento_trabalhar&amp;id_procedimento=' . $objProtocoloDTO->getDblIdProcedimentoDocumento() . '&amp;id_documento=' . $objProtocoloDTO->getDblIdProtocolo();
+                                $idDocumento["id_documento"] = $objProtocoloDTO->getDblIdProtocolo();
                                 if ($objProtocoloDTO->getStrStaProtocolo() == ProtocoloRN::$TP_DOCUMENTO_GERADO) {
-                                    if (!is_null($paginas)) {
-                                        return ["result" => "false", "mensagem" => mb_convert_encoding("O protocolo indicado se refere a Documento Gerado no SEI, que, por natureza, não aceita indicação de intervalo de páginas para interação sobre seu conteúdo com o Assistente de IA.", 'UTF-8', 'ISO-8859-1')];
-                                    }
-                                } elseif ($objProtocoloDTO->getStrStaProtocolo() == ProtocoloRN::$TP_DOCUMENTO_RECEBIDO) {
+                                    $idDocumento["download_ext"] = false;
+                                } else {
+                                    $idDocumento["download_ext"] = $download_ext;
+                                }
+                                $idDocumento["pag_doc_init"] = $pag_doc_init;
+                                $idDocumento["pag_doc_end"] = $pag_doc_end;
+                                $idProcedimento = $objProtocoloDTO->getDblIdProcedimentoDocumento();
+                            }
+                            if ($objProtocoloDTO->getStrStaProtocolo() == ProtocoloRN::$TP_DOCUMENTO_GERADO) {
+                                if (!is_null($paginas)) {
+                                    return ["result" => "false", "mensagem" => mb_convert_encoding("O protocolo indicado se refere a Documento Gerado no SEI, que, por natureza, não aceita indicação de intervalo de páginas para interação sobre seu conteúdo com o Assistente de IA.", 'UTF-8', 'ISO-8859-1')];
+                                }
+                            } elseif ($objProtocoloDTO->getStrStaProtocolo() == ProtocoloRN::$TP_DOCUMENTO_RECEBIDO) {
 
-                                    $extensaoArquivo = self::capturaExtensaoDocumento($idDocumento["id_documento"]);
+                                $extensaoArquivo = self::capturaExtensaoDocumento($idDocumento["id_documento"]);
 
-                                    if (in_array($extensaoArquivo, $arrExtensoesAceitas)) {
-                                        if (!is_null($paginas) && !in_array($extensaoArquivo, ['pdf'])) {
-                                            return ["result" => "false", "mensagem" => mb_convert_encoding("A indicação de intervalo de páginas sobre Documento Externo para interação com o Assistente de IA está restrita a documentos do tipo PDF.", 'UTF-8', 'ISO-8859-1')];
-                                        }
-                                    } else {
-                                        return ["result" => "false", "mensagem" => mb_convert_encoding("O protocolo indicado se refere a Documento Externo de arquivo com extensão não permitida para interação sobre seu conteúdo com o Assistente de IA.", 'UTF-8', 'ISO-8859-1')];
+                                if (in_array($extensaoArquivo, $arrExtensoesAceitas)) {
+                                    if (!is_null($paginas) && !in_array($extensaoArquivo, ['pdf'])) {
+                                        return ["result" => "false", "mensagem" => mb_convert_encoding("A indicação de intervalo de páginas sobre Documento Externo para interação com o Assistente de IA está restrita a documentos do tipo PDF.", 'UTF-8', 'ISO-8859-1')];
                                     }
+                                } else {
+                                    return ["result" => "false", "mensagem" => mb_convert_encoding("O protocolo indicado se refere a Documento Externo de arquivo com extensão não permitida para interação sobre seu conteúdo com o Assistente de IA.", 'UTF-8', 'ISO-8859-1')];
+                                }
+                                if (!in_array($extensaoArquivo, ['html', 'htm'])) {
                                     $indexacao = self::consultarIndexacaoSolr($idDocumento["id_documento"]);
                                     if (!$indexacao && !$sigiloso && is_null($paginas)) {
                                         $objIndexacaoRN = new IndexacaoRN();
@@ -511,15 +532,18 @@ class MdIaConfigAssistenteINT extends InfraINT
                                         }
                                         return ["result" => "false", "mensagem" => mb_convert_encoding("O documento externo é recente e ainda está pendente de indexação interna pelo SEI. Espere de 1 a 2 minutos para poder interagir.", 'UTF-8', 'ISO-8859-1')];
                                     }
+                                } else {
+                                    $idDocumento["download_ext"] = true;
                                 }
                             }
-                            $retornoDocumentos[] = ["result" => "true", "idDocumento" => $idDocumento, "linkAcesso" => $linkAcesso, "idProcedimento" => $idProcedimento, "citacaoRealizada" => "#" . $documento];
-                        } else {
-                            return ["result" => "false", "mensagem" => mb_convert_encoding("O protocolo citado #" . $documento . " não existe no SEI.", 'UTF-8', 'ISO-8859-1')];
                         }
+                        $retornoDocumentos[] = ["result" => "true", "idDocumento" => $idDocumento, "linkAcesso" => $linkAcesso, "idProcedimento" => $idProcedimento, "citacaoRealizada" => "#" . $documento];
+                    } else {
+                        return ["result" => "false", "mensagem" => mb_convert_encoding("O protocolo citado #" . $documento . " não existe no SEI.", 'UTF-8', 'ISO-8859-1')];
                     }
                 } catch (Exception $e) {
-                    throw new InfraException('Erro consultando protocolos de citação.', $e);
+                    $mensagem = ($e instanceof InfraException) ? (string) $e : $e->getMessage();
+                    return ["result" => "false", "mensagem" => mb_convert_encoding($mensagem, 'UTF-8', 'ISO-8859-1')];
                 }
             }
         }
@@ -576,8 +600,7 @@ class MdIaConfigAssistenteINT extends InfraINT
         $urlBusca = IaWS::obterUrlSolAuth() . '/' .  ConfiguracaoSEI::getInstance()->getValor('Solr', 'CoreProtocolos') . '/select?' . http_build_query($parametros) . '&hl=true&hl.snippets=2&hl.fl=content&hl.fragsize=100&hl.maxAnalyzedChars=1048576&hl.alternateField=content&hl.maxAlternateFieldLength=100&fl=id_proc,content,content_type';
         // Faz a requisição HTTP ao Solr
         $resultados = file_get_contents($urlBusca);
-        $xml = simplexml_load_string($resultados);
-        if (!$xml->xpath('/response/result/doc')) {
+        if (strpos($resultados, '<doc') == false) {
             return false;
         }
         return true;
@@ -607,7 +630,7 @@ class MdIaConfigAssistenteINT extends InfraINT
 
     public static function retornaMensagemAmigavelUsuario($statusRequisicao, $mensagemOriginal)
     {
-        if ($statusRequisicao != "200") {
+        if ($statusRequisicao != "200" && !is_null($statusRequisicao)) {
             switch ($statusRequisicao) {
                 case '204':
                     $resposta = "O prompt e o conteúdo do documento/processo citado não são compatíveis. Revise o prompt buscando deixar mais objetivo e alinhado ao conteúdo referenciado.";
@@ -682,9 +705,17 @@ class MdIaConfigAssistenteINT extends InfraINT
 
     public static function consultarMensagem($dadosEnviados)
     {
+        $retorno =  array("result" => "false");
+
+        if (!isset($dadosEnviados["IdMdIaInteracaoChat"]) || !is_numeric($dadosEnviados["IdMdIaInteracaoChat"])) {
+            return $retorno;
+        }
+
         $objMdIaInteracaoChatRN = new MdIaInteracaoChatRN();
         $objMdIaInteracaoChatDTO = new MdIaInteracaoChatDTO();
-        $objMdIaInteracaoChatDTO->setNumIdMdIaInteracaoChat($dadosEnviados["IdMdIaInteracaoChat"]);
+        $objMdIaInteracaoChatDTO->setNumIdMdIaInteracaoChat((int)$dadosEnviados["IdMdIaInteracaoChat"]);
+        $objMdIaInteracaoChatDTO->retNumIdUsuario();
+        $objMdIaInteracaoChatDTO->retNumIdUnidadeTopico();
         $objMdIaInteracaoChatDTO->retStrResposta();
         $objMdIaInteracaoChatDTO->retNumIdMessage();
         $objMdIaInteracaoChatDTO->retStrPergunta();
@@ -692,14 +723,28 @@ class MdIaConfigAssistenteINT extends InfraINT
         $objMdIaInteracaoChatDTO->retNumStatusRequisicao();
         $objMdIaInteracaoChatDTO->retDthCadastro();
         $interacao = $objMdIaInteracaoChatRN->consultar($objMdIaInteracaoChatDTO);
+
+        if (is_null($interacao)) {
+            throw new InfraException('Interação nao encontrada.');
+        }
+
+        if (
+            $interacao->getNumIdUsuario() != SessaoSEI::getInstance()->getNumIdUsuario()
+            || $interacao->getNumIdUnidadeTopico() != SessaoSEI::getInstance()->getNumIdUnidadeAtual()
+        ) {
+            throw new InfraException('A interação informada não pertence a sessao logada.');
+        }
+
         if (!is_null($interacao)) {
+
+            $resposta = mb_convert_encoding(self::retornaMensagemAmigavelUsuario($interacao->getNumStatusRequisicao(), $interacao->getStrResposta()), 'UTF-8', 'ISO-8859-1');
+
             if ($interacao->getNumStatusRequisicao() == "") {
-                return array("result" => "false");
+                $retorno['resposta'] = $resposta;
             } else {
-                $resposta = self::retornaMensagemAmigavelUsuario($interacao->getNumStatusRequisicao(), $interacao->getStrResposta());
-                return array(
+                $retorno = array(
                     "result" => "true",
-                    "resposta" => mb_convert_encoding($resposta["resposta"], 'UTF-8', 'ISO-8859-1'),
+                    "resposta" => $resposta,
                     "tipo_critica" => $resposta["tipoCritica"],
                     "id_mensagem" => $interacao->getNumIdMessage(),
                     "status_requisicao" => $interacao->getNumStatusRequisicao(),
@@ -707,8 +752,8 @@ class MdIaConfigAssistenteINT extends InfraINT
                     "dth_cadastro" => substr($interacao->getDthCadastro(), 0, 19)
                 );
             }
-        } else {
-            return array("result" => "false");
         }
+
+        return $retorno;
     }
 }

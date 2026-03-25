@@ -19,6 +19,7 @@
 
     function consultarObjetivoOds(idObjetivo) {
         $("#hdnIdSelecaoObjetivo").val(idObjetivo);
+        $("#obj_ods_" + idObjetivo).addClass("infraTrAcessada");
         var Url = "<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_consultar_objetivo_procedimento&forte_relacao=false&id_procedimento=' . $_GET['id_procedimento']) ?>"
         if (document.getElementById("btn-checkbox").checked) {
             Url = "<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_consultar_objetivo_procedimento&forte_relacao=true&id_procedimento=' . $_GET['id_procedimento'])  ?>"

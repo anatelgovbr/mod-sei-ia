@@ -264,8 +264,8 @@ try {
         }
         $strResultado .= $strCssTr;
 
-        $strResultado .= '<td valign="top" class="tdInteracao">' . PaginaSEI::getInstance()->getTrCheck($i, $arrObjMdIaGaleriaPromptsDTO[$i]->getNumIdMdIaGaleriaPrompts(), $arrObjMdIaGaleriaPromptsDTO[$i]->getStrDescricao()) . '</td>';
-        $strResultado .= '<td align="center" valign="top" class="tdInteracao">' . $arrObjMdIaGaleriaPromptsDTO[$i]->getStrNomeGrupo() . '</td>';
+        $strResultado .= '<td valign="top" class="tdInteracao">' . PaginaSEI::getInstance()->getTrCheck($i, $arrObjMdIaGaleriaPromptsDTO[$i]->getNumIdMdIaGaleriaPrompts(), PaginaSEI::tratarHTML($arrObjMdIaGaleriaPromptsDTO[$i]->getStrDescricao())) . '</td>';
+        $strResultado .= '<td align="center" valign="top" class="tdInteracao">' . PaginaSEI::tratarHTML($arrObjMdIaGaleriaPromptsDTO[$i]->getStrNomeGrupo()) . '</td>';
         $strResultado .= '<td align="left" valign="top" class="tdInteracao">' . nl2br(htmlspecialchars(mb_strimwidth($arrObjMdIaGaleriaPromptsDTO[$i]->getStrDescricao(), 0, 500, "...", "ISO-8859-1"), ENT_QUOTES | ENT_SUBSTITUTE, 'ISO-8859-1', false)) . '</td>';
         $strResultado .= '<td align="left" valign="top" class="tdInteracao">' . nl2br(htmlspecialchars(mb_strimwidth($arrObjMdIaGaleriaPromptsDTO[$i]->getStrPrompt(), 0, 500, "...", "ISO-8859-1"), ENT_QUOTES | ENT_SUBSTITUTE, 'ISO-8859-1', false)) . '</td>';
         $strResultado .= '<td align="center" valign="top" class="tdInteracao"><a alt="' . PaginaSEI::tratarHTML($arrObjMdIaGaleriaPromptsDTO[$i]->getStrNomeUsuario()) . '" title="' . PaginaSEI::tratarHTML($arrObjMdIaGaleriaPromptsDTO[$i]->getStrNomeUsuario()) . '" class="ancoraSigla">' . PaginaSEI::tratarHTML($arrObjMdIaGaleriaPromptsDTO[$i]->getStrSiglaUsuario()) . '</a></td>';

@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -37,7 +38,6 @@ try {
 
                     $objMdIaAdmSegDocRelevRN = new MdIaAdmSegDocRelevRN();
                     $objMdIaAdmSegDocRelevRN->excluirRelacionamento($arrStrIds[$i]);
-
                 }
                 $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
                 $objMdIaAdmDocRelevRN->excluir($arrObjMdIaAdmDocRelevDTO);
@@ -154,10 +154,10 @@ try {
     if (isset($_POST['selTipoDocumento']) && !empty($_POST['selTipoDocumento']) && $_POST['selTipoDocumento'] > 0) {
         $objMdIaAdmDocRelevDTO->setNumIdSerie($_POST['selTipoDocumento']);
     }
-    if(!empty($_POST)) {
-        if($_POST['selTipoProcesso'] > 0) {
+    if (!empty($_POST)) {
+        if ($_POST['selTipoProcesso'] > 0) {
             $objMdIaAdmDocRelevDTO->setNumIdTipoProcedimento($_POST['selTipoProcesso']);
-        } elseif($_POST['selTipoProcesso'] == "") {
+        } elseif ($_POST['selTipoProcesso'] == "") {
             $objMdIaAdmDocRelevDTO->setNumIdTipoProcedimento(null);
         }
     }
@@ -236,8 +236,8 @@ try {
         $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdIaAdmDocRelevDTO, 'Aplicabilidade', 'Aplicabilidade', $arrObjMdIaAdmDocRelevDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdIaAdmDocRelevDTO, 'Tipo de Documento', 'NomeSerie', $arrObjMdIaAdmDocRelevDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh">' . PaginaSEI::getInstance()->getThOrdenacao($objMdIaAdmDocRelevDTO, 'Tipo de Processo', 'NomeTipoProcedimento', $arrObjMdIaAdmDocRelevDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh"> Segmento do Documento</th> '."\n";
-        $strResultado .= '<th class="infraTh"> Data/Hora da Última Alteração:</th> '."\n";
+        $strResultado .= '<th class="infraTh"> Segmento do Documento</th> ' . "\n";
+        $strResultado .= '<th class="infraTh"> Data/Hora da Última Alteração:</th> ' . "\n";
         $strResultado .= '<th class="infraTh">Ações</th>' . "\n";
         $strResultado .= '</tr>' . "\n";
         $strCssTr = '';
@@ -288,11 +288,11 @@ try {
             $strResultado .= '<td align="center">';
 
             if ($bolAcaoConsultar) {
-                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_adm_doc_relev_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&documento_relevante=' . $arrObjMdIaAdmDocRelevDTO[$i]->getNumIdMdIaAdmDocRelev()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeConsultar() . '" title="Consultar Documento Relevante" alt="Consultar Documento Relevante" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_adm_doc_relev_consultar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_ia_adm_doc_relev=' . $arrObjMdIaAdmDocRelevDTO[$i]->getNumIdMdIaAdmDocRelev()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeConsultar() . '" title="Consultar Documento Relevante" alt="Consultar Documento Relevante" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoAlterar) {
-                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_adm_doc_relev_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&documento_relevante=' . $arrObjMdIaAdmDocRelevDTO[$i]->getNumIdMdIaAdmDocRelev()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeAlterar() . '" title="Alterar Documento Relevante" alt="Alterar Documento Relevante" class="infraImg" /></a>&nbsp;';
+                $strResultado .= '<a href="' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_adm_doc_relev_alterar&acao_origem=' . $_GET['acao'] . '&acao_retorno=' . $_GET['acao'] . '&id_md_ia_adm_doc_relev=' . $arrObjMdIaAdmDocRelevDTO[$i]->getNumIdMdIaAdmDocRelev()) . '" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getIconeAlterar() . '" title="Alterar Documento Relevante" alt="Alterar Documento Relevante" class="infraImg" /></a>&nbsp;';
             }
 
             if ($bolAcaoDesativar || $bolAcaoReativar || $bolAcaoExcluir) {
@@ -305,7 +305,7 @@ try {
             }
 
             if ($bolAcaoDesativar || $bolAcaoReativar) {
-                $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript(PaginaSEI::tratarHTML($aplicabilidade. " - ".$arrObjMdIaAdmDocRelevDTO[$i]->getStrNomeSerie()." - ".$tipoProcedimento));
+                $strDescricao = PaginaSEI::getInstance()->formatarParametrosJavaScript(PaginaSEI::tratarHTML($aplicabilidade . " - " . $arrObjMdIaAdmDocRelevDTO[$i]->getStrNomeSerie() . " - " . $tipoProcedimento));
                 if ($bolAcaoDesativar && $arrObjMdIaAdmDocRelevDTO[$i]->getStrSinAtivo() == 'S') {
                     $strResultado .= '<a href="' . PaginaSEI::getInstance()->montarAncora($strId) . '" onclick="acaoDesativar(\'' . $strId . '\',\'' . $strDescricao . '\');" tabindex="' . PaginaSEI::getInstance()->getProxTabTabela() . '"><img src="' . PaginaSEI::getInstance()->getDiretorioSvgGlobal() . '/desativar.svg" title="Desativar Documento Relevante" alt="Desativar Documento Relevante" class="infraImg" /></a>&nbsp;';
                 } else {
@@ -323,7 +323,6 @@ try {
     }
     $strItensSelTiposDocumentos = MdIaAdmDocRelevINT::retornaComboboxTipoDocumento($_POST);
     $strItensSelTiposProcessos = MdIaAdmDocRelevINT::retornaComboboxTipoProcessos($_POST);
-
 } catch (Exception $e) {
     PaginaSEI::getInstance()->processarExcecao($e);
 }
@@ -345,95 +344,95 @@ PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
-    <form id="frmMdIaAdmDocRelevLista" method="post"
-          action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
-        <?
+<form id="frmMdIaAdmDocRelevLista" method="post"
+    action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
+    <?
 
-        PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
-        ?>
-        <div id="divMsg">
-            <div class="alert" role="alert">
-                <label></label>
-            </div>
+    PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
+    ?>
+    <div id="divMsg">
+        <div class="alert" role="alert">
+            <label></label>
         </div>
-        <div class="infraAreaDados" id="divInfraAreaDados">
-            <div class="row">
-                <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4 mb-2">
-                    <div class="form-group">
-                        <label id="lblAplicabilidade" for="selAplicabilidade" accesskey="o" class="infraLabelOpcional">Aplicabilidade:</label>
-                        <select class="infraSelect form-control" name="selAplicabilidade" id="selAplicabilidade"
-                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"
-                                onchange="retornaTiposDocumentosCadastrados()">
-                            <option value="0">Selecione uma opção</option>
-                            <option value="I" <?php if ($_POST['selAplicabilidade'] == "I") {
-                                echo "selected";
-                            } ?>>Interno
-                            </option>
-                            <option value="E" <?php if ($_POST['selAplicabilidade'] == "E") {
-                                echo "selected";
-                            } ?>>Externo
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                    <div class="form-group">
-                        <label id="lblTipoDocumento" for="selTipoDocumento" accesskey="o" class="infraLabelOpcional">Tipo
-                            de Documento:</label>
-                        <select class="infraSelect form-control" name="selTipoDocumento" id="selTipoDocumento"
-                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
-                            <?=$strItensSelTiposDocumentos?>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                    <div class="form-group">
-                        <label id="lblTipoProcesso" for="selTipoProcesso" accesskey="o" class="infraLabelOpcional">Tipo
-                            de Processo:</label>
-                        <select class="infraSelect form-control" name="selTipoProcesso" id="selTipoProcesso"
-                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
-                            <?=$strItensSelTiposProcessos?>
-                        </select>
-                    </div>
+    </div>
+    <div class="infraAreaDados" id="divInfraAreaDados">
+        <div class="row">
+            <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4 mb-2">
+                <div class="form-group">
+                    <label id="lblAplicabilidade" for="selAplicabilidade" accesskey="o" class="infraLabelOpcional">Aplicabilidade:</label>
+                    <select class="infraSelect form-control" name="selAplicabilidade" id="selAplicabilidade"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>"
+                        onchange="retornaTiposDocumentosCadastrados()">
+                        <option value="0">Selecione uma opção</option>
+                        <option value="I" <?php if ($_POST['selAplicabilidade'] == "I") {
+                                                echo "selected";
+                                            } ?>>Interno
+                        </option>
+                        <option value="E" <?php if ($_POST['selAplicabilidade'] == "E") {
+                                                echo "selected";
+                                            } ?>>Externo
+                        </option>
+                    </select>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-8 col-md-8 col-lg-8 col-xl-8">
-                    <label id="lblSegmentoDocumento" for="txtSegmentoDocumento" accesskey="m"
-                           class="infraLabelOpcional">Segmento do Documento:</label>
-                    <input type="text" id="txtSegmentoDocumento" name="txtSegmentoDocumento"
-                           class="infraText form-control"
-                           value="<?= PaginaSEI::tratarHTML($_POST['txtSegmentoDocumento']) ?>" style="height: calc(1.5em + .4rem + 4px)"/>
-
-                    <input type="submit" style="visibility: hidden;"/>
-                </div>
-                <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                    <div class="form-group">
-                        <label id="lblAtivo" for="selAtivo" accesskey="o" class="infraLabelOpcional">Ativo:</label>
-                        <select class="infraSelect form-control" name="selAtivo" id="selAtivo"
-                                tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
-                            <option value="">Todos</option>
-                            <option value="S"<?php if ($_POST['selAtivo'] == "S") {
-                                echo "selected";
-                            } ?>>Ativo</option>
-                            <option value="N"<?php if ($_POST['selAtivo'] == "N") {
-                                echo "selected";
-                            } ?>>Inativo</option>
-                        </select>
-                    </div>
+            <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                <div class="form-group">
+                    <label id="lblTipoDocumento" for="selTipoDocumento" accesskey="o" class="infraLabelOpcional">Tipo
+                        de Documento:</label>
+                    <select class="infraSelect form-control" name="selTipoDocumento" id="selTipoDocumento"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
+                        <?= $strItensSelTiposDocumentos ?>
+                    </select>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                    <?
-                    PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
-                    //PaginaSEI::getInstance()->montarAreaDebug();
-                    PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
-                    ?>
+            <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                <div class="form-group">
+                    <label id="lblTipoProcesso" for="selTipoProcesso" accesskey="o" class="infraLabelOpcional">Tipo
+                        de Processo:</label>
+                    <select class="infraSelect form-control" name="selTipoProcesso" id="selTipoProcesso"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
+                        <?= $strItensSelTiposProcessos ?>
+                    </select>
                 </div>
             </div>
         </div>
-    </form>
+        <div class="row">
+            <div class="col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                <label id="lblSegmentoDocumento" for="txtSegmentoDocumento" accesskey="m"
+                    class="infraLabelOpcional">Segmento do Documento:</label>
+                <input type="text" id="txtSegmentoDocumento" name="txtSegmentoDocumento"
+                    class="infraText form-control"
+                    value="<?= PaginaSEI::tratarHTML($_POST['txtSegmentoDocumento']) ?>" style="height: calc(1.5em + .4rem + 4px)" />
+
+                <input type="submit" style="visibility: hidden;" />
+            </div>
+            <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                <div class="form-group">
+                    <label id="lblAtivo" for="selAtivo" accesskey="o" class="infraLabelOpcional">Ativo:</label>
+                    <select class="infraSelect form-control" name="selAtivo" id="selAtivo"
+                        tabindex="<?= PaginaSEI::getInstance()->getProxTabDados(); ?>">
+                        <option value="">Todos</option>
+                        <option value="S" <?php if ($_POST['selAtivo'] == "S") {
+                                                echo "selected";
+                                            } ?>>Ativo</option>
+                        <option value="N" <?php if ($_POST['selAtivo'] == "N") {
+                                                echo "selected";
+                                            } ?>>Inativo</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                <?
+                PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
+                //PaginaSEI::getInstance()->montarAreaDebug();
+                PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
+                ?>
+            </div>
+        </div>
+    </div>
+</form>
 <?
 require_once "md_ia_adm_doc_relev_lista_js.php";
 PaginaSEI::getInstance()->fecharBody();

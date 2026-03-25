@@ -1,9 +1,8 @@
 <script type="text/javascript">
-
     function inicializar() {
-        if ('<?=$_GET['acao']?>' == 'md_ia_adm_config_similar_cadastrar') {
+        if ('<?= $_GET['acao'] ?>' == 'md_ia_adm_config_similar_cadastrar') {
             document.getElementById('txtIdMdIaAdmConfigSimilar').focus();
-        } else if ('<?=$_GET['acao']?>' == 'md_ia_adm_config_similar_consultar') {
+        } else if ('<?= $_GET['acao'] ?>' == 'md_ia_adm_config_similar_consultar') {
             infraDesabilitarCamposAreaDados();
         } else {
             document.getElementById('btnCancelar').focus();
@@ -69,7 +68,7 @@
     function removerItensSelectMetadado() {
         var hdnTbPercRelevMetadado = $("#hdnTbPercRelevMetadado").val();
         var linhas = hdnTbPercRelevMetadado.split('¥');
-        linhas.forEach(function (linha) {
+        linhas.forEach(function(linha) {
             coluna = linha.split('±');
             $("option[value='" + coluna[0] + "']").remove();
         });
@@ -96,6 +95,7 @@
     }
 
     function editarPercRelevanciaMetadado(id) {
+        document.querySelectorAll('.infraTrAcessada').forEach(el => el.classList.remove('infraTrAcessada'));
         var peso_metadado = $("#" + id).attr("peso_metadado");
         var descricaoMetadado = $("#" + id).attr("descricao_metadado");
         $("#txtMetadado").html("");
@@ -108,7 +108,7 @@
 
     function atualizarPercRelevMetadados() {
         var percRelevContDoc = $("#txtPercRelevContDoc").val();
-        if(percRelevContDoc == "") {
+        if (percRelevContDoc == "") {
             rolar_para('#divMsg');
             $("#divMsg > div > label").html("O Percentual de Relevância do Conteúdo dos Documentos não pode ser vazio.");
             $("#divMsg > div").addClass("alert-danger");
@@ -123,10 +123,10 @@
     function removerItemHiddenPercRelevMetadados(hdnTbPercRelevMetadado, itemRemover) {
         var linhas = hdnTbPercRelevMetadado.split('¥');
         var linhaAtualizada = "";
-        linhas.forEach(function (linha) {
+        linhas.forEach(function(linha) {
             var colunas = linha.split('±');
             if (colunas[0] != itemRemover) {
-                colunas.forEach(function (coluna) {
+                colunas.forEach(function(coluna) {
                     linhaAtualizada += coluna + "±";
                 });
                 linhaAtualizada = linhaAtualizada.substring(0, linhaAtualizada.length - 1);
@@ -144,7 +144,7 @@
         var horas = ("0" + dataAtual.getHours()).slice(-2);
         var minutos = ("0" + dataAtual.getMinutes()).slice(-2);
         var segundos = ("0" + dataAtual.getSeconds()).slice(-2);
-        var linhaTabela = "<tr id='" + idItemAdicionar + "' descricao_metadado='" + itemAdicionar.val() + "' peso_metadado='" + percentualRelevanciaAdicionar + "'>";
+        var linhaTabela = "<tr class='infraTrAcessada' id='" + idItemAdicionar + "' descricao_metadado='" + itemAdicionar.val() + "' peso_metadado='" + percentualRelevanciaAdicionar + "'>";
         linhaTabela += "<td>" + itemAdicionar.val() + "</td>";
         linhaTabela += "<td>" + percentualRelevanciaAdicionar + "%</td>";
         linhaTabela += "<td>" + dia + "/" + mes + "/" + ano + " " + horas + ":" + minutos + ":" + segundos + "</td>";
@@ -154,6 +154,7 @@
         linhaTabela += "</tr>";
         return linhaTabela;
     }
+
     function rolar_para(elemento) {
         $("#divMsg > div").removeClass("alert-warning");
         $("#divMsg > div").removeClass("alert-danger");

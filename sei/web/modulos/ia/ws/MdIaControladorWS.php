@@ -119,6 +119,24 @@ class MdIaControladorWS extends MdIaUtilWS
         self::printResult($response);
     }
 
+    public static function processosVetorizaveis()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $IaWs = new IaWS();
+            $response = $IaWs->listarProcessosPendenteVetorizacao($_GET);
+            http_response_code($response['code']);
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+            $parametros = [];
+            parse_str($_SERVER['QUERY_STRING'], $parametros);
+            $IaWs = new IaWS();
+            $response = $IaWs->atualizarStatusProcessoVetorizado($parametros['IdProcedimento']);
+            http_response_code($response['code']);
+        }
+
+        self::printResult($response);
+    }
     public static function documentosIndexaveis()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -138,6 +156,24 @@ class MdIaControladorWS extends MdIaUtilWS
         self::printResult($response);
     }
 
+    public static function documentosVetorizaveis()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $IaWs = new IaWS();
+            $response = $IaWs->listarDocumentosPendenteVetorizacao($_GET);
+            http_response_code($response['code']);
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+            $parametros = [];
+            parse_str($_SERVER['QUERY_STRING'], $parametros);
+            $IaWs = new IaWS();
+            $response = $IaWs->atualizarStatusDocumentoVetorizado($parametros['IdDocumento']);
+            http_response_code($response['code']);
+        }
+
+        self::printResult($response);
+    }
     public static function processosIndexadosCancelados()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {

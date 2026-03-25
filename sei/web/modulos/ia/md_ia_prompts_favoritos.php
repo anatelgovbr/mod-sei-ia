@@ -104,7 +104,7 @@ try {
         );
     }
 
-    if ($numIdMdIaGrupoPromptsFav > 0) {
+    if (is_numeric($numIdMdIaGrupoPromptsFav) && (int)$numIdMdIaGrupoPromptsFav > 0) {
         $objMdIaPromptsFavoritosDTO->setNumIdMdIaGrupoPromptsFav($numIdMdIaGrupoPromptsFav);
     }
 
@@ -157,10 +157,10 @@ try {
         $strCssTr = ($strCssTr == 'class="infraTrClara"') ? 'class="infraTrEscura"' : 'class="infraTrClara"';
         $strResultado .= '<tr ' . $strCssTr . '>';
 
-        $strResultado .= '<td valign="top" class="tdInteracao">' . PaginaSEI::getInstance()->getTrCheck($i, $arrObjMdIaPromptsFavoritosDTO[$i]->getNumIdMdIaPromptsFavoritos(), $arrObjMdIaPromptsFavoritosDTO[$i]->getStrDescricaoPrompt()) . '</td>';
-        $strResultado .= '<td align="center" valign="top" class="tdInteracao">' . $arrObjMdIaPromptsFavoritosDTO[$i]->getStrNomeGrupoFavorito() . '</td>';
-        $strResultado .= '<td align="center" valign="top" class="tdInteracao">' . nl2br(htmlspecialchars(mb_strimwidth($arrObjMdIaPromptsFavoritosDTO[$i]->getStrDescricaoPrompt(), 0, 500, "...", "ISO-8859-1"), ENT_QUOTES | ENT_SUBSTITUTE, 'ISO-8859-1', false)) . '</td>';
-        $strResultado .= '<td align="center" valign="top" class="tdInteracao">' . nl2br(htmlspecialchars(mb_strimwidth($arrObjMdIaPromptsFavoritosDTO[$i]->getStrPrompt(), 0, 500, "...", "ISO-8859-1"), ENT_QUOTES | ENT_SUBSTITUTE, 'ISO-8859-1', false)) . '</td>';
+        $strResultado .= '<td valign="top" class="tdInteracao">' . PaginaSEI::getInstance()->getTrCheck($i, $arrObjMdIaPromptsFavoritosDTO[$i]->getNumIdMdIaPromptsFavoritos(), PaginaSEI::tratarHTML($arrObjMdIaPromptsFavoritosDTO[$i]->getStrDescricaoPrompt())) . '</td>';
+        $strResultado .= '<td align="center" valign="top" class="tdInteracao">' . PaginaSEI::tratarHTML($arrObjMdIaPromptsFavoritosDTO[$i]->getStrNomeGrupoFavorito()) . '</td>';
+        $strResultado .= '<td align="left" valign="top" class="tdInteracao">' . nl2br(htmlspecialchars(mb_strimwidth($arrObjMdIaPromptsFavoritosDTO[$i]->getStrDescricaoPrompt(), 0, 500, "...", "ISO-8859-1"), ENT_QUOTES | ENT_SUBSTITUTE, 'ISO-8859-1', false)) . '</td>';
+        $strResultado .= '<td align="left" valign="top" class="tdInteracao">' . nl2br(htmlspecialchars(mb_strimwidth($arrObjMdIaPromptsFavoritosDTO[$i]->getStrPrompt(), 0, 500, "...", "ISO-8859-1"), ENT_QUOTES | ENT_SUBSTITUTE, 'ISO-8859-1', false)) . '</td>';
         $strResultado .= '<td align="center" valign="top" class="tdInteracao">' . $arrObjMdIaPromptsFavoritosDTO[$i]->getDthAlteracao() . '</td>';
 
 

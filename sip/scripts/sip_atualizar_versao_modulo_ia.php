@@ -7,10 +7,10 @@ class MdIaAtualizadorSipRN extends InfraRN
     const PARAMETRO_VERSAO_MODULO = 'VERSAO_MODULO_IA';
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '1.3.0';
+    private $versaoAtualDesteModulo = '1.4.0';
     private $nomeDesteModulo = 'MÓDULO DO IA';
     private $nomeParametroModulo = 'VERSAO_MODULO_IA';
-    private $historicoVersoes = array('1.0.0', '1.1.0', '1.2.0', '1.3.0');
+    private $historicoVersoes = array('1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0');
 
     public function __construct()
     {
@@ -111,6 +111,8 @@ class MdIaAtualizadorSipRN extends InfraRN
                     $this->instalarv120();
                 case '1.2.0':
                     $this->instalarv130();
+                case '1.3.0':
+                    $this->instalarv140();
                     break;
                 default:
                     $this->finalizar('A VERSÃO MAIS ATUAL DO ' . $this->nomeDesteModulo . ' (v' . $this->versaoAtualDesteModulo . ') JÁ ESTÁ INSTALADA.');
@@ -603,6 +605,14 @@ class MdIaAtualizadorSipRN extends InfraRN
             '\'md_ia_ods_onu_nsa_consultar\''
         );
         $this->_cadastrarAuditoria($numIdSistemaSei, $arrAuditoria);
+
+        $this->atualizarNumeroVersao($nmVersao);
+    }
+
+    protected function instalarv140()
+    {
+        $nmVersao = '1.4.0';
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSÃO ' . $nmVersao . ' DO ' . $this->nomeDesteModulo . ' NA BASE DO SIP');
 
         $this->atualizarNumeroVersao($nmVersao);
     }

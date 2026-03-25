@@ -1,9 +1,8 @@
 <script type="text/javascript">
-
     function inicializar() {
-        if ('<?=$_GET['acao']?>' == 'md_ia_adm_pesq_doc_cadastrar') {
+        if ('<?= $_GET['acao'] ?>' == 'md_ia_adm_pesq_doc_cadastrar') {
             document.getElementById('txtQtdProcessListagem').focus();
-        } else if ('<?=$_GET['acao']?>' == 'md_ia_adm_pesq_doc_consultar') {
+        } else if ('<?= $_GET['acao'] ?>' == 'md_ia_adm_pesq_doc_consultar') {
             infraDesabilitarCamposAreaDados();
         } else {
             document.getElementById('btnCancelar').focus();
@@ -36,9 +35,11 @@
     function OnSubmitForm() {
         return validarCadastro();
     }
+
     function adicionarTipoDocumento() {
+        document.querySelectorAll('.infraTrAcessada').forEach(el => el.classList.remove('infraTrAcessada'));
         var IdItipoDocumento = $("#selTipoDocumento").val();
-        if($("#"+IdItipoDocumento).length) {
+        if ($("#" + IdItipoDocumento).length) {
             rolar_para('#divMsg');
             $("#divMsg > div > label").html("O Tipo de Documento selecionado já foi adicionado como Tipo de Documento Alvo da Pesquisa.");
             $("#divMsg > div").addClass("alert-danger");
@@ -46,11 +47,12 @@
             return false;
         }
         var nomeTipoDocumento = $('#selTipoDocumento').find(":selected").text();
-        var linhaAtualizada = $("#hdnTbTipoDocumento").val()+"¥"+IdItipoDocumento+"±S";
+        var linhaAtualizada = $("#hdnTbTipoDocumento").val() + "¥" + IdItipoDocumento + "±S";
         $("#hdnTbTipoDocumento").val(linhaAtualizada);
         var linhaTabela = montarLinhaTabela(IdItipoDocumento, nomeTipoDocumento, true);
         $("#tbTipoDocumento").append(linhaTabela);
     }
+
     function montarLinhaTabela(IdItipoDocumento, nomeTipoDocumento, itemNovo, ativo) {
         var dataAtual = new Date();
         var dia = ("0" + dataAtual.getDate()).slice(-2)
@@ -59,38 +61,40 @@
         var horas = ("0" + dataAtual.getHours()).slice(-2);
         var minutos = ("0" + dataAtual.getMinutes()).slice(-2);
         var segundos = ("0" + dataAtual.getSeconds()).slice(-2);
-        if(itemNovo) {
-            var linhaTabela = "<tr id='" + IdItipoDocumento + "'>";
+        if (itemNovo) {
+            var linhaTabela = "<tr id='" + IdItipoDocumento + "' class='infraTrAcessada'>";
         }
-        linhaTabela +=  "<td>"+nomeTipoDocumento+"</td>";
-        linhaTabela +=  "<td>"+dia+"/"+mes+"/"+ano+" "+horas+":"+minutos+":"+segundos+"</td>";
-        linhaTabela +=  "<td>";
-        if(itemNovo) {
-            linhaTabela +=  "<a onclick='removerTipoDocumento("+IdItipoDocumento+")'><img src=' <?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg' title='Excluir Tipo de Documento' alt='Excluir Tipo de Documento' class='infraImg' /></a>";
-        } else if(ativo) {
-            linhaTabela +=  "<a onclick='desativarTipoDocumento("+IdItipoDocumento+")'><img src=' <?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/desativar.svg' title='Desativar Tipo de Documento' alt='Desativar Tipo de Documento' class='infraImg' /></a>";
+        linhaTabela += "<td>" + nomeTipoDocumento + "</td>";
+        linhaTabela += "<td>" + dia + "/" + mes + "/" + ano + " " + horas + ":" + minutos + ":" + segundos + "</td>";
+        linhaTabela += "<td>";
+        if (itemNovo) {
+            linhaTabela += "<a onclick='removerTipoDocumento(" + IdItipoDocumento + ")'><img src=' <?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/remover.svg' title='Excluir Tipo de Documento' alt='Excluir Tipo de Documento' class='infraImg' /></a>";
+        } else if (ativo) {
+            linhaTabela += "<a onclick='desativarTipoDocumento(" + IdItipoDocumento + ")'><img src=' <?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/desativar.svg' title='Desativar Tipo de Documento' alt='Desativar Tipo de Documento' class='infraImg' /></a>";
         } else {
-            linhaTabela +=  "<a onclick='ativarTipoDocumento("+IdItipoDocumento+")'><img src=' <?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/reativar.svg' title='Reativar Tipo de Documento' alt='Reativar Tipo de Documento' class='infraImg' /></a>";
+            linhaTabela += "<a onclick='ativarTipoDocumento(" + IdItipoDocumento + ")'><img src=' <?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/reativar.svg' title='Reativar Tipo de Documento' alt='Reativar Tipo de Documento' class='infraImg' /></a>";
         }
-        linhaTabela +=  "</td>";
-        if(itemNovo) {
+        linhaTabela += "</td>";
+        if (itemNovo) {
             linhaTabela += "</tr>";
         }
         return linhaTabela;
     }
+
     function removerTipoDocumento(IdItipoDocumento) {
-        $("#"+IdItipoDocumento).remove();
+        $("#" + IdItipoDocumento).remove();
         linhaAtualizada = removerItemHiddenTipoDocumento($("#hdnTbTipoDocumento").val(), IdItipoDocumento);
         $("#hdnTbTipoDocumento").val(linhaAtualizada);
     }
+
     function removerItemHiddenTipoDocumento(hdnTbTipoDocumento, itemRemover) {
         var linhas = hdnTbTipoDocumento.split('¥');
         var linhaAtualizada = "";
         linhas.forEach(function(linha) {
             var colunas = linha.split('±');
-            if(colunas[0] != itemRemover) {
-                colunas.forEach(function (coluna) {
-                    linhaAtualizada += coluna+"±";
+            if (colunas[0] != itemRemover) {
+                colunas.forEach(function(coluna) {
+                    linhaAtualizada += coluna + "±";
                 });
                 linhaAtualizada = linhaAtualizada.substring(0, linhaAtualizada.length - 1);
                 linhaAtualizada += "¥";
@@ -99,24 +103,27 @@
         linhaAtualizada = linhaAtualizada.substring(0, linhaAtualizada.length - 1);
         return linhaAtualizada;
     }
+
     function desativarTipoDocumento(IdItipoDocumento) {
         var linhaAtualizada = removerItemHiddenTipoDocumento($("#hdnTbTipoDocumento").val(), IdItipoDocumento);
-        linhaAtualizada = linhaAtualizada+"¥"+IdItipoDocumento+"±N";
-        var nomeTipoDocumento = $('#'+IdItipoDocumento+' > td:first-child').html();
+        linhaAtualizada = linhaAtualizada + "¥" + IdItipoDocumento + "±N";
+        var nomeTipoDocumento = $('#' + IdItipoDocumento + ' > td:first-child').html();
         $("#hdnTbTipoDocumento").val(linhaAtualizada);
         var linhaTabela = montarLinhaTabela(IdItipoDocumento, nomeTipoDocumento, false, false);
-        $("#"+IdItipoDocumento).addClass("trVermelha");
-        $("#"+IdItipoDocumento).html(linhaTabela);
+        $("#" + IdItipoDocumento).addClass("trVermelha");
+        $("#" + IdItipoDocumento).html(linhaTabela);
     }
+
     function ativarTipoDocumento(IdItipoDocumento) {
         var linhaAtualizada = removerItemHiddenTipoDocumento($("#hdnTbTipoDocumento").val(), IdItipoDocumento);
-        linhaAtualizada = linhaAtualizada+"¥"+IdItipoDocumento+"±S";
-        var nomeTipoDocumento = $('#'+IdItipoDocumento+' > td:first-child').html();
+        linhaAtualizada = linhaAtualizada + "¥" + IdItipoDocumento + "±S";
+        var nomeTipoDocumento = $('#' + IdItipoDocumento + ' > td:first-child').html();
         $("#hdnTbTipoDocumento").val(linhaAtualizada);
         var linhaTabela = montarLinhaTabela(IdItipoDocumento, nomeTipoDocumento, false, true);
-        $("#"+IdItipoDocumento).html(linhaTabela);
-        $("#"+IdItipoDocumento).removeClass("trVermelha");
+        $("#" + IdItipoDocumento).html(linhaTabela);
+        $("#" + IdItipoDocumento).removeClass("trVermelha");
     }
+
     function rolar_para(elemento) {
         $("#divMsg > div").removeClass("alert-warning");
         $("#divMsg > div").removeClass("alert-danger");

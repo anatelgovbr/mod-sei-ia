@@ -1,4 +1,5 @@
 <?
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -102,7 +103,6 @@ class MdIaAdmIntegracaoRN extends InfraRN
         try {
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_integracao_cadastrar', __METHOD__, $objMdIaAdmIntegracaoDTO);
             return $this->processaCadastrarAlterar(array($objMdIaAdmIntegracaoDTO, "cadastrar"));
-
         } catch (Exception $e) {
             throw new InfraException('Erro cadastrando Integração.', $e);
         }
@@ -113,7 +113,6 @@ class MdIaAdmIntegracaoRN extends InfraRN
         try {
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_integracao_alterar', __METHOD__, $objMdIaAdmIntegracaoDTO);
             return $this->processaCadastrarAlterar(array($objMdIaAdmIntegracaoDTO, "alterar"));
-
         } catch (Exception $e) {
             throw new InfraException('Erro alterando Integração.', $e);
         }
@@ -147,27 +146,6 @@ class MdIaAdmIntegracaoRN extends InfraRN
         }
 
         return $retIntegracao;
-    }
-
-    protected function excluirControlado($arrObjMdIaAdmIntegracaoDTO)
-    {
-        try {
-
-            SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_integracao_excluir', __METHOD__, $arrObjMdIaAdmIntegracaoDTO);
-
-            //Regras de Negocio
-            //$objInfraException = new InfraException();
-
-            //$objInfraException->lancarValidacoes();
-
-            $objMdIaAdmIntegracaoBD = new MdIaAdmIntegracaoBD($this->getObjInfraIBanco());
-            for ($i = 0; $i < count($arrObjMdIaAdmIntegracaoDTO); $i++) {
-                $objMdIaAdmIntegracaoBD->excluir($arrObjMdIaAdmIntegracaoDTO[$i]);
-            }
-
-        } catch (Exception $e) {
-            throw new InfraException('Erro excluindo Integração.', $e);
-        }
     }
 
     protected function consultarConectado(MdIaAdmIntegracaoDTO $objMdIaAdmIntegracaoDTO)
@@ -205,7 +183,6 @@ class MdIaAdmIntegracaoRN extends InfraRN
             $ret = $objMdIaAdmIntegracaoBD->listar($objMdIaAdmIntegracaoDTO);
 
             return $ret;
-
         } catch (Exception $e) {
             throw new InfraException('Erro listando Integrações.', $e);
         }
@@ -228,48 +205,6 @@ class MdIaAdmIntegracaoRN extends InfraRN
             return $ret;
         } catch (Exception $e) {
             throw new InfraException('Erro contando Integrações.', $e);
-        }
-    }
-
-    protected function desativarControlado($arrObjMdIaAdmIntegracaoDTO)
-    {
-        try {
-
-            SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_integracao_desativar', __METHOD__, $arrObjMdIaAdmIntegracaoDTO);
-
-            //Regras de Negocio
-            //$objInfraException = new InfraException();
-
-            //$objInfraException->lancarValidacoes();
-
-            $objMdIaAdmIntegracaoBD = new MdIaAdmIntegracaoBD($this->getObjInfraIBanco());
-            for ($i = 0; $i < count($arrObjMdIaAdmIntegracaoDTO); $i++) {
-                $objMdIaAdmIntegracaoBD->desativar($arrObjMdIaAdmIntegracaoDTO[$i]);
-            }
-
-        } catch (Exception $e) {
-            throw new InfraException('Erro desativando Integração.', $e);
-        }
-    }
-
-    protected function reativarControlado($arrObjMdIaAdmIntegracaoDTO)
-    {
-        try {
-
-            SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_integracao_reativar', __METHOD__, $arrObjMdIaAdmIntegracaoDTO);
-
-            //Regras de Negocio
-            //$objInfraException = new InfraException();
-
-            //$objInfraException->lancarValidacoes();
-
-            $objMdIaAdmIntegracaoBD = new MdIaAdmIntegracaoBD($this->getObjInfraIBanco());
-            for ($i = 0; $i < count($arrObjMdIaAdmIntegracaoDTO); $i++) {
-                $objMdIaAdmIntegracaoBD->reativar($arrObjMdIaAdmIntegracaoDTO[$i]);
-            }
-
-        } catch (Exception $e) {
-            throw new InfraException('Erro reativando Integração.', $e);
         }
     }
 

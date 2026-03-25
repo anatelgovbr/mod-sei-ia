@@ -75,6 +75,7 @@ try {
                     $objMdIaAdmConfigAssistIADTO->setNumLimiteMaiorUsuariosTokens($_POST["txtQtdLimiteMaiorUsuarios"]);
                     $objMdIaAdmConfigAssistIADTO->setStrSinRefletir($_POST["rdnRefletir"]);
                     $objMdIaAdmConfigAssistIADTO->setStrSinBuscarWeb($_POST["rdnBuscarWeb"]);
+                    $objMdIaAdmConfigAssistIADTO->setStrSystemPrompt($_POST["txaPromptSystem"]);
                     $objMdIaAdmConfigAssistIARN->alterar($objMdIaAdmConfigAssistIADTO);
 
                     $arrUsuarios = PaginaSEI::getInstance()->getArrItensTabelaDinamica($_POST['hdnIdUsuarios']);
@@ -351,7 +352,7 @@ Define as instruções internas de como o LLM de IA Generativa deve se comportar
                     class="infraImg" alt="Ícone de Ajuda" />
                 <textarea class="infraTextArea form-control" name="txaPromptSystem" id="txaPromptSystem"
                     rows="12"
-                    cols="300" disabled
+                    cols="300" readonly
                     onkeypress="return infraMascaraTexto(this, event, 2000);"
                     maxlength="2000"
                     tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?= $objMdIaAdmConfigAssistIADTO->getStrSystemPrompt() ?></textarea>
