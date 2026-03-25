@@ -1,5 +1,5 @@
-name: 1 - Reportar Erro
-description: Reporte erro para nos ajudar a melhorar
+name: 🐛 Relatório de Erro
+description: Reportar um problema ou comportamento inesperado no sistema
 title: "[ERRO]: "
 labels: ["bug-defeito"]
 assignees: 
