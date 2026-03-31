@@ -1663,18 +1663,20 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
 
         $objInfraMetaBD->adicionarColuna('md_ia_proc_indexaveis', 'sin_processo_aberto', $objInfraMetaBD->tipoTextoVariavel(1), 'null');
-        $objInfraMetaBD->adicionarColuna('md_ia_proc_indexaveis', 'sin_vetorizado', $objInfraMetaBD->tipoTextoVariavel(1), 'not null');
+        $objInfraMetaBD->adicionarColuna('md_ia_proc_indexaveis', 'sin_vetorizado', $objInfraMetaBD->tipoTextoVariavel(1), 'null');
         $objInfraMetaBD->adicionarColuna('md_ia_proc_indexaveis', 'dth_vetorizacao', $objInfraMetaBD->tipoDataHora(), 'null');
 
         BancoSEI::getInstance()->executarSql("UPDATE md_ia_proc_indexaveis set sin_vetorizado =  'N'");
+        $objInfraMetaBD->alterarColuna('md_ia_proc_indexaveis', 'sin_vetorizado', $objInfraMetaBD->tipoTextoVariavel(1), 'not null');
 
         $objInfraMetaBD->adicionarColuna('md_ia_doc_indexaveis', 'sin_processo_aberto', $objInfraMetaBD->tipoTextoVariavel(1), 'null');
-        $objInfraMetaBD->adicionarColuna('md_ia_doc_indexaveis', 'sin_vetorizado', $objInfraMetaBD->tipoTextoVariavel(1), 'not null');
+        $objInfraMetaBD->adicionarColuna('md_ia_doc_indexaveis', 'sin_vetorizado', $objInfraMetaBD->tipoTextoVariavel(1), 'null');
         $objInfraMetaBD->adicionarColuna('md_ia_doc_indexaveis', 'dth_vetorizacao', $objInfraMetaBD->tipoDataHora(), 'null');
         $objInfraMetaBD->adicionarColuna('md_ia_doc_indexaveis', 'hash', $objInfraMetaBD->tipoTextoVariavel(32), 'null');
 
         BancoSEI::getInstance()->executarSql("UPDATE md_ia_doc_indexaveis set sin_vetorizado =  'N'");
 
+        $objInfraMetaBD->alterarColuna('md_ia_doc_indexaveis', 'sin_vetorizado', $objInfraMetaBD->tipoTextoVariavel(1), 'not null');
         $objMdIaAdmUrlIntegracaoDTO = new MdIaAdmUrlIntegracaoDTO();
         $MdIaAdmUrlIntegracaoRN = new MdIaAdmUrlIntegracaoRN();
         $objMdIaAdmUrlIntegracaoDTO->setNumIdMdIaAdmUrlIntegracao(8);
