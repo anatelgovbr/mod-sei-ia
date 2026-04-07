@@ -630,6 +630,7 @@ class MdIaConfigAssistenteINT extends InfraINT
 
     public static function retornaMensagemAmigavelUsuario($statusRequisicao, $mensagemOriginal)
     {
+        $tipo = "success";
         if ($statusRequisicao != "200" && !is_null($statusRequisicao)) {
             switch ($statusRequisicao) {
                 case '204':
@@ -695,6 +696,16 @@ class MdIaConfigAssistenteINT extends InfraINT
                 case '415':
                     $resposta = "A solução identificou citação de documento externo com extensão de arquivo não permitida. Adeque o prompt para não referenciar documento externo com extensão não permitida.";
                     $tipo = "warning";
+                    break;
+
+                case '429':
+                    $resposta = "A solução atingiu o limite de requisições no momento. Tente novamente em alguns instantes.";
+                    $tipo = "warning";
+                    break;
+
+                default:
+                    $resposta = "Tivemos um erro inesperado. O administrador do sistema já foi informado sobre o erro.";
+                    $tipo = "error";
                     break;
             }
         } else {

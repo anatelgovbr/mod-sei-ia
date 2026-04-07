@@ -74,11 +74,12 @@ class MdIaConsultaWebserviceINT extends InfraRN
 
             $respostaParcial = '';
             $metadataString = [];
+            $erroStream = [];
 
             // -----------------------------------------
             // CALLBACK: Processa o streaming linha a linha
             // -----------------------------------------
-            curl_setopt($curl, CURLOPT_WRITEFUNCTION, function ($ch, $data) use (&$respostaParcial, &$metadataString, $objMdIaInteracaoChatRN, $idInteracao) {
+            curl_setopt($curl, CURLOPT_WRITEFUNCTION, function ($ch, $data) use (&$respostaParcial, &$metadataString, &$erroStream, $objMdIaInteracaoChatRN, $idInteracao) {
 
                 $linhas = explode("\n", $data);
 
@@ -123,6 +124,10 @@ class MdIaConsultaWebserviceINT extends InfraRN
                                 }
                                 break;
 
+                            case 'error':
+                                $erroStream = $payload;
+                                break;
+
                             case 'end':
                                 break;
                         }
@@ -139,15 +144,21 @@ class MdIaConsultaWebserviceINT extends InfraRN
             $tempoExecucaoInteiro = intval($tempoExecucao);
             curl_close($curl);
 
-            if ($httpcode !== 200) {
-                $this->tratarCodigoDiferente200($metadataString, $topico, $urlApi['linkEndpoint'], $httpcode, $idInteracao, $tempoExecucaoInteiro);
+            $codigoRetorno = $httpcode;
+
+            if ($httpcode === 200 && !empty($erroStream['status_code'])) {
+                $codigoRetorno = intval($erroStream['status_code']);
+            }
+
+            if ($codigoRetorno !== 200) {
+                $this->tratarCodigoDiferente200($metadataString, $erroStream, $topico, $urlApi['linkEndpoint'], $codigoRetorno, $idInteracao, $tempoExecucaoInteiro);
             }
 
             // Atualiza final com sucesso
             $dtoFinal = new MdIaInteracaoChatDTO();
             $dtoFinal->setNumIdMdIaInteracaoChat($idInteracao);
             $dtoFinal->setNumTempoExecucao($tempoExecucaoInteiro);
-            $dtoFinal->setNumStatusRequisicao($httpcode);
+            $dtoFinal->setNumStatusRequisicao($codigoRetorno);
             $objMdIaInteracaoChatRN->alterar($dtoFinal);
         } catch (Exception $e) {
 
@@ -165,9 +176,15 @@ class MdIaConsultaWebserviceINT extends InfraRN
         }
     }
 
-    private function tratarCodigoDiferente200($metadataString, $topico, $urlApi, $httpcode, $idInteracao, $tempoExecucaoInteiro)
+    private function tratarCodigoDiferente200($metadataString, $erroStream, $topico, $urlApi, $httpcode, $idInteracao, $tempoExecucaoInteiro)
     {
-        $resposta = iconv("UTF-8", "ISO-8859-1//TRANSLIT", $metadataString['choices'][0]['message']['content']);
+        if (!empty($erroStream['detail'])) {
+            $resposta = iconv("UTF-8", "ISO-8859-1//TRANSLIT//IGNORE", $erroStream['detail']);
+        } else if (isset($metadataString['choices'][0]['message']['content'])) {
+            $resposta = iconv("UTF-8", "ISO-8859-1//TRANSLIT//IGNORE", $metadataString['choices'][0]['message']['content']);
+        } else {
+            $resposta = 'Erro nao detalhado pela solucao de IA.';
+        }
 
         $mensagemApresentadaUsuario = MdIaConfigAssistenteINT::retornaMensagemAmigavelUsuario($httpcode, $resposta);
 
@@ -183,7 +200,7 @@ class MdIaConsultaWebserviceINT extends InfraRN
             $log .= "00005 - Mensagem retornada pelo Servidor: " . $resposta . " \n";
             $log .= "00006 - Mensagem apresentada ao usuário: " . $mensagemApresentadaUsuario["resposta"] . " \n";
             $log .= "00007 - ID da interação no SEI: " . $idInteracao . " \n";
-            $log .= "00008 - ID da interação na Solução de IA: " . $metadataString['id_message'] . " \n";
+            $log .= "00008 - ID da interação na Solução de IA: " . (!empty($metadataString['id_message']) ? $metadataString['id_message'] : 'Nao informado') . " \n";
             $log .= "00009 - Data e hora: " . InfraData::getStrDataHoraAtual() . " \n";
             $log .= "00010 - Tempo de Execução: " . $tempoExecucaoInteiro . " segundos \n";
             $log .= "00011 - FIM \n";
