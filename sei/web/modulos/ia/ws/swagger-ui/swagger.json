@@ -1,4 +1,4 @@
-{
+﻿{
   "openapi": "3.0.0",
   "info": {
     "title": "SEI - Inteligência Artificial",
@@ -227,6 +227,14 @@
                           "IdDocumento ": {
                             "type": "integer",
                             "example": "14980856"
+                          },
+                          "Assinaturas": {
+                            "type": "string",
+                            "example": "<div class=\"sei-assinaturas\"><div class=\"assinatura\">Documento assinado eletronicamente por Fulano de Tal, Analista, em 02/04/2026, às 09:15.</div></div>"
+                          },
+                          "SinArmazenarCache": {
+                            "type": "string",
+                            "example": "S"
                           }
                         }
                       }
@@ -1384,18 +1392,22 @@
                       "example": "success"
                     },
                     "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "TipoConteudo": {
-                            "type": "string",
-                            "example": "application/pdf"
+                      "type": "object",
+                      "properties": {
+                        "TipoConteudo": {
+                          "type": "string",
+                          "example": "text/html"
+                        },
+                        "ConteudoDocumento": {
+                          "type": "string",
+                          "example": "<p>Este documento descreve como...</p>"
+                        },
+                        "IdAnexos": {
+                          "type": "array",
+                          "items": {
+                            "type": "integer"
                           },
-                          "ConteudoDocumento": {
-                            "type": "string",
-                            "example": "Este documento descreve como..."
-                          }
+                          "example": [12345, 12346]
                         }
                       }
                     }

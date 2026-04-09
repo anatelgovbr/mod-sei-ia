@@ -163,6 +163,10 @@ class IaWS extends MdIaUtilWS
             $documentoDTO->retStrProtocoloProcedimentoFormatado();
             $documentoDTO->retNumIdTipoProcedimentoProcedimento();
             $documentoDTO->retStrSinBloqueado();
+            $documentoDTO->retStrCrcAssinatura();
+            $documentoDTO->retStrQrCodeAssinatura();
+            $documentoDTO->retNumIdUnidadeGeradoraProtocolo();
+            $documentoDTO->retStrDescricaoTipoConferencia();
             $documentoDTO->setDblIdDocumento($arrIdDocumento, InfraDTO::$OPER_IN);
 
             //APLICAR FILTRO DE DOCUMENTOS BLOQUEADOS
@@ -209,6 +213,8 @@ class IaWS extends MdIaUtilWS
                     $sinArmazenarCache = "S";
                 }
 
+                $assinaturasHtml = (new AssinaturaRN())->montarTarjas($documentoDTO);
+
                 $retorno[] = [
                     'IdProcedimento'          => (int) $documentoDTO->getDblIdProcedimento(),
                     'NumeroDocumento'         => $documentoDTO->getStrProtocoloDocumentoFormatado(),
@@ -220,7 +226,8 @@ class IaWS extends MdIaUtilWS
                     'NomeArquivo'             => $nomeArquivoAnexo,
                     'NumeroProcesso'          => $documentoDTO->getStrProtocoloProcedimentoFormatado(),
                     'IdDocumento'             => (int) $documentoDTO->getDblIdDocumento(),
-                    'SinArmazenarCache'             => $sinArmazenarCache
+                    'Assinaturas'             => $this->tratarEncodeString($assinaturasHtml),
+                    'SinArmazenarCache'       => $sinArmazenarCache
                 ];
             }
 
@@ -967,16 +974,19 @@ class IaWS extends MdIaUtilWS
             return $this->retornoErro($e->getMessage(), $e->getCode());
         }
     }
-
     private static function retornarConteudoDocumentoInterno($idDocumento)
     {
+
+
         $retorno = null;
+        $IdAnexos = [];
 
         $documento = new DocumentoDTO();
         $documento->setDblIdDocumento($idDocumento);
+        $documento->retDblIdDocumento();
         $documento->setStrStaDocumento(DocumentoRN::$TD_EXTERNO, InfraDTO::$OPER_DIFERENTE);
         $documento->retStrConteudo();
-
+        $documento->retStrProtocoloDocumentoFormatado();
         $documento->retNumIdSerie();
         $documento->retStrStaDocumento();
         $documento->retDblIdProtocoloProtocolo();
@@ -984,6 +994,7 @@ class IaWS extends MdIaUtilWS
 
         if ($documento) {
             $conteudoDocumento = $documento->getStrConteudo();
+
             $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
             if ($documento->getNumIdSerie() == $objInfraParametro->getValor('ID_SERIE_EMAIL')) {
                 $anexos = self::listarAnexosDocumento($idDocumento);
