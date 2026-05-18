@@ -14,7 +14,7 @@ class IaIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '1.4.0';
+        return '1.4.1';
     }
 
     public function getInstituicao()
