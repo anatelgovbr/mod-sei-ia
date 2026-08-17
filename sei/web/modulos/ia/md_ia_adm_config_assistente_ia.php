@@ -78,6 +78,17 @@ try {
                     $objMdIaAdmConfigAssistIADTO->setStrSystemPrompt($_POST["txaPromptSystem"]);
                     $objMdIaAdmConfigAssistIARN->alterar($objMdIaAdmConfigAssistIADTO);
 
+                    $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+                    if (isset($_POST['selProvedorTipo'])) {
+                        $objInfraParametro->setValor('MODULO_IA_PROVEDOR_TIPO', $_POST['selProvedorTipo']);
+                        $objInfraParametro->setValor('MODULO_IA_GCP_PROJECT_ID', $_POST['txtGcpProjectId'] ?? '');
+                        $objInfraParametro->setValor('MODULO_IA_GCP_LOCATION', $_POST['txtGcpLocation'] ?? 'global');
+                        $objInfraParametro->setValor('MODULO_IA_GCP_COLLECTION_ID', $_POST['txtGcpCollectionId'] ?? 'default_collection');
+                        $objInfraParametro->setValor('MODULO_IA_GCP_ENGINE_ID', $_POST['txtGcpEngineId'] ?? '');
+                        $objInfraParametro->setValor('MODULO_IA_GCP_SERVICE_ACCOUNT_JSON', $_POST['txaGcpServiceAccountJson'] ?? '');
+                        $objInfraParametro->setValor('MODULO_IA_GCP_USAR_METADATA_SERVER', $_POST['rdnGcpMetadataServer'] ?? 'N');
+                    }
+
                     $arrUsuarios = PaginaSEI::getInstance()->getArrItensTabelaDinamica($_POST['hdnIdUsuarios']);
 
                     $objMdIaAdmCfgAssiIaUsuRN = new MdIaAdmCfgAssiIaUsuRN();
@@ -94,6 +105,15 @@ try {
             }
             break;
     }
+
+    $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+    $provedorTipo = $objInfraParametro->getValor('MODULO_IA_PROVEDOR_TIPO', false) ?: 'SEI_IA_SERVER';
+    $gcpProjectId = $objInfraParametro->getValor('MODULO_IA_GCP_PROJECT_ID', false) ?: '';
+    $gcpLocation = $objInfraParametro->getValor('MODULO_IA_GCP_LOCATION', false) ?: 'global';
+    $gcpCollectionId = $objInfraParametro->getValor('MODULO_IA_GCP_COLLECTION_ID', false) ?: 'default_collection';
+    $gcpEngineId = $objInfraParametro->getValor('MODULO_IA_GCP_ENGINE_ID', false) ?: '';
+    $gcpSaJson = $objInfraParametro->getValor('MODULO_IA_GCP_SERVICE_ACCOUNT_JSON', false) ?: '';
+    $gcpMetadataServer = $objInfraParametro->getValor('MODULO_IA_GCP_USAR_METADATA_SERVER', false) ?: 'N';
 
     if ($objMdIaAdmConfigAssistIADTO && $objMdIaAdmConfigAssistIADTO->getStrSinExibirFuncionalidade() == "S") {
         $exibirFuncionalidade = "checked='checked'";
@@ -130,6 +150,15 @@ PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistem
 PaginaSEI::getInstance()->montarStyle();
 ?>
 <link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_comum.css" />
+<script type="text/javascript">
+function alternarProvedor() {
+    var sel = document.getElementById('selProvedorTipo');
+    var div = document.getElementById('divConfigGcp');
+    if (sel && div) {
+        div.style.display = (sel.value === 'GEMINI_ENTERPRISE') ? 'block' : 'none';
+    }
+}
+</script>
 <?php
 PaginaSEI::getInstance()->abrirStyle();
 include_once('md_ia_adm_config_assistente_ia_css.php');
@@ -154,9 +183,62 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         </div>
     </div>
     <div class="row">
+        <div class="col-12 col-xl-10">
+            <fieldset class="infraFieldset" style="margin-bottom: 20px;">
+                <legend class="infraLegend">Provedor de Inteligência Artificial</legend>
+                <div class="form-group row">
+                    <div class="col-12 col-md-6">
+                        <label for="selProvedorTipo" class="infraLabelObrigatorio">Tipo de Provedor:</label>
+                        <select name="selProvedorTipo" id="selProvedorTipo" class="infraSelect" onchange="alternarProvedor();">
+                            <option value="SEI_IA_SERVER" <?= ($provedorTipo === 'SEI_IA_SERVER') ? 'selected="selected"' : '' ?>>Servidor SEI-IA (Padrão ANATEL)</option>
+                            <option value="GEMINI_ENTERPRISE" <?= ($provedorTipo === 'GEMINI_ENTERPRISE') ? 'selected="selected"' : '' ?>>Gemini Enterprise App (Direto na GCP)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="divConfigGcp" style="display: <?= ($provedorTipo === 'GEMINI_ENTERPRISE') ? 'block' : 'none' ?>; margin-top: 15px;">
+                    <div class="form-group row">
+                        <div class="col-12 col-md-4">
+                            <label for="txtGcpProjectId" class="infraLabelObrigatorio">GCP Project ID:</label>
+                            <input type="text" name="txtGcpProjectId" id="txtGcpProjectId" class="infraText" value="<?= htmlspecialchars($gcpProjectId) ?>" placeholder="meu-projeto-gcp" />
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label for="txtGcpLocation" class="infraLabelObrigatorio">Localização / Região:</label>
+                            <input type="text" name="txtGcpLocation" id="txtGcpLocation" class="infraText" value="<?= htmlspecialchars($gcpLocation) ?>" placeholder="global ou us-central1" />
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label for="txtGcpEngineId" class="infraLabelObrigatorio">Engine / App ID:</label>
+                            <input type="text" name="txtGcpEngineId" id="txtGcpEngineId" class="infraText" value="<?= htmlspecialchars($gcpEngineId) ?>" placeholder="meu-app-gemini" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-12 col-md-6">
+                            <label for="txtGcpCollectionId" class="infraLabelOpcional">Collection ID:</label>
+                            <input type="text" name="txtGcpCollectionId" id="txtGcpCollectionId" class="infraText" value="<?= htmlspecialchars($gcpCollectionId) ?>" placeholder="default_collection" />
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="infraLabelObrigatorio">Usar GCP Metadata Server (Se hospedado na GCP):</label>
+                            <div>
+                                <input type="radio" name="rdnGcpMetadataServer" id="rdnGcpMetadataSim" value="S" <?= ($gcpMetadataServer === 'S') ? 'checked="checked"' : '' ?> />
+                                <label for="rdnGcpMetadataSim" class="infraLabelRadio">Sim</label>
+                                <input type="radio" name="rdnGcpMetadataServer" id="rdnGcpMetadataNao" value="N" <?= ($gcpMetadataServer !== 'S') ? 'checked="checked"' : '' ?> />
+                                <label for="rdnGcpMetadataNao" class="infraLabelRadio">Não (Usar Key JSON abaixo)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-12">
+                            <label for="txaGcpServiceAccountJson" class="infraLabelOpcional">Service Account Key (JSON):</label>
+                            <textarea name="txaGcpServiceAccountJson" id="txaGcpServiceAccountJson" class="infraTextarea" rows="6" placeholder='{ "type": "service_account", ... }'><?= htmlspecialchars($gcpSaJson) ?></textarea>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-10">
             <label id="lblExibirFuncionalidade" for="txtExibirFuncionalidade" accesskey=""
-                class="infraLabelObrigatorio">Exibir Funcionalidade:</label>
             <img align="top"
                 src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
                 name="ajuda" <?= PaginaSEI::montarTitleTooltip('Selecione a opção Exibir para que o Assistente IA seja ativado nas telas principais do SEI e no seu Editor.

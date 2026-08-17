@@ -1,6 +1,7 @@
 <?php
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
+require_once dirname(__FILE__) . '/../rn/MdIaGcpAuthRN.php';
 
 
 class MdIaConsultaWebserviceINT extends InfraRN
@@ -56,6 +57,11 @@ class MdIaConsultaWebserviceINT extends InfraRN
 
             $objMdIaConfigAssistenteRN = new MdIaConfigAssistenteRN();
             $urlApi = $objMdIaConfigAssistenteRN->retornarUrlApi();
+
+            if (isset($urlApi['provedorTipo']) && $urlApi['provedorTipo'] === 'GEMINI_ENTERPRISE') {
+                $this->enviarMensagemGeminiEnterpriseConectado($idInteracao, $interacao, $topico, $urlApi);
+                return;
+            }
 
             $curl = curl_init();
             curl_setopt_array($curl, [
@@ -231,4 +237,99 @@ try {
     } catch (Exception $e) {
     }
     exit(1);
+
+    private function enviarMensagemGeminiEnterpriseConectado($idInteracao, $interacao, $topico, $urlApi)
+    {
+        try {
+            $objMdIaInteracaoChatRN = new MdIaInteracaoChatRN();
+            $gcpAuthRN = new MdIaGcpAuthRN();
+            $accessToken = $gcpAuthRN->obterAccessTokenGcp($urlApi['serviceAccountJson'], $urlApi['usarMetadataServer']);
+
+            $topicId = $topico ? $topico->getNumIdMdIaTopicoChat() : 'default';
+            $endpointUrl = $urlApi['linkEndpoint'] . "/sessions/" . $topicId . ":streamAssist";
+
+            $payload = [
+                'query' => [
+                    'input' => $interacao->getStrInputPrompt()
+                ]
+            ];
+
+            $curl = curl_init();
+            curl_setopt_array($curl, [
+                CURLOPT_URL => $endpointUrl,
+                CURLOPT_RETURNTRANSFER => false,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 0,
+                CURLOPT_POST => true,
+                CURLOPT_HTTPHEADER => [
+                    'Authorization: Bearer ' . $accessToken,
+                    'Content-Type: application/json',
+                    'Accept: application/json'
+                ],
+                CURLOPT_POSTFIELDS => json_encode($payload),
+                CURLOPT_TIMEOUT_MS => self::TIME_OUT
+            ]);
+
+            $respostaParcial = '';
+            $metadataString = [];
+            $erroStream = [];
+
+            curl_setopt($curl, CURLOPT_WRITEFUNCTION, function ($ch, $data) use (&$respostaParcial, &$metadataString, &$erroStream, $objMdIaInteracaoChatRN, $idInteracao) {
+                $linhas = explode("
+", $data);
+
+                $objMdIaInteracaoChatDTO = new MdIaInteracaoChatDTO();
+                $objMdIaInteracaoChatDTO->setNumIdMdIaInteracaoChat($idInteracao);
+
+                foreach ($linhas as $linha) {
+                    $linha = trim($linha);
+                    if ($linha === '') continue;
+                    if (substr($linha, 0, 1) === ':') continue;
+
+                    if (substr($linha, 0, 5) === 'data:') {
+                        $linha = trim(substr($linha, 5));
+                    }
+
+                    $payloadChunk = json_decode($linha, true);
+                    if (!is_array($payloadChunk)) continue;
+
+                    $chunkText = '';
+                    if (isset($payloadChunk['answer']['replyText'])) {
+                        $chunkText = $payloadChunk['answer']['replyText'];
+                    } else if (isset($payloadChunk['answerText'])) {
+                        $chunkText = $payloadChunk['answerText'];
+                    } else if (isset($payloadChunk['replyText'])) {
+                        $chunkText = $payloadChunk['replyText'];
+                    } else if (isset($payloadChunk['delta'])) {
+                        $chunkText = $payloadChunk['delta'];
+                    }
+
+                    if ($chunkText !== '') {
+                        $token = mb_convert_encoding($chunkText, 'HTML-ENTITIES', 'UTF-8');
+                        $respostaParcial .= iconv("UTF-8", "ISO-8859-1//TRANSLIT//IGNORE", $token);
+                        $objMdIaInteracaoChatDTO->setStrResposta($respostaParcial);
+                        $objMdIaInteracaoChatRN->alterar($objMdIaInteracaoChatDTO);
+                    }
+
+                    if (isset($payloadChunk['metadata'])) {
+                        $metadataString = $payloadChunk['metadata'];
+                    }
+                }
+
+                return strlen($data);
+            });
+
+            curl_exec($curl);
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            curl_close($curl);
+
+            $dtoFinal = new MdIaInteracaoChatDTO();
+            $dtoFinal->setNumIdMdIaInteracaoChat($idInteracao);
+            $dtoFinal->setNumStatusRequisicao($httpcode);
+            $objMdIaInteracaoChatRN->alterar($dtoFinal);
+
+        } catch (Exception $e) {
+            LogSEI::getInstance()->gravar("Erro no streaming Gemini Enterprise: " . $e->getMessage(), InfraLog::$ERRO);
+        }
+    }
 }
