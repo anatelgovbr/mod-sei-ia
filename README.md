@@ -60,6 +60,53 @@ Antes de executar qualquer script de instalação ou atualização do Módulo SE
 8. Em caso de erro durante a execução do script, verificar (lendo as mensagens de erro e no menu Infra > Log do SEI e do SIP) se a causa é algum problema na infraestrutura local ou ajustes indevidos na estrutura de banco do core do sistema. Neste caso, após a correção, deve recuperar o backup do banco pertinente e repetir o procedimento, especialmente a execução dos scripts de banco indicados acima.
 9. Após a execução com sucesso, com um usuário com permissão de Administrador no SEI, seguir os passos dispostos no tópico "Orientações Negociais" mais abaixo.
 
+## Guia de Inicialização de Conhecimento sobre a Instalação do SEI IA
+
+O SEI IA funciona com dois componentes: o Módulo SEI IA, instalado no SEI, e o Servidor de Soluções de IA, executado em um servidor Linux com Docker. O órgão deve instalar e configurar o módulo no ambiente correspondente antes de instalar o servidor.
+
+O Servidor de Soluções de IA deve ocupar um servidor exclusivo. Não compartilhe esse servidor com outras soluções.
+
+**Leitura inicial**
+
+Leia integralmente o [README do Servidor de Soluções de IA](https://github.com/anatelgovbr/sei-ia?tab=readme-ov-file) e o seu [Manual de Instalação do Servidor de Soluções de IA](https://github.com/anatelgovbr/sei-ia/blob/main/docs/INSTALL.md) antes de iniciar os trabalhos. Esses documentos detalham requisitos, configurações, implantação, validação, segurança, backup e atualização da solução.
+
+**Materiais para estudo**
+
+- Consulte o [Manual do Usuário do SEI IA](https://docs.google.com/document/d/e/2PACX-1vRsKljzHcKwRfdW7IcnFA1EHNPIInog9Mqpu58xEFzRMfZ5avrLhYbwUjPkXuTDFKFEPnev4ASJ-5Dm/pub) para conhecer as funcionalidades disponíveis.
+- Assista à [Aula de Engenharia de Prompts aplicada ao SEI IA](https://www.youtube.com/watch?v=Q4oIQBLHKXo) para compreender a importância do letramento em IA Generativa.
+- Consulte a [apresentação sobre o SEI IA e suas próximas versões](https://www.canva.com/design/DAGqoXRJj2Y/GlvF7VPtDapQIIpa4H0hDA/view).
+	- O slide 18 informa a quantidade de instalações já existentes do SEI IA.
+	- O slide 19 apresenta o roadmap das próximas versões.
+- Veja o [vídeo de demonstração de uso prático](https://www.youtube.com/watch?v=BX3NdqivydA).
+
+**Arquitetura e distribuição**
+
+O SEI IA é o sétimo módulo desenvolvido e distribuído pela Anatel por meio do GitHub. O [Módulo SEI IA](https://github.com/anatelgovbr/mod-sei-ia) e o [Servidor de Soluções de IA](https://github.com/anatelgovbr/sei-ia) compõem a arquitetura da solução.
+
+**Infraestrutura e comunicação**
+
+O Servidor de Soluções de IA requer, como referência mínima, um servidor Linux com 16 núcleos de 2,10 GHz, 128 GB de memória RAM, Docker Engine versão 27.1.1 ou posterior e Docker Compose versão 2.29 ou posterior. O órgão deve dimensionar o armazenamento de acordo com o volume de processos e documentos do SEI, pois os bancos de dados e os índices crescem com esse volume.
+- Veja mais informações sobre os requisitos de hardware e software no [Manual de Instalação do Servidor de Soluções de IA](https://github.com/anatelgovbr/sei-ia/blob/main/docs/INSTALL.md).
+
+Em ambiente não-produtivo, o órgão pode avaliar uma alocação menor de recursos e desligar o servidor durante períodos sem uso. Ligue o servidor para realizar atualizações e procedimentos de pré-produção. O manual não recomenda o uso do Windows com o Subsistema do Windows para Linux em ambiente de produção.
+
+**Consumo de serviços de inteligência artificial**
+
+A solução utiliza APIs de inteligência artificial como serviço para os modelos de linguagem de grande porte (LLMs) e a geração de embeddings (vetorização).
+
+Apenas como referência, reserve US$ 400 brutos **por mês** na console do Cloud Provider **para cada 1.000 usuários internos**. Esse valor é uma estimativa e não representa o preço final. O contrato pode incluir a taxa do Broker e outros acréscimos.
+- O [processo de contratação da Anatel](https://sei.anatel.gov.br/sei/modulos/pesquisa/md_pesq_processo_exibir.php?92AHliMZAlcgWWxm2w2qy-GDVz335h7FYd_mrGCDn9UEi2XStDTUZKOJ_damneHH9mwnSMIjw0l3j23hD04Tsmk90zHN2lc3Yg9C8WB6vIFDMdpaSLfMyGju2GmZCvwD) reúne Documento de Formalização da Demanda (DFD), Estudo Técnico Preliminar (ETP), Termo de Referência (TR) e Informe de Pesquisa de Preços. Esses documentos podem ajudar na contratação do serviço de **Broker MultiCloud** do Serpro, quando o órgão ainda não possui contrato para esse serviço.
+
+O valor reservado contempla, por enquanto, as APIs de inteligência artificial e de geração de embeddings. A estimativa inclui margem para funcionalidades futuras. O consumo real varia conforme o uso da solução **e depende diretamente** das campanhas de letramento, oficinas e capacitações sobre engenharia de prompts.
+
+**Importância da Galeria de Prompts no SEI IA**
+
+É muito importante que o órgão cadastre na **Galeria de Prompts** do SEI IA os prompts avançados indicados em seu [Manual do Usuário](https://docs.google.com/document/d/e/2PACX-1vRsKljzHcKwRfdW7IcnFA1EHNPIInog9Mqpu58xEFzRMfZ5avrLhYbwUjPkXuTDFKFEPnev4ASJ-5Dm/pub#h.cay75n32gnc8) e crie mais prompts adequados às atividades do órgão.
+
+A Galeria de Prompts iniciando com o máximo de prompts avançados serve como referência e orienta os usuários na criação de prompts mais completos, organizados e eficazes.
+
+Os prompts avançados indicados no Manual do Usuário são versionados no seguinte projeto do GitHub: [https://github.com/anatelgovbr/prompts](https://github.com/anatelgovbr/prompts)
+
 ## Orientações Negociais
 1. Mais uma vez reforçamos que antes de instalar o [Servidor de Soluções de IA](https://github.com/anatelgovbr/sei-ia?tab=readme-ov-file "Clique e acesse") é mandatório ter o Módulo SEI IA previamente instalado e configurado no SEI do ambiente correspondente.
 2. Imediatamente após a instalação com sucesso do Módulo SEI IA no SEI, usuário com permissão de "Administrador" do SEI deve fazer novo login no SEI e acessar os menus de administração do Módulo pelo seguinte caminho: Administração > Inteligência Artificial.
@@ -72,8 +119,8 @@ Antes de executar qualquer script de instalação ou atualização do Módulo SE
 	- **Atenção**: O recurso "md_ia_adm_config_assist_ia_consultar" define quem visualiza o Assistente do SEI IA.
 		- Caso o órgão tenha perfil separado para colaboradores, por exemplo "Colaborador (Básico sem Assinatura)", e queira ampliar o uso do Assistente, deve incluir o mencionado recurso no Perfil pertinente.
 		- Caso o órgão queira restringir quem pode utilizar o Assistente, precisa retirar o mencionado recurso do Perfil "Básico" e incluir no Perfil pertinente.
-		- O custo do uso da API do GPT-4o é muito baixo e pode ser desnecessário restringir o uso do Assistente.
-		- É de responsabilidade do órgão essa avaliação sobre ampliar ou restringir o uso do Assistente.
+		- O custo do uso das APIs é muito baixo e pode ser desnecessário restringir o uso do Assistente.
+		- É de responsabilidade do órgão essa avaliação, sobre ampliar ou restringir o uso do Assistente.
 4. Acesse o [Manual do Usuário do SEI IA](https://docs.google.com/document/d/e/2PACX-1vRsKljzHcKwRfdW7IcnFA1EHNPIInog9Mqpu58xEFzRMfZ5avrLhYbwUjPkXuTDFKFEPnev4ASJ-5Dm/pub "Clique e acesse") para conhecer suas funcionalidades.
 
 ## Erros ou Sugestões
