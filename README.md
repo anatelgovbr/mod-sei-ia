@@ -18,7 +18,9 @@ Antes de executar qualquer script de instalação ou atualização do Módulo SE
 
 É comum que o PHP utilizado pelo Apache carregue um `php.ini` diferente do PHP utilizado em linha de comando. Caso as configurações não estejam alinhadas, os scripts poderão falhar ou o módulo poderá apresentar comportamento inesperado.
 
-### Diretivas que devem ser conferidas
+**Diretivas que devem ser conferidas**
+
+As diretivas PHP abaixo devem ser conferidas se estão em conformidade com o Manual de Instalação do SEI.
 
 | Diretiva               | Valor                | Observação |
 |------------------------|----------------------|------------|
@@ -29,8 +31,6 @@ Antes de executar qualquer script de instalação ou atualização do Módulo SE
 | default_socket_timeout | 60                   |            |
 | max_input_vars         | 1000                 |            |
 | html_errors            | 0                    |            |
-| post_max_size          | 201M                 | Estes valores dependem do tamanho máximo permitido para arquivos externos (PDF, planilhas, imagens, vídeos, etc.). Os valores de exemplo são para upload de até 200 MB. O `post_max_size` deve ser ligeiramente maior que `upload_max_filesize`. Além dessas configurações, é necessário alterar o parâmetro `SEI_TAM_MB_DOC_EXTERNO` na tabela de parâmetros do SEI (ver seção "Configuração SEI"). |
-| upload_max_filesize    | 200M                 |            |
 | session.cookie_secure  | 1                    | Opcional. Indica que o cookie de sessão trafegará somente via HTTPS. Antes de ativar, garantir que todos os links do SEI utilizem o prefixo `https://` (intranet, atalhos, acessos externos, integrações, etc.). Caso o usuário clique em um link `http://` estando logado, a sessão será perdida. |
 
 ## Procedimentos para Instalação
