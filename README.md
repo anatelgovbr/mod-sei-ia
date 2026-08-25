@@ -78,6 +78,7 @@ Leia integralmente o [README do Servidor de Soluções de IA](https://github.com
 	- O slide 18 informa a quantidade de instalações já existentes do SEI IA.
 	- O slide 19 apresenta o roadmap das próximas versões.
 - Veja o [vídeo de demonstração de uso prático](https://www.youtube.com/watch?v=BX3NdqivydA).
+- Como referência, a Anatel possui uma Política de Governança de Inteligência Artificial (PGIA), aprovada pela [Resolução Interna Anatel nº 554, de 1º de junho de 2026](https://informacoes.anatel.gov.br/legislacao/resolucoes-internas/2152-resolucao-interna-anatel-554).
 
 **Arquitetura e distribuição**
 
