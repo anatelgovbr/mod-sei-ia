@@ -79,6 +79,32 @@ class MdIaConfigAssistenteRN extends InfraRN
 
     public function retornarUrlApi()
     {
+        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+        $provedorTipo = $objInfraParametro->getValor('MODULO_IA_PROVEDOR_TIPO', false) ?: 'SEI_IA_SERVER';
+
+        if ($provedorTipo === 'GEMINI_ENTERPRISE') {
+            $projectId = $objInfraParametro->getValor('MODULO_IA_GCP_PROJECT_ID', false);
+            $location = $objInfraParametro->getValor('MODULO_IA_GCP_LOCATION', false) ?: 'global';
+            $collectionId = $objInfraParametro->getValor('MODULO_IA_GCP_COLLECTION_ID', false) ?: 'default_collection';
+            $engineId = $objInfraParametro->getValor('MODULO_IA_GCP_ENGINE_ID', false);
+            $saJson = $objInfraParametro->getValor('MODULO_IA_GCP_SERVICE_ACCOUNT_JSON', false);
+            $usarMetadataServer = $objInfraParametro->getValor('MODULO_IA_GCP_USAR_METADATA_SERVER', false) === 'S';
+
+            $endpointBase = "https://discoveryengine.googleapis.com/v1alpha/projects/{$projectId}/locations/{$location}/collections/{$collectionId}/engines/{$engineId}";
+
+            return array(
+                'provedorTipo' => 'GEMINI_ENTERPRISE',
+                'linkEndpoint' => $endpointBase,
+                'projectId' => $projectId,
+                'location' => $location,
+                'collectionId' => $collectionId,
+                'engineId' => $engineId,
+                'serviceAccountJson' => $saJson,
+                'usarMetadataServer' => $usarMetadataServer,
+                'janelaContexto' => MdIaAdmConfigAssistIARN::$LLM_GPT_4_128K_CONTEXTO
+            );
+        }
+
         $idMdIaAdmIntegFuncion = 2;
         $objMdIaAdmIntegracaoDTO = new MdIaAdmIntegracaoDTO();
         $objMdIaAdmIntegracaoDTO->setNumIdMdIaAdmIntegFuncion($idMdIaAdmIntegFuncion);
@@ -86,6 +112,7 @@ class MdIaConfigAssistenteRN extends InfraRN
         $objMdIaAdmIntegracaoDTO = (new MdIaAdmIntegracaoRN())->consultar($objMdIaAdmIntegracaoDTO);
 
         $urlsIntegracao = array();
+        $urlsIntegracao['provedorTipo'] = 'SEI_IA_SERVER';
         if ($objMdIaAdmIntegracaoDTO) {
             $urlsIntegracao['urlBase'] = $objMdIaAdmIntegracaoDTO->getStrOperacaoWsdl();
             $urlsIntegracao['linkEndpoint'] = $urlsIntegracao['urlBase'] . $this->consultarUrlApi($idMdIaAdmIntegFuncion, 'linkEndpoint');
