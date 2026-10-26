@@ -1,4 +1,5 @@
-<?
+<?php
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -25,7 +26,6 @@ try {
 
     $strDesabilitar = '';
     $arrComandos = array();
-
 } catch (Exception $e) {
     PaginaSEI::getInstance()->processarExcecao($e);
 }
@@ -36,17 +36,19 @@ PaginaSEI::getInstance()->abrirHead();
 PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
-PaginaSEI::getInstance()->abrirStyle();
-include_once('md_ia_consultar_objetivo_css.php');
-PaginaSEI::getInstance()->fecharStyle();
+?>
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_componentes_avaliacao.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_componentes_toggle.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_consultar_objetivo.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
+<?php
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
 PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
-    <form id="frmMdIaClassificacaoOds" method="post">
-    <?
+<form id="frmMdIaClassificacaoOds" method="post">
+    <?php
     PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
     PaginaSEI::getInstance()->abrirAreaDados('auto');
     ?>
@@ -57,8 +59,8 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
                 <h5 class="font-weight-bold">Metas</h5>
             </div>
             <div class="col-6 text-right botoes">
-                <button type="button" accesskey="S" name="btnSalvar" id="btnSalvar" value="Salvar"  onclick="salvarConfiguracaoMetas()" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>
-                <button type="button" accesskey="C" name="btnFechar" id="btnFechar"   onclick="fecharModal()" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>
+                <button type="button" accesskey="S" name="btnSalvar" id="btnSalvar" value="Salvar" onclick="salvarConfiguracaoMetas()" class="infraButton"><span class="infraTeclaAtalho">S</span>alvar</button>
+                <button type="button" accesskey="C" name="btnFechar" id="btnFechar" onclick="fecharModal()" value="Fechar" class="infraButton">Fe<span class="infraTeclaAtalho">c</span>har</button>
             </div>
         </div>
     </div>
@@ -68,9 +70,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         </div>
     </div>
     <div class="row" id="conteudoObjetivo"></div>
-<?
-require_once "md_ia_consultar_objetivo_js.php";
-?>
-<?php
-PaginaSEI::getInstance()->fecharBody();
-PaginaSEI::getInstance()->fecharHtml();
+    <?php
+    require_once "md_ia_consultar_objetivo_js.php";
+    ?>
+    <?php
+    PaginaSEI::getInstance()->fecharBody();
+    PaginaSEI::getInstance()->fecharHtml();

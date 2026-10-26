@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -104,11 +104,10 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
 ?>
-<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_comum.css" />
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_comum.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_componentes_avaliacao.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_recurso_cadastro.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
 <?php
-PaginaSEI::getInstance()->abrirStyle();
-include_once('md_ia_recurso_cadastro_css.php');
-PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
 PaginaSEI::getInstance()->fecharJavaScript();
@@ -245,7 +244,7 @@ if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
                                         ?>
                                         <input type="hidden" id="hdnNumeroElementos" name="hdnNumeroElementos"
                                             value="<?= $contador ?>" />
-                                        <input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento"
+                                        <input type="hidden" id="hdnIdProcedimentoSimilaridade" name="hdnIdProcedimentoSimilaridade"
                                             value="<?= $idProcedimento ?>" />
                                         <input type="hidden" id="hdnIdRecommendation" name="hdnIdRecommendation"
                                             value="<?= $idRecommendation ?>" />
@@ -295,7 +294,7 @@ if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
                                         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"></textarea>
                                 </div>
                             </div>
-                    <?
+                    <?php
                         }
                     }
                     ?>
@@ -400,7 +399,7 @@ Aqui são listados apenas tipos de documentos definidos pela Administração do 
                                 }
                                 ?>
                             </div>
-                            <input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento"
+                            <input type="hidden" id="hdnIdProcedimentoPesquisaDocumentos" name="hdnIdProcedimentoPesquisaDocumentos"
                                 value="<?= $idProcedimento ?>" />
                             <button type="button" accesskey="P" name="btnPesquisar" id="btnPesquisar" value="Pesquisar"
                                 onclick="pesquisarDocumentos()" class="infraButton"><span
@@ -412,13 +411,13 @@ Aqui são listados apenas tipos de documentos definidos pela Administração do 
                 <br />
             </div>
         </div>
-    <?
+    <?php
 }
 //PaginaSEI::getInstance()->montarAreaDebug();
 PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
     ?>
     </form>
-    <?
+    <?php
     require_once "md_ia_recurso_cadastro_js.php";
     ?>
     <?php

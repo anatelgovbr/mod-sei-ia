@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -86,32 +86,25 @@ try {
                     $arrTipoProcessoEspecifico = PaginaSEI::getInstance()->getArrItensTabelaDinamica($_POST['hdnIdTpProcesso']);
 
                     $arrSegmentoDocumento = PaginaSEI::getInstance()->getArrItensTabelaDinamica($_POST['hdnTbPercRelevSegmento']);
+                    $arrIdTipoProcedimento = [null];
                     if ($_POST['hdnIdTpProcesso'] != "") {
-                        foreach ($arrTipoProcessoEspecifico as $tipoProcessoEspecifico) {
-                            $objMdIaAdmDocRelevDTO = new MdIaAdmDocRelevDTO();
-                            $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
-                            $objMdIaAdmDocRelevDTO->setNumIdSerie($_POST["selTipoDocumento"]);
-                            $objMdIaAdmDocRelevDTO->setStrAplicabilidade($_POST["selAplicabilidade"]);
-                            $objMdIaAdmDocRelevDTO->setNumIdTipoProcedimento($tipoProcessoEspecifico[0]);
-                            $objMdIaAdmDocRelevDTO->setDthAlteracao(InfraData::getStrDataHoraAtual());
-                            $objMdIaAdmDocRelevDTO->setStrSinAtivo("S");
-                            $objMdIaAdmDocRelevRN->cadastrar($objMdIaAdmDocRelevDTO);
+                        $arrIdTipoProcedimento = array_column($arrTipoProcessoEspecifico, 0);
+                    }
 
-                            $objMdIaAdmSegDocRelevRN = new MdIaAdmSegDocRelevRN();
-                            $objMdIaAdmSegDocRelevRN->cadastrarRelacionamento(array($arrSegmentoDocumento, $objMdIaAdmDocRelevDTO->getNumIdMdIaAdmDocRelev()));
-                        }
-                    } else {
+                    $arrObjMdIaAdmDocRelevDTO = [];
+                    foreach ($arrIdTipoProcedimento as $numIdTipoProcedimento) {
                         $objMdIaAdmDocRelevDTO = new MdIaAdmDocRelevDTO();
-                        $objMdIaAdmDocRelevRN = new MdIaAdmDocRelevRN();
                         $objMdIaAdmDocRelevDTO->setNumIdSerie($_POST["selTipoDocumento"]);
                         $objMdIaAdmDocRelevDTO->setStrAplicabilidade($_POST["selAplicabilidade"]);
+                        if ($numIdTipoProcedimento !== null) {
+                            $objMdIaAdmDocRelevDTO->setNumIdTipoProcedimento($numIdTipoProcedimento);
+                        }
                         $objMdIaAdmDocRelevDTO->setDthAlteracao(InfraData::getStrDataHoraAtual());
                         $objMdIaAdmDocRelevDTO->setStrSinAtivo("S");
-                        $objMdIaAdmDocRelevRN->cadastrar($objMdIaAdmDocRelevDTO);
-
-                        $objMdIaAdmSegDocRelevRN = new MdIaAdmSegDocRelevRN();
-                        $objMdIaAdmSegDocRelevRN->cadastrarRelacionamento(array($arrSegmentoDocumento, $objMdIaAdmDocRelevDTO->getNumIdMdIaAdmDocRelev()));
+                        $arrObjMdIaAdmDocRelevDTO[] = $objMdIaAdmDocRelevDTO;
                     }
+
+                    $objMdIaAdmDocRelevDTO = (new MdIaAdmDocRelevRN())->cadastrarComSegmentos([$arrObjMdIaAdmDocRelevDTO, $arrSegmentoDocumento]);
 
                     PaginaSEI::getInstance()->adicionarMensagem('Documento Relevante "' . $objMdIaAdmDocRelevDTO->getNumIdMdIaAdmDocRelev() . '" cadastrado com sucesso.');
                     header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . '&id_md_ia_adm_doc_relev=' . $objMdIaAdmDocRelevDTO->getNumIdMdIaAdmDocRelev() . PaginaSEI::getInstance()->montarAncora($objMdIaAdmDocRelevDTO->getNumIdMdIaAdmDocRelev())));
@@ -131,12 +124,8 @@ try {
             if (isset($_POST['sbmAlterarMdIaAdmDocRelev'])) {
                 try {
                     $objMdIaAdmDocRelevDTO->setDthAlteracao(InfraData::getStrDataHoraAtual());
-                    $objMdIaAdmDocRelevRN->alterar($objMdIaAdmDocRelevDTO);
-
                     $arrSegmentoDocumento = PaginaSEI::getInstance()->getArrItensTabelaDinamica($_POST['hdnTbPercRelevSegmento']);
-                    $objMdIaAdmSegDocRelevRN = new MdIaAdmSegDocRelevRN();
-                    $objMdIaAdmSegDocRelevRN->excluirRelacionamento($idMdIaAdmDocRelev);
-                    $objMdIaAdmSegDocRelevRN->cadastrarRelacionamento(array($arrSegmentoDocumento, $idMdIaAdmDocRelev));
+                    $objMdIaAdmDocRelevRN->alterarComSegmentos([$objMdIaAdmDocRelevDTO, $arrSegmentoDocumento]);
 
                     PaginaSEI::getInstance()->adicionarMensagem('Documento Relevante "' . $idMdIaAdmDocRelev . '" alterado com sucesso.');
                     header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . '&id_md_ia_adm_doc_relev=' . $idMdIaAdmDocRelev . PaginaSEI::getInstance()->montarAncora($idMdIaAdmDocRelev)));
@@ -198,11 +187,9 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
 ?>
-<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_comum.css" />
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_comum.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_adm_doc_relev_cadastro.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
 <?php
-PaginaSEI::getInstance()->abrirStyle();
-include_once('md_ia_adm_doc_relev_cadastro_css.php');
-PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
 PaginaSEI::getInstance()->fecharJavaScript();
@@ -211,7 +198,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
 <form id="frmMdIaAdmDocRelevCadastro" method="post" onsubmit="return OnSubmitForm(event);"
     action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
-    <?
+    <?php
     PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
     PaginaSEI::getInstance()->abrirAreaDados('auto');
     ?>
@@ -296,10 +283,9 @@ Caso não atinja os 100% os demais segmentos do documento serão considerados co
                             onkeypress="return infraMascaraNumero(this, event)" class="form-control"
                             value=""
                             maxlength="3" min="1" max="100"
-                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"
-                            aria-describedby="basic-addon2" />
+                            tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" />
                         <div class="input-group-append">
-                            <span class="input-group-text" id="basic-addon2">%</span>
+                            <span class="input-group-text">%</span>
                         </div>
                     </div>
                 </div>
@@ -404,12 +390,12 @@ Caso não atinja os 100% os demais segmentos do documento serão considerados co
             </div>
         </div>
     </div>
-    <?
+    <?php
     //PaginaSEI::getInstance()->montarAreaDebug();
     PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
     ?>
 </form>
-<?
+<?php
 require_once "md_ia_adm_doc_relev_cadastro_js.php";
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();

@@ -1,7 +1,8 @@
+<?php require_once "md_ia_funcoes_comuns_js.php"; ?>
 <script type="text/javascript">
     function inicializar() {
 
-        <? if ($bolOk) { ?>
+        <?php if ($bolOk) { ?>
 
             var sel = window.top.document.getElementsByTagName('iframe')[0].contentWindow.document.getElementById("selGrupoPromptsFav");
             if (!sel) {
@@ -16,7 +17,7 @@
             infraSelectSelecionarItem(sel, '<?= $objMdIaGrupoPromptsFavDTO->getNumIdMdIaGrupoPromptsFav() ?>');
             self.setTimeout($(window.top.document).find('div[id^=divInfraSparklingModalClose]').last().click(), 200);
 
-        <? } else { ?>
+        <?php } else { ?>
 
             if ('<?= $_GET['acao'] ?>' == 'md_ia_grupo_prompts_fav_cadastrar' || '<?= $_GET['acao'] ?>' == 'md_ia_grupo_prompts_fav_alterar') {
                 document.getElementById('txtNomeGrupo').focus();
@@ -26,7 +27,7 @@
                 document.getElementById('btnCancelar').focus();
             }
             infraEfeitoTabelas();
-        <? } ?>
+        <?php } ?>
     }
 
     function validarCadastro(event) {
@@ -37,10 +38,6 @@
         }
         verificarExistenciaGrupoPromptFavorito(event, document.getElementById('txtNomeGrupo').value);
         return true;
-    }
-
-    function OnSubmitForm(event) {
-        return validarCadastro(event);
     }
 
     function verificarExistenciaGrupoPromptFavorito(event, nomeGrupoPromptFavorito) {
@@ -67,14 +64,5 @@
                 console.log(err);
             }
         });
-    }
-
-    function rolar_para(elemento) {
-        $("#divMsg > div").removeClass("alert-warning");
-        $("#divMsg > div").removeClass("alert-danger");
-        $("#divMsg > div").removeClass("alert-success");
-        $("#divInfraAreaTelaD").animate({
-            scrollTop: $(elemento).offset().top
-        }, 300);
     }
 </script>

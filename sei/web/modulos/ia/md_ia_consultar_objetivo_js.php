@@ -1,6 +1,7 @@
+<?php require_once "md_ia_funcoes_comuns_js.php"; ?>
 <script type="text/javascript">
     <?php
-        $strLinkAjaxTipoProcesso = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_tipo_procedimento_auto_completar');
+    $strLinkAjaxTipoProcesso = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_tipo_procedimento_auto_completar');
     ?>
 
     var objLupaTipoProcessos = [];
@@ -10,7 +11,7 @@
 
         carregarObjetivo(function(data) {
             $("#conteudoObjetivo").html(data);
-            infraCriarCheckboxRadio("infraCheckbox","infraCheckboxDiv","infraCheckboxLabel","infraCheckbox","infraCheckboxInput");
+            infraCriarCheckboxRadio("infraCheckbox", "infraCheckboxDiv", "infraCheckboxLabel", "infraCheckbox", "infraCheckboxInput");
         });
 
         document.querySelectorAll('.row-meta').forEach(function(input) {
@@ -32,14 +33,14 @@
         objAutoCompletarTipoProcesso = new infraAjaxAutoCompletar(
             'hdnIdTipoProcesso_' + index,
             'txtTipoProcesso_' + index,
-            '<?=$strLinkAjaxTipoProcesso?>'
+            '<?= $strLinkAjaxTipoProcesso ?>'
         );
         objAutoCompletarTipoProcesso.limparCampo = true;
         objAutoCompletarTipoProcesso.tamanhoMinimo = 3;
-        objAutoCompletarTipoProcesso.prepararExecucao = function () {
+        objAutoCompletarTipoProcesso.prepararExecucao = function() {
             return 'palavras_pesquisa=' + document.getElementById('txtTipoProcesso_' + index).value;
         };
-        objAutoCompletarTipoProcesso.processarResultado = function (id, descricao, complemento) {
+        objAutoCompletarTipoProcesso.processarResultado = function(id, descricao, complemento) {
             if (id != '') {
                 var sel = document.getElementById('selTipoProcessos_' + index);
                 var options = sel.options;
@@ -59,7 +60,7 @@
     }
 
     function carregarObjetivo(callback) {
-        if( window.top.document.getElementById("ifrVisualizacao") != null) {
+        if (window.top.document.getElementById("ifrVisualizacao") != null) {
             var idObjetivo = window.top.document.getElementById("ifrVisualizacao").contentWindow.document.getElementById('hdnIdSelecaoObjetivo').value;
         } else {
             var idObjetivo = window.top.document.getElementById("hdnIdSelecaoObjetivo").value;
@@ -72,44 +73,15 @@
         $.ajax({
             url: url,
             type: 'POST', //selecionando o tipo de requisição, PUT,GET,POST,DELETE
-            dataType: "json",//Tipo de dado que será enviado ao servidor
+            dataType: "json", //Tipo de dado que será enviado ao servidor
             data: result, // Enviando o JSON com o nome de itens
             async: false,
-            success: function (data) {
+            success: function(data) {
                 callback(data);
             },
-            error: function (err) {
+            error: function(err) {
                 callback("Ocorreu um erro ao consultar o Metas do Objetivo.");
             }
-        });
-    }
-
-    function infraCriarCheckboxRadio(classInput,classDiv,classLabel,classRemocao,classAdicao){
-        $("."+classInput).each(function (index) {
-            var div = $('<div class="'+classDiv+'" ></div>');
-            var isVisible = this.style.visibility !== 'hidden' && this.style.display !== 'none';
-            if (isVisible) {
-                $(this).wrap(div);
-            }else{
-                $(this).addClass("infraCheckboxRadioSemDiv");
-            }
-
-            var id = $(this).attr("id");
-            var title = $(this).attr("title");
-
-            var label = $('<label class="'+classLabel+'"></label>');
-
-            if(id != undefined){
-                $(label).attr("for",id);
-            }
-            if(title != undefined){
-                $(label).attr("title",title);
-            }
-
-            $(this).removeClass(classRemocao);
-            $(this).addClass(classAdicao);
-
-            label.insertAfter($(this));
         });
     }
 
@@ -126,9 +98,9 @@
             type: 'POST',
             dataType: "json",
             data: dadosPost,
-            success: function (retorno) {
+            success: function(retorno) {
 
-                if(retorno.result == "true") {
+                if (retorno.result == "true") {
                     rolar_para('#divMsg');
                     $("#divMsg > div > label").html("Parâmetros salvos com sucesso.");
                     $("#divMsg > div").addClass("alert-success");
@@ -141,13 +113,13 @@
                     $("#divMsg").show();
                 }
 
-                setTimeout(function(){
+                setTimeout(function() {
                     $("#divMsg").fadeOut(300);
                     fecharModal();
                 }, 2000);
 
             },
-            error: function (err) {
+            error: function(err) {
                 //Em caso de erro
                 rolar_para('#divMsg');
                 $("#divMsg > div > label").html("Ocorreu um erro ao realizar a Classificação.");
@@ -188,18 +160,4 @@
             }
         });
     }
-
-    function rolar_para(elemento) {
-        $("#divMsg > div").removeClass("alert-warning");
-        $("#divMsg > div").removeClass("alert-danger");
-        $("#divMsg > div").removeClass("alert-success");
-        $("#divInfraAreaTelaD").animate({
-            scrollTop: $(elemento).offset().top
-        }, 300);
-    }
-
-    function fecharModal() {
-        $(window.top.document).find('div[id^=divInfraSparklingModalClose]').click();
-    }
-
 </script>

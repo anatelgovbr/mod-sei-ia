@@ -1,0 +1,32 @@
+/* Estrutura da tela */
+#conteudoObjetivo .col-10 {
+    padding-top: 4%;
+    padding-left: 0;
+}
+
+#conteudoObjetivo h4 {
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+#conteudoObjetivo p {
+    font-size: 1rem;
+}
+
+.infraBarraLocalizacao {
+    width: auto !important;
+}
+
+.rounded-pill {
+    display: inline-grid !important;
+    float: right;
+}
+
+.itemSugeridoIa,
+.sugeridoIa {
+    background-color: #ffbfbf;
+}
+
+.infraTh .infraImg {
+    margin-top: 4px;
+}

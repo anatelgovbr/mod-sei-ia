@@ -1,4 +1,5 @@
-<?
+<?php
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -52,7 +53,6 @@ class MdIaAdmOdsOnuRN extends InfraRN
     protected function cadastrarControlado(MdIaAdmOdsOnuDTO $objMdIaAdmOdsOnuDTO)
     {
         try {
-
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_ods_onu_cadastrar', __METHOD__, $objMdIaAdmOdsOnuDTO);
 
             //Regras de Negocio
@@ -67,7 +67,6 @@ class MdIaAdmOdsOnuRN extends InfraRN
             $ret = $objMdIaAdmOdsOnuBD->cadastrar($objMdIaAdmOdsOnuDTO);
 
             return $ret;
-
         } catch (Exception $e) {
             throw new InfraException('Erro cadastrando ODS da ONU.', $e);
         }
@@ -76,7 +75,6 @@ class MdIaAdmOdsOnuRN extends InfraRN
     protected function alterarControlado(MdIaAdmOdsOnuDTO $objMdIaAdmOdsOnuDTO)
     {
         try {
-
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_ods_onu_alterar', __METHOD__, $objMdIaAdmOdsOnuDTO);
 
             //Regras de Negocio
@@ -96,7 +94,6 @@ class MdIaAdmOdsOnuRN extends InfraRN
 
             $objMdIaAdmOdsOnuBD = new MdIaAdmOdsOnuBD($this->getObjInfraIBanco());
             $objMdIaAdmOdsOnuBD->alterar($objMdIaAdmOdsOnuDTO);
-
         } catch (Exception $e) {
             throw new InfraException('Erro alterando ODS da ONU.', $e);
         }
@@ -117,16 +114,29 @@ class MdIaAdmOdsOnuRN extends InfraRN
             for ($i = 0; $i < count($arrObjMdIaAdmOdsOnuDTO); $i++) {
                 $objMdIaAdmOdsOnuBD->excluir($arrObjMdIaAdmOdsOnuDTO[$i]);
             }
-
         } catch (Exception $e) {
             throw new InfraException('Erro excluindo ODS da ONU.', $e);
+        }
+    }
+
+    protected function alterarComUnidadesAlertaControlado(array $arrParametros): void
+    {
+        try {
+            [$objMdIaAdmOdsOnuDTO, $arrUnidadesAlerta] = $arrParametros;
+
+            $this->alterar($objMdIaAdmOdsOnuDTO);
+
+            $objMdIaAdmUnidadeAlertaRN = new MdIaAdmUnidadeAlertaRN();
+            $objMdIaAdmUnidadeAlertaRN->excluirRelacionamento($objMdIaAdmOdsOnuDTO->getNumIdMdIaAdmOdsOnu());
+            $objMdIaAdmUnidadeAlertaRN->cadastrarRelacionamento([$arrUnidadesAlerta, $objMdIaAdmOdsOnuDTO->getNumIdMdIaAdmOdsOnu()]);
+        } catch (Exception $e) {
+            throw new InfraException('Erro alterando ODS da ONU.', $e);
         }
     }
 
     protected function consultarConectado(MdIaAdmOdsOnuDTO $objMdIaAdmOdsOnuDTO)
     {
         try {
-
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_ods_onu_consultar', __METHOD__, $objMdIaAdmOdsOnuDTO);
 
             //Regras de Negocio
@@ -162,7 +172,6 @@ class MdIaAdmOdsOnuRN extends InfraRN
             $ret = $objMdIaAdmOdsOnuBD->listar($objMdIaAdmOdsOnuDTO);
 
             return $ret;
-
         } catch (Exception $e) {
             throw new InfraException('Erro listando ODS da ONU.', $e);
         }

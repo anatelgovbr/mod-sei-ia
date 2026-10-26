@@ -45,17 +45,6 @@ class MdIaControladorWS extends MdIaUtilWS
         self::printResult($response);
     }
 
-    public static function gerarHashConteudoDocumento()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            $IaWs = new IaWS();
-            $response = $IaWs->gerarHashConteudoDocumento($_GET);
-            http_response_code($response['code']);
-        }
-
-        self::printResult($response);
-    }
-
     public static function listarTipoDocumento()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -119,24 +108,6 @@ class MdIaControladorWS extends MdIaUtilWS
         self::printResult($response);
     }
 
-    public static function processosVetorizaveis()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            $IaWs = new IaWS();
-            $response = $IaWs->listarProcessosPendenteVetorizacao($_GET);
-            http_response_code($response['code']);
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-            $parametros = [];
-            parse_str($_SERVER['QUERY_STRING'], $parametros);
-            $IaWs = new IaWS();
-            $response = $IaWs->atualizarStatusProcessoVetorizado($parametros['IdProcedimento']);
-            http_response_code($response['code']);
-        }
-
-        self::printResult($response);
-    }
     public static function documentosIndexaveis()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -252,5 +223,29 @@ class MdIaControladorWS extends MdIaUtilWS
     private static function printResult($response)
     {
         echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR);
+    }
+
+    public static function downloadArquivoAvulso()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $IaWs = new IaWS();
+            $response = $IaWs->downloadArquivoAvulso($_GET);
+            http_response_code($response['code']);
+        }
+
+        self::printResult($response);
+    }
+
+    public static function removerArquivoAvulso()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+            $parametros = [];
+            parse_str($_SERVER['QUERY_STRING'], $parametros);
+            $IaWs = new IaWS();
+            $response = $IaWs->removerArquivoAvulso($parametros['IdArquivoAvulso']);
+            http_response_code($response['code']);
+        }
+
+        self::printResult($response);
     }
 }

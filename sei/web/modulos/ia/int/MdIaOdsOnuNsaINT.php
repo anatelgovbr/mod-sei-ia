@@ -14,6 +14,7 @@ class MdIaOdsOnuNsaINT extends InfraINT
 {
     public static function atualizaNaoSeAplicaOdsOnu($dados)
     {
+        MdIaClassMetaOdsINT::validarAcessoProcedimento($dados["idProcedimento"]);
         $objMdIaOdsOnuNsaDTO = new MdIaOdsOnuNsaDTO();
         $objMdIaOdsOnuNsaRN = new MdIaOdsOnuNsaRN();
         $objMdIaOdsOnuNsaDTO->setDblIdProcedimento($dados["idProcedimento"]);

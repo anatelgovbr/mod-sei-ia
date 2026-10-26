@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -13,6 +13,8 @@ class MdIaAdmObjetivoOdsINT extends InfraINT
 {
 	public static function consultarObjetivoProcedimento($dados)
 	{
+		MdIaClassMetaOdsINT::validarAcessoProcedimento($dados["idProcedimento"]);
+		$dados["idProcedimento"] = (int)$dados["idProcedimento"];
 
 		$teveAlgumaSugestaoIa = "N";
 		$itensSugeridos = [];

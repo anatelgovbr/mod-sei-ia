@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -13,7 +13,7 @@ try {
 
     session_start();
     SessaoSEI::getInstance()->validarLink();
-    //    SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
+    SessaoSEI::getInstance()->validarPermissao('md_ia_adm_config_assist_ia_consultar');
     //////////////////////////////////////////////////////////////////////////////
     //    InfraDebug::getInstance()->setBolLigado(false);
     //    InfraDebug::getInstance()->setBolDebugInfra(false);
@@ -95,7 +95,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo);
         </tbody>
     </table>
 </div>
-<?
+<?php
 require_once "md_ia_modal_chats_arquivados_js.php";
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();

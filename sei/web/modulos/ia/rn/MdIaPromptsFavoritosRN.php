@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -60,6 +60,40 @@ class MdIaPromptsFavoritosRN extends InfraRN
         }
     }
 
+    private function validarProprietario(array $arrIdMdIaPromptsFavoritos, InfraException $objInfraException): void
+    {
+        $arrIdMdIaPromptsFavoritos = array_unique(array_filter(array_map('intval', $arrIdMdIaPromptsFavoritos)));
+        if (count($arrIdMdIaPromptsFavoritos) == 0) {
+            return;
+        }
+
+        $objMdIaPromptsFavoritosDTO = new MdIaPromptsFavoritosDTO();
+        $objMdIaPromptsFavoritosDTO->setNumIdMdIaPromptsFavoritos($arrIdMdIaPromptsFavoritos, InfraDTO::$OPER_IN);
+        $objMdIaPromptsFavoritosDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
+        $objMdIaPromptsFavoritosDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+
+        $objMdIaPromptsFavoritosBD = new MdIaPromptsFavoritosBD($this->getObjInfraIBanco());
+        if ($objMdIaPromptsFavoritosBD->contar($objMdIaPromptsFavoritosDTO) != count($arrIdMdIaPromptsFavoritos)) {
+            $objInfraException->adicionarValidacao('Prompt Favorito não encontrado.');
+        }
+    }
+
+    private function validarGrupoProprietario(MdIaPromptsFavoritosDTO $objMdIaPromptsFavoritosDTO, InfraException $objInfraException): void
+    {
+        if ($objMdIaPromptsFavoritosDTO->getNumIdMdIaGrupoPromptsFav() === null) {
+            return;
+        }
+
+        $objMdIaGrupoPromptsFavDTO = new MdIaGrupoPromptsFavDTO();
+        $objMdIaGrupoPromptsFavDTO->setNumIdMdIaGrupoPromptsFav((int)$objMdIaPromptsFavoritosDTO->getNumIdMdIaGrupoPromptsFav());
+        $objMdIaGrupoPromptsFavDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
+        $objMdIaGrupoPromptsFavDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+
+        if ((new MdIaGrupoPromptsFavRN())->contar($objMdIaGrupoPromptsFavDTO) == 0) {
+            $objInfraException->adicionarValidacao('Grupo de Prompts Favoritos não encontrado.');
+        }
+    }
+
     protected function cadastrarControlado(MdIaPromptsFavoritosDTO $objMdIaPromptsFavoritosDTO)
     {
         try {
@@ -72,6 +106,7 @@ class MdIaPromptsFavoritosRN extends InfraRN
             $this->validarNumIdMdIaGrupoPromptsFav($objMdIaPromptsFavoritosDTO, $objInfraException);
             $this->validarStrDescricaoPrompt($objMdIaPromptsFavoritosDTO, $objInfraException);
             $this->validarDthAlteracao($objMdIaPromptsFavoritosDTO, $objInfraException);
+            $this->validarGrupoProprietario($objMdIaPromptsFavoritosDTO, $objInfraException);
 
             $objInfraException->lancarValidacoes();
 
@@ -106,6 +141,12 @@ class MdIaPromptsFavoritosRN extends InfraRN
             if ($objMdIaPromptsFavoritosDTO->isSetDthAlteracao()) {
                 $this->validarDthAlteracao($objMdIaPromptsFavoritosDTO, $objInfraException);
             }
+            if ($objMdIaPromptsFavoritosDTO->isSetNumIdMdIaPromptsFavoritos()) {
+                $this->validarProprietario([$objMdIaPromptsFavoritosDTO->getNumIdMdIaPromptsFavoritos()], $objInfraException);
+            }
+            if ($objMdIaPromptsFavoritosDTO->isSetNumIdMdIaGrupoPromptsFav()) {
+                $this->validarGrupoProprietario($objMdIaPromptsFavoritosDTO, $objInfraException);
+            }
 
             $objInfraException->lancarValidacoes();
 
@@ -124,9 +165,11 @@ class MdIaPromptsFavoritosRN extends InfraRN
             SessaoSEI::getInstance()->validarPermissao('md_ia_adm_config_assist_ia_consultar');
 
             //Regras de Negocio
-            //$objInfraException = new InfraException();
+            $objInfraException = new InfraException();
 
-            //$objInfraException->lancarValidacoes();
+            $this->validarProprietario(InfraArray::converterArrInfraDTO($arrObjMdIaPromptsFavoritosDTO, 'IdMdIaPromptsFavoritos'), $objInfraException);
+
+            $objInfraException->lancarValidacoes();
 
             $objMdIaPromptsFavoritosBD = new MdIaPromptsFavoritosBD($this->getObjInfraIBanco());
             for ($i = 0; $i < count($arrObjMdIaPromptsFavoritosDTO); $i++) {
@@ -148,6 +191,9 @@ class MdIaPromptsFavoritosRN extends InfraRN
             //$objInfraException = new InfraException();
 
             //$objInfraException->lancarValidacoes();
+
+            $objMdIaPromptsFavoritosDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
+            $objMdIaPromptsFavoritosDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
 
             $objMdIaPromptsFavoritosBD = new MdIaPromptsFavoritosBD($this->getObjInfraIBanco());
 

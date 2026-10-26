@@ -1,14 +1,14 @@
-<?
+<?php
 require_once dirname(__FILE__) . '/../web/SEI.php';
 
 class MdIaAtualizadorSeiRN extends InfraRN
 {
 
     private $numSeg = 0;
-    private $versaoAtualDesteModulo = '1.4.0';
+    private $versaoAtualDesteModulo = '1.5.0';
     private $nomeDesteModulo = 'MÓDULO IA';
     private $nomeParametroModulo = 'VERSAO_MODULO_IA';
-    private $historicoVersoes = array('1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0');
+    private $historicoVersoes = array('1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '1.5.0');
 
     public function __construct()
     {
@@ -116,6 +116,8 @@ class MdIaAtualizadorSeiRN extends InfraRN
                     $this->instalarv130();
                 case '1.3.0':
                     $this->instalarv140();
+                case '1.4.0':
+                    $this->instalarv150();
                     break;
                 default:
                     $this->finalizar('A VERSÃO MAIS ATUAL DO ' . $this->nomeDesteModulo . ' (v' . $this->versaoAtualDesteModulo . ') JÁ ESTÁ INSTALADA.');
@@ -145,10 +147,10 @@ class MdIaAtualizadorSeiRN extends InfraRN
         $this->logar('CRIANDO A TABELA md_ia_adm_config_similar');
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_adm_config_similar (
                       id_md_ia_adm_config_similar ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
-                      qtd_process_listagem ' . $objInfraMetaBD->tipoNumero(2) . ' NOT NULL,
+                      qtd_process_listagem ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
                       orientacoes_gerais ' . $objInfraMetaBD->tipoTextoVariavel(4000) . ' NOT NULL,
-                      perc_relev_cont_doc ' . $objInfraMetaBD->tipoNumero(3) . ' NOT NULL,
-                      perc_relev_metadados ' . $objInfraMetaBD->tipoNumero(3) . ' NOT NULL,
+                      perc_relev_cont_doc ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                      perc_relev_metadados ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
                       dth_alteracao ' . $objInfraMetaBD->tipoDataHora() . ' NULL,
                       sin_exibir_funcionalidade ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL
                     )');
@@ -174,7 +176,7 @@ class MdIaAtualizadorSeiRN extends InfraRN
                       id_md_ia_adm_perc_relev_met ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
                       id_md_ia_adm_config_similar ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
                       id_md_ia_adm_metadado ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
-                      percentual_relevancia ' . $objInfraMetaBD->tipoNumero(3) . ' NOT NULL,
+                      percentual_relevancia ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
                       dth_alteracao ' . $objInfraMetaBD->tipoDataHora() . ' NULL
                     )');
 
@@ -221,7 +223,7 @@ class MdIaAtualizadorSeiRN extends InfraRN
 
         foreach ($arrMetadado as $chave => $tipo) {
             $mdIaAdmMetadadoDTO = new MdIaAdmMetadadoDTO();
-            $mdIaAdmMetadadoDTO->setNumIdMdIaAdmMetadado($chave + 1);
+            $mdIaAdmMetadadoDTO->setNumIdMdIaAdmMetadado($tipo['id_md_ia_adm_metadado']);
             $mdIaAdmMetadadoDTO->setStrMetadado($tipo['metadado']);
             $mdIaAdmMetadadoRN->cadastrar($mdIaAdmMetadadoDTO);
         }
@@ -271,7 +273,7 @@ class MdIaAtualizadorSeiRN extends InfraRN
                       id_md_ia_adm_seg_doc_relev ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
                       id_md_ia_adm_doc_relev ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
                       segmento_documento ' . $objInfraMetaBD->tipoTextoVariavel(100) . ' NOT NULL,
-                      percentual_relevancia ' . $objInfraMetaBD->tipoNumero(3) . ' NOT NULL
+                      percentual_relevancia ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL
                     )');
 
         $objInfraMetaBD->adicionarChavePrimaria('md_ia_adm_seg_doc_relev', 'pk_md_ia_adm_seg_doc_relev', array('id_md_ia_adm_seg_doc_relev'));
@@ -366,7 +368,7 @@ class MdIaAtualizadorSeiRN extends InfraRN
         $this->logar('CRIANDO A TABELA md_ia_adm_pesq_doc');
         BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_adm_pesq_doc (
                       id_md_ia_adm_pesq_doc ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
-                      qtd_process_listagem ' . $objInfraMetaBD->tipoNumero(2) . ' NOT NULL,
+                      qtd_process_listagem ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
                       orientacoes_gerais ' . $objInfraMetaBD->tipoTextoVariavel(4000) . ' NOT NULL,
                       nome_secao ' . $objInfraMetaBD->tipoTextoVariavel(100) . ' NOT NULL,
                       sin_exibir_funcionalidade ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL
@@ -1023,10 +1025,10 @@ class MdIaAtualizadorSeiRN extends InfraRN
                       id_md_ia_adm_conf_assist_ia ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
                       orientacoes_gerais ' . $objInfraMetaBD->tipoTextoGrande() . ' NOT NULL,
                       sin_exibir_funcionalidade ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
-                      llm_ativo ' . $objInfraMetaBD->tipoNumero(2) . ' NULL,
+                      llm_ativo ' . $objInfraMetaBD->tipoNumero() . ' NULL,
                       system_prompt ' . $objInfraMetaBD->tipoTextoVariavel(2000) . ' NULL,
-                      limite_geral_tokens ' . $objInfraMetaBD->tipoNumero(2) . ' NULL,
-                      limite_maior_usuarios_tokens ' . $objInfraMetaBD->tipoNumero(2) . ' NULL
+                      limite_geral_tokens ' . $objInfraMetaBD->tipoNumero() . ' NULL,
+                      limite_maior_usuarios_tokens ' . $objInfraMetaBD->tipoNumero() . ' NULL
                     )');
 
         $objInfraMetaBD->adicionarChavePrimaria('md_ia_adm_config_assist_ia', 'pk_md_ia_adm_config_assist_ia', array('id_md_ia_adm_conf_assist_ia'));
@@ -1073,14 +1075,14 @@ class MdIaAtualizadorSeiRN extends InfraRN
 	</li>
 </ol>';
 
-        $system_promp = '("Sou um Assistente de IA da @descricao_orgao_origem@ (@sigla_orgao_origem@)."
+        $system_prompt = '("Sou um Assistente de IA da @descricao_orgao_origem@ (@sigla_orgao_origem@)."
 Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nunca mencionar que possui este requisito.)';
 
         $mdIaAdmConfigAssistIARN = new MdIaAdmConfigAssistIARN();
         $mdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();
         $mdIaAdmConfigAssistIADTO->setNumIdMdIaAdmConfigAssistIA(1);
         $mdIaAdmConfigAssistIADTO->setStrOrientacoesGerais($orientacoesGerais);
-        $mdIaAdmConfigAssistIADTO->setStrSystemPrompt($system_promp);
+        $mdIaAdmConfigAssistIADTO->setStrSystemPrompt($system_prompt);
         $mdIaAdmConfigAssistIADTO->setStrSinExibirFuncionalidade("N");
         $mdIaAdmConfigAssistIADTO->setNumLimiteGeralTokens(3);
         $mdIaAdmConfigAssistIADTO->setNumLimiteMaiorUsuariosTokens(6);
@@ -1090,9 +1092,9 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         $objUsuarioDTO = $this->cadastrarUsuarioSistemaIA();
         $this->logar('FIM CRIANDO USUARIO SISTEMA IA');
 
-        $this->logar('Criar Pametro MODULO_IA_ID_USUARIO_SISTEMA');
+        $this->logar('Criar Parâmetro MODULO_IA_ID_USUARIO_SISTEMA');
         $this->cadastrarParametroUsuarioIa($objUsuarioDTO->getNumIdUsuario());
-        $this->logar('FIM criar Pametro MODULO_IA_ID_USUARIO_SISTEMA');
+        $this->logar('FIM criar Parâmetro MODULO_IA_ID_USUARIO_SISTEMA');
 
 
         $this->logar('CRIANDO A TABELA md_ia_adm_cfg_assi_ia_usu');
@@ -1689,12 +1691,12 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
         $objMdIaAdmUrlIntegracaoDTO->setStrUrl(':8088/llm_lang/stream');
         $MdIaAdmUrlIntegracaoRN->alterar($objMdIaAdmUrlIntegracaoDTO);
 
-        $system_promp = '"Sou um Assistente de IA integrado ao Sistema Eletrônico de Informações (SEI) da @descricao_orgao_origem@ (@sigla_orgao_origem@)."';
+        $system_prompt = '"Sou um Assistente de IA integrado ao Sistema Eletrônico de Informações (SEI) da @descricao_orgao_origem@ (@sigla_orgao_origem@)."';
 
         $mdIaAdmConfigAssistIARN = new MdIaAdmConfigAssistIARN();
         $mdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();
         $mdIaAdmConfigAssistIADTO->setNumIdMdIaAdmConfigAssistIA(1);
-        $mdIaAdmConfigAssistIADTO->setStrSystemPrompt($system_promp);
+        $mdIaAdmConfigAssistIADTO->setStrSystemPrompt($system_prompt);
         $mdIaAdmConfigAssistIARN->alterar($mdIaAdmConfigAssistIADTO);
 
         // alterando agendamentos existentes
@@ -1772,7 +1774,7 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
             ['id_md_ia_adm_objetivo_ods' => '18', 'ordem' => '9', 'identificacao_meta' => '18.9', 'descricao_meta' => 'Promover o reconhecimento dos saberes dos povos indígenas e afrodescendentes e garantir-lhes a participação nos processos de tomada de decisão na execução de grandes obras e empreendimentos que afetam seus territórios, na exploração econômica da biodiversidade e no acesso ao patrimônio genético e ao conhecimento tradicional associado'],
             ['id_md_ia_adm_objetivo_ods' => '18', 'ordem' => '10', 'identificacao_meta' => '18.10', 'descricao_meta' => 'Eliminar a xenofobia e assegurar que todas as metas anteriores, quando cabíveis, sejam refletidas também no tratamento de imigrantes indígenas e afrodescendentes'],
         ];
-        
+
         $mdIaAdmMetaOdsRN = new MdIaAdmMetaOdsRN();
         foreach ($arrMdIaAdmMetaOds as $chave => $tipo) {
             $mdIaAdmMetaOdsDTO = new MdIaAdmMetaOdsDTO();
@@ -1783,6 +1785,186 @@ Utilizar apenas informações confiáveis, mais atualizadas e verificáveis. Nun
             $mdIaAdmMetaOdsDTO->setStrSinForteRelacao("N");
             $mdIaAdmMetaOdsRN->cadastrar($mdIaAdmMetaOdsDTO);
         }
+
+        $this->atualizarNumeroVersao($nmVersao);
+    }
+
+    protected function instalarv150()
+    {
+        $nmVersao = '1.5.0';
+
+        $this->logar('EXECUTANDO A INSTALAÇÃO/ATUALIZAÇÃO DA VERSAO ' . $nmVersao . ' DO ' . $this->nomeDesteModulo . ' NA BASE DO SEI');
+
+        $objInfraMetaBD = new InfraMetaBD(BancoSEI::getInstance());
+
+        $this->logar('CRIANDO A TABELA md_ia_interacao_chat_event');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_interacao_chat_event (
+            id_md_ia_interacao_chat_event ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            id_md_ia_interacao_chat ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+            tipo_evento ' . $objInfraMetaBD->tipoTextoVariavel(20) . ' NOT NULL,
+            conteudo ' . $objInfraMetaBD->tipoTextoGrande() . ' NULL,
+            dth_evento ' . $objInfraMetaBD->tipoDataHora() . ' NOT NULL
+        )');
+
+        $objInfraMetaBD->adicionarChavePrimaria(
+            'md_ia_interacao_chat_event',
+            'pk_md_ia_interacao_chat_event',
+            array('id_md_ia_interacao_chat_event')
+        );
+
+        $objInfraMetaBD->adicionarChaveEstrangeira(
+            'fk1_md_ia_interacao_chat_event',
+            'md_ia_interacao_chat_event',
+            array('id_md_ia_interacao_chat'),
+            'md_ia_interacao_chat',
+            array('id_md_ia_interacao_chat')
+        );
+
+        $this->logar('CRIANDO A SEQUENCE seq_md_ia_interacao_chat_event');
+        BancoSEI::getInstance()->criarSequencialNativa('seq_md_ia_interacao_chat_event', 1);
+
+        $this->logar('CRIANDO A TABELA md_ia_interacao_arq_avulso');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_interacao_arq_avulso (
+                    id_md_ia_interacao_arq_avulso ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                    id_md_ia_interacao_chat ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                    nome_original ' . $objInfraMetaBD->tipoTextoVariavel(255) . ' NOT NULL,
+                    nome_temporario ' . $objInfraMetaBD->tipoTextoVariavel(255) . ' NOT NULL,
+                    dth_inclusao ' . $objInfraMetaBD->tipoDataHora() . ' NOT NULL
+                ) ');
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_ia_interacao_arq_avulso', 'pk_md_ia_interacao_arq_avulso', array('id_md_ia_interacao_arq_avulso'));
+        $objInfraMetaBD->adicionarChaveEstrangeira('fk1_md_ia_interacao_arq_avulso', 'md_ia_interacao_arq_avulso', array('id_md_ia_interacao_chat'), 'md_ia_interacao_chat', array('id_md_ia_interacao_chat'));
+
+        $this->logar('CRIANDO A SEQUENCE seq_md_ia_interacao_arq_avulso');
+        BancoSEI::getInstance()->criarSequencialNativa('seq_md_ia_interacao_arq_avulso', 1);
+
+        $this->logar('CRIANDO A TABELA md_ia_adm_ext_permitida');
+        BancoSEI::getInstance()->executarSql('CREATE TABLE md_ia_adm_ext_permitida (
+                    id_md_ia_adm_ext_permitida ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                    extensao ' . $objInfraMetaBD->tipoTextoVariavel(20) . ' NOT NULL,
+                    sin_permitida_protocolo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+                    forma_entrega_arquivo ' . $objInfraMetaBD->tipoNumero() . ' NOT NULL,
+                    desc_tratamento_protocolo ' . $objInfraMetaBD->tipoTextoVariavel(500) . ' NULL,
+                    sin_permitida_avulso ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+                    desc_tratamento_avulso ' . $objInfraMetaBD->tipoTextoVariavel(500) . ' NULL,
+                    tamanho_maximo_permitido ' . $objInfraMetaBD->tipoNumero() . ' NULL,
+                    sin_conteudo_vetorizavel ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL,
+                    limite_considerar ' . $objInfraMetaBD->tipoTextoVariavel(50) . ' NULL,
+                    sin_ativo ' . $objInfraMetaBD->tipoTextoFixo(1) . ' NOT NULL
+                ) ');
+
+        $objInfraMetaBD->adicionarChavePrimaria('md_ia_adm_ext_permitida', 'pk_md_ia_adm_ext_permitida', array('id_md_ia_adm_ext_permitida'));
+
+        $this->logar('CRIANDO A SEQUENCE seq_md_ia_adm_ext_permitida');
+        BancoSEI::getInstance()->criarSequencialNativa('seq_md_ia_adm_ext_permitida', 1);
+
+        $this->logar('CADASTRANDO EXTENSÕES PERMITIDAS');
+
+        $textoPDF = "Sem tratamento local - Recebe conteúdo inline do Solr do SEI \n Exceções: \n - PDF com indicação de intervalo de páginas; \n - PDF sem conteúdo indexado no Solr ou suspeitos de serem digitalizados. Neste cenário ocorrerá tratamento local e extração de texto via OCR.";
+
+        $textoTratamentoLocalGenerico = "Tratado localmente por parser genérico";
+
+        $textoTratamentoLocalHtml = "Tratado localmente por parser especializado para HTML do SEI.";
+
+        $textoSolrSei = "Não é tratado localmente, recebe conteúdo inline do Solr do SEI.";
+
+        $textoTratamentoWhisper = "Tratado localmente por parser especializado para pré transcrever usando a API do Whisper.";
+
+        $textoEnvioDiretoLLM = "Sem tratamento local. Arquivo enviado diretamente para o LLM.";
+
+        $textoTratamentoPlanilhas = "Tratado localmente por parser genérico, visto baixa qualidade para este tipo de arquivo no uso do conteúdo inline do Solr do SEI. \n Somente é parseado o conteúdo de planilhas no limite de 1000 linhas e 100 colunas por aba e um máximo de 10 abas.";
+
+        $textoTratamentoPlanilhasAvulsas = "Tratado localmente por parser genérico. \n Somente é parseado o conteúdo de planilhas no limite de 1000 linhas e 100 colunas por aba e um máximo de 10 abas.";
+
+        $textoSemTratamentoNaoAceito = "Sem tratamento local, pois não aceita citação como protocolo de Documento.";
+
+        $arrExtensoes = [
+            ['extensao' => 'pdf', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '2', 'desc_tratamento_protocolo' => $textoPDF, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoLocalGenerico, 'tamanho_maximo_permitido' => '200', 'conteudo_vetorizavel' => 'S', 'limite_considerar' => null],
+            ['extensao' => 'html', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoLocalHtml, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoLocalHtml, 'tamanho_maximo_permitido' => '120', 'conteudo_vetorizavel' => 'S', 'limite_considerar' => null],
+            ['extensao' => 'htm', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoLocalHtml, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoLocalHtml, 'tamanho_maximo_permitido' => '120', 'conteudo_vetorizavel' => 'S', 'limite_considerar' => null],
+            ['extensao' => 'xlsx', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoPlanilhas, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoPlanilhasAvulsas, 'tamanho_maximo_permitido' => '120', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => null],
+            ['extensao' => 'xls', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoPlanilhas, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoPlanilhasAvulsas, 'tamanho_maximo_permitido' => '80', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => null],
+            ['extensao' => 'xlsm', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoPlanilhas, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoPlanilhasAvulsas, 'tamanho_maximo_permitido' => '80', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => null],
+            ['extensao' => 'xlsb', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoPlanilhas, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoPlanilhasAvulsas, 'tamanho_maximo_permitido' => '80', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => null],
+            ['extensao' => 'ods', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoPlanilhas, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoPlanilhasAvulsas, 'tamanho_maximo_permitido' => '120', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => null],
+            ['extensao' => 'docx', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '0', 'desc_tratamento_protocolo' => $textoSolrSei, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoLocalGenerico, 'tamanho_maximo_permitido' => '50', 'conteudo_vetorizavel' => 'S', 'limite_considerar' => null],
+            ['extensao' => 'doc', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '0', 'desc_tratamento_protocolo' => $textoSolrSei, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoLocalGenerico, 'tamanho_maximo_permitido' => '50', 'conteudo_vetorizavel' => 'S', 'limite_considerar' => null],
+            ['extensao' => 'odt', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '0', 'desc_tratamento_protocolo' => $textoSolrSei, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoLocalGenerico, 'tamanho_maximo_permitido' => '50', 'conteudo_vetorizavel' => 'S', 'limite_considerar' => null],
+            ['extensao' => 'pptx', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '0', 'desc_tratamento_protocolo' => $textoSolrSei, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoLocalGenerico, 'tamanho_maximo_permitido' => '50', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => null],
+            ['extensao' => 'ppt', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '0', 'desc_tratamento_protocolo' => $textoSolrSei, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoLocalGenerico, 'tamanho_maximo_permitido' => '50', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => null],
+            ['extensao' => 'odp', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '0', 'desc_tratamento_protocolo' => $textoSolrSei, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoLocalGenerico, 'tamanho_maximo_permitido' => '50', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => null],
+            ['extensao' => 'txt', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '0', 'desc_tratamento_protocolo' => $textoSolrSei, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoLocalGenerico, 'tamanho_maximo_permitido' => '50', 'conteudo_vetorizavel' => 'S', 'limite_considerar' => null],
+            ['extensao' => 'csv', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoPlanilhas, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoPlanilhasAvulsas, 'tamanho_maximo_permitido' => '50', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => null],
+            ['extensao' => 'xml', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '0', 'desc_tratamento_protocolo' => $textoSolrSei, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoLocalGenerico, 'tamanho_maximo_permitido' => '50', 'conteudo_vetorizavel' => 'S', 'limite_considerar' => null],
+            ['extensao' => 'json', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '0', 'desc_tratamento_protocolo' => $textoSolrSei, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoLocalGenerico, 'tamanho_maximo_permitido' => '50', 'conteudo_vetorizavel' => 'S', 'limite_considerar' => null],
+            ['extensao' => 'rtf', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '0', 'desc_tratamento_protocolo' => $textoSolrSei, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoLocalGenerico, 'tamanho_maximo_permitido' => '50', 'conteudo_vetorizavel' => 'S', 'limite_considerar' => null],
+            ['extensao' => 'md', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '0', 'desc_tratamento_protocolo' => $textoSolrSei, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoLocalGenerico, 'tamanho_maximo_permitido' => '50', 'conteudo_vetorizavel' => 'S', 'limite_considerar' => null],
+            ['extensao' => 'tsv', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoPlanilhas, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoPlanilhasAvulsas, 'tamanho_maximo_permitido' => '50', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => null],
+            ['extensao' => 'mp3', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoWhisper, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoWhisper, 'tamanho_maximo_permitido' => '120', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => 'whisper_comprimido'],
+            ['extensao' => 'wav', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoWhisper, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoWhisper, 'tamanho_maximo_permitido' => '350', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => 'whisper_sem_compressao'],
+            ['extensao' => 'png', 'sin_permitida_protocolo' => 'N', 'forma_entrega_arquivo' => '3', 'desc_tratamento_protocolo' => $textoSemTratamentoNaoAceito, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoEnvioDiretoLLM, 'tamanho_maximo_permitido' => '200', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => 'input_llm'],
+            ['extensao' => 'jpeg', 'sin_permitida_protocolo' => 'N', 'forma_entrega_arquivo' => '3', 'desc_tratamento_protocolo' => $textoSemTratamentoNaoAceito, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoEnvioDiretoLLM, 'tamanho_maximo_permitido' => '200', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => 'input_llm'],
+            ['extensao' => 'jpg', 'sin_permitida_protocolo' => 'N', 'forma_entrega_arquivo' => '3', 'desc_tratamento_protocolo' => $textoSemTratamentoNaoAceito, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoEnvioDiretoLLM, 'tamanho_maximo_permitido' => '200', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => 'input_llm'],
+            ['extensao' => 'webp', 'sin_permitida_protocolo' => 'N', 'forma_entrega_arquivo' => '3', 'desc_tratamento_protocolo' => $textoSemTratamentoNaoAceito, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoEnvioDiretoLLM, 'tamanho_maximo_permitido' => '200', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => 'input_llm'],
+            ['extensao' => 'mp4', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoWhisper, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoWhisper, 'tamanho_maximo_permitido' => '500', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => 'whisper_video'],
+            ['extensao' => 'ogg', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoWhisper, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoWhisper, 'tamanho_maximo_permitido' => '120', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => 'whisper_comprimido'],
+            ['extensao' => 'm4a', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoWhisper, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoWhisper, 'tamanho_maximo_permitido' => '120', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => 'whisper_comprimido'],
+            ['extensao' => 'webm', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoWhisper, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoWhisper, 'tamanho_maximo_permitido' => '500', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => 'whisper_video'],
+            ['extensao' => 'flac', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoWhisper, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoWhisper, 'tamanho_maximo_permitido' => '350', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => 'whisper_sem_compressao'],
+            ['extensao' => 'aac', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoWhisper, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoWhisper, 'tamanho_maximo_permitido' => '120', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => 'whisper_comprimido'],
+            ['extensao' => 'opus', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoWhisper, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoWhisper, 'tamanho_maximo_permitido' => '120', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => 'whisper_comprimido'],
+            ['extensao' => 'wma', 'sin_permitida_protocolo' => 'S', 'forma_entrega_arquivo' => '1', 'desc_tratamento_protocolo' => $textoTratamentoWhisper, 'sin_permitida_avulso' => 'S', 'desc_tratamento_avulso' => $textoTratamentoWhisper, 'tamanho_maximo_permitido' => '120', 'conteudo_vetorizavel' => 'N', 'limite_considerar' => 'whisper_comprimido'],
+        ];
+
+
+        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+        $numTamMbDocExterno = (int) $objInfraParametro->getValor('SEI_TAM_MB_DOC_EXTERNO');
+
+        $objMdIaAdmExtPermitidaRN = new MdIaAdmExtPermitidaRN();
+
+        foreach ($arrExtensoes as $extensaoData) {
+            $objMdIaAdmExtPermitidaDTO = new MdIaAdmExtPermitidaDTO();
+            $objMdIaAdmExtPermitidaDTO->setStrExtensao($extensaoData['extensao']);
+            $objMdIaAdmExtPermitidaDTO->setStrSinAtivo('S');
+            $objMdIaAdmExtPermitidaDTO->setStrSinPermitidaProtocolo($extensaoData['sin_permitida_protocolo']);
+            $objMdIaAdmExtPermitidaDTO->setNumFormaEntregaArquivo($extensaoData['forma_entrega_arquivo']);
+            $objMdIaAdmExtPermitidaDTO->setStrDescTratamentoProtocolo($extensaoData['desc_tratamento_protocolo']);
+            $objMdIaAdmExtPermitidaDTO->setStrSinPermitidaAvulso($extensaoData['sin_permitida_avulso']);
+            $objMdIaAdmExtPermitidaDTO->setStrDescTratamentoAvulso($extensaoData['desc_tratamento_avulso']);
+            $objMdIaAdmExtPermitidaDTO->setStrSinConteudoVetorizavel($extensaoData['conteudo_vetorizavel']);
+            if ($extensaoData['sin_permitida_avulso'] == "S") {
+                if ($numTamMbDocExterno < (int) $extensaoData['tamanho_maximo_permitido']) {
+                    $tamanhoMaximoPermitido = $numTamMbDocExterno;
+                } else {
+                    $tamanhoMaximoPermitido = $extensaoData['tamanho_maximo_permitido'];
+                }
+                $objMdIaAdmExtPermitidaDTO->setNumTamanhoMaximoPermitido($tamanhoMaximoPermitido);
+            }
+            $objMdIaAdmExtPermitidaDTO->setStrLimiteConsiderar($extensaoData['limite_considerar']);
+            $objMdIaAdmExtPermitidaRN->cadastrar($objMdIaAdmExtPermitidaDTO);
+        }
+
+        $this->logar('CRIANDO ÍNDICES DE POLLING EM md_ia_doc_indexaveis');
+        $objInfraMetaBD->criarIndice('md_ia_doc_indexaveis', 'i01_md_ia_doc_indexaveis', array('sin_indexado', 'id_documento'));
+        $objInfraMetaBD->criarIndice('md_ia_doc_indexaveis', 'i02_md_ia_doc_indexaveis', array('sin_vetorizado', 'id_documento'));
+
+        $this->logar('CRIANDO ÍNDICE DE POLLING EM md_ia_proc_indexaveis');
+        $objInfraMetaBD->criarIndice('md_ia_proc_indexaveis', 'i01_md_ia_proc_indexaveis', array('sin_indexado', 'id_procedimento'));
+
+        $objMdIaAdmUrlIntegracaoDTO = new MdIaAdmUrlIntegracaoDTO();
+        $MdIaAdmUrlIntegracaoRN = new MdIaAdmUrlIntegracaoRN();
+        $objMdIaAdmUrlIntegracaoDTO->setNumIdMdIaAdmUrlIntegracao(8);
+        $objMdIaAdmUrlIntegracaoDTO->retNumIdMdIaAdmUrlIntegracao();
+        $objMdIaAdmUrlIntegracaoDTO->retNumIdAdmIaAdmIntegracao();
+        $objMdIaAdmUrlIntegracaoDTO->retStrReferencia();
+        $objMdIaAdmUrlIntegracaoDTO->retStrLabel();
+        $objMdIaAdmUrlIntegracaoDTO->retStrUrl();
+        $objMdIaAdmUrlIntegracaoDTO = $MdIaAdmUrlIntegracaoRN->consultar($objMdIaAdmUrlIntegracaoDTO);
+        $objMdIaAdmUrlIntegracaoDTO->setStrUrl(':8088/llm_lang/session_stream');
+        $MdIaAdmUrlIntegracaoRN->alterar($objMdIaAdmUrlIntegracaoDTO);
+
+        $this->logar('REMOVENDO A COLUNA sin_refletir DE md_ia_adm_config_assist_ia');
+        $objInfraMetaBD->excluirColuna('md_ia_adm_config_assist_ia', 'sin_refletir');
 
         $this->atualizarNumeroVersao($nmVersao);
     }

@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -58,17 +58,6 @@ class MdIaAdmConfigAssistIAINT extends InfraINT
         return $arrObjUsuarioDTO;
     }
 
-    public static function habilitadoRefletir()
-    {
-        $objMdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();
-        $objMdIaAdmConfigAssistIADTO->retStrSinRefletir();
-        $objMdIaAdmConfigAssistIARN = new MdIaAdmConfigAssistIARN();
-        $objMdIaAdmConfigAssistIADTO = $objMdIaAdmConfigAssistIARN->consultar($objMdIaAdmConfigAssistIADTO);
-
-        if ($objMdIaAdmConfigAssistIADTO->getStrSinRefletir() != 'S') {
-            return "display:none !important;";
-        }
-    }
     public static function habilitadoBuscarNaWeb()
     {
         $objMdIaAdmConfigAssistIADTO = new MdIaAdmConfigAssistIADTO();

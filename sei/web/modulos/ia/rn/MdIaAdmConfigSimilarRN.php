@@ -1,4 +1,5 @@
-<?
+<?php
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -62,7 +63,6 @@ class MdIaAdmConfigSimilarRN extends InfraRN
     protected function cadastrarControlado(MdIaAdmConfigSimilarDTO $objMdIaAdmConfigSimilarDTO)
     {
         try {
-
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_config_similar_cadastrar', __METHOD__, $objMdIaAdmConfigSimilarDTO);
 
             //Regras de Negocio
@@ -80,7 +80,6 @@ class MdIaAdmConfigSimilarRN extends InfraRN
             $ret = $objMdIaAdmConfigSimilarBD->cadastrar($objMdIaAdmConfigSimilarDTO);
 
             return $ret;
-
         } catch (Exception $e) {
             throw new InfraException('Erro cadastrando .', $e);
         }
@@ -89,7 +88,6 @@ class MdIaAdmConfigSimilarRN extends InfraRN
     protected function alterarControlado(MdIaAdmConfigSimilarDTO $objMdIaAdmConfigSimilarDTO)
     {
         try {
-
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_config_similar_alterar', __METHOD__, $objMdIaAdmConfigSimilarDTO);
 
             //Regras de Negocio
@@ -112,7 +110,6 @@ class MdIaAdmConfigSimilarRN extends InfraRN
 
             $objMdIaAdmConfigSimilarBD = new MdIaAdmConfigSimilarBD($this->getObjInfraIBanco());
             $objMdIaAdmConfigSimilarBD->alterar($objMdIaAdmConfigSimilarDTO);
-
         } catch (Exception $e) {
             throw new InfraException('Erro alterando .', $e);
         }
@@ -133,7 +130,6 @@ class MdIaAdmConfigSimilarRN extends InfraRN
             for ($i = 0; $i < count($arrObjMdIaAdmConfigSimilarDTO); $i++) {
                 $objMdIaAdmConfigSimilarBD->excluir($arrObjMdIaAdmConfigSimilarDTO[$i]);
             }
-
         } catch (Exception $e) {
             throw new InfraException('Erro excluindo .', $e);
         }
@@ -142,7 +138,6 @@ class MdIaAdmConfigSimilarRN extends InfraRN
     protected function consultarConectado(MdIaAdmConfigSimilarDTO $objMdIaAdmConfigSimilarDTO)
     {
         try {
-
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_config_similar_consultar', __METHOD__, $objMdIaAdmConfigSimilarDTO);
 
             //Regras de Negocio
@@ -178,7 +173,6 @@ class MdIaAdmConfigSimilarRN extends InfraRN
             $ret = $objMdIaAdmConfigSimilarBD->listar($objMdIaAdmConfigSimilarDTO);
 
             return $ret;
-
         } catch (Exception $e) {
             throw new InfraException('Erro listando .', $e);
         }

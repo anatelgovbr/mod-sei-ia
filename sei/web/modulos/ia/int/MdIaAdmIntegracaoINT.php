@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -9,6 +9,7 @@
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
+require_once dirname(__FILE__) . '/../rn/MdIaAutenticacaoSSLRN.php';
 
 class MdIaAdmIntegracaoINT extends InfraINT
 {
@@ -34,11 +35,10 @@ class MdIaAdmIntegracaoINT extends InfraINT
 
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => 0,       // ignora verificação do nome do host (0 desabilita, 2 habilita)
             CURLOPT_TIMEOUT_MS => '5000',
             CURLOPT_CUSTOMREQUEST => $post['tipoRequisicao'],
         ]);
+        MdIaAutenticacaoSSLRN::configurarAutenticacaoSSL($curl);
 
         // monta dados de parametros necessarios
         if (array_key_exists('parametros', $post)) {

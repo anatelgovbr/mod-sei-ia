@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -115,10 +115,12 @@ class MdIaTopicoChatINT extends InfraINT
         $objMdIaTopicoChatDTO->retStrSinAtivo();
         $objMdIaTopicoChatDTO->setNumIdMdIaTopicoChat(SessaoSEI::getInstance()->getAtributo('MD_IA_ID_TOPICO_CHAT_IA'));
         $topicoCadastrado = $objMdIaTopicoChatRN->consultar($objMdIaTopicoChatDTO);
-        if (!is_null($topicoCadastrado)
+        if (
+            !is_null($topicoCadastrado)
             && ($topicoCadastrado->getNumIdUsuario() != SessaoSEI::getInstance()->getNumIdUsuario()
                 || $topicoCadastrado->getNumIdUnidade() != SessaoSEI::getInstance()->getNumIdUnidadeAtual()
-                || $topicoCadastrado->getStrSinAtivo() != "S")) {
+                || $topicoCadastrado->getStrSinAtivo() != "S")
+        ) {
             $topicoCadastrado = null;
         }
         if (empty($topicoCadastrado)) {
@@ -323,23 +325,10 @@ class MdIaTopicoChatINT extends InfraINT
 
     public static function listarProcedimentosPrompt($prompt)
     {
-        $documentos = [];
-        preg_match_all('/#\S*(?=\s|$|\n)/', $prompt, $matches);
-        $possiveisCitacoes = array_unique($matches[0]);
-        if (!empty($possiveisCitacoes)) {
-            foreach ($possiveisCitacoes as $possivelCitacao) {
-                if (strpos($possivelCitacao, '[') !== false) {
-                    if (preg_match('/#[0-9]+\[[0-9]+(:[0-9]+)?\]/', $possivelCitacao, $match)) {
-                        $documentos[] = $match[0];
-                    }
-                } else {
-                    if (preg_match('/#[0-9]+[^[\s]*?(?=\s|$|\n|[.,;:?!)](?![^.,;:?!)]))/', $possivelCitacao, $match)) {
-                        $documentos[] = $match[0];
-                    }
-                }
-            }
-        }
-        $protocolo["documento"] = $documentos;
+        // A pergunta e gravada com entidades HTML, como &#128220;, que nao podem ser lidas como citacao.
+        $prompt = html_entity_decode(mb_convert_encoding($prompt, 'UTF-8', 'ISO-8859-1'), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        preg_match_all('~' . MdIaConfigAssistenteINT::REGEX_CITACAO_PROTOCOLO . '~', $prompt, $matches);
+        $protocolo["documento"] = array_values(array_unique($matches[0]));
         $protocolo["consultaTopico"] = true;
         $citacoes = MdIaConfigAssistenteINT::listaProtocolosUtilizados($protocolo);
 
@@ -359,6 +348,7 @@ class MdIaTopicoChatINT extends InfraINT
         SessaoSEI::getInstance()->setAtributo('MD_IA_ID_TOPICO_CHAT_IA', $idTopico);
         $objMdIaInteracaoChatDTO = new MdIaInteracaoChatDTO();
         $objMdIaInteracaoChatRN = new MdIaInteracaoChatRN();
+        $objMdIaInteracaoChatEventRN = new MdIaInteracaoChatEventRN();
         $objMdIaInteracaoChatDTO->retNumIdMessage();
         $objMdIaInteracaoChatDTO->retStrPergunta();
         $objMdIaInteracaoChatDTO->retStrResposta();
@@ -385,9 +375,25 @@ class MdIaTopicoChatINT extends InfraINT
             $arrayProcedimentos = self::listarProcedimentosPrompt($itemInteracao->getStrPergunta());
 
             $resposta = MdIaConfigAssistenteINT::retornaMensagemAmigavelUsuario($itemInteracao->getNumStatusRequisicao(), $itemInteracao->getStrResposta());
+            $eventosInteracao = $objMdIaInteracaoChatEventRN->listarEventosInteracao((int)$itemInteracao->getNumIdMdIaInteracaoChat());
+            $ultimoEventoReasoning = null;
+            $statusHistorico = array();
+
+            foreach ($eventosInteracao as $eventoInteracao) {
+                if ($eventoInteracao->getStrTipoEvento() === 'status' && !InfraString::isBolVazia($eventoInteracao->getStrConteudo())) {
+                    $statusHistorico[] = mb_convert_encoding($eventoInteracao->getStrConteudo(), 'UTF-8', 'ISO-8859-1');
+                    continue;
+                }
+
+                if ($eventoInteracao->getStrTipoEvento() === 'reasoning' && !InfraString::isBolVazia($eventoInteracao->getStrConteudo())) {
+                    $ultimoEventoReasoning = $eventoInteracao;
+                }
+            }
 
             $arrayItensInteracoes["resposta"] = mb_convert_encoding($resposta["resposta"], 'UTF-8', 'ISO-8859-1');
             $arrayItensInteracoes["tipo_critica"] = $resposta["tipoCritica"];
+            $arrayItensInteracoes["reasoning"] = $ultimoEventoReasoning ? mb_convert_encoding($ultimoEventoReasoning->getStrConteudo(), 'UTF-8', 'ISO-8859-1') : null;
+            $arrayItensInteracoes["status_execucao_historico"] = $statusHistorico;
 
             $arrayItensInteracoes["feedback"] = $itemInteracao->getNumFeedback();
             $arrayItensInteracoes["dadosCitacoes"] = $arrayProcedimentos;
@@ -395,6 +401,7 @@ class MdIaTopicoChatINT extends InfraINT
             $arrayItensInteracoes["status_requisicao"] = $itemInteracao->getNumStatusRequisicao();
             $arrayItensInteracoes["dth_cadastro"] = substr($itemInteracao->getDthCadastro(), 0, 19);
             $arrayItensInteracoes["tempo_execucao"] = $itemInteracao->getNumTempoExecucao();
+            $arrayItensInteracoes["upload"] = (new MdIaInteracaoArqAvulsoINT())->recuperarDadosUploadTopico($itemInteracao->getNumIdMdIaInteracaoChat());
 
             $arrayInteracoes[] = $arrayItensInteracoes;
         }

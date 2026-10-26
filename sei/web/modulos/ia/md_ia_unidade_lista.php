@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * ANATEL
  *
@@ -159,7 +159,7 @@ PaginaSEI::getInstance()->abrirJavaScript();
     infraEfeitoTabelas();
     }
 
-<?
+<?php
 /*
   if ($bolAcaoDesativar) {
   function acaoDesativar(id,desc){
@@ -227,14 +227,14 @@ PaginaSEI::getInstance()->abrirJavaScript();
  */
 ?>
 
-<?
+<?php
 PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
     <form id="frmUnidadeLista" method="post"
           action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao'] . $strTermoPesquisa) ?>">
-        <?
+        <?php
         PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
         PaginaSEI::getInstance()->abrirAreaDados('5em');
         ?>
@@ -271,22 +271,22 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             </div>
         </div>
 
-        <? PaginaSEI::getInstance()->fecharAreaDados(); ?>
+        <?php PaginaSEI::getInstance()->fecharAreaDados(); ?>
 
         <div class="row">
             <div class="col-12">
                 <div class="table-responsive">
-                    <? PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros); ?>
+                    <?php PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros); ?>
                 </div>
             </div>
         </div>
 
-        <?
+        <?php
         PaginaSEI::getInstance()->montarAreaDebug();
         PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
         ?>
     </form>
-<?
+<?php
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>

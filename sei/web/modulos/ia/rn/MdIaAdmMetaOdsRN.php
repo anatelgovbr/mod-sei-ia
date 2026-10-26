@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -147,6 +147,44 @@ class MdIaAdmMetaOdsRN extends InfraRN
 
         } catch (Exception $e) {
             throw new InfraException('Erro excluindo Meta da ODS.', $e);
+        }
+    }
+
+    protected function salvarConfiguracaoMetasControlado(array $dados): void
+    {
+        try {
+            $arrIdMetasForteRelacao = explode(',', $dados['hdnInfraItensSelecionados']);
+            $arrTiposProcessoMetas = $dados['tipoProcessoMetas'] ?? [];
+
+            $objMdIaAdmMetaOdsDTO = new MdIaAdmMetaOdsDTO();
+            $objMdIaAdmMetaOdsDTO->setNumIdMdIaAdmObjetivoOds($dados['hdnIdObjetivo']);
+            $objMdIaAdmMetaOdsDTO->retNumIdMdIaAdmMetaOds();
+            $objMdIaAdmMetaOdsDTO->retStrSinForteRelacao();
+            $arrObjMdIaAdmMetaOdsDTO = $this->listar($objMdIaAdmMetaOdsDTO);
+
+            $objMdIaAdmClassAutTpRN = new MdIaAdmClassAutTpRN();
+            foreach ($arrObjMdIaAdmMetaOdsDTO as $objMdIaAdmMetaOdsDTO) {
+                $numIdMdIaAdmMetaOds = $objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmMetaOds();
+
+                $objMdIaAdmClassAutTpDTO = new MdIaAdmClassAutTpDTO();
+                $objMdIaAdmClassAutTpDTO->setNumIdMdIaAdmMetaOds($numIdMdIaAdmMetaOds);
+                $objMdIaAdmClassAutTpDTO->retNumIdMdIaAdmClassAutTp();
+                $objMdIaAdmClassAutTpRN->excluir($objMdIaAdmClassAutTpRN->listar($objMdIaAdmClassAutTpDTO));
+
+                $objMdIaAdmMetaOdsDTO->setStrSinForteRelacao('N');
+                if (in_array($numIdMdIaAdmMetaOds, $arrIdMetasForteRelacao)) {
+                    $objMdIaAdmMetaOdsDTO->setStrSinForteRelacao('S');
+                    foreach ($arrTiposProcessoMetas[$numIdMdIaAdmMetaOds] ?? [] as $numIdTipoProcedimento) {
+                        $objMdIaAdmClassAutTpDTO = new MdIaAdmClassAutTpDTO();
+                        $objMdIaAdmClassAutTpDTO->setNumIdMdIaAdmMetaOds($numIdMdIaAdmMetaOds);
+                        $objMdIaAdmClassAutTpDTO->setNumIdTipoProcedimento($numIdTipoProcedimento);
+                        $objMdIaAdmClassAutTpRN->cadastrar($objMdIaAdmClassAutTpDTO);
+                    }
+                }
+                $this->alterar($objMdIaAdmMetaOdsDTO);
+            }
+        } catch (Exception $e) {
+            throw new InfraException('Erro salvando configuração das Metas ODS.', $e);
         }
     }
 

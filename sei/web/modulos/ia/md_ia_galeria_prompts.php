@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -235,7 +235,7 @@ try {
         $strResultado .= '<tr>';
         $strResultado .= '<th class="infraTh" width="1%">' . PaginaSEI::getInstance()->getThCheck('', 'Infra') . '</th>' . "\n";
         $strResultado .= '<th class="infraTh" width="10%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdIaGaleriaPromptsDTO, 'Grupo', 'NomeGrupo', $arrObjMdIaGaleriaPromptsDTO) . '</th>' . "\n";
-        $strResultado .= '<th class="infraTh" width="20%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdIaGaleriaPromptsDTO, 'Descrição do Prompt', 'DescricaoPrompt', $arrObjMdIaGaleriaPromptsDTO) . '</th>' . "\n";
+        $strResultado .= '<th class="infraTh" width="20%">' . PaginaSEI::getInstance()->getThOrdenacao($objMdIaGaleriaPromptsDTO, 'Descrição do Prompt', 'Descricao', $arrObjMdIaGaleriaPromptsDTO) . '</th>' . "\n";
         $strResultado .= '<th class="infraTh" width="20%">Prompt</th>' . "\n";
         $strResultado .= '<th class="infraTh" width="7%">Usuário</th>' . "\n";
         $strResultado .= '<th class="infraTh" width="5%">Unidade</th>' . "\n";
@@ -317,7 +317,7 @@ PaginaSEI::getInstance()->abrirStyle();
 
 #lblMeusPrompts {position:absolute;left:0%;top:70%;width:34%;}
 
-<?
+<?php
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
@@ -358,7 +358,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             value="S" <?php echo $_POST['optMeusPrompts'] == 'S' ? 'checked="checked"' : '' ?>
             class="infraCheckbox"> Meus Prompts Publicados</label>
 
-    <?
+    <?php
     PaginaSEI::getInstance()->fecharAreaDados();
     PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
     PaginaSEI::getInstance()->montarAreaDebug();

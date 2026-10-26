@@ -1,24 +1,16 @@
+<?php require_once "md_ia_funcoes_comuns_js.php"; ?>
 <script src="modulos/ia/lib/purify/purify.js"></script>
 <script type="text/javascript">
-    function inicializar() {
+    window.mdIaFecharModalPadrao = {
+        fecharTodos: true
+    };
+    window.mdIaTratarDigitacaoFormId = 'frmPromptsFavoritos';
+    window.mdIaInicializarSelecaoConfig = {
+        acaoAtual: '<?= $_GET['acao'] ?>',
+        acaoSelecao: 'md_ia_prompts_favoritos_selecionar'
+    };
 
-        //infraOcultarMenuSistemaEsquema();
-
-        if ('<?= $_GET['acao'] ?>' == 'md_ia_prompts_favoritos_selecionar') {
-            infraReceberSelecao();
-            document.getElementById('btnFecharSelecao').focus();
-        } else {
-            document.getElementById('btnFechar').focus();
-        }
-        infraEfeitoTabelas();
-    }
-
-    function fecharModal() {
-        $(window.top.document).find('div[id^=divInfraSparklingModalClose]').get().reverse().forEach(function(element) {
-            $(element).click();
-        });
-    }
-
+    var inicializar = inicializarPromptSelecaoPadrao;
 
     function carregarPromptFavorito(idPromptFavorito) {
         var dadosMensagem = {};
@@ -29,23 +21,12 @@
             dataType: "json", //Tipo de dado que será enviado ao servidor
             data: dadosMensagem, // Enviando o JSON com o nome de itens
             success: function(data) {
-                mensagem = decodeHtmlEntitiesPergunta(data["prompt"]);
-                mensagem = getTextForTextarea(mensagem);
-                //mensagem = safe_tags(mensagem);
-                window.top.document.getElementById('mensagem').value = mensagem;
-                // Seleciona o campo no top document
-                var campo = window.top.document.querySelector('#mensagem');
-
-                // Cria um evento keydown para a tecla Shift (keyCode 16)
-                var evento = new KeyboardEvent('keydown', {
-                    key: 'Shift',
-                    keyCode: 16,
-                    which: 16,
+                mensagem = getTextForTextarea(data["prompt"]).replace(/\r\n?/g, '\n');
+                var campo = window.top.document.getElementById('mensagem');
+                campo.textContent = mensagem;
+                campo.dispatchEvent(new Event('input', {
                     bubbles: true
-                });
-
-                // Dispara o evento keydown no campo
-                campo.dispatchEvent(evento);
+                }));
                 $(window.top.document).find('div[id^=divInfraSparklingModalClose]').get().reverse().forEach(function(element) {
                     $(element).click();
                     campo.focus();
@@ -54,18 +35,9 @@
         });
     }
 
-    function infraTransportarItem(n) {
-        carregarPromptFavorito(n);
-    }
+    window.mdIaTransportarItemHandler = carregarPromptFavorito;
 
-    function tratarDigitacao(ev) {
-        if (infraGetCodigoTecla(ev) == 13) {
-            document.getElementById('frmPromptsFavoritos').submit();
-        }
-        return true;
-    }
-
-    <? if ($bolAcaoExcluir) { ?>
+    <?php if ($bolAcaoExcluir) { ?>
 
         function acaoExcluir(id, desc) {
             if (confirm("Confirma exclusão do Prompt Favorito?")) {
@@ -86,5 +58,5 @@
                 document.getElementById('frmPromptsFavoritos').submit();
             }
         }
-    <? } ?>
+    <?php } ?>
 </script>

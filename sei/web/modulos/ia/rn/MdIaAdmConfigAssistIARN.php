@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -61,13 +61,34 @@ class MdIaAdmConfigAssistIARN extends InfraRN
                 $this->validarStrSinExibirFuncionalidade($objMdIaAdmConfigAssistIADTO, $objInfraException);
             }
 
+            if ($objMdIaAdmConfigAssistIADTO->isSetNumLimiteGeralTokens()
+                && $objMdIaAdmConfigAssistIADTO->isSetNumLimiteMaiorUsuariosTokens()
+                && $objMdIaAdmConfigAssistIADTO->getNumLimiteMaiorUsuariosTokens() <= $objMdIaAdmConfigAssistIADTO->getNumLimiteGeralTokens()) {
+                $objInfraException->adicionarValidacao('O limite maior para usuários específicos deve ser maior que o limite geral de tokens.');
+            }
+
             $objInfraException->lancarValidacoes();
 
-            $objMdIaAdmConfigSimilarBD = new MdIaAdmConfigSimilarBD($this->getObjInfraIBanco());
-            $objMdIaAdmConfigSimilarBD->alterar($objMdIaAdmConfigAssistIADTO);
+            $objMdIaAdmConfigAssistIABD = new MdIaAdmConfigAssistIABD($this->getObjInfraIBanco());
+            $objMdIaAdmConfigAssistIABD->alterar($objMdIaAdmConfigAssistIADTO);
 
         } catch (Exception $e) {
             throw new InfraException('Erro alterando .', $e);
+        }
+    }
+
+    protected function alterarComUsuariosControlado(array $arrParametros): void
+    {
+        try {
+            [$objMdIaAdmConfigAssistIADTO, $arrUsuarios] = $arrParametros;
+
+            $this->alterar($objMdIaAdmConfigAssistIADTO);
+
+            $objMdIaAdmCfgAssiIaUsuRN = new MdIaAdmCfgAssiIaUsuRN();
+            $objMdIaAdmCfgAssiIaUsuRN->excluirRelacionamento($objMdIaAdmConfigAssistIADTO->getNumIdMdIaAdmConfigAssistIA());
+            $objMdIaAdmCfgAssiIaUsuRN->cadastrarRelacionamento([$arrUsuarios, $objMdIaAdmConfigAssistIADTO->getNumIdMdIaAdmConfigAssistIA()]);
+        } catch (Exception $e) {
+            throw new InfraException('Erro alterando Configuração do Assistente.', $e);
         }
     }
 

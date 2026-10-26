@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -32,6 +32,24 @@ class MdIaGrupoPromptsFavRN extends InfraRN
             if (strlen($objMdIaGrupoPromptsFavDTO->getStrNomeGrupo()) > 80) {
                 $objInfraException->adicionarValidacao(' possui tamanho superior a 80 caracteres.');
             }
+        }
+    }
+
+    private function validarProprietario(array $arrIdMdIaGrupoPromptsFav, InfraException $objInfraException): void
+    {
+        $arrIdMdIaGrupoPromptsFav = array_unique(array_filter(array_map('intval', $arrIdMdIaGrupoPromptsFav)));
+        if (count($arrIdMdIaGrupoPromptsFav) == 0) {
+            return;
+        }
+
+        $objMdIaGrupoPromptsFavDTO = new MdIaGrupoPromptsFavDTO();
+        $objMdIaGrupoPromptsFavDTO->setNumIdMdIaGrupoPromptsFav($arrIdMdIaGrupoPromptsFav, InfraDTO::$OPER_IN);
+        $objMdIaGrupoPromptsFavDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
+        $objMdIaGrupoPromptsFavDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+
+        $objMdIaGrupoPromptsFavBD = new MdIaGrupoPromptsFavBD($this->getObjInfraIBanco());
+        if ($objMdIaGrupoPromptsFavBD->contar($objMdIaGrupoPromptsFavDTO) != count($arrIdMdIaGrupoPromptsFav)) {
+            $objInfraException->adicionarValidacao('Grupo de Prompts Favoritos não encontrado.');
         }
     }
 
@@ -70,6 +88,7 @@ class MdIaGrupoPromptsFavRN extends InfraRN
             if ($arrobjMdIaGrupoPromptsFavDTO->isSetStrNomeGrupo()) {
                 $this->validarStrNomeGrupo($arrobjMdIaGrupoPromptsFavDTO, $objInfraException);
             }
+            $this->validarProprietario([$arrobjMdIaGrupoPromptsFavDTO->getNumIdMdIaGrupoPromptsFav()], $objInfraException);
 
             $objInfraException->lancarValidacoes();
 
@@ -89,6 +108,9 @@ class MdIaGrupoPromptsFavRN extends InfraRN
 
             //Regras de Negocio
             $objInfraException = new InfraException();
+
+            $this->validarProprietario(InfraArray::converterArrInfraDTO($arrobjMdIaGrupoPromptsFavDTO, 'IdMdIaGrupoPromptsFav'), $objInfraException);
+            $objInfraException->lancarValidacoes();
 
             if (count($arrobjMdIaGrupoPromptsFavDTO)){
 
@@ -131,6 +153,9 @@ class MdIaGrupoPromptsFavRN extends InfraRN
             //$objInfraException = new InfraException();
 
             //$objInfraException->lancarValidacoes();
+
+            $arrobjMdIaGrupoPromptsFavDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
+            $arrobjMdIaGrupoPromptsFavDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
 
             $objMdIaGrupoPromptsFavBD = new MdIaGrupoPromptsFavBD($this->getObjInfraIBanco());
 

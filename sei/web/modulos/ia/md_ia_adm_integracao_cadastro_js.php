@@ -1,3 +1,4 @@
+<?php require_once "md_ia_funcoes_comuns_js.php"; ?>
 <script type="text/javascript">
     var isTelaAcaoAlterar = document.querySelector('#hdnTipoAcao').value == 'alterar' ? true : false;
     var isTpIntegOrigem = document.querySelector('[name="rdnTpIntegracao"]').value;
@@ -9,9 +10,9 @@
     };
 
     /* *****************************
-		* Codigo Jquery
-		* ******************************/
-    $('[name="rdnTpIntegracao"]').change(function () {
+     * Codigo Jquery
+     * ******************************/
+    $('[name="rdnTpIntegracao"]').change(function() {
         if ($(this).val() == "<?= MdIaAdmIntegracaoRN::$TP_INTEGRACAO_SEM_AUTENTICACAO ?>") {
             $('.dvConteudo').hide();
             $('.selREST,.selSOAP').hide();
@@ -32,7 +33,7 @@
         }
     });
 
-    $('#selMetodoRequisicao').change(function () {
+    $('#selMetodoRequisicao').change(function() {
         if ($(this).val() != <?= MdIaAdmIntegracaoRN::$REQUISICAO_POST ?>) {
             alert('O Método da Requisição "' + $('option:selected', this).text() + '" ainda não está disponível nesta versão.');
             $(this).val(<?= MdIaAdmIntegracaoRN::$REQUISICAO_POST ?>);
@@ -40,7 +41,7 @@
         }
     });
 
-    $('#selFormato').change(function () {
+    $('#selFormato').change(function() {
         if ($(this).val() != <?= MdIaAdmIntegracaoRN::$FORMATO_JSON ?>) {
             alert('O Formato do Retorno da Operação "' + $('option:selected', this).text() + '" ainda não está disponível nesta versão.');
             $(this).val(<?= MdIaAdmIntegracaoRN::$FORMATO_JSON ?>);
@@ -49,8 +50,8 @@
     });
 
     /* *****************************
-    * Codigo Javascript
-    * ******************************/
+     * Codigo Javascript
+     * ******************************/
     function inicializar() {
         infraEfeitoTabelas(true);
         alterarFuncionalidade();
@@ -69,10 +70,6 @@
         if (document.querySelector('#selMetodoAutenticacao').value == <?= MdIaAdmIntegracaoRN::$AUT_BODY_TOKEN ?>) {
             $('#rowTokenAut').show();
         }
-    }
-
-    function OnSubmitForm() {
-        return validarCadastro();
     }
 
     function validarCadastro() {
@@ -152,35 +149,14 @@
             params.versaoSoap = document.querySelector('#selVersaoSOAP').value;
             params.retorno = 'XML';
         }
-        buscarOperacoeWs(params);
-    }
-
-    function buscarOperacoeWs(parametros) {
-        let path = "<?= $strLinkValidarWsdl ?>";
-        $.ajax({
-            type: "POST",
-            url: path,
-            dataType: 'xml',
-            async: false,
-            data: parametros,
-            beforeSend: function () {
-                //infraExibirAviso(false);
-            },
-            success: function (result) {
-                montaOperacao(result);
-            },
-            error: function (msgError) {
-                msgCommit = "Erro ao processar o XML do SEI: " + msgError.responseText;
-            },
-            complete: function (result) {
-                //infraAvisoCancelar();
-            }
+        buscarOperacoeWs(params, {
+            path: "<?= $strLinkValidarWsdl ?>"
         });
     }
 
     function montaOperacao(result) {
         //valida se a operacao informada existe no arquivo .Json
-        $.each($(result).find('operacao'), function (key, value) {
+        $.each($(result).find('operacao'), function(key, value) {
             objOperacao.validado = true;
         });
 
@@ -202,7 +178,7 @@
             return false;
         }
         var ultimoCaractere = $("#txtUrlServico").val().slice(-1);
-        if(ultimoCaractere == ":" || ultimoCaractere == "/") {
+        if (ultimoCaractere == ":" || ultimoCaractere == "/") {
             rolar_para('#divMsg');
             $("#divMsg > div > label").html("URL do Endpoint de Autenticação inválido.");
             $("#divMsg > div").addClass("alert-danger");
@@ -232,31 +208,32 @@
             $("#divMsg").show();
         }
     }
+
     function alterarFuncionalidade() {
         if ($("#selFuncionalidade").val() == <?= MdIaAdmIntegFuncionRN::$ID_FUNCIONALIDADE_INTELIGENCIA_ARTIFICIAL ?> || $("#selFuncionalidade").val() == <?= MdIaAdmIntegFuncionRN::$ID_FUNCIONALIDADE_INTERFACE_LLM ?>) {
             $("input[name='rdnTpIntegracao']").each(function() {
-                if(this.value != '<?= MdIaAdmIntegracaoRN::$SEI_IA_TP_INTEGRACAO ?>') {
+                if (this.value != '<?= MdIaAdmIntegracaoRN::$SEI_IA_TP_INTEGRACAO ?>') {
                     this.disabled = true;
                 } else {
                     this.disabled = false;
                 }
             });
             $("#selMetodoRequisicao > option").each(function() {
-                if(this.value != <?= MdIaAdmIntegracaoRN::$SEI_IA_REQUISICAO ?>) {
+                if (this.value != <?= MdIaAdmIntegracaoRN::$SEI_IA_REQUISICAO ?>) {
                     this.disabled = true;
                 } else {
                     this.disabled = false;
                 }
             });
             $("#selMetodoAutenticacao > option").each(function() {
-                if(this.value != <?= MdIaAdmIntegracaoRN::$SEI_IA_AUT ?>) {
+                if (this.value != <?= MdIaAdmIntegracaoRN::$SEI_IA_AUT ?>) {
                     this.disabled = true;
                 } else {
                     this.disabled = false;
                 }
             });
             $("#selFormato > option").each(function() {
-                if(this.value != <?= MdIaAdmIntegracaoRN::$SEI_IA_FORMATO ?>) {
+                if (this.value != <?= MdIaAdmIntegracaoRN::$SEI_IA_FORMATO ?>) {
                     this.disabled = true;
                 } else {
                     this.disabled = false;
@@ -264,19 +241,11 @@
             });
         }
     }
-    function rolar_para(elemento) {
-        $("#divMsg > div").removeClass("alert-warning");
-        $("#divMsg > div").removeClass("alert-danger");
-        $("#divMsg > div").removeClass("alert-success");
-        $("#divInfraAreaTelaD").animate({
-            scrollTop: $(elemento).offset().top
-        }, 300);
-    }
 
-    function setMensagemPersonalizada(msg, arrParams){
+    function setMensagemPersonalizada(msg, arrParams) {
         var padraoSetMsg = '@VALOR$NUMERO$@';
 
-        for(var i = 0; i < arrParams.length; i++){
+        for (var i = 0; i < arrParams.length; i++) {
             var numero = i + 1;
             var campoNome = padraoSetMsg.replace('$NUMERO$', numero);
             var campoSubst = $.trim(arrParams[i]);
@@ -286,7 +255,7 @@
         return msg;
     }
 
-    function emitirAlerta(){
+    function emitirAlerta() {
         var msg = 'Atenção: Este campo é crítico para o funcionamento do Assistente de IA. É mantido exclusivamente pelo script de atualização do Módulo.\n\nNunca altere manualmente esse campo!'
         alert(msg);
     }

@@ -85,6 +85,27 @@ class MdIaGaleriaPromptsRN extends InfraRN
         }
     }
 
+    private function validarUnidadeOuModerador(array $arrIdMdIaGaleriaPrompts, InfraException $objInfraException): void
+    {
+        if (SessaoSEI::getInstance()->verificarPermissao('md_ia_galeria_prompt_moderador')) {
+            return;
+        }
+
+        $arrIdMdIaGaleriaPrompts = array_unique(array_filter(array_map('intval', $arrIdMdIaGaleriaPrompts)));
+        if (count($arrIdMdIaGaleriaPrompts) == 0) {
+            return;
+        }
+
+        $objMdIaGaleriaPromptsDTO = new MdIaGaleriaPromptsDTO();
+        $objMdIaGaleriaPromptsDTO->setNumIdMdIaGaleriaPrompts($arrIdMdIaGaleriaPrompts, InfraDTO::$OPER_IN);
+        $objMdIaGaleriaPromptsDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+
+        $objMdIaGaleriaPromptsBD = new MdIaGaleriaPromptsBD($this->getObjInfraIBanco());
+        if ($objMdIaGaleriaPromptsBD->contar($objMdIaGaleriaPromptsDTO) != count($arrIdMdIaGaleriaPrompts)) {
+            $objInfraException->adicionarValidacao('Somente a unidade que publicou o Prompt ou um moderador da Galeria pode alterá-lo ou excluí-lo.');
+        }
+    }
+
     /**
      * @param MdIaGaleriaPromptsDTO $objMdIaGaleriaPromptsDTO
      * @return MdIaGaleriaPromptsDTO
@@ -129,6 +150,7 @@ class MdIaGaleriaPromptsRN extends InfraRN
 
             if ($objMdIaGaleriaPromptsDTO->isSetNumIdMdIaGaleriaPrompts()) {
                 $this->validarNumIdMdIaGaleriaPrompts($objMdIaGaleriaPromptsDTO, $objInfraException);
+                $this->validarUnidadeOuModerador([$objMdIaGaleriaPromptsDTO->getNumIdMdIaGaleriaPrompts()], $objInfraException);
             }
 
             if ($objMdIaGaleriaPromptsDTO->isSetNumIdMdIaGrupoGaleriaPrompt()) {
@@ -176,9 +198,11 @@ class MdIaGaleriaPromptsRN extends InfraRN
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_galeria_prompt_excluir', __METHOD__, $arrObjMdIaGaleriaPromptsDTO);
 
             //Regras de Negocio
-            //$objInfraException = new InfraException();
+            $objInfraException = new InfraException();
 
-            //$objInfraException->lancarValidacoes();
+            $this->validarUnidadeOuModerador(InfraArray::converterArrInfraDTO($arrObjMdIaGaleriaPromptsDTO, 'IdMdIaGaleriaPrompts'), $objInfraException);
+
+            $objInfraException->lancarValidacoes();
 
             $objMdIaGaleriaPromptsBD = new MdIaGaleriaPromptsBD($this->getObjInfraIBanco());
             foreach ($arrObjMdIaGaleriaPromptsDTO as $objMdIaGaleriaPromptsDTO) {
@@ -288,9 +312,11 @@ class MdIaGaleriaPromptsRN extends InfraRN
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_galeria_prompt_desativar', __METHOD__, $arrObjMdIaGaleriaPromptsDTO);
 
             //Regras de Negocio
-            //$objInfraException = new InfraException();
+            $objInfraException = new InfraException();
 
-            //$objInfraException->lancarValidacoes();
+            $this->validarUnidadeOuModerador(InfraArray::converterArrInfraDTO($arrObjMdIaGaleriaPromptsDTO, 'IdMdIaGaleriaPrompts'), $objInfraException);
+
+            $objInfraException->lancarValidacoes();
 
             $objMdIaGaleriaPromptsBD = new MdIaGaleriaPromptsBD($this->getObjInfraIBanco());
             foreach ($arrObjMdIaGaleriaPromptsDTO as $objMdIaGaleriaPromptsDTO) {
@@ -312,9 +338,11 @@ class MdIaGaleriaPromptsRN extends InfraRN
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_galeria_prompt_reativar', __METHOD__, $arrObjMdIaGaleriaPromptsDTO);
 
             //Regras de Negocio
-            //$objInfraException = new InfraException();
+            $objInfraException = new InfraException();
 
-            //$objInfraException->lancarValidacoes();
+            $this->validarUnidadeOuModerador(InfraArray::converterArrInfraDTO($arrObjMdIaGaleriaPromptsDTO, 'IdMdIaGaleriaPrompts'), $objInfraException);
+
+            $objInfraException->lancarValidacoes();
 
             $objMdIaGaleriaPromptsBD = new MdIaGaleriaPromptsBD($this->getObjInfraIBanco());
             foreach ($arrObjMdIaGaleriaPromptsDTO as $objMdIaGaleriaPromptsDTO) {

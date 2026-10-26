@@ -9,7 +9,7 @@
         infraEfeitoTabelas();
     }
 
-    <? if ($bolAcaoExcluir) { ?>
+    <?php if ($bolAcaoExcluir) { ?>
     function acaoExcluir(id, desc) {
         if (confirm("Confirma exclusão do Grupo de Prompts Favoritos \"" + desc + "\"?")) {
             document.getElementById('hdnInfraItemId').value = id;
@@ -29,5 +29,5 @@
             document.getElementById('frmGrupoPrompsFavoritosLista').submit();
         }
     }
-    <? } ?>
+    <?php } ?>
 </script>

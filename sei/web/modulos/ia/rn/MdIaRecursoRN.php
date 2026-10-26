@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -9,20 +9,21 @@
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
+require_once dirname(__FILE__) . '/MdIaAutenticacaoSSLRN.php';
 
 
 class MdIaRecursoRN extends InfraRN
 {
     const TIME_OUT = '120000';
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     protected function inicializarObjInfraIBanco()
     {
         return BancoSEI::getInstance();
+    }
+
+    public function __construct()
+    {
+        parent::__construct();
     }
 
     protected function conexaoApiRecomendacaoSimilaridadeConectado($dadosProcesso)
@@ -40,10 +41,9 @@ class MdIaRecursoRN extends InfraRN
             curl_setopt_array($curl, [
                 CURLOPT_RETURNTRANSFER => 1,
                 CURLOPT_URL => $urlConsulta,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_SSL_VERIFYHOST => 0,
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT
             ]);
+            MdIaAutenticacaoSSLRN::configurarAutenticacaoSSL($curl);
 
             // Envio e armazenamento da resposta
             $response = curl_exec($curl);
@@ -73,7 +73,7 @@ class MdIaRecursoRN extends InfraRN
                 $strPara = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR');
                 $strAssunto = "ERRO DE RECURSO NO SEI IA";
                 $strConteudo = $log;
-                InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
+                InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, '', '', $strAssunto, $strConteudo);
                 return null;
             }
         } catch (Exception $e) {
@@ -92,12 +92,11 @@ class MdIaRecursoRN extends InfraRN
             curl_setopt_array($curl, [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_URL => $urlOperacao,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_SSL_VERIFYHOST => 0,
                 CURLOPT_POSTFIELDS => $dadosEnviados[0],
                 CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT
             ]);
+            MdIaAutenticacaoSSLRN::configurarAutenticacaoSSL($curl);
             // Envio e armazenamento da resposta
             $response = curl_exec($curl);
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
@@ -124,7 +123,7 @@ class MdIaRecursoRN extends InfraRN
                 $strPara = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR');
                 $strAssunto = "ERRO DE RECURSO DE FEEDBACK DE PROCESSOS SIMILARES NO SEI IA";
                 $strConteudo = $log;
-                InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
+                InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, '', '', $strAssunto, $strConteudo);
             }
         } catch (Exception $e) {
             throw new InfraException('Erro ao submeter Feedback de Processos Similares', $e);
@@ -143,12 +142,11 @@ class MdIaRecursoRN extends InfraRN
             curl_setopt_array($curl, [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_URL => $urlOperacao,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_SSL_VERIFYHOST => 0,
                 CURLOPT_POSTFIELDS => $dadosEnviados[0],
                 CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT
             ]);
+            MdIaAutenticacaoSSLRN::configurarAutenticacaoSSL($curl);
             // Envio e armazenamento da resposta
             $response = curl_exec($curl);
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
@@ -175,7 +173,7 @@ class MdIaRecursoRN extends InfraRN
                 $strPara = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR');
                 $strAssunto = "INDISPONIBILIDADE DO RECURSO DE FEEDBACK DE PESQUISA DE DOCUMENTO NO SEI IA";
                 $strConteudo = $log;
-                InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
+                InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, '', '', $strAssunto, $strConteudo);
             }
         } catch (Exception $e) {
             throw new InfraException('Erro ao submeter Feedback de Pesquisa de Documento', $e);
@@ -227,10 +225,9 @@ class MdIaRecursoRN extends InfraRN
             curl_setopt_array($curl, [
                 CURLOPT_RETURNTRANSFER => 1,
                 CURLOPT_URL => $urlOperacao,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_SSL_VERIFYHOST => 0,
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT
             ]);
+            MdIaAutenticacaoSSLRN::configurarAutenticacaoSSL($curl);
 
             // Envio e armazenamento da resposta
             $response = curl_exec($curl);
@@ -259,7 +256,7 @@ class MdIaRecursoRN extends InfraRN
                 $strPara = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR');
                 $strAssunto = "ERRO DE RECURSO NO SEI IA";
                 $strConteudo = $log;
-                InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
+                InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, '', '', $strAssunto, $strConteudo);
                 return null;
             }
         } catch (Exception $e) {

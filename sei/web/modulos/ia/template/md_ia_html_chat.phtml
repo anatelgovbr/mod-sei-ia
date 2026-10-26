@@ -5,7 +5,6 @@ $strLinkConfiguracoes = SessaoSEI::getInstance()->assinarLink('controlador.php?a
 $strLinkConfiguracoes = "'$strLinkConfiguracoes'";
 $strLinkPromptsFavoritos = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_prompts_favoritos_selecionar&tipo_selecao=2');
 $strLinkPromptsFavoritos = "'$strLinkPromptsFavoritos'";
-$strRefletir = MdIaAdmConfigAssistIAINT::habilitadoRefletir();
 $strBuscarNaWeb = MdIaAdmConfigAssistIAINT::habilitadoBuscarNaWeb();
 ?>
 <div class="widget-chat" id="chat_ia" style="display: none">
@@ -22,106 +21,213 @@ $strBuscarNaWeb = MdIaAdmConfigAssistIAINT::habilitadoBuscarNaWeb();
     <div class="widget-content">
         <div class="widget-title">
             <div id="tituloChat">
-                SEI IA
+                <span class="texto-titulo-chat">SEI IA</span>
+                <button type="button" id="alternarPainelTopicos" onclick="alternarPainelTopicos()" aria-label="Recolher menu lateral" aria-expanded="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                        <path d="M9 3v18"></path>
+                    </svg>
+                </button>
             </div>
             <div id="iconesExpandir" class="text-right">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="iconeAdicionarTopico" viewBox="0 0 512 512" onclick="adicionarTopico(this);">
-                    <path fill="#ffffff" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344V280H168c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H280v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z" />
-                </svg>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 512 512" onclick="openModal( <?= $strLinkOrientacoesGerais ?>)" class="iconeOrientacoesGerais">
-                    <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
-                </svg>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 512 512" onclick="infraAbrirJanelaModal( <?= $strLinkConfiguracoes ?>, 800, 300)" class="iconeConfiguracoes">
-                    <path d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z" />
-                </svg>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 448 512" onclick="expandirAssistente()" id="expandirAssistente">
-                    <path d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H64V352zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32H320zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V352z" />
-                </svg>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 448 512" onclick="reduzirAssistente()" id="reduzirAssistente">
-                    <path d="M160 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V64zM32 320c-17.7 0-32 14.3-32 32s14.3 32 32 32H96v64c0 17.7 14.3 32 32 32s32-14.3 32-32V352c0-17.7-14.3-32-32-32H32zM352 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H352V64zM320 320c-17.7 0-32 14.3-32 32v96c0 17.7 14.3 32 32 32s32-14.3 32-32V384h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H320z" />
-                </svg>
+                <button type="button" class="botao-cabecalho-chat iconeAdicionarTopico" onclick="adicionarTopico(this)" aria-label="Novo tópico"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"></path>
+                        <path d="M12 7v8M8 11h8"></path>
+                    </svg></button>
+                <button type="button" class="botao-cabecalho-chat" id="botaoGaleriaPrompt" onclick="galeriaPrompts()" aria-label="Galeria de prompts"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <rect width="7" height="7" x="3" y="3" rx="1"></rect>
+                        <rect width="7" height="7" x="14" y="3" rx="1"></rect>
+                        <rect width="7" height="7" x="3" y="14" rx="1"></rect>
+                        <rect width="7" height="7" x="14" y="14" rx="1"></rect>
+                    </svg></button>
+                <button type="button" class="botao-cabecalho-chat" id="botaoPromptFavorito" onclick="infraAbrirJanelaModal( <?= $strLinkPromptsFavoritos ?>, 1200, 800)" aria-label="Prompts favoritos"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 21s-7-4.35-9.33-8.19C.7 9.57 2.04 5.5 5.5 4.37A5.1 5.1 0 0 1 12 7.1a5.1 5.1 0 0 1 6.5-2.73c3.46 1.13 4.8 5.2 2.83 8.44C19 16.65 12 21 12 21Z"></path>
+                    </svg></button>
+                <button type="button" class="botao-cabecalho-chat iconeOrientacoesGerais" onclick="openModal( <?= $strLinkOrientacoesGerais ?>)" aria-label="Orientações gerais"><svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.1 9a3 3 0 1 1 5.83 1c0 2-3 2-3 4"></path>
+                        <path d="M12 18h.01"></path>
+                    </svg></button>
+                <button type="button" class="botao-cabecalho-chat iconeConfiguracoes" onclick="infraAbrirJanelaModal( <?= $strLinkConfiguracoes ?>, 800, 300)" aria-label="Configurações"><svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.51a2 2 0 0 1 1-1.72l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg></button>
+                <button type="button" class="botao-cabecalho-chat" id="expandirAssistente" onclick="expandirAssistente()" aria-label="Expandir assistente"><svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3"></path>
+                        <path d="M16 3h3a2 2 0 0 1 2 2v3"></path>
+                        <path d="M8 21H5a2 2 0 0 1-2-2v-3"></path>
+                        <path d="M16 21h3a2 2 0 0 0 2-2v-3"></path>
+                    </svg></button>
+                <button type="button" class="botao-cabecalho-chat" id="reduzirAssistente" onclick="reduzirAssistente()" aria-label="Reduzir assistente"><svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M8 3v3a2 2 0 0 1-2 2H3"></path>
+                        <path d="M16 3v3a2 2 0 0 0 2 2h3"></path>
+                        <path d="M8 21v-3a2 2 0 0 0-2-2H3"></path>
+                        <path d="M16 21v-3a2 2 0 0 1 2-2h3"></path>
+                    </svg></button>
             </div>
         </div>
         <div class="widget-container-dialog">
             <div id="painelTopicos" class="row">
                 <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
-                    <a onclick="adicionarTopico(this);">
-                        <button class="nav-link adicionarTopico" id="adicionarTopico" data-toggle="pill" data-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Novo Tópico</button>
-                    </a>
-                    <a onclick="galeriaPrompts();">
-                        <button class="nav-link galeriaPrompts" id="galeriaPrompts" data-toggle="pill" data-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Galeria de Prompts</button>
-                    </a>
-                    <a onclick="infraAbrirJanelaModal( <?= $strLinkPromptsFavoritos ?>, 1200, 800)">
-                        <button class="nav-link promptsFavoritos" id="promptsFavoritos" data-toggle="pill" data-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Prompts Favoritos</button>
-                    </a>
+                    <div class="acoes-painel-topicos">
+                        <button class="acao-painel-topicos" id="adicionarTopico" type="button" onclick="adicionarTopico(this)" title="Novo tópico">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"></path>
+                                <path d="M12 7v8M8 11h8"></path>
+                            </svg>
+                            <span>Novo tópico</span>
+                        </button>
+                        <button class="acao-painel-topicos" id="galeriaPrompts" type="button" onclick="galeriaPrompts()" title="Galeria de prompts">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect width="7" height="7" x="3" y="3" rx="1"></rect>
+                                <rect width="7" height="7" x="14" y="3" rx="1"></rect>
+                                <rect width="7" height="7" x="3" y="14" rx="1"></rect>
+                                <rect width="7" height="7" x="14" y="14" rx="1"></rect>
+                            </svg>
+                            <span>Galeria de prompts</span>
+                        </button>
+                        <button class="acao-painel-topicos" id="promptsFavoritos" type="button" onclick="infraAbrirJanelaModal( <?= $strLinkPromptsFavoritos ?>, 1200, 800)" title="Prompts favoritos">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 21s-7-4.35-9.33-8.19C.7 9.57 2.04 5.5 5.5 4.37A5.1 5.1 0 0 1 12 7.1a5.1 5.1 0 0 1 6.5-2.73c3.46 1.13 4.8 5.2 2.83 8.44C19 16.65 12 21 12 21Z"></path>
+                            </svg>
+                            <span>Prompts favoritos</span>
+                        </button>
+                    </div>
                     <div id="listagemTopicos"></div>
                 </div>
             </div>
             <div id="conteudoChat">
                 <div class="interaction-container" id="conversa"></div>
                 <div id="lugarInteracaoUsuario">
+                    <div id="containerListaArquivos" style="display: none;"></div>
+
                     <div class="send-message">
-                        <textarea class="send-message-input" aria-describedby="validacaoMensagem" id="mensagem"></textarea>
+                        <div class="send-message-input" id="mensagem" contenteditable="true" role="textbox" aria-label="Mensagem" aria-multiline="true"></div>
                     </div>
                     <div class="botoesInferiores">
                         <div id="botoesInferioresEsquerdo">
+                            <input type="file" id="inputArquivos" multiple style="display: none;" onchange="processarArquivosSelecionados(this)">
+
+                            <button type="button" id="botaoAnexarArquivo" class="btn btn-outline-secondary d-flex align-items-center buttonSize" onclick="$('#inputArquivos').click()" title="Anexar arquivos">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-right: 5px;">
+                                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                                </svg><span id="anexarArquivo">Anexar Arquivos</span>
+                            </button>
+
                             <button type="button" id="botaoMemoriaTopico" onclick="ativaBotaoAcao(this)" class="btn btn-outline-secondary d-flex align-items-center buttonSize botaoAcaoAssistenteIAAtivado">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 512 512"
-                                    width="1em" height="1em"
-                                    fill="currentColor"
-                                    class="me-2"
-                                    aria-hidden="true" style="margin-right: 5px;">
-                                    <path d="M480 416c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V96C32 60.7 60.7 32 96 32h160c17.7 0 32 14.3 32 32s-14.3 32-32 32H96c-17.7 0-32 14.3-32 32v320c0 17.7 14.3 32 32 32h320c17.7 0 32-14.3 32-32V256c0-17.7 14.3-32 32-32s32 14.3 32 32v160zM224 352H96c-17.7 0-32-14.3-32-32s14.3-32 32-32h128c17.7 0 32 14.3 32 32s-14.3 32-32 32zM224 256H96c-17.7 0-32-14.3-32-32s14.3-32 32-32h128c17.7 0 32 14.3 32 32s-14.3 32-32 32zM320 160V64h48l96 96V320h-96c-17.7 0-32-14.3-32-32s14.3-32 32-32h64V160h-64zm17.5 160c-2.3 0-4.6-.2-6.8-.5c-15.3-2.6-28.1-15.4-30.7-30.7c-.3-2.2-.5-4.5-.5-6.8V64c0-17.7-14.3-32-32-32H96C78.3 32 64 46.3 64 64V416c0 17.7 14.3 32 32 32h320c17.7 0 32-14.3 32-32V192c0-17.7-14.3-32-32-32h-32c-17.7 0-32 14.3-32 32s14.3 32 32 32H448V416H96V64h192z" />
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-right: 5px;">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                                 </svg><span id="memoriaTopico">Memória do Tópico</span>
                             </button>
                             <button type="button" id="botaoBuscarWeb" onclick="ativaBotaoAcao(this)" class="btn btn-outline-secondary d-flex align-items-center buttonSize" style=" <?= $strBuscarNaWeb ?>">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 512 512"
-                                    width="1em" height="1em"
-                                    fill="currentColor"
-                                    class="me-2"
-                                    aria-hidden="true" style="margin-right: 5px;">
-                                    <path d="M352 256c0 22.2-1.2 43.6-3.3 64l-185.3 0c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64l185.3 0c2.2 20.4 3.3 41.8 3.3 64zm28.8-64l123.1 0c5.3 20.5 8.1 41.9 8.1 64s-2.8 43.5-8.1 64l-123.1 0c2.1-20.6 3.2-42 3.2-64s-1.1-43.4-3.2-64zm112.6-32l-116.7 0c-10-63.9-29.8-117.4-55.3-151.6c78.3 20.7 142 77.5 171.9 151.6zm-149.1 0l-176.6 0c6.1-36.4 15.5-68.6 27-94.7c10.5-23.6 22.2-40.7 33.5-51.5C239.4 3.2 248.7 0 256 0s16.6 3.2 27.8 13.8c11.3 10.8 23 27.9 33.5 51.5c11.6 26 20.9 58.2 27 94.7zm-209 0L18.6 160C48.6 85.9 112.2 29.1 190.6 8.4C165.1 42.6 145.3 96.1 135.3 160zM8.1 192l123.1 0c-2.1 20.6-3.2 42-3.2 64s1.1 43.4 3.2 64L8.1 320C2.8 299.5 0 278.1 0 256s2.8-43.5 8.1-64zM194.7 446.6c-11.6-26-20.9-58.2-27-94.6l176.6 0c-6.1 36.4-15.5 68.6-27 94.6c-10.5 23.6-22.2 40.7-33.5 51.5C272.6 508.8 263.3 512 256 512s-16.6-3.2-27.8-13.8c-11.3-10.8-23-27.9-33.5-51.5zM135.3 352c10 63.9 29.8 117.4 55.3 151.6C112.2 482.9 48.6 426.1 18.6 352l116.7 0zm358.1 0c-30 74.1-93.6 130.9-171.9 151.6c25.5-34.2 45.2-87.7 55.3-151.6l116.7 0z" />
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-right: 5px;">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M2 12h20"></path>
+                                    <path d="M12 2a15.3 15.3 0 0 1 0 20"></path>
+                                    <path d="M12 2a15.3 15.3 0 0 0 0 20"></path>
                                 </svg><span id="buscarWeb">Buscar na Web</span>
                             </button>
-                            <button type="button" id="botaoRefletir" onclick="ativaBotaoAcao(this)" class="btn btn-outline-secondary d-flex align-items-center buttonSize" style=" <?= $strRefletir ?>">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 512 512"
-                                    width="1em" height="1em"
-                                    fill="currentColor"
-                                    class="me-2"
-                                    aria-hidden="true">
-                                    <path d="M297.2 248.9C311.6 228.3 320 203.2 320 176c0-70.7-57.3-128-128-128S64 105.3 64 176c0 27.2 8.4 52.3 22.8 72.9c3.7 5.3 8.1 11.3 12.8 17.7c0 0 0 0 0 0c12.9 17.7 28.3 38.9 39.8 59.8c10.4 19 15.7 38.8 18.3 57.5L109 384c-2.2-12-5.9-23.7-11.8-34.5c-9.9-18-22.2-34.9-34.5-51.8c0 0 0 0 0 0s0 0 0 0c-5.2-7.1-10.4-14.2-15.4-21.4C27.6 247.9 16 213.3 16 176C16 78.8 94.8 0 192 0s176 78.8 176 176c0 37.3-11.6 71.9-31.4 100.3c-5 7.2-10.2 14.3-15.4 21.4c0 0 0 0 0 0s0 0 0 0c-12.3 16.8-24.6 33.7-34.5 51.8c-5.9 10.8-9.6 22.5-11.8 34.5l-48.6 0c2.6-18.7 7.9-38.6 18.3-57.5c11.5-20.9 26.9-42.1 39.8-59.8c0 0 0 0 0 0s0 0 0 0s0 0 0 0c4.7-6.4 9-12.4 12.7-17.7zM192 128c-26.5 0-48 21.5-48 48c0 8.8-7.2 16-16 16s-16-7.2-16-16c0-44.2 35.8-80 80-80c8.8 0 16 7.2 16 16s-7.2 16-16 16zm0 384c-44.2 0-80-35.8-80-80l0-16 160 0 0 16c0 44.2-35.8 80-80 80z" />
-                                </svg><span id="refletir">Refletir</span>
-                            </button>
+                            <div class="botao-com-menu acoes-menu-mobile">
+                                <button id="botaoMaisAcoesMobile" type="button" class="btn btn-outline-secondary d-flex align-items-center buttonSize" onclick="exibirOpcoes(this);" aria-label="Mais ações" aria-haspopup="menu" aria-expanded="false" aria-controls="menuMaisAcoesMobile" title="Mais ações">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <circle cx="12" cy="5" r="1"></circle>
+                                        <circle cx="12" cy="12" r="1"></circle>
+                                        <circle cx="12" cy="19" r="1"></circle>
+                                    </svg>
+                                </button>
+                                <div id="menuMaisAcoesMobile" class="submenu-opcoes menu-acoes-mobile" role="menu" style="display: none;">
+                                    <button type="button" class="submenu-item" onclick="document.getElementById('botaoAnexarArquivo').click(); exibirOpcoes(document.getElementById('botaoMaisAcoesMobile'));" role="menuitem" title="Anexar arquivos" aria-label="Anexar arquivos">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                                        </svg>
+                                        <span>Anexar arquivos</span>
+                                    </button>
+                                    <button type="button" class="submenu-item botaoAcaoAssistenteIAAtivado" onclick="document.getElementById('botaoMemoriaTopico').click(); this.classList.toggle('botaoAcaoAssistenteIAAtivado'); exibirOpcoes(document.getElementById('botaoMaisAcoesMobile'));" role="menuitemcheckbox" aria-checked="true" title="Memória do tópico" aria-label="Memória do tópico">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        </svg>
+                                        <span>Memória do tópico</span>
+                                    </button>
+                                    <button type="button" class="submenu-item" onclick="document.getElementById('botaoBuscarWeb').click(); this.classList.toggle('botaoAcaoAssistenteIAAtivado'); exibirOpcoes(document.getElementById('botaoMaisAcoesMobile'));" role="menuitemcheckbox" aria-checked="false" style=" <?= $strBuscarNaWeb ?>" title="Buscar na Web" aria-label="Buscar na Web">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <path d="M2 12h20"></path>
+                                            <path d="M12 2a15.3 15.3 0 0 1 0 20"></path>
+                                            <path d="M12 2a15.3 15.3 0 0 0 0 20"></path>
+                                        </svg>
+                                        <span>Buscar na Web</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         <div id="botoesInferioresDireito">
+                            <div class="botao-com-menu modelos-menu">
+                                <button id="botaoModelos" type="button" class="btn btn-outline-secondary d-flex align-items-center botao-selecao" onclick="exibirOpcoes(this);" aria-label="Selecionar Modelo" aria-haspopup="menu" aria-expanded="false" aria-controls="menuModelos">
+                                    <span class="rotulo-modelos">Modelos</span>
+                                    <svg class="icone-expandir-modelos" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="m6 9 6 6 6-6"></path>
+                                    </svg>
+                                </button>
+                                <div id="menuModelos" class="submenu-opcoes menu-modelos" role="menu" style="display: none;">
+                                    <div class="cabecalho-menu-modelos" role="presentation">Modelos</div>
+                                    <button type="button" class="modelo-item opcao-selecao-item" role="menuitemradio" aria-checked="true">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="m20 6-11 11-5-5"></path>
+                                        </svg>
+                                        <span class="rotulo-opcao-selecao">GPT-6.1 Sol</span>
+                                        <span class="label-opcao-padrao">Default</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="botao-com-menu esforco-menu">
+                                <button id="botaoEsforcoModelo" type="button" class="btn btn-outline-secondary d-flex align-items-center botao-selecao" onclick="exibirOpcoes(this);" aria-label="Selecionar esforço do modelo" aria-haspopup="menu" aria-expanded="false" aria-controls="menuEsforcoModelo">
+                                    <span class="rotulo-esforco">Esforço</span>
+                                    <svg class="icone-expandir-selecao" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="m6 9 6 6 6-6"></path>
+                                    </svg>
+                                </button>
+                                <div id="menuEsforcoModelo" class="submenu-opcoes menu-modelos" role="menu" style="display: none;">
+                                    <div class="cabecalho-menu-modelos" role="presentation">Esforço do Modelo</div>
+                                    <button type="button" class="esforco-item opcao-selecao-item" role="menuitemradio" aria-checked="true" data-refletir="false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="m20 6-11 11-5-5"></path>
+                                        </svg>
+                                        <span class="rotulo-opcao-selecao">Normal</span>
+                                        <span class="label-opcao-padrao">Default</span>
+                                    </button>
+                                    <button type="button" class="esforco-item opcao-selecao-item" role="menuitemradio" aria-checked="false" data-refletir="true">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="m20 6-11 11-5-5"></path>
+                                        </svg>
+                                        <span class="rotulo-opcao-selecao">Médio</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="botao-com-menu configuracoes-modelo-mobile">
+                                <button id="botaoConfiguracoesModeloMobile" type="button" class="btn btn-outline-secondary d-flex align-items-center botao-selecao" onclick="exibirOpcoes(this);" aria-label="Configurar modelo" aria-haspopup="menu" aria-expanded="false" aria-controls="menuConfiguracoesModeloMobile">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M12 3v18"></path>
+                                        <path d="M3 8h18"></path>
+                                        <path d="M3 16h18"></path>
+                                    </svg>
+                                    <span>Modelo</span>
+                                </button>
+                                <div id="menuConfiguracoesModeloMobile" class="submenu-opcoes menu-configuracoes-modelo-mobile" role="menu" style="display: none;">
+                                    <div class="cabecalho-menu-modelos">Modelo</div>
+                                    <button type="button" class="configuracao-modelo-mobile-item" onclick="document.querySelectorAll('#menuModelos .modelo-item')[0].click(); exibirOpcoes(document.getElementById('botaoConfiguracoesModeloMobile'));" role="menuitem"><span>GPT-6.1 Sol</span><span class="label-opcao-padrao">Default</span></button>
+                                    <div class="cabecalho-menu-modelos">Esforço</div>
+                                    <button type="button" class="configuracao-modelo-mobile-item" onclick="document.querySelectorAll('#menuEsforcoModelo .esforco-item')[0].click(); exibirOpcoes(document.getElementById('botaoConfiguracoesModeloMobile'));" role="menuitem"><span>Normal</span><span class="label-opcao-padrao">Default</span></button>
+                                    <button type="button" class="configuracao-modelo-mobile-item" onclick="document.querySelectorAll('#menuEsforcoModelo .esforco-item')[1].click(); exibirOpcoes(document.getElementById('botaoConfiguracoesModeloMobile'));" role="menuitem">Médio</button>
+                                </div>
+                            </div>
                             <button id="botaoEnviarMensagem" type="button" class="btn btn-outline-secondary d-flex align-items-center buttonSize" onclick="enviarMensagem(this);">
-                                <svg fill="currentColor" onclick="enviarMensagem(this);" xmlns="http://www.w3.org/2000/svg" width="21px" height="21px" viewBox="0 0 24 24" width="24">
-                                    <path d="M0 0h24v24H0V0z" fill="none" />
-                                    <path d="M4.01 6.03l7.51 3.22-7.52-1 .01-2.22m7.5 8.72L4 17.97v-2.22l7.51-1M2.01 3L2 10l15 2-15 2 .01 7L23 12 2.01 3z" />
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="64 64 512 512" aria-hidden="true">
+                                    <path class="circuloEnviarMensagem" d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576z" />
+                                    <path class="setaEnviarMensagem" d="M330.6 205.4L410.6 285.4C416.5 291.3 416.5 300.8 410.6 306.6C404.7 312.4 395.2 312.5 389.4 306.6L335.1 252.3V424C335.1 432.3 328.4 439 320.1 439C311.8 439 305.1 432.3 305.1 424V252.3L250.8 306.6C244.9 312.5 235.4 312.5 229.6 306.6C223.8 300.7 223.7 291.2 229.6 285.4L309.6 205.4C315.5 199.5 325 199.5 330.8 205.4z" />
                                 </svg>
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary d-flex align-items-center titleGaleriaPrompt buttonSize" onclick="galeriaPrompts();">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 512 512"
-                                    width="1em" height="1em"
-                                    fill="currentColor"
-                                    class="me-2 iconeGaleriaPrompt"
-                                    aria-hidden="true">
-                                    <path d="M307 34.8c-11.5 5.1-19 16.6-19 29.2l0 64-112 0C78.8 128 0 206.8 0 304C0 417.3 81.5 467.9 100.2 478.1c2.5 1.4 5.3 1.9 8.1 1.9c10.9 0 19.7-8.9 19.7-19.7c0-7.5-4.3-14.4-9.8-19.5C108.8 431.9 96 414.4 96 384c0-53 43-96 96-96l96 0 0 64c0 12.6 7.4 24.1 19 29.2s25 3 34.4-5.4l160-144c6.7-6.1 10.6-14.7 10.6-23.8s-3.8-17.7-10.6-23.8l-160-144c-9.4-8.5-22.9-10.6-34.4-5.4z" />
-                                </svg>
-                            </button>
-                            <button type="button" id="botaoPromptFavorito" class="btn btn-outline-secondary d-flex align-items-center buttonSize" onclick="infraAbrirJanelaModal( <?= $strLinkPromptsFavoritos ?>, 1200, 800)">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 512 512"
-                                    width="1em" height="1em"
-                                    fill="currentColor"
-                                    class="me-2"
-                                    aria-hidden="true">
-                                    <path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z" />
-                                </svg>
+                                <span class="spinnerVerificacaoPermissoes" aria-hidden="true"></span>
                             </button>
                         </div>
                     </div>

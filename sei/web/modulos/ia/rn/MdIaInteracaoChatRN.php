@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -292,4 +292,14 @@ class MdIaInteracaoChatRN extends InfraRN
       }
 
      */
+
+    protected function calcularConsumoTokenDiarioConectado($numIdUsuario)
+    {
+        try {
+            $objMdIaInteracaoChatBD = new MdIaInteracaoChatBD($this->getObjInfraIBanco());
+            return $objMdIaInteracaoChatBD->calcularConsumoTokenDiario((int)$numIdUsuario);
+        } catch (Exception $e) {
+            throw new InfraException('Erro calculando consumo diário de tokens.', $e);
+        }
+    }
 }

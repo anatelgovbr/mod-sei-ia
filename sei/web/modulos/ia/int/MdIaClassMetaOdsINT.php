@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -12,8 +12,22 @@ require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdIaClassMetaOdsINT extends InfraINT
 {
+    public static function validarAcessoProcedimento($idProcedimento): void
+    {
+        $objPesquisaProtocoloDTO = new PesquisaProtocoloDTO();
+        $objPesquisaProtocoloDTO->setDblIdProtocolo((int)$idProcedimento);
+        $objPesquisaProtocoloDTO->setStrStaTipo(ProtocoloRN::$TPP_PROCEDIMENTOS);
+        $objPesquisaProtocoloDTO->setStrStaAcesso(ProtocoloRN::$TAP_AUTORIZADO);
+
+        if ((int)$idProcedimento <= 0 || count((new ProtocoloRN())->pesquisarRN0967($objPesquisaProtocoloDTO)) == 0) {
+            $objInfraException = new InfraException();
+            $objInfraException->lancarValidacao('Processo não encontrado.');
+        }
+    }
+
     public static function salvarClassificacaoOds($dados)
     {
+        self::validarAcessoProcedimento($dados["hdnIdProcedimento"]);
         $metasSelecionadasAnteriormente = explode(",", $dados["hdnHistoricoSelecionados"]);
         $metasSelecionadas = explode(",", $dados["hdnInfraItensSelecionados"]);
         $itensSugeridos = explode(",", $dados["hdnItensSugeridos"]);
@@ -63,7 +77,15 @@ class MdIaClassMetaOdsINT extends InfraINT
                 $objMdIaClassMetaOdsDTO->setDthCadastro(InfraData::getStrDataHoraAtual());
                 $objMdIaClassMetaOdsDTO->setStrRacional(self::encodeCaracteres($dados["racionais"]["txaRacional_" . $itemAdicionado]));
                 $objMdIaClassMetaOdsDTO->setStrStaTipoUsuario(MdIaClassMetaOdsRN::$USUARIO_PADRAO);
-                (new MdIaClassMetaOdsRN())->cadastrar($objMdIaClassMetaOdsDTO);
+                try {
+                    (new MdIaClassMetaOdsRN())->cadastrar($objMdIaClassMetaOdsDTO);
+                } catch (Exception $e) {
+                    if (!self::isClassificacaoDuplicada($e) || !self::existeClassificacao($itemAdicionado, $dados["hdnIdProcedimento"])) {
+                        throw $e;
+                    }
+
+                    continue;
+                }
 
                 $objMdIaHistClassDTO = new MdIaHistClassDTO();
                 $objMdIaHistClassDTO->setDblIdProcedimento($dados["hdnIdProcedimento"]);
@@ -77,6 +99,21 @@ class MdIaClassMetaOdsINT extends InfraINT
                 (new MdIaHistClassRN())->cadastrar($objMdIaHistClassDTO);
             }
         }
+    }
+
+    private static function isClassificacaoDuplicada(Exception $e)
+    {
+        return strpos($e->getMessage(), 'uq_meta_usuario_procedimento') !== false;
+    }
+
+    private static function existeClassificacao($idMeta, $idProcedimento)
+    {
+        $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
+        $objMdIaClassMetaOdsDTO->setDblIdProcedimento($idProcedimento);
+        $objMdIaClassMetaOdsDTO->setNumIdMdIaAdmMetaOds($idMeta);
+        $objMdIaClassMetaOdsDTO->retNumIdMdIaClassMetaOds();
+
+        return (new MdIaClassMetaOdsRN())->consultar($objMdIaClassMetaOdsDTO) !== null;
     }
 
     private static function aceitarsugestoes($sugestoesAceitas, $dados)
@@ -259,6 +296,7 @@ class MdIaClassMetaOdsINT extends InfraINT
 
     public static function listaOdsOnu($dados)
     {
+        self::validarAcessoProcedimento($dados["id_procedimento"]);
 
         $resultado = "";
         $possuiClassificacaoQuente = false;

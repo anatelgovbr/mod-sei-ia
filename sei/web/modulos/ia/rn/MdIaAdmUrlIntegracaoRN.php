@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -116,7 +116,7 @@ class MdIaAdmUrlIntegracaoRN extends InfraRN
         try {
 
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_integracao_listar', __METHOD__, $objMdIaAdmUrlIntegracaoDTO);
-            $objMdIaAdmUrlIntegracaoBD = new MdIaAdmTpDocPesqBD($this->getObjInfraIBanco());
+            $objMdIaAdmUrlIntegracaoBD = new MdIaAdmUrlIntegracaoBD($this->getObjInfraIBanco());
             return $objMdIaAdmUrlIntegracaoBD->listar($objMdIaAdmUrlIntegracaoDTO);
 
         } catch (Exception $e) {

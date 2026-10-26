@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -12,7 +12,7 @@ try {
 
     session_start();
     SessaoSEI::getInstance()->validarLink();
-//    SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
+    SessaoSEI::getInstance()->validarPermissao('md_ia_adm_config_assist_ia_consultar');
     //////////////////////////////////////////////////////////////////////////////
 //    InfraDebug::getInstance()->setBolLigado(false);
 //    InfraDebug::getInstance()->setBolDebugInfra(false);
@@ -65,9 +65,9 @@ PaginaSEI::getInstance()->abrirBody($strTitulo);
 
 ?>
 <div id="conteudoModalOrientacoes" style="margin-top: 35px;">
-    <? echo $objMdIaAdmConfigAssistIADTO->getStrOrientacoesGerais(); ?>
+    <?php echo $objMdIaAdmConfigAssistIADTO->getStrOrientacoesGerais(); ?>
 </div>
-<?
+<?php
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>
