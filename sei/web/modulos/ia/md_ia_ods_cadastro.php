@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -23,7 +23,7 @@ try {
 
     PaginaSEI::getInstance()->setTipoPagina(InfraPagina::$TIPO_PAGINA_SIMPLES);
 
-    //    SessaoSEI::getInstance()->validarPermissao($_GET['acao']);
+    SessaoSEI::getInstance()->validarPermissao('md_ia_recurso');
 
     $strDesabilitar = '';
 
@@ -41,6 +41,7 @@ try {
     } else {
         $idProcedimento = $_GET['id_procedimento'];
     }
+    MdIaClassMetaOdsINT::validarAcessoProcedimento($idProcedimento);
 
     $objMdIaOdsOnuNsaDTO = new MdIaOdsOnuNsaDTO();
     $objMdIaOdsOnuNsaRN = new MdIaOdsOnuNsaRN();
@@ -85,8 +86,11 @@ PaginaSEI::getInstance()->abrirHead();
 PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
+?>
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_componentes_toggle.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_ods_cadastro.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
+<?php
 PaginaSEI::getInstance()->abrirStyle();
-include_once('md_ia_ods_cadastro_css.php');
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
@@ -149,7 +153,7 @@ if ($objMdIaAdmOdsOnuDTO->getStrSinExibirFuncionalidade() == "S") {
 
                 <input type="hidden" id="hdnIdSelecaoObjetivo" name="hdnIdSelecaoObjetivo" />
                 <input type="hidden" id="hdntelaConsulta" name="hdntelaConsulta" value="false" />
-                <input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento" value="<?= $_GET['id_procedimento'] ?> " />
+                <input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento" value="<?= (int)PaginaSEI::GET('id_procedimento') ?>" />
                 <input type="hidden" id="arr-objetivos-forte-relacao" value="<?= implode(",", $arrIdsObjetivosForteRelacao) ?>">
             </fieldset>
             <br />
@@ -162,7 +166,7 @@ if ($objMdIaAdmOdsOnuDTO->getStrSinExibirFuncionalidade() == "S") {
 PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
 ?>
 </form>
-<?
+<?php
 require_once "md_ia_ods_js.php";
 ?>
 <?php

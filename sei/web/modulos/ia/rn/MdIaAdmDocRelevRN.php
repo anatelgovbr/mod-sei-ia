@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -91,6 +91,51 @@ class MdIaAdmDocRelevRN extends InfraRN
                 $objMdIaAdmDocRelevBD->excluir($arrObjMdIaAdmDocRelevDTO[$i]);
             }
 
+        } catch (Exception $e) {
+            throw new InfraException('Erro excluindo Documento Relevante.', $e);
+        }
+    }
+
+    protected function cadastrarComSegmentosControlado(array $arrParametros): MdIaAdmDocRelevDTO
+    {
+        try {
+            [$arrObjMdIaAdmDocRelevDTO, $arrSegmentoDocumento] = $arrParametros;
+
+            $objMdIaAdmSegDocRelevRN = new MdIaAdmSegDocRelevRN();
+            $objRetorno = null;
+            foreach ($arrObjMdIaAdmDocRelevDTO as $objMdIaAdmDocRelevDTO) {
+                $objRetorno = $this->cadastrar($objMdIaAdmDocRelevDTO);
+                $objMdIaAdmSegDocRelevRN->cadastrarRelacionamento([$arrSegmentoDocumento, $objRetorno->getNumIdMdIaAdmDocRelev()]);
+            }
+            return $objRetorno;
+        } catch (Exception $e) {
+            throw new InfraException('Erro cadastrando Documento Relevante.', $e);
+        }
+    }
+
+    protected function alterarComSegmentosControlado(array $arrParametros): void
+    {
+        try {
+            [$objMdIaAdmDocRelevDTO, $arrSegmentoDocumento] = $arrParametros;
+
+            $this->alterar($objMdIaAdmDocRelevDTO);
+
+            $objMdIaAdmSegDocRelevRN = new MdIaAdmSegDocRelevRN();
+            $objMdIaAdmSegDocRelevRN->excluirRelacionamento($objMdIaAdmDocRelevDTO->getNumIdMdIaAdmDocRelev());
+            $objMdIaAdmSegDocRelevRN->cadastrarRelacionamento([$arrSegmentoDocumento, $objMdIaAdmDocRelevDTO->getNumIdMdIaAdmDocRelev()]);
+        } catch (Exception $e) {
+            throw new InfraException('Erro alterando Documento Relevante.', $e);
+        }
+    }
+
+    protected function excluirComSegmentosControlado(array $arrObjMdIaAdmDocRelevDTO): void
+    {
+        try {
+            $objMdIaAdmSegDocRelevRN = new MdIaAdmSegDocRelevRN();
+            foreach ($arrObjMdIaAdmDocRelevDTO as $objMdIaAdmDocRelevDTO) {
+                $objMdIaAdmSegDocRelevRN->excluirRelacionamento($objMdIaAdmDocRelevDTO->getNumIdMdIaAdmDocRelev());
+            }
+            $this->excluir($arrObjMdIaAdmDocRelevDTO);
         } catch (Exception $e) {
             throw new InfraException('Erro excluindo Documento Relevante.', $e);
         }

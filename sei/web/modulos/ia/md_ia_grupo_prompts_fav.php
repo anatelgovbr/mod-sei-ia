@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -156,7 +156,7 @@ PaginaSEI::getInstance()->abrirStyle();
     #lblUnidade {position:absolute;left:0%;top:0%;width:25%;}
     #selUnidade {position:absolute;left:0%;top:40%;width:25%;}
 
-<?
+<?php
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
@@ -166,7 +166,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
     <form id="frmGrupoPrompsFavoritosLista" method="post"
           action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
-        <?
+        <?php
         PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
         PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
         //PaginaSEI::getInstance()->montarAreaDebug();

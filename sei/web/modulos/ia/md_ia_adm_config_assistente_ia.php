@@ -1,11 +1,11 @@
-<?
+<?php
 
 /**
- * TRIBUNAL REGIONAL FEDERAL DA 4Âª REGIÃO
+ * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
  * 05/07/2023 - criado por sabino.colab
  *
- * Versãoo do Gerador de CÃ³digo: 1.43.2
+ * Versãoo do Gerador de Código: 1.43.2
  */
 
 try {
@@ -29,8 +29,7 @@ try {
     $strLinkValidarWsdl = SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_integracao_busca_operacao_ajax');
 
     $strDesabilitar = '';
-    $msgRefletir = 'Ativar ou desativar a função Refletir, que serve para que a IA pensa antes de responder.\n \n Depende de ter indicado API de LLM com recurso de reflexão no Servidor de Soluções de IA.';
-    $msgBuscarNaWeb = 'Ativar ou desativar a função Buscar na Web em tempo real para compor contexto de seu prompt com informações atualizadas. \n \n Depende de ter indicado API de busca na web no Servidor de Soluções de IA. \n \n DESATIVADO! Ainda não funciona na versão 1.1 do servidor de soluções de IA. Previsto para versão futura.';
+    $msgBuscarNaWeb = 'Ativar ou desativar a função Buscar na Web em tempo real para compor contexto de seu prompt com informações atualizadas. \n \n Depende de ter indicado API de busca na web no Servidor de Soluções de IA.';
 
     $arrComandos = array();
 
@@ -60,7 +59,6 @@ try {
             $objMdIaAdmConfigAssistIADTO->retStrSystemPrompt();
             $objMdIaAdmConfigAssistIADTO->retNumLimiteGeralTokens();
             $objMdIaAdmConfigAssistIADTO->retNumLimiteMaiorUsuariosTokens();
-            $objMdIaAdmConfigAssistIADTO->retStrSinRefletir();
             $objMdIaAdmConfigAssistIADTO->retStrSinBuscarWeb();
             $objMdIaAdmConfigAssistIARN = new MdIaAdmConfigAssistIARN();
             $objMdIaAdmConfigAssistIADTO = $objMdIaAdmConfigAssistIARN->consultar($objMdIaAdmConfigAssistIADTO);
@@ -73,17 +71,10 @@ try {
                     $objMdIaAdmConfigAssistIADTO->setStrSinExibirFuncionalidade($_POST["rdnExibirFuncionalidade"]);
                     $objMdIaAdmConfigAssistIADTO->setNumLimiteGeralTokens($_POST["txtQtdLimiteGeralTokens"]);
                     $objMdIaAdmConfigAssistIADTO->setNumLimiteMaiorUsuariosTokens($_POST["txtQtdLimiteMaiorUsuarios"]);
-                    $objMdIaAdmConfigAssistIADTO->setStrSinRefletir($_POST["rdnRefletir"]);
                     $objMdIaAdmConfigAssistIADTO->setStrSinBuscarWeb($_POST["rdnBuscarWeb"]);
                     $objMdIaAdmConfigAssistIADTO->setStrSystemPrompt($_POST["txaPromptSystem"]);
-                    $objMdIaAdmConfigAssistIARN->alterar($objMdIaAdmConfigAssistIADTO);
-
                     $arrUsuarios = PaginaSEI::getInstance()->getArrItensTabelaDinamica($_POST['hdnIdUsuarios']);
-
-                    $objMdIaAdmCfgAssiIaUsuRN = new MdIaAdmCfgAssiIaUsuRN();
-
-                    $objMdIaAdmCfgAssiIaUsuRN->excluirRelacionamento($objMdIaAdmConfigAssistIADTO->getNumIdMdIaAdmConfigAssistIA());
-                    $objMdIaAdmCfgAssiIaUsuRN->cadastrarRelacionamento(array($arrUsuarios, $objMdIaAdmConfigAssistIADTO->getNumIdMdIaAdmConfigAssistIA()));
+                    $objMdIaAdmConfigAssistIARN->alterarComUsuarios([$objMdIaAdmConfigAssistIADTO, $arrUsuarios]);
 
                     PaginaSEI::getInstance()->adicionarMensagem(' "' . $objMdIaAdmConfigAssistIADTO->getNumIdMdIaAdmConfigAssistIA() . '" Alterado com sucesso.');
                     header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao']));
@@ -101,14 +92,6 @@ try {
     } else {
         $exibirFuncionalidade = "";
         $naoExibirFuncionalidade = "checked='checked'";
-    }
-
-    if ($objMdIaAdmConfigAssistIADTO && $objMdIaAdmConfigAssistIADTO->getStrSinRefletir() == "S") {
-        $refletirAtivar = "checked='checked'";
-        $refletirDesativar = "";
-    } else {
-        $refletirAtivar = "";
-        $refletirDesativar = "checked='checked'";
     }
 
     if ($objMdIaAdmConfigAssistIADTO && $objMdIaAdmConfigAssistIADTO->getStrSinBuscarWeb() == "S") {
@@ -129,11 +112,9 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
 ?>
-<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_comum.css" />
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_comum.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_adm_config_assistente_ia.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
 <?php
-PaginaSEI::getInstance()->abrirStyle();
-include_once('md_ia_adm_config_assistente_ia_css.php');
-PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
 PaginaSEI::getInstance()->fecharJavaScript();
@@ -144,7 +125,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
 <form id="frmMdIaAdmConfigAsssitIACadastro" method="post" onsubmit="return OnSubmitForm();"
     action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
-    <?
+    <?php
     PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
     PaginaSEI::getInstance()->abrirAreaDados('auto');
     ?>
@@ -176,30 +157,6 @@ No SIP, o recurso associado ao Assistente é o "md_ia_adm_config_assist_ia_consu
                 <label id="lblProcessosEspecificos" name="lblProcessosEspecificos"
                     for="naoExibirFuncionalidade"
                     class="infraLabelOpcional infraLabelRadio">Não Exibir</label>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-10">
-            <label id="lblRefletir" for="txtRefletir" accesskey=""
-                class="infraLabelObrigatorio">Refletir:</label>
-            <img align="top"
-                src="<?= PaginaSEI::getInstance()->getDiretorioSvgGlobal() ?>/ajuda.svg"
-                name="ajuda" <?= PaginaSEI::montarTitleTooltip($msgRefletir, 'Ajuda') ?>
-                class="infraImg" alt="Ícone de Ajuda" />
-            <div class="infraDivRadio">
-                <input type="radio" id="refletirAtivar" utlCampoObrigatorio="o" name="rdnRefletir"
-                    value="S" class="infraRadio" <?= $refletirAtivar ?>>
-                <label id="lblRefletirAtivar" name="lblRefletirAtivar" for="refletirAtivar"
-                    class="infraLabelOpcional infraLabelRadio">Ativar</label>
-            </div>
-
-            <div class="infraDivRadio">
-                <input type="radio" id="refletirDesativar" utlCampoObrigatorio="o" name="rdnRefletir" value="N"
-                    class="infraRadio" <?= $refletirDesativar ?>>
-                <label id="lblRefletirDesativar" name="lblRefletirDesativar"
-                    for="refletirDesativar"
-                    class="infraLabelOpcional infraLabelRadio">Desativar</label>
             </div>
         </div>
     </div>
@@ -268,7 +225,7 @@ No SIP, o recurso associado ao Assistente é o "md_ia_adm_config_assist_ia_consu
                                     class="infraText form-control campoTamanho70"
                                     value="<?= PaginaSEI::tratarHTML($objMdIaAdmConfigAssistIADTO->getNumLimiteGeralTokens()); ?>"
                                     maxlength="2" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" min="1"
-                                    max="15" />
+                                    max="50" />
                             </div>
                         </div>
                     </div>
@@ -288,7 +245,7 @@ Somente será aplicado limite a maior sobre os usuários indicados no campo mais
                                     class="infraText form-control campoTamanho70"
                                     value="<?= PaginaSEI::tratarHTML($objMdIaAdmConfigAssistIADTO->getNumLimiteMaiorUsuariosTokens()); ?>"
                                     maxlength="2" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" min="1"
-                                    max="15" />
+                                    max="99" />
                             </div>
                         </div>
                     </div>
@@ -360,12 +317,12 @@ Define as instruções internas de como o LLM de IA Generativa deve se comportar
         </div>
     </div>
     <input type="hidden" id="hdnConectadoAPI" value="0">
-    <?
+    <?php
     //PaginaSEI::getInstance()->montarAreaDebug();
     PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
     ?>
 </form>
-<?
+<?php
 require_once "md_ia_adm_config_assistente_ia_js.php";
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();

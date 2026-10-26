@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -14,24 +14,7 @@ class MdIaAdmMetaOdsINT extends InfraINT
 {
     public static function salvarConfiguracaoMetas($dados)
     {
-        $metasForteRelacaoSelecionadas = explode(",", $dados["hdnInfraItensSelecionados"]);
-
-        $objMdIaAdmMetaOdsRN = new MdIaAdmMetaOdsRN();
-        $objMdIaAdmMetaOdsDTO = new MdIaAdmMetaOdsDTO();
-        $objMdIaAdmMetaOdsDTO->setNumIdMdIaAdmObjetivoOds($dados["hdnIdObjetivo"]);
-        $objMdIaAdmMetaOdsDTO->retNumIdMdIaAdmMetaOds();
-        $objMdIaAdmMetaOdsDTO->retStrSinForteRelacao();
-        $arrObjMdIaAdmMetaOdsDTO = $objMdIaAdmMetaOdsRN->listar($objMdIaAdmMetaOdsDTO);
-
-        foreach ($arrObjMdIaAdmMetaOdsDTO as $objMdIaAdmMetaOdsDTO) {
-            MdIaAdmClassAutTpINT::apagarListaTipoProcessoMeta($objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmMetaOds());
-            $objMdIaAdmMetaOdsDTO->setStrSinForteRelacao('N');
-            if (in_array($objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmMetaOds(), $metasForteRelacaoSelecionadas)) {
-                $objMdIaAdmMetaOdsDTO->setStrSinForteRelacao('S');
-                MdIaAdmClassAutTpINT::cadastrarListaTipoProcessoMeta($objMdIaAdmMetaOdsDTO->getNumIdMdIaAdmMetaOds(), $dados["tipoProcessoMetas"]);
-            }
-            $objMdIaAdmMetaOdsRN->alterar($objMdIaAdmMetaOdsDTO);
-        }
+        (new MdIaAdmMetaOdsRN())->salvarConfiguracaoMetas($dados);
 
         return json_encode(array("result" => "true"));
     }

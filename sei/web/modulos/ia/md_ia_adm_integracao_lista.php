@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -165,7 +165,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
 <form id="frmMdIaAdmIntegracaoLista" method="post"
     action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
-    <?
+    <?php
     PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
     PaginaSEI::getInstance()->abrirAreaDados();
     PaginaSEI::getInstance()->fecharAreaDados();
@@ -175,7 +175,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     ?>
 </form>
 
-<?
+<?php
 require_once "md_ia_adm_integracao_lista_js.php";
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();

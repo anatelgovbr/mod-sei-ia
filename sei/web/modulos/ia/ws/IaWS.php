@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * ANATEL
@@ -16,23 +16,6 @@ class IaWS extends MdIaUtilWS
     public function getObjInfraLog()
     {
         return LogSEI::getInstance();
-    }
-
-    public function cadastrarClassificacaoMonitorado($identificacaoServico, $idProcedimento, $meta)
-    {
-        try {
-
-            $objMdIaAdmObjetivoOdsINT = new MdIaAdmObjetivoOdsINT();
-            $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
-            $idUsuario = $objInfraParametro->getValor(MdIaClassMetaOdsRN::$MODULO_IA_ID_USUARIO_SISTEMA, false);
-            $staTipoUsuario = MdIaClassMetaOdsRN::$USUARIO_IA;
-
-            $retorno = $objMdIaAdmObjetivoOdsINT->classificarOdsWS($idProcedimento, $meta, $idUsuario, $staTipoUsuario);
-
-            return $retorno;
-        } catch (Exception $e) {
-            throw new InfraException('Erro ao Classificar meta.', $e);
-        }
     }
 
     public static function consultarOperacaoConsultarDocumento()
@@ -136,6 +119,99 @@ class IaWS extends MdIaUtilWS
                 }
             } else {
                 throw new Exception('Documento não encontrado.', 404);
+            }
+        } catch (Exception $e) {
+            return self::retornoErro($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public static function downloadArquivoAvulso($parametros)
+    {
+
+        ignore_user_abort(true);
+        set_time_limit(0);
+
+        try {
+
+            $objUploadDTO = new MdIaInteracaoArqAvulsoDTO();
+            $objUploadDTO->setNumIdMdIaInteracaoArqAvulso($parametros['IdArquivoAvulso']);
+            $objUploadDTO->retStrNomeOriginal();
+            $objUploadDTO->retStrNomeTemporario();
+            $objUploadDTO = (new MdIaInteracaoArqAvulsoRN())->consultar($objUploadDTO);
+
+            if (!is_null($objUploadDTO)) {
+
+                // 1. Monta o caminho físico completo
+                $strCaminhoArquivo = DIR_SEI_TEMP . '/' . $objUploadDTO->getStrNomeTemporario();
+
+                // 2. Verifica se o arquivo existe fisicamente
+                if (file_exists($strCaminhoArquivo)) {
+
+                    // 3. Limpa o buffer de saída (CRUCIAL no SEI para não corromper binários)
+                    // Isso remove qualquer espaço em branco ou echo que tenha ocorrido antes
+                    if (ob_get_level()) {
+                        ob_end_clean();
+                    }
+
+                    // 4. Configura os Headers HTTP
+
+                    // Tenta detectar o tipo MIME, ou usa genérico se falhar
+                    $mimeType = mime_content_type($strCaminhoArquivo);
+                    if (!$mimeType) {
+                        $mimeType = 'application/octet-stream';
+                    }
+
+                    header('Content-Description: File Transfer');
+                    header('Content-Type: ' . $mimeType);
+                    // Força o download com o nome ORIGINAL (não o temporário)
+                    $strNomeOriginal = $objUploadDTO->getStrNomeOriginal();
+                    if (!mb_check_encoding($strNomeOriginal, 'UTF-8')) {
+                        $strNomeOriginal = InfraString::toUTF8($strNomeOriginal);
+                    }
+                    header('Content-Disposition: attachment; filename="' . $strNomeOriginal . '"');
+                    header('Content-Transfer-Encoding: binary');
+                    header('Expires: 0');
+                    header('Cache-Control: must-revalidate');
+                    header('Pragma: public');
+                    header('Content-Length: ' . filesize($strCaminhoArquivo));
+
+                    // 5. Lê e envia o arquivo para o output
+                    readfile($strCaminhoArquivo);
+
+                    die;
+                }
+            } else {
+                throw new Exception('Arquivo não existe ou não está mais disponível.', 404);
+            }
+        } catch (Exception $e) {
+            return self::retornoErro($e->getMessage(), $e->getCode());
+        }
+    }
+
+
+    public static function removerArquivoAvulso($idArquivoAvulso)
+    {
+        try {
+
+            $objUploadDTO = new MdIaInteracaoArqAvulsoDTO();
+            $objUploadDTO->setNumIdMdIaInteracaoArqAvulso($idArquivoAvulso);
+            $objUploadDTO->retStrNomeOriginal();
+            $objUploadDTO->retStrNomeTemporario();
+            $objUploadDTO = (new MdIaInteracaoArqAvulsoRN())->consultar($objUploadDTO);
+
+            if (!is_null($objUploadDTO)) {
+
+                // 1. Monta o caminho físico completo
+                $strCaminhoArquivo = DIR_SEI_TEMP . '/' . $objUploadDTO->getStrNomeTemporario();
+                // 2. Verifica se o arquivo existe fisicamente
+                if (file_exists($strCaminhoArquivo)) {
+                    unlink($strCaminhoArquivo);
+
+                    return [
+                        'status' => 'success',
+                        'message' => 'Arquivo removido da pasta TEMP com sucesso.'
+                    ];
+                }
             }
         } catch (Exception $e) {
             return self::retornoErro($e->getMessage(), $e->getCode());
@@ -287,74 +363,7 @@ class IaWS extends MdIaUtilWS
                 'data' => $retorno
             ];
         } catch (Exception $e) {
-            return self::retornoErro($e->getMessage(), $e->getCode());
-        }
-    }
-
-    public static function gerarHashConteudoDocumento($parametros)
-    {
-        try {
-
-            self::consultarOperacaoConsultarDocumento();
-
-            if (!$parametros['IdDocumento']) {
-                throw new Exception('IdDocumento é um parametro obrigatório.');
-            }
-
-            $arrIdDocumento = array_map('trim', explode(',', $parametros['IdDocumento']));
-            $arrIdDocumento = array_map('intval', $arrIdDocumento);
-
-            $documentoDTO = new DocumentoDTO();
-            $documentoDTO->setDblIdDocumento($arrIdDocumento, InfraDTO::$OPER_IN);
-            $documentoDTO->setStrStaEstadoProtocolo(0);
-            $documentoDTO->retStrStaDocumento();
-            $documentoDTO->retDblIdDocumento();
-            $documentoDTO->retStrSinBloqueado();
-
-            $arrDocumentoDTO = (new DocumentoRN())->listarRN0008($documentoDTO);
-
-            if (empty($arrDocumentoDTO)) {
-                throw new Exception("Nenhum Documento encontrado.", 404);
-            }
-
-            $retorno = [];
-            foreach ($arrDocumentoDTO as $documentoDTO) {
-
-                $hashContent = $documentoDTO->getDblIdDocumento();
-
-                if ($documentoDTO->getStrSinBloqueado() === 'N' && ($documentoDTO->getStrStaDocumento() == DocumentoRN::$TD_EXTERNO || $documentoDTO->getStrStaDocumento() == DocumentoRN::$TD_EDITOR_INTERNO)) {
-
-                    $hashDocumentoExterno = '';
-                    $dthMaxAtualizacaoDocumento = '';
-                    if ($documentoDTO->getStrStaDocumento() == DocumentoRN::$TD_EXTERNO) {
-                        $objAnexoDTO = new AnexoDTO();
-                        $objAnexoDTO->retStrHash();
-                        $objAnexoDTO->setDblIdProtocolo($documentoDTO->getDblIdDocumento());
-                        $objAnexoDTO = (new AnexoRN())->consultarRN0736($objAnexoDTO);
-                        $hashDocumentoExterno = self::tratarEncodeString($objAnexoDTO->getStrHash());
-                    } else {
-                        $dthMaxAtualizacaoDocumento = self::buscarDthMaxAtualizacaoDocumento($documentoDTO->getDblIdDocumento());
-                    }
-
-                    $hashContent = md5(
-                        $documentoDTO->getDblIdDocumento() .
-                            $hashDocumentoExterno .
-                            $dthMaxAtualizacaoDocumento
-                    );
-                }
-
-                $retorno[] = [
-                    'IdDocumento' => $documentoDTO->getDblIdDocumento(),
-                    'HashConteudoDocumento' => $hashContent
-                ];
-            }
-
-            return [
-                'status' => 'success',
-                'data' => $retorno
-            ];
-        } catch (Exception $e) {
-            return self::retornoErro($e->getMessage(), $e->getCode());
+            return self::retornoErro($e->getMessage(), $e->getCode(), $e->getCode() != 404);
         }
     }
 
@@ -475,7 +484,7 @@ class IaWS extends MdIaUtilWS
                 'data' => $retorno
             ];
         } catch (Exception $e) {
-            return self::retornoErro($e->getMessage(), $e->getCode());
+            return self::retornoErro($e->getMessage(), $e->getCode(), $e->getCode() != 404);
         }
     }
 
@@ -507,33 +516,6 @@ class IaWS extends MdIaUtilWS
         }
     }
 
-    public function listarProcessosPendenteVetorizacao($parametros)
-    {
-        try {
-            ini_set('max_execution_time', '0');
-            ini_set('memory_limit', '-1');
-
-            $arrObjMdIaProcIndexaveisDTO = $this->listaProcessosVetorizaveis($parametros);
-
-            if ($arrObjMdIaProcIndexaveisDTO["quantidadeRegistrosTotal"] == 0) {
-                return $this->retornoErro('Nenhum Processo pendente de vetorização.', 404, false);
-            }
-
-            $arrIdProcIndexaveis = InfraArray::converterArrInfraDTO($arrObjMdIaProcIndexaveisDTO["registros"], 'IdProcedimento');
-
-            return [
-                'status' => 'success',
-                'data' => [
-                    'IdProcedimentos'                => $arrIdProcIndexaveis,
-                    'QuantidadeRegistrosEntregue'                => count($arrObjMdIaProcIndexaveisDTO["registros"]),
-                    'QuantidadeRegistrosTotal'                => $arrObjMdIaProcIndexaveisDTO["quantidadeRegistrosTotal"],
-                    'IdUltimoRegistroEntregue'                => ($ultimoRegistro = end($arrObjMdIaProcIndexaveisDTO["registros"])) ? (int) $ultimoRegistro->getDblIdProcedimento() : null
-                ]
-            ];
-        } catch (Exception $e) {
-            return $this->retornoErro($e->getMessage(), $e->getCode());
-        }
-    }
     public function listarDocumentosPendenteIndexacao($parametros)
     {
         try {
@@ -608,7 +590,6 @@ class IaWS extends MdIaUtilWS
                 throw new Exception('Id do procedimento é um parametro obrigatório.', 400);
             }
             $arrIdDocumento = [];
-            $arrExtensoesPermitidas = ["pdf", "html", "htm", "txt", "ods", "xlsx", "csv", "xml", "odt", "odp", "doc", "docx", "json", "ppt", "pptx", "rtf", "xls", "xlsm"];
 
             $objProcedimentoDTO = self::buscarProcedimento($params['IdProcedimento']);
             if (is_null($objProcedimentoDTO)) {
@@ -623,7 +604,7 @@ class IaWS extends MdIaUtilWS
                 $arrProcedimentos[] = $objProcedimentoAnexadosDTO->getDblIdProcedimento();
             }
             foreach ($arrProcedimentos as $procedimento) {
-                // ATRIBUTOS QUE TORNA O DOCUMENTO PASSILVEL DE SER RELEVANTES
+                // ATRIBUTOS QUE TORNAM O DOCUMENTO PASSÍVEL DE SEREM RELEVANTES
                 $objMdIaDocumentoDTO = new MdIaDocumentoDTO();
                 $objMdIaDocumentoDTO->retDblIdDocumento();
                 $objMdIaDocumentoDTO->retNumIdSerie();
@@ -637,11 +618,14 @@ class IaWS extends MdIaUtilWS
                 $objMdIaDocumentoDTO->setDblIdProcedimento($procedimento);
                 $arrObjDocumentoDTO = (new MdIaDocumentoRN())->listar($objMdIaDocumentoDTO);
 
+                $objMdIaConfigAssistenteRN = new MdIaConfigAssistenteRN();
+
                 foreach ($arrObjDocumentoDTO as $objDocumentoDTO) {
                     if (self::consultarDocumentosRelevante($objDocumentoDTO)) {
                         if ($objDocumentoDTO->getStrStaDocumento() == DocumentoRN::$TD_EXTERNO) {
-                            $extensaoAnexo = end(explode('.', $objDocumentoDTO->getStrNomeAnexo()));
-                            if (in_array($extensaoAnexo, $arrExtensoesPermitidas)) {
+                            $partes = explode('.', $objDocumentoDTO->getStrNomeAnexo());
+                            $extensaoAnexo = end($partes);
+                            if ($objMdIaConfigAssistenteRN->verificarExtensaoPermitida($extensaoAnexo, MdIaConfigAssistenteRN::CONTEXTO_PROTOCOLO)) {
                                 $arrIdDocumento[] = (int) $objDocumentoDTO->getDblIdDocumento();
                             }
                         } elseif ($objDocumentoDTO->getStrStaDocumento() == DocumentoRN::$TD_EDITOR_INTERNO) {
@@ -684,37 +668,6 @@ class IaWS extends MdIaUtilWS
 
             $objMdIaProcIndexaveisDTO->setStrSinIndexado('S');
             $objMdIaProcIndexaveisDTO->setDthIndexacao(InfraData::getStrDataHoraAtual());
-            $objMdIaProcIndexaveisRN->alterar($objMdIaProcIndexaveisDTO);
-
-            return [
-                'status' => 'success',
-                'message' => 'Status atualizado com sucesso.'
-            ];
-        } catch (Exception $e) {
-            return $this->retornoErro($e->getMessage(), $e->getCode());
-        }
-    }
-
-    public function atualizarStatusProcessoVetorizado($idProcedimento)
-    {
-        try {
-            if (!$idProcedimento) {
-                throw new Exception('Id do protocolo é um parametro obrigatório.', 400);
-            }
-
-            $objMdIaProcIndexaveisRN = new MdIaProcIndexaveisRN();
-            $objMdIaProcIndexaveisDTO = new MdIaProcIndexaveisDTO;
-            $objMdIaProcIndexaveisDTO->setDblIdProcedimento($idProcedimento);
-            $objMdIaProcIndexaveisDTO->retDblIdProcedimento();
-
-            $objMdIaProcIndexaveisDTO = $objMdIaProcIndexaveisRN->consultar($objMdIaProcIndexaveisDTO);
-
-            if (!$objMdIaProcIndexaveisDTO) {
-                throw new Exception('Processo não encontrado.', 404);
-            }
-
-            $objMdIaProcIndexaveisDTO->setStrSinVetorizado('S');
-            $objMdIaProcIndexaveisDTO->setDthVetorizacao(InfraData::getStrDataHoraAtual());
             $objMdIaProcIndexaveisRN->alterar($objMdIaProcIndexaveisDTO);
 
             return [
@@ -884,10 +837,6 @@ class IaWS extends MdIaUtilWS
                     'IdUltimoRegistroEntregue'                => ($ultimoRegistro = end($arrObjMdIaDocIndexCanc["registros"])) ? (int) $ultimoRegistro->getDblIdDocumento() : null
                 ]
             ];
-            return [
-                'status' => 'success',
-                'IdDocumentos' => $arrIdDocumentos
-            ];
         } catch (Exception $e) {
             return $this->retornoErro($e->getMessage(), $e->getCode());
         }
@@ -895,19 +844,24 @@ class IaWS extends MdIaUtilWS
 
     private function listarDocumentosIndexaveisCancelados($parametros)
     {
+        $idUltimoRegistro = isset($parametros["IdUltimoRegistro"]) ? (int) $parametros["IdUltimoRegistro"] : 0;
+        $quantidadeRegistros = isset($parametros["QuantidadeRegistros"]) ? (int) $parametros["QuantidadeRegistros"] : 0;
+
         $objMdIaDocIndexCancDTO = new MdIaDocIndexCancDTO();
         $objMdIaDocIndexCancDTO->retDblIdDocumento();
 
         $quantidadeRegistrosTotal =  (new MdIaDocIndexCancRN())->contar($objMdIaDocIndexCancDTO);
 
-        if ($parametros["IdUltimoRegistro"] > 0) {
+        if ($idUltimoRegistro > 0) {
             $objMdIaDocIndexCancDTO->adicionarCriterio(
                 array('IdDocumento'),
                 array(InfraDTO::$OPER_MAIOR),
-                array($parametros["IdUltimoRegistro"])
+                array($idUltimoRegistro)
             );
         }
-        $objMdIaDocIndexCancDTO->setNumMaxRegistrosRetorno($parametros["QuantidadeRegistros"]);
+        if ($quantidadeRegistros > 0) {
+            $objMdIaDocIndexCancDTO->setNumMaxRegistrosRetorno($quantidadeRegistros);
+        }
         $registros =  (new MdIaDocIndexCancRN())->listar($objMdIaDocIndexCancDTO);
 
         return array("registros" => $registros, "quantidadeRegistrosTotal" => $quantidadeRegistrosTotal);
@@ -1017,11 +971,33 @@ class IaWS extends MdIaUtilWS
     private static function montarRetornoConteudoDocumentoExterno($idDocumento)
     {
         $documento = self::consultarConteudoDocumentoSolr($idDocumento);
+        $tipoConteudo = self::obterCampoDocumentoSolr($documento, 'content_type');
+        $conteudoDocumento = self::obterCampoDocumentoSolr($documento, 'content');
+
+        if ($tipoConteudo === null || $conteudoDocumento === null) {
+            throw new Exception('Conteúdo do documento não encontrado no Solr para o id_documento: ' . $idDocumento, 404);
+        }
 
         return [
-            'TipoConteudo'  => self::tratarEncodeString($documento->arr[0]->str[0]),
-            'ConteudoDocumento'     => self::tratarEncodeString(mb_convert_encoding($documento->arr[1]->str[0], 'ISO-8859-1', 'UTF-8')),
+            'TipoConteudo'  => self::tratarEncodeString($tipoConteudo),
+            'ConteudoDocumento'     => self::tratarEncodeString(mb_convert_encoding($conteudoDocumento, 'ISO-8859-1', 'UTF-8')),
         ];
+    }
+
+    private static function obterCampoDocumentoSolr(SimpleXMLElement $documento, $nomeCampo)
+    {
+        $campos = $documento->xpath('./*[@name="' . $nomeCampo . '"]');
+        if (empty($campos)) {
+            return null;
+        }
+
+        $campo = current($campos);
+        if ($campo->getName() === 'arr') {
+            $valor = current($campo->children());
+            return $valor === false ? null : (string) $valor;
+        }
+
+        return (string) $campo;
     }
 
     private static function listaSegDocumentosRelevantes()
@@ -1143,68 +1119,27 @@ class IaWS extends MdIaUtilWS
         return $retorno;
     }
 
-    private function buscarDthMaxAtualizacaoDocumento($idDocumento)
-    {
-        $SecaoDocumentoDTO = new SecaoDocumentoDTO();
-        $SecaoDocumentoDTO->setDblIdDocumento($idDocumento);
-        $SecaoDocumentoDTO->retNumIdSecaoDocumento();
-        $arrSecaoDocumentoDTO = (new SecaoDocumentoRN())->listar($SecaoDocumentoDTO);
-
-        $arrIdSecaoDocumento = InfraArray::converterArrInfraDTO($arrSecaoDocumentoDTO, 'IdSecaoDocumento');
-
-        $VersaoSecaoDocumentoDTO = new VersaoSecaoDocumentoDTO();
-        $VersaoSecaoDocumentoDTO->setNumIdSecaoDocumento($arrIdSecaoDocumento, InfraDTO::$OPER_IN);
-        $VersaoSecaoDocumentoDTO->setOrdDthAtualizacao(InfraDTO::$TIPO_ORDENACAO_DESC);
-        $VersaoSecaoDocumentoDTO->setNumMaxRegistrosRetorno(1);
-        $VersaoSecaoDocumentoDTO->retDthAtualizacao();
-        $VersaoSecaoDocumentoDTO = (new VersaoSecaoDocumentoRN())->consultar($VersaoSecaoDocumentoDTO);
-
-
-        //formatação da data para o mesmo formato gravado em banco pois o formato é alterado ao recuperar do banco de dados
-        $dataOriginal = $VersaoSecaoDocumentoDTO->getDthAtualizacao();
-        $data = DateTime::createFromFormat('d/m/Y H:i:s', $dataOriginal);
-        $data = $data->format('Y-m-d H:i:s');
-
-        return $data;
-    }
-
     private function listaProcessosIndexaveis($parametros)
     {
+        $idUltimoRegistro = isset($parametros["IdUltimoRegistro"]) ? (int) $parametros["IdUltimoRegistro"] : 0;
+        $quantidadeRegistros = isset($parametros["QuantidadeRegistros"]) ? (int) $parametros["QuantidadeRegistros"] : 0;
+
         $objMdIaProcIndexaveisDTO = new MdIaProcIndexaveisDTO;
         $objMdIaProcIndexaveisDTO->retDblIdProcedimento();
         $objMdIaProcIndexaveisDTO->setStrSinIndexado('N');
 
         $quantidadeRegistrosTotal =  (new MdIaProcIndexaveisRN())->contar($objMdIaProcIndexaveisDTO);
-        if ($parametros["IdUltimoRegistro"] > 0) {
+        if ($idUltimoRegistro > 0) {
             $objMdIaProcIndexaveisDTO->adicionarCriterio(
                 array('IdProcedimento'),
                 array(InfraDTO::$OPER_MAIOR),
-                array($parametros["IdUltimoRegistro"])
+                array($idUltimoRegistro)
             );
         }
         $objMdIaProcIndexaveisDTO->setOrdStrSinProcessoAberto(InfraDTO::$TIPO_ORDENACAO_DESC);
-        $objMdIaProcIndexaveisDTO->setNumMaxRegistrosRetorno($parametros["QuantidadeRegistros"]);
-        $registros =  (new MdIaProcIndexaveisRN())->listar($objMdIaProcIndexaveisDTO);
-
-        return array("registros" => $registros, "quantidadeRegistrosTotal" => $quantidadeRegistrosTotal);
-    }
-
-    private function listaProcessosVetorizaveis($parametros)
-    {
-        $objMdIaProcIndexaveisDTO = new MdIaProcIndexaveisDTO;
-        $objMdIaProcIndexaveisDTO->retDblIdProcedimento();
-        $objMdIaProcIndexaveisDTO->setStrSinVetorizado('N');
-
-        $quantidadeRegistrosTotal =  (new MdIaProcIndexaveisRN())->contar($objMdIaProcIndexaveisDTO);
-        if ($parametros["IdUltimoRegistro"] > 0) {
-            $objMdIaProcIndexaveisDTO->adicionarCriterio(
-                array('IdProcedimento'),
-                array(InfraDTO::$OPER_MAIOR),
-                array($parametros["IdUltimoRegistro"])
-            );
+        if ($quantidadeRegistros > 0) {
+            $objMdIaProcIndexaveisDTO->setNumMaxRegistrosRetorno($quantidadeRegistros);
         }
-        $objMdIaProcIndexaveisDTO->setOrdStrSinProcessoAberto(InfraDTO::$TIPO_ORDENACAO_DESC);
-        $objMdIaProcIndexaveisDTO->setNumMaxRegistrosRetorno($parametros["QuantidadeRegistros"]);
         $registros =  (new MdIaProcIndexaveisRN())->listar($objMdIaProcIndexaveisDTO);
 
         return array("registros" => $registros, "quantidadeRegistrosTotal" => $quantidadeRegistrosTotal);
@@ -1212,20 +1147,25 @@ class IaWS extends MdIaUtilWS
 
     private function listaDocumentosIndexaveis($parametros)
     {
+        $idUltimoRegistro = isset($parametros["IdUltimoRegistro"]) ? (int) $parametros["IdUltimoRegistro"] : 0;
+        $quantidadeRegistros = isset($parametros["QuantidadeRegistros"]) ? (int) $parametros["QuantidadeRegistros"] : 0;
+
         $objMdIaDocIndexaveisDTO = new MdIaDocIndexaveisDTO;
         $objMdIaDocIndexaveisDTO->retDblIdDocumento();
         $objMdIaDocIndexaveisDTO->setStrSinIndexado('N');
 
         $quantidadeRegistrosTotal =  (new MdIaDocIndexaveisRN())->contar($objMdIaDocIndexaveisDTO);
-        if ($parametros["IdUltimoRegistro"] > 0) {
+        if ($idUltimoRegistro > 0) {
             $objMdIaDocIndexaveisDTO->adicionarCriterio(
                 array('IdDocumento'),
                 array(InfraDTO::$OPER_MAIOR),
-                array($parametros["IdUltimoRegistro"])
+                array($idUltimoRegistro)
             );
         }
         $objMdIaDocIndexaveisDTO->setOrdStrSinProcessoAberto(InfraDTO::$TIPO_ORDENACAO_DESC);
-        $objMdIaDocIndexaveisDTO->setNumMaxRegistrosRetorno($parametros["QuantidadeRegistros"]);
+        if ($quantidadeRegistros > 0) {
+            $objMdIaDocIndexaveisDTO->setNumMaxRegistrosRetorno($quantidadeRegistros);
+        }
         $registros =  (new MdIaDocIndexaveisRN())->listar($objMdIaDocIndexaveisDTO);
 
         return array("registros" => $registros, "quantidadeRegistrosTotal" => $quantidadeRegistrosTotal);
@@ -1233,20 +1173,25 @@ class IaWS extends MdIaUtilWS
 
     private function listaDocumentosVetorizaveis($parametros)
     {
+        $idUltimoRegistro = isset($parametros["IdUltimoRegistro"]) ? (int) $parametros["IdUltimoRegistro"] : 0;
+        $quantidadeRegistros = isset($parametros["QuantidadeRegistros"]) ? (int) $parametros["QuantidadeRegistros"] : 0;
+
         $objMdIaDocIndexaveisDTO = new MdIaDocIndexaveisDTO;
         $objMdIaDocIndexaveisDTO->retDblIdDocumento();
         $objMdIaDocIndexaveisDTO->setStrSinVetorizado('N');
 
         $quantidadeRegistrosTotal =  (new MdIaDocIndexaveisRN())->contar($objMdIaDocIndexaveisDTO);
-        if ($parametros["IdUltimoRegistro"] > 0) {
+        if ($idUltimoRegistro > 0) {
             $objMdIaDocIndexaveisDTO->adicionarCriterio(
                 array('IdDocumento'),
                 array(InfraDTO::$OPER_MAIOR),
-                array($parametros["IdUltimoRegistro"])
+                array($idUltimoRegistro)
             );
         }
         $objMdIaDocIndexaveisDTO->setOrdStrSinProcessoAberto(InfraDTO::$TIPO_ORDENACAO_DESC);
-        $objMdIaDocIndexaveisDTO->setNumMaxRegistrosRetorno($parametros["QuantidadeRegistros"]);
+        if ($quantidadeRegistros > 0) {
+            $objMdIaDocIndexaveisDTO->setNumMaxRegistrosRetorno($quantidadeRegistros);
+        }
         $registros =  (new MdIaDocIndexaveisRN())->listar($objMdIaDocIndexaveisDTO);
 
         return array("registros" => $registros, "quantidadeRegistrosTotal" => $quantidadeRegistrosTotal);
@@ -1254,20 +1199,25 @@ class IaWS extends MdIaUtilWS
 
     private function listarProcessosIndexaveisCancelados($parametros)
     {
+        $idUltimoRegistro = isset($parametros["IdUltimoRegistro"]) ? (int) $parametros["IdUltimoRegistro"] : 0;
+        $quantidadeRegistros = isset($parametros["QuantidadeRegistros"]) ? (int) $parametros["QuantidadeRegistros"] : 0;
+
         $objMdIaProcIndexCancDTO = new MdIaProcIndexCancDTO();
         $objMdIaProcIndexCancDTO->retDblIdProcedimento();
 
         $quantidadeRegistrosTotal =  (new MdIaProcIndexCancRN())->contar($objMdIaProcIndexCancDTO);
 
-        if ($parametros["IdUltimoRegistro"] > 0) {
+        if ($idUltimoRegistro > 0) {
             $objMdIaProcIndexCancDTO->adicionarCriterio(
                 array('IdProcedimento'),
                 array(InfraDTO::$OPER_MAIOR),
-                array($parametros["IdUltimoRegistro"])
+                array($idUltimoRegistro)
             );
         }
 
-        $objMdIaProcIndexCancDTO->setNumMaxRegistrosRetorno($parametros["QuantidadeRegistros"]);
+        if ($quantidadeRegistros > 0) {
+            $objMdIaProcIndexCancDTO->setNumMaxRegistrosRetorno($quantidadeRegistros);
+        }
 
         $registros =  (new MdIaProcIndexCancRN())->listar($objMdIaProcIndexCancDTO);
 
@@ -1389,20 +1339,5 @@ class IaWS extends MdIaUtilWS
         $log .= "00005 - Data e hora: " . InfraData::getStrDataHoraAtual() . " \n";
         $log .= "00006 - FIM \n";
         LogSEI::getInstance()->gravar($log, InfraLog::$INFORMACAO);
-    }
-}
-
-//TODO para funcionar SOAP e REST deve ter essa validação. E quando deixar de existir serviço do tipo SOAP no modulo esse trecho deve ser removido
-if (empty($_GET) && empty($_GET)) {
-    $servidorSoap = new BeSimple\SoapServer\SoapServer("wsia.wsdl", array(
-        'encoding' => 'ISO-8859-1',
-        'soap_version' => SOAP_1_1,
-        'attachment_type' => BeSimple\SoapCommon\Helper::ATTACHMENTS_TYPE_MTOM
-    ));
-    $servidorSoap->setClass("IaWS");
-
-    //Só processa se acessado via POST
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $servidorSoap->handle();
     }
 }

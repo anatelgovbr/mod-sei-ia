@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -148,7 +148,6 @@ class MdIaHistClassRN extends InfraRN
     {
         try {
 
-            //SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_hist_class_excluir', __METHOD__, $arrObjMdIaHistClassDTO);
 
             //Regras de Negocio
             //$objInfraException = new InfraException();
@@ -161,6 +160,18 @@ class MdIaHistClassRN extends InfraRN
             }
         } catch (Exception $e) {
             throw new InfraException('Erro excluindo Histórico de Classificação.', $e);
+        }
+    }
+
+    protected function excluirInternoControlado($arrObjMdIaHistClassDTO)
+    {
+        try {
+            $objMdIaHistClassBD = new MdIaHistClassBD($this->getObjInfraIBanco());
+            for ($i = 0; $i < count($arrObjMdIaHistClassDTO); $i++) {
+                $objMdIaHistClassBD->excluir($arrObjMdIaHistClassDTO[$i]);
+            }
+        } catch (Exception $e) {
+            throw new InfraException('Erro excluindo historico de classificacao.', $e);
         }
     }
 
@@ -205,6 +216,17 @@ class MdIaHistClassRN extends InfraRN
             return $ret;
         } catch (Exception $e) {
             throw new InfraException('Erro listando Histórico de Classificações.', $e);
+        }
+    }
+
+    protected function listarInternoConectado(MdIaHistClassDTO $objMdIaHistClassDTO)
+    {
+        try {
+            $objMdIaHistClassBD = new MdIaHistClassBD($this->getObjInfraIBanco());
+
+            return $objMdIaHistClassBD->listar($objMdIaHistClassDTO);
+        } catch (Exception $e) {
+            throw new InfraException('Erro listando historicos de classificacao.', $e);
         }
     }
 

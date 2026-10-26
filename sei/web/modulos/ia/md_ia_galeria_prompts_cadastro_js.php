@@ -1,18 +1,18 @@
+<?php require_once "md_ia_funcoes_comuns_js.php"; ?>
 <script src="modulos/ia/lib/purify/purify.js"></script>
 <script type="text/javascript">
     function inicializar() {
         var idPromptGaleriaPrompt = window.top.document.getElementById('hdnIdPromptSelecionado').value;
         if (idPromptGaleriaPrompt != '' && $("#hdnIdMdIaGaleriaPrompts").val() == '') {
             $("#hdnIdMdIaGaleriaPrompts").val(idPromptGaleriaPrompt);
-            carregarPromptAssistente(idPromptGaleriaPrompt);
+            carregarPromptAssistente(idPromptGaleriaPrompt, {
+                path: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_consultar_mensagem_ajax'); ?>',
+                seletorFormulario: '#frmPublicarGaleriaPrompt'
+            });
             window.top.document.getElementById('hdnIdPromptSelecionado').value = "";
         } else {
             $("#frmPublicarGaleriaPrompt").css("display", "block");
         }
-    }
-
-    function OnSubmitForm(event) {
-        return validarCadastro(event);
     }
 
     function validarCadastro(event) {
@@ -36,23 +36,5 @@
         }
 
         return true;
-    }
-
-    function carregarPromptAssistente(idPromptGaleriaPrompt) {
-        var dadosMensagem = {};
-        dadosMensagem["IdMdIaInteracaoChat"] = idPromptGaleriaPrompt;
-        $.ajax({
-            url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_consultar_mensagem_ajax'); ?>',
-            type: 'POST', //selecionando o tipo de requisição, PUT,GET,POST,DELETE
-            dataType: "json", //Tipo de dado que será enviado ao servidor
-            data: dadosMensagem, // Enviando o JSON com o nome de itens
-            success: function(data) {
-                mensagem = decodeHtmlEntitiesPergunta(data["pergunta"]);
-                mensagem = getTextForTextarea(mensagem);
-                //mensagem = safe_tags(mensagem);
-                $("#txaPrompt").val(mensagem);
-                $("#frmPublicarGaleriaPrompt").css("display", "block");
-            }
-        });
     }
 </script>

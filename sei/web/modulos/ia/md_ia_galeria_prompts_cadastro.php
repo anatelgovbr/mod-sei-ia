@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -59,9 +59,13 @@ try {
 
             if (isset($_POST['sbmPublicarGaleriaPrompts'])) {
                 try {
+                    $objMdIaGaleriaPromptsDTO = new MdIaGaleriaPromptsDTO();
                     $objMdIaGaleriaPromptsDTO->setNumIdMdIaGrupoGaleriaPrompt($_POST["selGrupoGaleriaPrompts"]);
                     $objMdIaGaleriaPromptsDTO->setStrDescricao($_POST["txaDescricaoPrompt"]);
-                    $objMdIaGaleriaPromptsDTO->setStrPrompt($_POST["txaPrompt"]);
+
+                    $prompt = mb_convert_encoding($_POST["txaPrompt"], 'HTML-ENTITIES', 'ISO-8859-1');
+                    $objMdIaGaleriaPromptsDTO->setStrPrompt($prompt);
+
                     $objMdIaGaleriaPromptsDTO->setNumIdUsuario(SessaoSEI::getInstance()->getNumIdUsuario());
                     $objMdIaGaleriaPromptsDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
                     $objMdIaGaleriaPromptsDTO->setDthAlteracao(InfraData::getStrDataHoraAtual());
@@ -71,7 +75,7 @@ try {
                     $arrObjMdIaGaleriaPromptsDTO = $objMdIaGaleriaPromptsRN->cadastrar($objMdIaGaleriaPromptsDTO);
                     PaginaSEI::getInstance()->setStrMensagem('Prompt "' . $objMdIaGaleriaPromptsDTO->getNumIdMdIaGaleriaPrompts() . '" publicado na Galeria de Prompts com sucesso.');
 
-                    header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . PaginaSEI::getInstance()->getAcaoRetorno() . '&acao_origem=' . $_GET['acao'] . '&id_md_ia_galeria_prompts=' . $objMdIaGaleriaPromptsDTO->getNumIdMdIaGaleriaPrompts() . PaginaSEI::getInstance()->montarAncora($objMdIaGaleriaPromptsDTO->getNumIdMdIaGaleriaPrompts())));
+                    header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_galeria_prompts_selecionar&acao_origem=' . $_GET['acao'] . '&id_md_ia_galeria_prompts=' . $objMdIaGaleriaPromptsDTO->getNumIdMdIaGaleriaPrompts() . PaginaSEI::getInstance()->montarAncora($objMdIaGaleriaPromptsDTO->getNumIdMdIaGaleriaPrompts())));
                     die;
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
@@ -90,7 +94,7 @@ try {
             if ($objMdIaGaleriaPromptsDTO) {
                 $numIdMdIaGrupoGaleriaPrompts = $objMdIaGaleriaPromptsDTO->getNumIdMdIaGrupoGaleriaPrompt();
                 $descricaoPrompt = $objMdIaGaleriaPromptsDTO->getStrDescricao();
-                $prompt = $objMdIaGaleriaPromptsDTO->getStrPrompt();
+                $prompt = str_replace(['<', '>'], ['&lt;', '&gt;'], $objMdIaGaleriaPromptsDTO->getStrPrompt());
             }
 
             if (isset($_POST['sbmAlterarPromptGaleriaPrompts'])) {
@@ -99,7 +103,10 @@ try {
                     $objMdIaGaleriaPromptsDTO->setNumIdMdIaGaleriaPrompts($numIdMdIaGaleriaPrompts);
                     $objMdIaGaleriaPromptsDTO->setNumIdMdIaGrupoGaleriaPrompt($_POST["selGrupoGaleriaPrompts"]);
                     $objMdIaGaleriaPromptsDTO->setStrDescricao($_POST["txaDescricaoPrompt"]);
-                    $objMdIaGaleriaPromptsDTO->setStrPrompt($_POST["txaPrompt"]);
+
+                    $prompt = mb_convert_encoding($_POST["txaPrompt"], 'HTML-ENTITIES', 'ISO-8859-1');
+                    $objMdIaGaleriaPromptsDTO->setStrPrompt($prompt);
+
                     $objMdIaGaleriaPromptsDTO->setDthAlteracao(InfraData::getStrDataHoraAtual());
 
                     $objMdIaGaleriaPromptsRN->alterar($objMdIaGaleriaPromptsDTO);
@@ -143,7 +150,7 @@ PaginaSEI::getInstance()->abrirStyle();
 
 #frmPublicarGaleriaPrompt {display: none;}
 
-<?
+<?php
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
@@ -154,7 +161,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
 <form id="frmPublicarGaleriaPrompt" method="post" onsubmit="return OnSubmitForm();"
     action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
-    <?
+    <?php
     PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
     //PaginaSEI::getInstance()->montarAreaValidacao();
     PaginaSEI::getInstance()->abrirAreaDados('40em');
@@ -173,11 +180,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     </div>
     <div class="form-group">
         <label id="lblPrompt" for="txaPrompt" class="infraLabelObrigatorio">Prompt:</label>
-        <textarea rows="18" required name="txaPrompt" id="txaPrompt" class="infraTextarea" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?= PaginaSEI::tratarHTML($prompt) ?></textarea>
+        <textarea rows="18" required name="txaPrompt" id="txaPrompt" class="infraTextarea" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?= $prompt ?? '' ?></textarea>
     </div>
     <input type="hidden" id="hdnIdMdIaGaleriaPrompts" name="hdnIdMdIaGaleriaPrompts" value="<?= $numIdMdIaGaleriaPrompts ?>" />
 
-    <?
+    <?php
 
     PaginaSEI::getInstance()->fecharAreaDados();
     //PaginaSEI::getInstance()->montarAreaDebug();

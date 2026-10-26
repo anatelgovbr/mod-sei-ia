@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -194,7 +194,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
 <form id="frmMdIaAdmIntegracaoCadastro" method="post" onsubmit="return OnSubmitForm();"
     action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
-    <?
+    <?php
     PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
     //PaginaSEI::getInstance()->montarAreaValidacao();
     PaginaSEI::getInstance()->abrirAreaDados();
@@ -326,31 +326,31 @@ Exemplo de URL valida: https://hostname_docker_solucao_sei_ia_do_ambiente', 'Aju
         </div>
     </div>
 
-    <? if ($strCadastroUrls != '') { ?>
+    <?php if ($strCadastroUrls != '') { ?>
         <div class="row">
             <div class="col-12 col-xl-10">
-                <label id="lblNome" for="txtNome" class="infraLabelObrigatorio">Cadastro de URL's:</label>
+                <label class="infraLabelObrigatorio">Cadastro de URL's:</label>
             </div>
 
             <div class="col-12 col-xl-10">
-                <? PaginaSEI::getInstance()->montarAreaTabela($strCadastroUrls, 1); ?>
+                <?php PaginaSEI::getInstance()->montarAreaTabela($strCadastroUrls, 1); ?>
             </div>
         </div>
-    <? } ?>
+    <?php } ?>
 
-    <? PaginaSEI::getInstance()->fecharAreaDados(); ?>
+    <?php PaginaSEI::getInstance()->fecharAreaDados(); ?>
     <input type="hidden" id="hdnIdMdIaAdmIntegracao" name="hdnIdMdIaAdmIntegracao"
         value="<?= $objMdIaAdmIntegracaoDTO->getNumIdMdIaAdmIntegracao() ?>" />
     <input type="hidden" id="hdnTipoAcao" value="<?= $strTipoAcao ?>">
     <input type="hidden" id="hdnIsRest" value="<?= $isRest ? 's' : 'n' ?>">
 
-    <?
+    <?php
     //PaginaSEI::getInstance()->montarAreaDebug();
     PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
     ?>
 </form>
 
-<?
+<?php
 require 'md_ia_adm_integracao_cadastro_js.php';
 
 PaginaSEI::getInstance()->fecharBody();

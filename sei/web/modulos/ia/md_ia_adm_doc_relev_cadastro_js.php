@@ -1,3 +1,4 @@
+<?php require_once "md_ia_funcoes_comuns_js.php"; ?>
 <script>
     function inicializar() {
         infraEfeitoTabelas(true);
@@ -288,14 +289,5 @@
         linhaTabela += "</td>";
         linhaTabela += "</tr>";
         return linhaTabela;
-    }
-
-    function rolar_para(elemento) {
-        $("#divMsg > div").removeClass("alert-warning");
-        $("#divMsg > div").removeClass("alert-danger");
-        $("#divMsg > div").removeClass("alert-success");
-        $("#divInfraAreaTelaD").animate({
-            scrollTop: $(elemento).offset().top
-        }, 300);
     }
 </script>

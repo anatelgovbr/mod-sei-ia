@@ -1,4 +1,5 @@
-<?
+<?php
+
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -54,7 +55,6 @@ class MdIaAdmPesqDocRN extends InfraRN
     protected function cadastrarControlado(MdIaAdmPesqDocDTO $objMdIaAdmPesqDocDTO)
     {
         try {
-
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_pesq_doc_cadastrar', __METHOD__, $objMdIaAdmPesqDocDTO);
 
             //Regras de Negocio
@@ -70,7 +70,6 @@ class MdIaAdmPesqDocRN extends InfraRN
             $ret = $objMdIaAdmPesqDocBD->cadastrar($objMdIaAdmPesqDocDTO);
 
             return $ret;
-
         } catch (Exception $e) {
             throw new InfraException('Erro cadastrando Pesquisa de Documentos.', $e);
         }
@@ -79,7 +78,6 @@ class MdIaAdmPesqDocRN extends InfraRN
     protected function alterarControlado(MdIaAdmPesqDocDTO $objMdIaAdmPesqDocDTO)
     {
         try {
-
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_pesq_doc_alterar', __METHOD__, $objMdIaAdmPesqDocDTO);
 
             //Regras de Negocio
@@ -99,7 +97,6 @@ class MdIaAdmPesqDocRN extends InfraRN
 
             $objMdIaAdmPesqDocBD = new MdIaAdmPesqDocBD($this->getObjInfraIBanco());
             $objMdIaAdmPesqDocBD->alterar($objMdIaAdmPesqDocDTO);
-
         } catch (Exception $e) {
             throw new InfraException('Erro alterando Pesquisa de Documentos.', $e);
         }
@@ -120,16 +117,31 @@ class MdIaAdmPesqDocRN extends InfraRN
             for ($i = 0; $i < count($arrObjMdIaAdmPesqDocDTO); $i++) {
                 $objMdIaAdmPesqDocBD->excluir($arrObjMdIaAdmPesqDocDTO[$i]);
             }
-
         } catch (Exception $e) {
             throw new InfraException('Erro excluindo Pesquisa de Documentos.', $e);
+        }
+    }
+
+    protected function alterarComTiposDocumentoControlado(array $arrParametros): void
+    {
+        try {
+            [$objMdIaAdmPesqDocDTO, $arrTipoDocumento] = $arrParametros;
+
+            $this->alterar($objMdIaAdmPesqDocDTO);
+
+            if ($arrTipoDocumento !== null) {
+                $objMdIaAdmTpDocPesqRN = new MdIaAdmTpDocPesqRN();
+                $objMdIaAdmTpDocPesqRN->excluirRelacionamento($objMdIaAdmPesqDocDTO->getNumIdMdIaAdmPesqDoc());
+                $objMdIaAdmTpDocPesqRN->cadastrarRelacionamento([$arrTipoDocumento, $objMdIaAdmPesqDocDTO->getNumIdMdIaAdmPesqDoc()]);
+            }
+        } catch (Exception $e) {
+            throw new InfraException('Erro alterando Pesquisa de Documentos.', $e);
         }
     }
 
     protected function consultarConectado(MdIaAdmPesqDocDTO $objMdIaAdmPesqDocDTO)
     {
         try {
-
             SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_pesq_doc_consultar', __METHOD__, $objMdIaAdmPesqDocDTO);
 
             //Regras de Negocio
@@ -165,7 +177,6 @@ class MdIaAdmPesqDocRN extends InfraRN
             $ret = $objMdIaAdmPesqDocBD->listar($objMdIaAdmPesqDocDTO);
 
             return $ret;
-
         } catch (Exception $e) {
             throw new InfraException('Erro listando Pesquisa de Documentos.', $e);
         }

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -140,7 +140,7 @@ PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistem
 PaginaSEI::getInstance()->montarStyle();
 PaginaSEI::getInstance()->abrirStyle();
 ?>
-<?
+<?php
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
@@ -149,14 +149,14 @@ PaginaSEI::getInstance()->abrirJavaScript();
     infraReceberSelecao();
     infraEfeitoTabelas();
     }
-<?
+<?php
 PaginaSEI::getInstance()->fecharJavaScript();
 PaginaSEI::getInstance()->fecharHead();
 PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
     <form id="frmProtocoloAcessoExternoSelecao" method="post"
           action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
-        <?
+        <?php
         //PaginaSEI::getInstance()->montarBarraLocalizacao($strTitulo);
         PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
         PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
@@ -164,7 +164,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
         ?>
     </form>
-<?
+<?php
 PaginaSEI::getInstance()->fecharBody();
 PaginaSEI::getInstance()->fecharHtml();
 ?>

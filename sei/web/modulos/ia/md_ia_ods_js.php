@@ -61,7 +61,7 @@
 
     function setAtualizaNaoSeAplica(active) {
         var dadosOdsOnu = {};
-        dadosOdsOnu["idProcedimento"] = <?= $_GET['id_procedimento'] ?>;
+        dadosOdsOnu["idProcedimento"] = <?= (int)PaginaSEI::GET('id_procedimento') ?>;
         dadosOdsOnu["naoSeAplica"] = active;
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_atualiza_nao_se_aplica_ods_onu_ajax'); ?>',

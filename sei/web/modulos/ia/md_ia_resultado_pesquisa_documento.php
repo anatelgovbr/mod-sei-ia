@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -49,11 +49,10 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ');
 PaginaSEI::getInstance()->montarStyle();
 ?>
-<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_comum.css" />
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_comum.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_componentes_avaliacao.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_recurso_cadastro.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
 <?php
-PaginaSEI::getInstance()->abrirStyle();
-include_once('md_ia_recurso_cadastro_css.php');
-PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
 PaginaSEI::getInstance()->fecharJavaScript();
@@ -63,7 +62,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 <div id="divTituloModal" class="infraBarraLocalizacao"><?= $objMdIaAdmPesqDocDTO->getStrNomeSecao() ?></div>
 <form id="frmMdIaPesquisaDocumento" method="post"
     action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
-    <?
+    <?php
     PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
     //PaginaSEI::getInstance()->montarAreaValidacao();
     ?>
@@ -77,7 +76,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <div class="row">
                 <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12" id="resultado_processamento">
                     <div class="d-flex justify-content-center align-items-center">
-                        <img src="../../../infra_css/svg/aguarde.svg" alt="" style="d-inline-block">
+                        <img src="../../../infra_css/svg/aguarde.svg" alt="" class="d-inline-block">
                         <span>Pesquisando...</span>
                     </div>
                 </div>
@@ -85,13 +84,13 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
             <br />
         </div>
     </div>
-    <?
+    <?php
     //PaginaSEI::getInstance()->montarAreaDebug();
     PaginaSEI::getInstance()->montarBarraComandosInferior($arrComandos);
     ?>
 </form>
 </div>
-<?
+<?php
 require_once "md_ia_resultado_pesquisa_documento_js.php";
 ?>
 <?php

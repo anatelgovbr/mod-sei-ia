@@ -1,23 +1,16 @@
+<?php require_once "md_ia_funcoes_comuns_js.php"; ?>
 <script src="modulos/ia/lib/purify/purify.js"></script>
 <script type="text/javascript">
-    function inicializar() {
+    window.mdIaFecharModalPadrao = {
+        fecharTodos: true
+    };
+    window.mdIaTratarDigitacaoFormId = 'frmGaleriaPrompts';
+    window.mdIaInicializarSelecaoConfig = {
+        acaoAtual: '<?= $_GET['acao'] ?>',
+        acaoSelecao: 'md_ia_galeria_prompts_selecionar'
+    };
 
-        //infraOcultarMenuSistemaEsquema();
-
-        if ('<?= $_GET['acao'] ?>' == 'md_ia_galeria_prompts_selecionar') {
-            infraReceberSelecao();
-            document.getElementById('btnFecharSelecao').focus();
-        } else {
-            document.getElementById('btnFechar').focus();
-        }
-        infraEfeitoTabelas();
-    }
-
-    function fecharModal() {
-        $(window.top.document).find('div[id^=divInfraSparklingModalClose]').get().reverse().forEach(function(element) {
-            $(element).click();
-        });
-    }
+    var inicializar = inicializarPromptSelecaoPadrao;
 
     function carregarPromptGaleriaPrompt(idPrompt) {
         var dadosMensagem = {};
@@ -28,23 +21,13 @@
             dataType: "json", //Tipo de dado que será enviado ao servidor
             data: dadosMensagem, // Enviando o JSON com o nome de itens
             success: function(data) {
-                mensagem = decodeHtmlEntitiesPergunta(data["prompt"]);
-                mensagem = getTextForTextarea(mensagem);
+                mensagem = getTextForTextarea(data["prompt"]).replace(/\r\n?/g, '\n');
+                var campo = window.top.document.getElementById('mensagem');
 
-                window.top.document.getElementById('mensagem').value = mensagem;
-                // Seleciona o campo no top document
-                var campo = window.top.document.querySelector('#mensagem');
-
-                // Cria um evento keydown para a tecla Shift (keyCode 16)
-                var evento = new KeyboardEvent('keydown', {
-                    key: 'Shift',
-                    keyCode: 16,
-                    which: 16,
+                campo.textContent = mensagem;
+                campo.dispatchEvent(new Event('input', {
                     bubbles: true
-                });
-
-                // Dispara o evento keydown no campo
-                campo.dispatchEvent(evento);
+                }));
                 $(window.top.document).find('div[id^=divInfraSparklingModalClose]').get().reverse().forEach(function(element) {
                     $(element).click();
                     campo.focus();
@@ -53,17 +36,8 @@
         });
     }
 
-    function infraTransportarItem(n) {
-        carregarPromptGaleriaPrompt(n);
-    }
-
-    function tratarDigitacao(ev) {
-        if (infraGetCodigoTecla(ev) == 13) {
-            document.getElementById('frmGaleriaPrompts').submit();
-        }
-        return true;
-    }
-    <? if ($bolAcaoDesativar) { ?>
+    window.mdIaTransportarItemHandler = carregarPromptGaleriaPrompt;
+    <?php if ($bolAcaoDesativar) { ?>
 
         function acaoDesativar(id, desc) {
             if (confirm("Confirma desativação do Prompt Publicado \"" + desc + "\"?")) {
@@ -86,7 +60,7 @@
         }
     <?php } ?>
 
-    <? if ($bolAcaoReativar) { ?>
+    <?php if ($bolAcaoReativar) { ?>
 
         function acaoReativar(id, desc) {
             if (confirm("Confirma reativação do Prompt Publicado \"" + desc + "\"?")) {
@@ -108,7 +82,7 @@
             }
         }
     <?php } ?>
-    <? if ($bolAcaoExcluir) { ?>
+    <?php if ($bolAcaoExcluir) { ?>
 
         function acaoExcluir(id, desc) {
             if (confirm("Confirma exclusão da Galeria de Prompts?")) {
@@ -129,5 +103,5 @@
                 document.getElementById('frmGaleriaPrompts').submit();
             }
         }
-    <? } ?>
+    <?php } ?>
 </script>

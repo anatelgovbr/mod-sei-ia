@@ -38,7 +38,7 @@ class MdIaAdmClassAutTpRN extends InfraRN
   protected function cadastrarControlado(MdIaAdmClassAutTpDTO $objMdIaAdmClassAutTpDTO)
   {
     try {
-//      SessaoIA::getInstance()->validarPermissao('md_ia_adm_meta_ods_cadastrar');
+      SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_meta_ods_alterar', __METHOD__, $objMdIaAdmClassAutTpDTO);
 
       //Regras de Negocio
       $objInfraException = new InfraException();
@@ -64,7 +64,7 @@ class MdIaAdmClassAutTpRN extends InfraRN
   protected function excluirControlado(array $arrObjMdIaAdmClassAutTpDTO): void
   {
     try {
-//      SessaoIA::getInstance()->validarPermissao('md_ia_adm_meta_ods_excluir');
+      SessaoSEI::getInstance()->validarAuditarPermissao('md_ia_adm_meta_ods_alterar', __METHOD__, $arrObjMdIaAdmClassAutTpDTO);
 
       //Regras de Negocio
       //$objInfraException = new InfraException();

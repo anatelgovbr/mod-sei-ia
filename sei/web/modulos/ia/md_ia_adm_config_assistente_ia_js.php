@@ -1,3 +1,4 @@
+<?php require_once "md_ia_funcoes_comuns_js.php"; ?>
 <script type="text/javascript">
     var objOperacao = {
         operacao: null,
@@ -9,22 +10,17 @@
         validarWebService();
     }
 
-    function rolar_para(elemento) {
-        $("#divMsg > div").removeClass("alert-warning");
-        $("#divMsg > div").removeClass("alert-danger");
-        $("#divMsg > div").removeClass("alert-success");
-        const posicao = $(elemento).offset().top - 100;
-        $("#divInfraAreaTelaD").animate({
-            scrollTop: posicao
-        }, 500);
-    }
-
-    function OnSubmitForm(event) {
-        return validarCadastro(event);
-    }
-
     function validarCadastro(event) {
         $("#divMsg").hide();
+        const campoLimiteGeral = document.getElementById('txtQtdLimiteGeralTokens');
+        const campoLimiteMaior = document.getElementById('txtQtdLimiteMaiorUsuarios');
+
+        if (Number(campoLimiteMaior.value) <= Number(campoLimiteGeral.value)) {
+            alert('O limite maior para usuários específicos deve ser maior que o limite geral de tokens.');
+            campoLimiteMaior.focus();
+            return false;
+        }
+
         const radioSelecionado = document.querySelector("input[name='rdnExibirFuncionalidade']:checked");
 
         if ($("#hdnConectadoAPI").val() == 0 && radioSelecionado.value === "S") {
@@ -81,7 +77,9 @@
                     retorno: 'JSON',
                     funcionalidade: 2
                 };
-                buscarOperacoeWs(params);
+                buscarOperacoeWs(params, {
+                    path: "<?= $strLinkValidarWsdl ?>"
+                });
             },
             error: function(err) {
                 montaOperacao(err);
@@ -89,40 +87,23 @@
         });
     }
 
-    function buscarOperacoeWs(parametros) {
-        let path = "<?= $strLinkValidarWsdl ?>";
-        $.ajax({
-            type: "POST",
-            url: path,
-            dataType: 'xml',
-            async: false,
-            data: parametros,
-            beforeSend: function() {
-                //infraExibirAviso(false);
-            },
-            success: function(result) {
-                montaOperacao(result);
-            },
-            error: function(msgError) {
-                msgCommit = "Erro ao processar o XML do SEI: " + msgError.responseText;
-            },
-            complete: function(result) {
-                //infraAvisoCancelar();
-            }
-        });
-    }
-
     function montaOperacao(result) {
         if ($(result).find('success').text() != 'true') {
             $("#hdnConectadoAPI").val(0);
-            rolar_para('#divMsg');
+            rolar_para('#divMsg', {
+                deslocamento: -100,
+                duracao: 500
+            });
             $("#divMsg > div > label").html("Não foi possível conectar a API do SEI IA. Verifique os dados da integração no Mapeamento de Integrações.");
             $("#divMsg > div").addClass("alert-danger");
             $("#divMsg").show();
             const radioParaSelecionar = document.querySelector("input[name='rdnExibirFuncionalidade'][value='N']");
             radioParaSelecionar.checked = true; // Define este botão como selecionado
         } else {
-            rolar_para('#divMsg');
+            rolar_para('#divMsg', {
+                deslocamento: -100,
+                duracao: 500
+            });
             $("#divMsg > div > label").html("Conectado a API do SEI IA com sucesso.");
             $("#divMsg > div").addClass("alert-success");
             $("#divMsg").show();

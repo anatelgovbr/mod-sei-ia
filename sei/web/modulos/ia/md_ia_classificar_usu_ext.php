@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -52,11 +52,9 @@ PaginaSEI::getInstance()->montarMeta();
 PaginaSEI::getInstance()->montarTitle(PaginaSEI::getInstance()->getStrNomeSistema() . ' - ' . $strTitulo);
 PaginaSEI::getInstance()->montarStyle();
 ?>
-<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_comum.css" />
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_comum.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
+<link rel="stylesheet" type="text/css" href="modulos/ia/css/md_ia_classificar_usu_ext.css?<?= PaginaSEI::getInstance()->getNumVersao() ?>" />
 <?php
-PaginaSEI::getInstance()->abrirStyle();
-include_once('md_ia_classificar_usu_ext_css.php');
-PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
 PaginaSEI::getInstance()->fecharJavaScript();
@@ -167,7 +165,7 @@ PaginaSEI::getInstance()->abrirAreaDados('auto');
 </div>
 <input id="arr-objetivos-forte-relacao" type="hidden" value="<?= implode(",", $arrIdsObjetivosForteRelacao) ?>">
 <input type='hidden' id='hdnInfraItensSelecionados' name='hdnInfraItensSelecionados' value=''>
-<?
+<?php
 require_once "md_ia_classificar_usu_ext_js.php";
 ?>
 <?php

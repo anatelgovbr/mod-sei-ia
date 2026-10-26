@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -152,6 +152,18 @@ class MdIaClassMetaOdsRN extends InfraRN
         }
     }
 
+    protected function excluirInternoControlado($arrObjMdIaClassMetaOdsDTO)
+    {
+        try {
+            $objMdIaClassMetaOdsBD = new MdIaClassMetaOdsBD($this->getObjInfraIBanco());
+            for ($i = 0; $i < count($arrObjMdIaClassMetaOdsDTO); $i++) {
+                $objMdIaClassMetaOdsBD->excluir($arrObjMdIaClassMetaOdsDTO[$i]);
+            }
+        } catch (Exception $e) {
+            throw new InfraException('Erro excluindo meta avaliacao.', $e);
+        }
+    }
+
     protected function consultarConectado(MdIaClassMetaOdsDTO $objMdIaClassMetaOdsDTO)
     {
         try {
@@ -194,6 +206,17 @@ class MdIaClassMetaOdsRN extends InfraRN
             return $ret;
         } catch (Exception $e) {
             throw new InfraException('Erro listando Metas Avaliação.', $e);
+        }
+    }
+
+    protected function listarInternoConectado(MdIaClassMetaOdsDTO $objMdIaClassMetaOdsDTO)
+    {
+        try {
+            $objMdIaClassMetaOdsBD = new MdIaClassMetaOdsBD($this->getObjInfraIBanco());
+
+            return $objMdIaClassMetaOdsBD->listar($objMdIaClassMetaOdsDTO);
+        } catch (Exception $e) {
+            throw new InfraException('Erro listando metas avaliacao.', $e);
         }
     }
 

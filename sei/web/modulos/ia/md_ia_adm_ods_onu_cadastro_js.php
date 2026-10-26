@@ -1,3 +1,4 @@
+<?php require_once "md_ia_funcoes_comuns_js.php"; ?>
 <script type="text/javascript">
     function inicializar() {
         document.getElementById('btnCancelar').focus();
@@ -18,17 +19,6 @@
         }
 
         return true;
-    }
-
-    function OnSubmitForm() {
-        return validarCadastro();
-    }
-
-    function rolar_para(elemento) {
-        $("#divMsg > div").removeClass('alert-warning alert-danger alert-success');
-        $("#divInfraAreaTelaD").animate({
-            scrollTop: $(elemento).offset().top
-        }, 300);
     }
 
     function iniciarAutoCompletarUnidadeSolicitante() {

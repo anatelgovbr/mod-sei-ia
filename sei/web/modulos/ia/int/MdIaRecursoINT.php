@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -20,7 +20,7 @@ class MdIaRecursoINT extends InfraINT
 
         $objSeiRN = new SeiRN();
         $objEntradaConsultarProcedimentoAPI = new EntradaConsultarProcedimentoAPI();
-        $objEntradaConsultarProcedimentoAPI->setIdProcedimento($dados['hdnIdProcedimento']);
+        $objEntradaConsultarProcedimentoAPI->setIdProcedimento($dados['hdnIdProcedimentoSimilaridade']);
 
         $objSaidaConsultarProcedimentoAPI = $objSeiRN->consultarProcedimento($objEntradaConsultarProcedimentoAPI);
 
@@ -46,7 +46,7 @@ class MdIaRecursoINT extends InfraINT
 
         $objSeiRN = new SeiRN();
         $objEntradaConsultarProcedimentoAPI = new EntradaConsultarProcedimentoAPI();
-        $objEntradaConsultarProcedimentoAPI->setIdProcedimento($dados['hdnIdProcedimento']);
+        $objEntradaConsultarProcedimentoAPI->setIdProcedimento($dados['hdnIdProcedimentoPesquisaDocumentos']);
 
         $objSaidaConsultarProcedimentoAPI = $objSeiRN->consultarProcedimento($objEntradaConsultarProcedimentoAPI);
 
@@ -130,7 +130,7 @@ class MdIaRecursoINT extends InfraINT
 
         $objSeiRN = new SeiRN();
         $objEntradaConsultarProcedimentoAPI = new EntradaConsultarProcedimentoAPI();
-        $objEntradaConsultarProcedimentoAPI->setIdProcedimento($dados['hdnIdProcedimento']);
+        $objEntradaConsultarProcedimentoAPI->setIdProcedimento($dados['hdnIdProcedimentoPesquisaDocumentos']);
 
         $objSaidaConsultarProcedimentoAPI = $objSeiRN->consultarProcedimento($objEntradaConsultarProcedimentoAPI);
 
@@ -209,8 +209,8 @@ class MdIaRecursoINT extends InfraINT
             $rodapeTabela = '
                 <input type="hidden" id="hdnNumeroElementos" name="hdnNumeroElementos"
                        value="' . $contador . '"/>
-                <input type="hidden" id="hdnIdProcedimento" name="hdnIdProcedimento"
-                       value="' . $dados['hdnIdProcedimento'] . '"/>
+                <input type="hidden" id="hdnIdProcedimentoPesquisaDocumentos" name="hdnIdProcedimentoPesquisaDocumentos"
+                       value="' . $dados['hdnIdProcedimentoPesquisaDocumentos'] . '"/>
                 <input type="hidden" id="hdnIdRecomendacao" name="hdnIdRecomendacao"
                        value="' . $pesquisaDocumentos->id_recommendation . '"/>
 

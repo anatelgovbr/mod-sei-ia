@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -48,6 +48,9 @@ try {
         $objMdIaPromptsFavoritosDTO->retStrPrompt();
         $objMdIaPromptsFavoritosRN = new MdIaPromptsFavoritosRN();
         $objMdIaPromptsFavoritosDTO = $objMdIaPromptsFavoritosRN->consultar($objMdIaPromptsFavoritosDTO);
+        if ($objMdIaPromptsFavoritosDTO == null) {
+            throw new InfraException('Registro não encontrado.');
+        }
     }
     $strDesabilitar = '';
 
@@ -68,13 +71,16 @@ try {
                     $objMdIaPromptsFavoritosDTO = new MdIaPromptsFavoritosDTO();
                     $objMdIaPromptsFavoritosDTO->setNumIdMdIaGrupoPromptsFav($_POST["selGrupoPromptsFav"]);
                     $objMdIaPromptsFavoritosDTO->setStrDescricaoPrompt($_POST["txaDescricaoPrompt"]);
-                    $objMdIaPromptsFavoritosDTO->setStrPrompt($_POST["txaPrompt"]);
+
+                    $prompt = mb_convert_encoding($_POST["txaPrompt"], 'HTML-ENTITIES', 'ISO-8859-1');
+                    $objMdIaPromptsFavoritosDTO->setStrPrompt($prompt);
+
                     $objMdIaPromptsFavoritosDTO->setDthAlteracao(InfraData::getStrDataHoraAtual());
 
                     $objMdIaPromptsFavoritosRN = new MdIaPromptsFavoritosRN();
                     $objMdIaPromptsFavoritosDTO = $objMdIaPromptsFavoritosRN->cadastrar($objMdIaPromptsFavoritosDTO);
                     PaginaSEI::getInstance()->setStrMensagem('Prompt Favorito "' . $objMdIaPromptsFavoritosDTO->getNumIdMdIaPromptsFavoritos() . '" cadastrado com sucesso.');
-                    header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_prompts_favoritos_selecionar&acao_origem=' . $_GET['acao'] . '&id_md_ia_prompts_favoritos=' . $objMdIaPromptsFavoritosDTO->getNumIdMdIaPromptsFavoritos() . PaginaSEI::getInstance()->montarAncora($objMdIaPromptsFavoritosDTO->getNumIdMdIaPromptsFavoritos())));
+                    header('Location: ' . SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_prompts_favoritos_selecionar&tipo_selecao=2&acao_origem=' . $_GET['acao'] . '&id_md_ia_prompts_favoritos=' . $objMdIaPromptsFavoritosDTO->getNumIdMdIaPromptsFavoritos() . PaginaSEI::getInstance()->montarAncora($objMdIaPromptsFavoritosDTO->getNumIdMdIaPromptsFavoritos())));
                     die;
                 } catch (Exception $e) {
                     PaginaSEI::getInstance()->processarExcecao($e);
@@ -102,7 +108,10 @@ try {
                     $objMdIaPromptsFavoritosDTO->setNumIdMdIaPromptsFavoritos($numIdMdIaPromptsFavoritos);
                     $objMdIaPromptsFavoritosDTO->setNumIdMdIaGrupoPromptsFav($_POST["selGrupoPromptsFav"]);
                     $objMdIaPromptsFavoritosDTO->setStrDescricaoPrompt($_POST["txaDescricaoPrompt"]);
-                    $objMdIaPromptsFavoritosDTO->setStrPrompt($_POST["txaPrompt"]);
+
+                    $prompt = mb_convert_encoding($_POST["txaPrompt"], 'HTML-ENTITIES', 'ISO-8859-1');
+                    $objMdIaPromptsFavoritosDTO->setStrPrompt($prompt);
+
                     $objMdIaPromptsFavoritosDTO->setDthAlteracao(InfraData::getStrDataHoraAtual());
 
                     $objMdIaPromptsFavoritosRN->alterar($objMdIaPromptsFavoritosDTO);
@@ -148,7 +157,7 @@ PaginaSEI::getInstance()->abrirStyle();
 #lblPrompt {position:absolute;left:0%;top:77%;width:95%;}
 #txaPrompt {position:absolute;left:0%;top:87%;width:95%;}
 
-<?
+<?php
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
@@ -159,7 +168,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
 ?>
 <form id="frmNovoPromptFavorito" method="post" onsubmit="return OnSubmitForm();"
     action="<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=' . $_GET['acao'] . '&acao_origem=' . $_GET['acao']) ?>">
-    <?
+    <?php
     PaginaSEI::getInstance()->montarBarraComandosSuperior($arrComandos);
     //PaginaSEI::getInstance()->montarAreaValidacao();
     PaginaSEI::getInstance()->abrirAreaDados('20em');
@@ -179,11 +188,11 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
     </div>
     <div class="form-group">
         <label id="lblPrompt" for="txaPrompt" accesskey="P" class="infraLabelObrigatorio"><span class="infraTeclaAtalho">P</span>rompt:</label>
-        <textarea rows="17" required name="txaPrompt" id="txaPrompt" class="infraTextarea" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?= PaginaSEI::tratarHTML($prompt) ?></textarea>
+        <textarea rows="17" required name="txaPrompt" id="txaPrompt" class="infraTextarea" tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>"><?= $prompt ?></textarea>
     </div>
     <input type="hidden" id="hdnIdMdIaPromptsFavoritos" name="hdnIdMdIaPromptsFavoritos" value="<?= $numIdMdIaPromptsFavoritos ?>" />
 
-    <?
+    <?php
 
     PaginaSEI::getInstance()->fecharAreaDados();
     //PaginaSEI::getInstance()->montarAreaDebug();

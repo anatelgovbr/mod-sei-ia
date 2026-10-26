@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -9,20 +9,147 @@
  */
 
 require_once dirname(__FILE__) . '/../../../SEI.php';
-
+require_once dirname(__FILE__) . '/MdIaAutenticacaoSSLRN.php';
 
 class MdIaConfigAssistenteRN extends InfraRN
 {
     const TIME_OUT = '600000';
+    const NUM_TENTATIVAS_CONEXAO = 2;
+    const CONTEXTO_PROTOCOLO = 'protocolo';
+    const CONTEXTO_AVULSO = 'avulso';
+
+    protected function inicializarObjInfraIBanco()
+    {
+        return BancoSEI::getInstance();
+    }
 
     public function __construct()
     {
         parent::__construct();
     }
 
-    protected function inicializarObjInfraIBanco()
+    public function listarExtensoesPermitidasProtocolo()
     {
-        return BancoSEI::getInstance();
+        return array_keys($this->listarRegrasExtensoesPermitidas(self::CONTEXTO_PROTOCOLO));
+    }
+
+    public function listarExtensoesPermitidasAvulso()
+    {
+        return array_keys($this->listarRegrasExtensoesPermitidas(self::CONTEXTO_AVULSO));
+    }
+
+    public function listarMapaExtensoesPermitidasUpload()
+    {
+        $arrRegras = $this->listarRegrasExtensoesPermitidas(self::CONTEXTO_AVULSO);
+        $arrRetorno = array();
+
+        foreach ($arrRegras as $strExtensao => $arrRegra) {
+            $arrRetorno[$strExtensao] = $arrRegra['tamanhoMaximoMb'];
+        }
+
+        return $arrRetorno;
+    }
+
+    public function verificarExtensaoPermitida($strExtensao, $strContexto)
+    {
+        $strExtensao = $this->normalizarExtensao($strExtensao);
+
+        if ($strExtensao === null) {
+            return false;
+        }
+
+        $arrRegras = $this->listarRegrasExtensoesPermitidas($strContexto);
+
+        return isset($arrRegras[$strExtensao]);
+    }
+
+    public function consultarRegraExtensaoPermitida($strExtensao, $strContexto)
+    {
+        $strExtensao = $this->normalizarExtensao($strExtensao);
+
+        if ($strExtensao === null) {
+            return null;
+        }
+
+        $arrRegras = $this->listarRegrasExtensoesPermitidas($strContexto);
+
+        if (!isset($arrRegras[$strExtensao])) {
+            return null;
+        }
+
+        return $arrRegras[$strExtensao];
+    }
+
+    public function listarRegrasExtensoesPermitidas($strContexto)
+    {
+        $objMdIaAdmExtPermitidaDTO = new MdIaAdmExtPermitidaDTO();
+        $objMdIaAdmExtPermitidaDTO->retStrExtensao();
+        $objMdIaAdmExtPermitidaDTO->retNumTamanhoMaximoPermitido();
+        $objMdIaAdmExtPermitidaDTO->retNumFormaEntregaArquivo();
+        $objMdIaAdmExtPermitidaDTO->setStrSinAtivo('S');
+
+        if ($strContexto == self::CONTEXTO_PROTOCOLO) {
+            $objMdIaAdmExtPermitidaDTO->setStrSinPermitidaProtocolo('S');
+        } elseif ($strContexto == self::CONTEXTO_AVULSO) {
+            $objMdIaAdmExtPermitidaDTO->setStrSinPermitidaAvulso('S');
+        } else {
+            throw new InfraException('Contexto de extensao permitida invalido.');
+        }
+
+        $arrObjMdIaAdmExtPermitidaDTO = (new MdIaAdmExtPermitidaRN())->listar($objMdIaAdmExtPermitidaDTO);
+        $numLimitePadraoMb = $this->consultarTamanhoMaximoPadraoUploadMb();
+        $arrRetorno = array();
+
+        foreach ($arrObjMdIaAdmExtPermitidaDTO as $objMdIaAdmExtPermitidaDTO) {
+            $strExtensao = $this->normalizarExtensao($objMdIaAdmExtPermitidaDTO->getStrExtensao());
+
+            if ($strExtensao === null) {
+                continue;
+            }
+
+            $numTamanhoMaximoMb = $objMdIaAdmExtPermitidaDTO->getNumTamanhoMaximoPermitido();
+            if ($strContexto == self::CONTEXTO_AVULSO && InfraString::isBolVazia($numTamanhoMaximoMb)) {
+                $numTamanhoMaximoMb = $numLimitePadraoMb;
+            }
+
+            $arrRetorno[$strExtensao] = array(
+                'extensao' => $strExtensao,
+                'forma_entrega_arquivo' => $objMdIaAdmExtPermitidaDTO->getNumFormaEntregaArquivo(),
+                'tamanhoMaximoMb' => InfraString::isBolVazia($numTamanhoMaximoMb) ? null : (int)$numTamanhoMaximoMb,
+            );
+        }
+
+        return $arrRetorno;
+    }
+
+    private function consultarTamanhoMaximoPadraoUploadMb()
+    {
+        $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
+        $numLimitePadraoMb = $objInfraParametro->getValor('SEI_TAM_MB_DOC_EXTERNO');
+
+        if (!is_numeric($numLimitePadraoMb) || $numLimitePadraoMb < 1) {
+            throw new InfraException('Valor do parametro SEI_TAM_MB_DOC_EXTERNO invalido.');
+        }
+
+        return (int)$numLimitePadraoMb;
+    }
+
+    private function normalizarExtensao($strExtensao)
+    {
+        if ($strExtensao === null) {
+            return null;
+        }
+
+        $strExtensao = trim($strExtensao);
+        $strExtensao = ltrim($strExtensao, '.');
+        $strExtensao = InfraString::transformarCaixaBaixa($strExtensao);
+        $strExtensao = str_replace(' ', '', $strExtensao);
+
+        if ($strExtensao === '') {
+            return null;
+        }
+
+        return $strExtensao;
     }
 
     public function consultarDisponibilidadeApi($url)
@@ -36,16 +163,23 @@ class MdIaConfigAssistenteRN extends InfraRN
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT_MS => '5000',
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_SSL_VERIFYHOST => 0,
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'GET',
             ));
+            MdIaAutenticacaoSSLRN::configurarAutenticacaoSSL($curl);
 
-            // Envio e armazenamento da resposta
-            $response = curl_exec($curl);
-            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            $response = false;
+            $httpcode = 0;
+            for ($numTentativa = 1; $numTentativa <= self::NUM_TENTATIVAS_CONEXAO; $numTentativa++) {
+                $response = curl_exec($curl);
+                $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+                if ($response !== false) {
+                    break;
+                }
+            }
+
             // Fecha e limpa recursos
             curl_close($curl);
             if ($httpcode == "200") {
@@ -68,7 +202,7 @@ class MdIaConfigAssistenteRN extends InfraRN
                 $strPara = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR');
                 $strAssunto = "ERRO DE RECURSO NO ASSISTENTE DO SEI IA";
                 $strConteudo = $log;
-                InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
+                InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, '', '', $strAssunto, $strConteudo);
 
                 return false;
             }
@@ -118,12 +252,11 @@ class MdIaConfigAssistenteRN extends InfraRN
             curl_setopt_array($curl, [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_URL => $dadosEnviados[1],
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_SSL_VERIFYHOST => 0,
                 CURLOPT_POSTFIELDS => $dadosEnviados[0],
                 CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
                 CURLOPT_TIMEOUT_MS => self::TIME_OUT
             ]);
+            MdIaAutenticacaoSSLRN::configurarAutenticacaoSSL($curl);
             $response = curl_exec($curl);
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             if ($httpcode == "200") {
@@ -146,7 +279,7 @@ class MdIaConfigAssistenteRN extends InfraRN
                 $strPara = $objInfraParametro->getValor('SEI_EMAIL_ADMINISTRADOR');
                 $strAssunto = "ERRO DE RECURSO NO FEEDBACK  DO ASSISTENTE DO SEI IA ";
                 $strConteudo = $log;
-                InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, null, null, $strAssunto, $strConteudo);
+                InfraMail::enviarConfigurado(ConfiguracaoSEI::getInstance(), $strDe, $strPara, '', '', $strAssunto, $strConteudo);
                 return false;
             }
         } catch (Exception $e) {

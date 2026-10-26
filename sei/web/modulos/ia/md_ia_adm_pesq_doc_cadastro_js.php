@@ -1,3 +1,4 @@
+<?php require_once "md_ia_funcoes_comuns_js.php"; ?>
 <script type="text/javascript">
     function inicializar() {
         if ('<?= $_GET['acao'] ?>' == 'md_ia_adm_pesq_doc_cadastrar') {
@@ -30,10 +31,6 @@
         }
 
         return true;
-    }
-
-    function OnSubmitForm() {
-        return validarCadastro();
     }
 
     function adicionarTipoDocumento() {
@@ -122,14 +119,5 @@
         var linhaTabela = montarLinhaTabela(IdItipoDocumento, nomeTipoDocumento, false, true);
         $("#" + IdItipoDocumento).html(linhaTabela);
         $("#" + IdItipoDocumento).removeClass("trVermelha");
-    }
-
-    function rolar_para(elemento) {
-        $("#divMsg > div").removeClass("alert-warning");
-        $("#divMsg > div").removeClass("alert-danger");
-        $("#divMsg > div").removeClass("alert-success");
-        $("#divInfraAreaTelaD").animate({
-            scrollTop: $(elemento).offset().top
-        }, 300);
     }
 </script>

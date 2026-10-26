@@ -5,6 +5,10 @@ class IaIntegracao extends SeiIntegracao
 
     const PARAMETRO_VERSAO_MODULO = 'VERSAO_MODULO_IA';
 
+    private static $bolExibeFuncionalidade = null;
+    private static $bolExibeFuncionalidadeOdsOnu = null;
+    private static $arrUnidadeAlerta = array();
+
     public function __construct() {}
 
     public function getNome()
@@ -14,7 +18,7 @@ class IaIntegracao extends SeiIntegracao
 
     public function getVersao()
     {
-        return '1.4.1';
+        return '1.5.0';
     }
 
     public function getInstituicao()
@@ -27,12 +31,12 @@ class IaIntegracao extends SeiIntegracao
         $arrBotoes = array();
 
         if ($this->verificaAcesso($objProcedimentoAPI)) {
-            $strBotaoAvaliacaoSeiIa = $this->retornaBotao();
+            $strBotaoAvaliacaoSeiIa = $this->retornaBotao($objProcedimentoAPI->getIdProcedimento());
             $arrBotoes[] = $strBotaoAvaliacaoSeiIa;
         }
 
         if ($this->verificaAcessoOdsOnu($objProcedimentoAPI)) {
-            $strBotaoOdsOnu = $this->retornarBotaoOds();
+            $strBotaoOdsOnu = $this->retornarBotaoOds($objProcedimentoAPI->getIdProcedimento());
             $arrBotoes[] = $strBotaoOdsOnu;
         }
 
@@ -51,15 +55,17 @@ class IaIntegracao extends SeiIntegracao
         if ($bolExibirFuncionalidade && $bolPermissaoAcesso) {
             return true;
         }
+
+        return false;
     }
 
-    public function retornaBotao()
+    public function retornaBotao($idProcedimento)
     {
-        $strLinkIA = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_recurso&arvore=1&id_procedimento=' . $_GET['id_procedimento']);
+        $strLinkIA = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_recurso&arvore=1&id_procedimento=' . (int)$idProcedimento);
         $imgIconeIA = "modulos/ia/imagens/md_ia_icone_1.svg?" . Icone::VERSAO;
         $titleIA = "Inteligência Artificial";
-        $strBotaoAvaliacaoSeiIa = '<a href="' . $strLinkIA . '"class="botaoSEI">';
-        $strBotaoAvaliacaoSeiIa .= '    <img class="infraCorBarraSistema" src="' . $imgIconeIA . '" alt="' . $titleIA . '" title="' . $titleIA . '">';
+        $strBotaoAvaliacaoSeiIa = '<a href="' . $strLinkIA . '" class="botaoSEI">';
+        $strBotaoAvaliacaoSeiIa .= '<img class="infraCorBarraSistema" src="' . $imgIconeIA . '" alt="' . $titleIA . '" title="' . $titleIA . '">';
         $strBotaoAvaliacaoSeiIa .= '</a>';
         return $strBotaoAvaliacaoSeiIa;
     }
@@ -76,16 +82,18 @@ class IaIntegracao extends SeiIntegracao
         if ($bolExibirFuncionalidade && $bolPermissaoAcesso) {
             return true;
         }
+
+        return false;
     }
 
-    private function retornarBotaoOds()
+    private function retornarBotaoOds($idProcedimento)
     {
         $strBotaoOds = '';
-        $strLinkODS = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_ods&arvore=1&id_procedimento=' . $_GET['id_procedimento']);
+        $strLinkODS = SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_ods&arvore=1&id_procedimento=' . (int)$idProcedimento);
         $imgIconeODS = "modulos/ia/imagens/md_ia_icone_ods.png?" . Icone::VERSAO;
         $titleODS = "Classificação pelos ODS da ONU";
-        $strBotaoOds .= '<a href="' . $strLinkODS . '"class="botaoSEI">';
-        $strBotaoOds .= '    <img class="infraCorBarraSistema" src="' . $imgIconeODS . '" alt="' . $titleODS . '" title="' . $titleODS . '">';
+        $strBotaoOds .= '<a href="' . $strLinkODS . '" class="botaoSEI">';
+        $strBotaoOds .= '<img class="infraCorBarraSistema" src="' . $imgIconeODS . '" alt="' . $titleODS . '" title="' . $titleODS . '">';
         $strBotaoOds .= '</a>';
 
         return $strBotaoOds;
@@ -97,7 +105,7 @@ class IaIntegracao extends SeiIntegracao
 
         if ($this->verificaAcesso($objProcedimentoAPI)) {
             foreach ($arrObjDocumentoAPI as $documentoAPI) {
-                $strBotaoAvaliacaoSeiIa = $this->retornaBotao();
+                $strBotaoAvaliacaoSeiIa = $this->retornaBotao($objProcedimentoAPI->getIdProcedimento());
                 $idDocumento = $documentoAPI->getIdDocumento();
                 $arrBotoes[$idDocumento][] = $strBotaoAvaliacaoSeiIa;
             }
@@ -105,7 +113,7 @@ class IaIntegracao extends SeiIntegracao
 
         if ($this->verificaAcessoOdsOnu($objProcedimentoAPI)) {
             foreach ($arrObjDocumentoAPI as $documentoAPI) {
-                $strBotaoAvaliacaoSeiIa = $this->retornarBotaoOds();
+                $strBotaoAvaliacaoSeiIa = $this->retornarBotaoOds($objProcedimentoAPI->getIdProcedimento());
                 $idDocumento = $documentoAPI->getIdDocumento();
                 $arrBotoes[$idDocumento][] = $strBotaoAvaliacaoSeiIa;
             }
@@ -116,12 +124,20 @@ class IaIntegracao extends SeiIntegracao
 
     public function consultaUnidadeAlerta()
     {
+        $numIdUnidadeAtual = SessaoSEI::getInstance()->getNumIdUnidadeAtual();
+
+        if (array_key_exists($numIdUnidadeAtual, self::$arrUnidadeAlerta)) {
+            return self::$arrUnidadeAlerta[$numIdUnidadeAtual];
+        }
+
         $objMdIaAdmUnidadeAlertaDTO = new MdIaAdmUnidadeAlertaDTO();
         $objMdIaAdmUnidadeAlertaDTO->setNumIdMdIaAdmOdsOnu(1);
-        $objMdIaAdmUnidadeAlertaDTO->setNumIdUnidade(SessaoSEI::getInstance()->getNumIdUnidadeAtual());
+        $objMdIaAdmUnidadeAlertaDTO->setNumIdUnidade($numIdUnidadeAtual);
         $objMdIaAdmUnidadeAlertaDTO->retNumIdMdIaAdmUnidadeAlerta();
         $objMdIaAdmUnidadeAlertaRN = new MdIaAdmUnidadeAlertaRN();
-        return $objMdIaAdmUnidadeAlertaRN->consultar($objMdIaAdmUnidadeAlertaDTO);
+        self::$arrUnidadeAlerta[$numIdUnidadeAtual] = $objMdIaAdmUnidadeAlertaRN->consultar($objMdIaAdmUnidadeAlertaDTO);
+
+        return self::$arrUnidadeAlerta[$numIdUnidadeAtual];
     }
 
     public function listaObjetivosOdsOnu()
@@ -145,22 +161,76 @@ class IaIntegracao extends SeiIntegracao
 
     private function montarArrIcone($arrObjProcedimentoDTO)
     {
-        if ($this->verificaAcessoOdsOnu(NULL)) {
+        $arrIcone = array();
 
-            foreach ($arrObjProcedimentoDTO as $objProcedimentoDTO) {
-                if ($this->sugeridoPorUsuarioExtIntArtificial($objProcedimentoDTO->getIdProcedimento())) {
-                    $descricao = "Pendência de validação de sugestão feita pelo SEI IA ou por Usuário Externo de classificação do processo segundo os Objetivos de Desenvolvimento Sustentável da ONU.";
-                    $arrIcone[$objProcedimentoDTO->getIdProcedimento()][] = $this->montaTooltip($descricao);;
-                    break;
-                }
-                if (!$this->verificarSeJaFoiClassificadoAlgumaVez($objProcedimentoDTO->getIdProcedimento()) && !is_null($this->consultaUnidadeAlerta())) {
-                    $descricao = "Pendência de classificação do processo segundo os Objetivos de Desenvolvimento Sustentável da ONU.";
-                    $arrIcone[$objProcedimentoDTO->getIdProcedimento()][] = $this->montaTooltip($descricao);
-                }
-            }
-
+        if (!$this->verificaAcessoOdsOnu(null)) {
             return $arrIcone;
         }
+
+        if (empty($arrObjProcedimentoDTO)) {
+            return $arrIcone;
+        }
+
+        $arrIdProcedimento = array();
+        foreach ($arrObjProcedimentoDTO as $objProcedimentoDTO) {
+            $arrIdProcedimento[] = $objProcedimentoDTO->getIdProcedimento();
+        }
+
+        $arrClassificacao = $this->consultarClassificacoesOdsOnu($arrIdProcedimento);
+        $bolExisteUnidadeAlerta = !is_null($this->consultaUnidadeAlerta());
+
+        $arrTipoSugerido = array(MdIaClassMetaOdsRN::$USUARIO_IA, MdIaClassMetaOdsRN::$USUARIO_EXTERNO);
+        $arrTipoClassificado = array(MdIaClassMetaOdsRN::$USUARIO_PADRAO, MdIaClassMetaOdsRN::$USUARIO_AGENDAMENTO);
+
+        foreach ($arrObjProcedimentoDTO as $objProcedimentoDTO) {
+            $idProcedimento = $objProcedimentoDTO->getIdProcedimento();
+            $arrTipoUsuario = isset($arrClassificacao[$idProcedimento]) ? $arrClassificacao[$idProcedimento] : array();
+
+            if (count(array_intersect($arrTipoUsuario, $arrTipoSugerido)) > 0) {
+                $descricao = "Pendência de validação de sugestão feita pelo SEI IA ou por Usuário Externo de classificação do processo segundo os Objetivos de Desenvolvimento Sustentável da ONU.";
+                $arrIcone[$idProcedimento][] = $this->montaTooltip($descricao);
+                continue;
+            }
+
+            $bolJaClassificado = count(array_intersect($arrTipoUsuario, $arrTipoClassificado)) > 0;
+            if (!$bolJaClassificado && $bolExisteUnidadeAlerta) {
+                $descricao = "Pendência de classificação do processo segundo os Objetivos de Desenvolvimento Sustentável da ONU.";
+                $arrIcone[$idProcedimento][] = $this->montaTooltip($descricao);
+            }
+        }
+
+        return $arrIcone;
+    }
+
+    private function consultarClassificacoesOdsOnu($arrIdProcedimento)
+    {
+        $arrClassificacao = array();
+
+        if (empty($arrIdProcedimento)) {
+            return $arrClassificacao;
+        }
+
+        $objMdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
+        $objMdIaClassMetaOdsDTO->setDblIdProcedimento($arrIdProcedimento, InfraDTO::$OPER_IN);
+        $objMdIaClassMetaOdsDTO->setStrStaTipoUsuario(
+            array(
+                MdIaClassMetaOdsRN::$USUARIO_IA,
+                MdIaClassMetaOdsRN::$USUARIO_EXTERNO,
+                MdIaClassMetaOdsRN::$USUARIO_PADRAO,
+                MdIaClassMetaOdsRN::$USUARIO_AGENDAMENTO
+            ),
+            InfraDTO::$OPER_IN
+        );
+        $objMdIaClassMetaOdsDTO->retDblIdProcedimento();
+        $objMdIaClassMetaOdsDTO->retStrStaTipoUsuario();
+
+        $arrObjMdIaClassMetaOdsDTO = (new MdIaClassMetaOdsRN())->listar($objMdIaClassMetaOdsDTO);
+
+        foreach ($arrObjMdIaClassMetaOdsDTO as $objClassMetaOdsDTO) {
+            $arrClassificacao[$objClassMetaOdsDTO->getDblIdProcedimento()][] = $objClassMetaOdsDTO->getStrStaTipoUsuario();
+        }
+
+        return $arrClassificacao;
     }
 
     private function sugeridoPorUsuarioExtIntArtificial($idProcedimento)
@@ -316,10 +386,6 @@ class IaIntegracao extends SeiIntegracao
                 require_once dirname(__FILE__) . '/md_ia_modal_configuracoes_assistente_ia.php';
                 return true;
 
-            case 'md_ia_classificar_usu_ext':
-                require_once dirname(__FILE__) . '/md_ia_classificar_usu_ext.php';
-                return true;
-
             case 'md_ia_modal_chats_arquivados':
                 require_once dirname(__FILE__) . '/md_ia_modal_chats_arquivados.php';
                 return true;
@@ -364,6 +430,21 @@ class IaIntegracao extends SeiIntegracao
             case 'md_ia_galeria_prompts_desativar':
             case 'md_ia_galeria_prompts_reativar':
                 require_once dirname(__FILE__) . '/md_ia_galeria_prompts.php';
+                return true;
+
+            case 'md_ia_adm_ext_permitida_listar':
+            case 'md_ia_adm_ext_permitida_excluir':
+            case 'md_ia_adm_ext_permitida_desativar':
+            case 'md_ia_adm_ext_permitida_reativar':
+            case 'md_ia_adm_ext_permitida_selecionar':
+                require_once dirname(__FILE__) . '/md_ia_adm_ext_permitida_lista.php';
+                return true;
+
+
+            case 'md_ia_adm_ext_permitida_cadastrar':
+            case 'md_ia_adm_ext_permitida_alterar':
+            case 'md_ia_adm_ext_permitida_consultar':
+                require_once dirname(__FILE__) . '/md_ia_adm_ext_permitida_cadastro.php';
                 return true;
         }
 
@@ -480,18 +561,7 @@ class IaIntegracao extends SeiIntegracao
                 exit(0);
 
             case 'md_ia_assistente_envia_mensagem_ajax':
-                // lê corpo raw e tenta decodificar JSON
-                $raw = file_get_contents('php://input');
-                $input = json_decode($raw, true);
-
-                if (is_array($input) && isset($input['mensagemUsuario'])) {
-                    $mensagemUsuario = $input['mensagemUsuario']; // o array que você enviou do JS
-                } else {
-                    // fallback para compatibilidade com envio form-urlencoded
-                    $mensagemUsuario = $_POST;
-                }
-
-                $json = MdIaConfigAssistenteINT::enviarMensagemAssistenteIa($mensagemUsuario);
+                $json = MdIaConfigAssistenteINT::enviarMensagemAssistenteIa();
                 InfraAjax::enviarJSON($json);
                 exit(0);
 
@@ -502,7 +572,7 @@ class IaIntegracao extends SeiIntegracao
                 exit(0);
 
             case 'md_ia_assistente_consulta_disponibilidade_ajax':
-                $json = MdIaConfigAssistenteINT::consultarDisponibilidadeApi($_POST);
+                $json = MdIaConfigAssistenteINT::consultarDisponibilidadeApi();
                 InfraAjax::enviarJSON(json_encode($json));
                 exit(0);
 
@@ -529,6 +599,11 @@ class IaIntegracao extends SeiIntegracao
 
             case 'md_ia_gera_log_excedeu_limite_janela_contexto_ajax':
                 $json = MdIaConfigAssistenteINT::geraLogExcedeuJanelaContexto($_POST);
+                InfraAjax::enviarJSON(json_encode($json));
+                exit(0);
+
+            case 'md_ia_gera_log_arquivo_prejudicial_ajax':
+                $json = MdIaConfigAssistenteINT::geraLogBloqueioArquivoPrejudicial($_POST);
                 InfraAjax::enviarJSON(json_encode($json));
                 exit(0);
 
@@ -606,12 +681,6 @@ class IaIntegracao extends SeiIntegracao
         $strArq = null;
 
         switch ($strServico) {
-
-            case 'wsia':
-                $strArq = 'wsia.wsdl';
-                $strArq = dirname(__FILE__) . '/ws/' . $strArq;
-                break;
-
             case 'md_ia_documentacao':
                 if ($this->verificarPermitirSwagger()) {
                     readfile(dirname(__FILE__) . '/ws/wsia.html');
@@ -632,11 +701,6 @@ class IaIntegracao extends SeiIntegracao
             case 'md_ia_consulta_processo':
                 $IaWS->validarPermissao();
                 MdIaControladorWS::consultarProcesso();
-                die;
-
-            case 'md_ia_gera_hash_conteudo_documento':
-                $IaWS->validarPermissao();
-                MdIaControladorWS::gerarHashConteudoDocumento();
                 die;
 
             case 'md_ia_lista_tipo_documento':
@@ -677,12 +741,6 @@ class IaIntegracao extends SeiIntegracao
                 MdIaControladorWS::processosIndexaveis();
                 die;
 
-            case 'md_ia_lista_processos_vetorizaveis':
-            case 'md_ia_atualiza_processos_vetorizaveis':
-                $IaWS->validarPermissao();
-                MdIaControladorWS::processosVetorizaveis();
-                die;
-
             case 'md_ia_lista_processos_indexaveis_cancelados':
             case 'md_ia_remove_processos_indexaveis_cancelados':
                 $IaWS->validarPermissao();
@@ -708,6 +766,16 @@ class IaIntegracao extends SeiIntegracao
             case 'md_ia_consulta_ultimo_id_message':
                 $IaWS->validarPermissao();
                 MdIaControladorWS::consultarUltimoIdMessage();
+                die;
+
+            case 'md_ia_download_arquivo_avulso':
+                $IaWS->validarPermissao();
+                MdIaControladorWS::downloadArquivoAvulso();
+                die;
+
+            case 'md_ia_remove_arquivos_avulsos':
+                $IaWS->validarPermissao();
+                MdIaControladorWS::removerArquivoAvulso();
                 die;
 
             default:
@@ -800,8 +868,7 @@ class IaIntegracao extends SeiIntegracao
     {
         $arr = [
             'procedimento_controlar',
-            'procedimento_trabalhar',
-            'editor_montar'
+            'procedimento_trabalhar'
         ];
 
         return $arr;
@@ -813,27 +880,29 @@ class IaIntegracao extends SeiIntegracao
         $MdIaHistClassRN = new MdIaHistClassRN();
         $MdIaHistClassDTO->setDblIdProcedimento($objProcedimentoAPI->getIdProcedimento());
         $MdIaHistClassDTO->retTodos();
-        $arrMdIaHistClassDTO = $MdIaHistClassRN->listar($MdIaHistClassDTO);
+        $arrMdIaHistClassDTO = $MdIaHistClassRN->listarInterno($MdIaHistClassDTO);
         if ($arrMdIaHistClassDTO) {
-            $MdIaHistClassRN->excluir($arrMdIaHistClassDTO);
+            $MdIaHistClassRN->excluirInterno($arrMdIaHistClassDTO);
         }
 
         $MdIaClassMetaOdsDTO = new MdIaClassMetaOdsDTO();
         $MdIaClassMetaOdsRN = new MdIaClassMetaOdsRN();
         $MdIaClassMetaOdsDTO->setDblIdProcedimento($objProcedimentoAPI->getIdProcedimento());
         $MdIaClassMetaOdsDTO->retTodos();
-        $arrMdIaClassMetaOdsDTO = $MdIaClassMetaOdsRN->listar($MdIaClassMetaOdsDTO);
+        $arrMdIaClassMetaOdsDTO = $MdIaClassMetaOdsRN->listarInterno($MdIaClassMetaOdsDTO);
         if ($arrMdIaClassMetaOdsDTO) {
-            $MdIaClassMetaOdsRN->excluir($arrMdIaClassMetaOdsDTO);
+            $MdIaClassMetaOdsRN->excluirInterno($arrMdIaClassMetaOdsDTO);
         }
     }
 
     public function exibeFuncionalidadeOdsOnu()
     {
-
-        $bolAcaoRecursoIa = SessaoSEI::getInstance()->verificarPermissao('md_ia_recurso');
+        if (self::$bolExibeFuncionalidadeOdsOnu !== null) {
+            return self::$bolExibeFuncionalidadeOdsOnu;
+        }
 
         $bolExibirFuncionalidade = false;
+        $bolAcaoRecursoIa = SessaoSEI::getInstance()->verificarPermissao('md_ia_recurso');
 
         if ($bolAcaoRecursoIa) {
             $objMdIaAdmOdsOnuDTO = new MdIaAdmOdsOnuDTO();
@@ -841,21 +910,24 @@ class IaIntegracao extends SeiIntegracao
             $objMdIaAdmOdsOnuRN = new MdIaAdmOdsOnuRN();
             $objMdIaAdmOdsOnuDTO = $objMdIaAdmOdsOnuRN->consultar($objMdIaAdmOdsOnuDTO);
 
-            if ($objMdIaAdmOdsOnuDTO) {
-                if ($objMdIaAdmOdsOnuDTO->getStrSinExibirFuncionalidade() == "S") {
-                    $bolExibirFuncionalidade = true;
-                    return $bolExibirFuncionalidade;
-                }
+            if ($objMdIaAdmOdsOnuDTO && $objMdIaAdmOdsOnuDTO->getStrSinExibirFuncionalidade() == "S") {
+                $bolExibirFuncionalidade = true;
             }
         }
+
+        self::$bolExibeFuncionalidadeOdsOnu = $bolExibirFuncionalidade;
+
+        return self::$bolExibeFuncionalidadeOdsOnu;
     }
 
     public function exibeFuncionalidade()
     {
-
-        $bolAcaoRecursoIa = SessaoSEI::getInstance()->verificarPermissao('md_ia_recurso');
+        if (self::$bolExibeFuncionalidade !== null) {
+            return self::$bolExibeFuncionalidade;
+        }
 
         $bolExibirFuncionalidade = false;
+        $bolAcaoRecursoIa = SessaoSEI::getInstance()->verificarPermissao('md_ia_recurso');
 
         if ($bolAcaoRecursoIa) {
             $objMdIaAdmConfigSimilarDTO = new MdIaAdmConfigSimilarDTO();
@@ -863,9 +935,9 @@ class IaIntegracao extends SeiIntegracao
             $objMdIaAdmConfigSimilarRN = new MdIaAdmConfigSimilarRN();
             $objMdIaAdmConfigSimilarDTO = $objMdIaAdmConfigSimilarRN->consultar($objMdIaAdmConfigSimilarDTO);
 
-            if ($objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
-                $bolExibirFuncionalidade = true;
-                return $bolExibirFuncionalidade;
+            if ($objMdIaAdmConfigSimilarDTO && $objMdIaAdmConfigSimilarDTO->getStrSinExibirFuncionalidade() == "S") {
+                self::$bolExibeFuncionalidade = true;
+                return self::$bolExibeFuncionalidade;
             }
 
             $objMdIaAdmPesqDocDTO = new MdIaAdmPesqDocDTO();
@@ -874,13 +946,14 @@ class IaIntegracao extends SeiIntegracao
             $objMdIaAdmPesqDocRN = new MdIaAdmPesqDocRN();
             $objMdIaAdmPesqDocDTO = $objMdIaAdmPesqDocRN->consultar($objMdIaAdmPesqDocDTO);
 
-            if ($objMdIaAdmPesqDocDTO) {
-                if ($objMdIaAdmPesqDocDTO->getStrSinExibirFuncionalidade() == "S") {
-                    $bolExibirFuncionalidade = true;
-                    return $bolExibirFuncionalidade;
-                }
+            if ($objMdIaAdmPesqDocDTO && $objMdIaAdmPesqDocDTO->getStrSinExibirFuncionalidade() == "S") {
+                $bolExibirFuncionalidade = true;
             }
         }
+
+        self::$bolExibeFuncionalidade = $bolExibirFuncionalidade;
+
+        return self::$bolExibeFuncionalidade;
     }
 
     public function exibeFuncionalidadeChatIa()

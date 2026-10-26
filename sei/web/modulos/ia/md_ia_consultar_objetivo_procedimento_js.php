@@ -1,3 +1,4 @@
+<?php require_once "md_ia_funcoes_comuns_js.php"; ?>
 <script type="text/javascript">
     function inicializar() {
         if (window.top.document.getElementById("ifrVisualizacao") != null) {
@@ -132,6 +133,10 @@
     function salvarClassificacaoOds() {
         var error = false;
         var racionais = {};
+        var btnSalvar = $("#btnSalvar");
+        if (btnSalvar.prop("disabled")) {
+            return false;
+        }
         $(".infraCheckboxInput").each(function() {
             var idCheckbox = this.id;
             idCheckbox = idCheckbox.split("chkInfraItem");
@@ -176,6 +181,9 @@
             type: 'POST',
             dataType: "json",
             data: result,
+            beforeSend: function() {
+                btnSalvar.prop("disabled", true);
+            },
             success: function(retorno) {
                 if (retorno.result == "true") {
                     atualizarListaOdsONU();
@@ -203,56 +211,10 @@
                 $("#divMsg > div > label").html("Ocorreu um erro ao realizar a Classificação.");
                 $("#divMsg > div").addClass("alert-danger");
                 $("#divMsg").show();
+            },
+            complete: function() {
+                btnSalvar.prop("disabled", false);
             }
-        });
-    }
-
-    function rolar_para(elemento) {
-        $("#divMsg > div").removeClass("alert-warning");
-        $("#divMsg > div").removeClass("alert-danger");
-        $("#divMsg > div").removeClass("alert-success");
-        $("#divInfraAreaTelaD").animate({
-            scrollTop: $(elemento).offset().top
-        }, 300);
-    }
-
-    function fecharModal() {
-        /* if ($("#hdnAlteracoesRealizadas").val() == "1") {
-             if (window.top.document.getElementById("ifrVisualizacao") != null) {
-                 window.top.document.getElementById("ifrVisualizacao").src = "<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_recurso&arvore=1&id_procedimento=' . $_GET['id_procedimento']) ?>";
-             } else {
-                 window.top.document.getElementById('ifrConteudoVisualizacao').contentWindow.document.getElementById("ifrVisualizacao").src = "<?= SessaoSEI::getInstance()->assinarLink('controlador.php?acao=md_ia_recurso&arvore=1&id_procedimento=' . $_GET['id_procedimento']) ?>";
-             }
-         }*/
-        $(window.top.document).find('div[id^=divInfraSparklingModalClose]').click();
-    }
-
-    function infraCriarCheckboxRadio(classInput, classDiv, classLabel, classRemocao, classAdicao) {
-        $("." + classInput).each(function(index) {
-            var div = $('<div class="' + classDiv + '" ></div>');
-            var isVisible = this.style.visibility !== 'hidden' && this.style.display !== 'none';
-            if (isVisible) {
-                $(this).wrap(div);
-            } else {
-                $(this).addClass("infraCheckboxRadioSemDiv");
-            }
-
-            var id = $(this).attr("id");
-            var title = $(this).attr("title");
-
-            var label = $('<label class="' + classLabel + '"></label>');
-
-            if (id != undefined) {
-                $(label).attr("for", id);
-            }
-            if (title != undefined) {
-                $(label).attr("title", title);
-            }
-
-            $(this).removeClass(classRemocao);
-            $(this).addClass(classAdicao);
-
-            label.insertAfter($(this));
         });
     }
 

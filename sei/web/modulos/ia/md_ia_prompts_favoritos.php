@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
@@ -54,8 +54,8 @@ try {
 
             //Se cadastrou alguem
             if ($_GET['acao_origem'] == 'md_ia_prompts_favoritos_cadastrar') {
-                if (isset($_GET['id_md_ia_interacao_chat'])) {
-                    PaginaSEI::getInstance()->adicionarSelecionado($_GET['id_md_ia_interacao_chat']);
+                if (isset($_GET['id_md_ia_prompts_favoritos'])) {
+                    PaginaSEI::getInstance()->adicionarSelecionado($_GET['id_md_ia_prompts_favoritos']);
                 }
             }
             break;
@@ -203,7 +203,7 @@ PaginaSEI::getInstance()->abrirStyle();
 #lblPalavrasPesquisaPromptsFavoritos {position:absolute;left:35%;top:0%;width:65%;}
 #txtPalavrasPesquisaPromptsFavoritos {position:absolute;left:35%;top:40%;width:65%;}
 
-<?
+<?php
 PaginaSEI::getInstance()->fecharStyle();
 PaginaSEI::getInstance()->montarJavaScript();
 PaginaSEI::getInstance()->abrirJavaScript();
@@ -231,7 +231,7 @@ PaginaSEI::getInstance()->abrirBody($strTitulo, 'onload="inicializar();"');
         onkeypress="return tratarDigitacao(event);"
         tabindex="<?= PaginaSEI::getInstance()->getProxTabDados() ?>" />
 
-    <?
+    <?php
     PaginaSEI::getInstance()->fecharAreaDados();
     PaginaSEI::getInstance()->montarAreaTabela($strResultado, $numRegistros);
     PaginaSEI::getInstance()->montarAreaDebug();

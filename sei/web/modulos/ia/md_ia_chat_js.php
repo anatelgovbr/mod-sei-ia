@@ -17,7 +17,80 @@
 <script src="modulos/ia/lib/purify/purify.js"></script>
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function(event) {
-        $('.send-message-input').on('keydown input', function(event) {
+
+
+        // --- INICIO DO BLOCO DRAG AND DROP ---
+
+        // 1. Previne comportamento padrão em todo o documento (impede abrir nova guia)
+        $(document).on('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        $(document).on('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        // 2. Configura a área de drop (usando a área do chat widget-content)
+        var $dropZone = $('.widget-content');
+
+        // Efeito visual quando arrasta o arquivo para dentro (opcional)
+        $dropZone.on('dragenter', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).css('background-color', '#f1f8ff'); // Leve azul para indicar área ativa
+            $(this).css('border', '2px dashed #2494da');
+        });
+
+        $dropZone.on('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            // Verifica se realmente saiu da área principal e não entrou num filho
+            if (e.target === this) {
+                $(this).css('background-color', '');
+                $(this).css('border', 'none');
+            }
+        });
+
+        // 3. O evento DROP real - Aqui capturamos o arquivo
+        $dropZone.on('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Remove estilos visuais de destaque
+            $(this).css('background-color', '');
+            $(this).css('border', 'none');
+
+            // Pega os arquivos do evento de drop (dataTransfer)
+            var files = e.originalEvent.dataTransfer.files;
+
+            if (files && files.length > 0) {
+                // Percorremos os arquivos que foram soltos
+                for (let i = 0; i < files.length; i++) {
+                    const arquivo = files[i];
+
+                    // --- AQUI ENTRA A VALIDAÇÃO ---
+                    if (!validarArquivo(arquivo)) {
+                        continue;
+                    }
+
+                    if (!validarTamanhoTotalArquivos(arquivosSelecionados.concat([arquivo]))) {
+                        continue;
+                    }
+
+                    arquivosSelecionados.push(arquivo);
+                }
+
+                // Atualiza os chips na tela
+                renderizarListaArquivos();
+
+                // Foca no campo de mensagem após soltar
+                $('#mensagem').focus();
+            }
+        });
+
+        $('.send-message-input').on('keydown input paste', function(event) {
             // ENTER sem Shift ? enviar
             if (event.type === 'keydown' && event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
@@ -28,12 +101,15 @@
                 }, 500);
                 return;
             }
+            if (event.type === 'paste') {
+                event.preventDefault();
+                inserirTextoColadoMensagem(event.originalEvent.clipboardData.getData('text/plain'));
+            }
             // qualquer outra mudança no valor (inclui paste)
             if (event.type === 'input') {
-                setTimeout(() => {
-                    controlaPreenchimentoCampoMensagem();
-                    controlaTamanhoInputDigitacao();
-                }, 500);
+                destacarReferenciasSimplesMensagem();
+                controlaPreenchimentoCampoMensagem();
+                controlaTamanhoInputDigitacao();
             }
         });
 
@@ -46,10 +122,6 @@
             content: "Orientações Gerais",
         });
 
-        tippy(".titleGaleriaPrompt", {
-            content: "Galeria de Prompts",
-        });
-
         tippy(".iconeConfiguracoes", {
             content: "Configurações",
         });
@@ -60,6 +132,10 @@
 
         tippy("#reduzirAssistente", {
             content: "Reduzir Assistente",
+        });
+
+        tippy("#alternarPainelTopicos", {
+            content: "Recolher menu lateral",
         });
 
         tippy(".chat-open", {
@@ -75,7 +151,7 @@
         });
 
         tippy("#botaoPromptFavorito", {
-            content: "Promps Favoritos",
+            content: "Prompts Favoritos",
         });
 
         tippy("#botaoGaleriaPrompt", {
@@ -95,20 +171,82 @@
         });
 
         tippy("#botaoMemoriaTopico", {
-            content: "Utilizar memória do tópico",
+            content: "Utilizar Memória do Tópico",
         });
+        atualizarTooltipMemoriaTopico();
 
         tippy("#botaoBuscarWeb", {
             content: "Buscar na Web",
         });
 
-        tippy("#botaoRefletir", {
-            content: "Pensar antes de responder",
-        });
-
         tippy(".iconeAdicionarTopico", {
             content: "Novo Tópico",
         });
+
+        var painelTopicos = document.getElementById('painelTopicos');
+        if (painelTopicos && typeof tippy.delegate === 'function') {
+            var painelTopicosEmRolagem = false;
+            var temporizadorRolagemTopicos;
+            var tooltipTopicoAtivo = null;
+
+            var tooltipTopicoDelegado = tippy.delegate(painelTopicos, {
+                target: '.selecionaTopico, .rename, .arquivo',
+                content: function(elemento) {
+                    if (elemento.classList.contains('rename')) {
+                        return 'Renomear Tópico';
+                    }
+                    if (elemento.classList.contains('arquivo')) {
+                        return 'Arquivar Tópico';
+                    }
+                    return 'Selecionar Tópico';
+                },
+                delay: [500, 0],
+                popperOptions: {
+                    strategy: 'fixed'
+                },
+                onShow: function(instance) {
+                    if (painelTopicosEmRolagem) {
+                        return false;
+                    }
+                    tooltipTopicoAtivo = instance;
+                },
+                onHidden: function(instance) {
+                    if (tooltipTopicoAtivo === instance) {
+                        tooltipTopicoAtivo = null;
+                    }
+                }
+            });
+
+            painelTopicos.addEventListener('scroll', function() {
+                painelTopicosEmRolagem = true;
+                tooltipTopicoDelegado.disable();
+                if (tooltipTopicoAtivo) {
+                    tooltipTopicoAtivo.hide();
+                }
+                clearTimeout(temporizadorRolagemTopicos);
+                temporizadorRolagemTopicos = setTimeout(function() {
+                    painelTopicosEmRolagem = false;
+                    tooltipTopicoDelegado.enable();
+                }, 150);
+            }, {
+                passive: true
+            });
+        }
+
+        tippy("#botaoAnexarArquivo", {
+            content: "Anexar Arquivos",
+        });
+
+        tippy("#botaoModelos", {
+            content: "Selecionar Modelo",
+        });
+
+        tippy("#botaoEsforcoModelo", {
+            content: "Selecionar Esforço do Modelo",
+        });
+
+        atualizarRotuloModeloSelecionado();
+        atualizarRotuloEsforcoSelecionado();
         setTimeout(() => {
             fecharChat();
             $("#chat_ia").css("display", "block");
@@ -119,7 +257,6 @@
             }, 1000);
         }
     });
-
     $(document).on('click', '.submenu-item', function() {
         const titulo = $(this).text().trim();
         const mensagem = mensagensSugeridas[titulo] || "";
@@ -128,10 +265,45 @@
         identificarProtocolo(mensagem);
     });
 
+    function atualizarRotuloModeloSelecionado() {
+        const modeloSelecionado = document.querySelector('#menuModelos .modelo-item[aria-checked="true"]');
+        if (modeloSelecionado) {
+            document.querySelector('#botaoModelos .rotulo-modelos').textContent = modeloSelecionado.querySelector('.rotulo-opcao-selecao').textContent.trim();
+        }
+    }
+
+    function atualizarRotuloEsforcoSelecionado() {
+        const esforcoSelecionado = document.querySelector('#menuEsforcoModelo .esforco-item[aria-checked="true"]');
+        if (esforcoSelecionado) {
+            document.querySelector('#botaoEsforcoModelo .rotulo-esforco').textContent = esforcoSelecionado.querySelector('.rotulo-opcao-selecao').textContent.trim();
+        }
+    }
+
+    $(document).on('click', '.opcao-selecao-item', function() {
+        const menu = this.closest('.submenu-opcoes');
+        const botao = menu.closest('.botao-com-menu').querySelector('[aria-expanded]');
+        menu.querySelectorAll('[role="menuitemradio"]').forEach(function(item) {
+            item.setAttribute('aria-checked', 'false');
+        });
+        this.setAttribute('aria-checked', 'true');
+        if (this.classList.contains('modelo-item')) {
+            atualizarRotuloModeloSelecionado();
+        }
+        if (this.classList.contains('esforco-item')) {
+            atualizarRotuloEsforcoSelecionado();
+        }
+        menu.style.display = 'none';
+        botao.setAttribute('aria-expanded', 'false');
+    });
+
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.botao-com-menu')) {
             document.querySelectorAll('.submenu-opcoes').forEach(function(el) {
                 el.style.display = 'none';
+                const botao = el.closest('.botao-com-menu').querySelector('[aria-expanded]');
+                if (botao) {
+                    botao.setAttribute('aria-expanded', 'false');
+                }
             });
         }
     });
@@ -212,21 +384,33 @@
         "Ajude a aprender Python": "Pode me ajudar a aprender Python? Comece perguntando sobre meu nível atual de conhecimento de programação."
     };
 
+    const ArrExtensoesAceitas = <?= json_encode((new MdIaConfigAssistenteRN())->listarMapaExtensoesPermitidasUpload()); ?>;
+    const ArrIcones = <?= json_encode(MdIaInteracaoArqAvulsoINT::obterMapaIconesPorExtensao(), JSON_UNESCAPED_SLASHES) ?>;
+    const TAMANHO_MAXIMO_UPLOAD_TOTAL_MB = 500;
+
     function exibirOpcoes(botao) {
 
         const submenu = botao.closest('.botao-com-menu').querySelector('.submenu-opcoes');
         const display = submenu.style.display;
 
         // Fecha todos os outros
-        document.querySelectorAll('.submenu-opcoes').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.submenu-opcoes').forEach(function(el) {
+            el.style.display = 'none';
+            const botaoMenu = el.closest('.botao-com-menu').querySelector('[aria-expanded]');
+            if (botaoMenu) {
+                botaoMenu.setAttribute('aria-expanded', 'false');
+            }
+        });
 
         // Toggle visibilidade
         if (display === 'block') {
             submenu.style.display = 'none';
+            botao.setAttribute('aria-expanded', 'false');
             return;
         }
 
         submenu.style.display = 'block';
+        botao.setAttribute('aria-expanded', 'true');
 
         //Exibir o posicionamento correto
         const rect = botao.getBoundingClientRect();
@@ -266,11 +450,26 @@
     }
 
     function controlaPreenchimentoCampoMensagem() {
-        if ($("#mensagem").val() != "" && !$("#botaoEnviarMensagem").hasClass("aguardandoResposta") && !$("#botaoEnviarMensagem").hasClass("apiIndisponivel") && !$("#botaoEnviarMensagem").hasClass("limiteDiarioExcedido")) {
+        var mensagemNormalizada = obterTextoMensagem().trim();
+        if (mensagemNormalizada !== "" && !$("#botaoEnviarMensagem").hasClass("aguardandoResposta") && !$("#botaoEnviarMensagem").hasClass("apiIndisponivel") && !$("#botaoEnviarMensagem").hasClass("limiteDiarioExcedido")) {
             $("#botaoEnviarMensagem").addClass("habilitadoEnvio");
 
         } else {
             $("#botaoEnviarMensagem").removeClass("habilitadoEnvio");
+        }
+    }
+
+    function alterarEstadoVerificacaoPermissoes(verificando) {
+        var botao = document.getElementById("botaoEnviarMensagem");
+        if (!botao) {
+            return;
+        }
+
+        botao.classList.toggle("verificandoPermissoes", verificando);
+        botao.setAttribute("aria-busy", verificando ? "true" : "false");
+
+        if (botao._tippy) {
+            botao._tippy.setContent(verificando ? "Verificando permissões de acesso sobre protocolos" : "Enviar Mensagem");
         }
     }
 
@@ -325,7 +524,7 @@
     }
 
     function transferirTexto(selectedText) {
-        document.getElementById("mensagem").value = document.getElementById('textoSelecionado').value;
+        definirTextoMensagem(document.getElementById('textoSelecionado').value);
         document.getElementById("botaoTransferir").style.display = 'none';
         document.getElementById('widget-open').checked = true;
         controlaPreenchimentoCampoMensagem();
@@ -361,9 +560,257 @@
     function safe_tags(str) {
         return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
+
+    var REGEX_POSSIVEL_CITACAO_PROTOCOLO_SEI = <?= json_encode(MdIaConfigAssistenteINT::REGEX_POSSIVEL_CITACAO_PROTOCOLO) ?>;
+    var REGEX_CITACAO_PROTOCOLO_SEI = <?= json_encode(MdIaConfigAssistenteINT::REGEX_CITACAO_PROTOCOLO) ?>;
+
+    function criarRegexCitacaoProtocolo(flags = '', ancorarInicio = false) {
+        return new RegExp((ancorarInicio ? '^' : '') + REGEX_CITACAO_PROTOCOLO_SEI, flags);
+    }
+
+    function aplicarLinksCitacoesMensagem(html, dadosCitacoes) {
+        if (!Array.isArray(dadosCitacoes) || dadosCitacoes.length === 0) {
+            return html;
+        }
+
+        var linksCitacoes = {};
+        dadosCitacoes.forEach(function(citacao) {
+            if (citacao && citacao["citacaoRealizada"] && citacao["linkAcesso"]) {
+                linksCitacoes[citacao["citacaoRealizada"]] = decodeHTML(citacao["linkAcesso"]);
+            }
+        });
+
+        var template = document.createElement('template');
+        template.innerHTML = html;
+        var walker = document.createTreeWalker(template.content, NodeFilter.SHOW_TEXT, {
+            acceptNode: function(noTexto) {
+                return noTexto.parentElement && noTexto.parentElement.closest('a') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+            }
+        });
+        var nosTexto = [];
+        while (walker.nextNode()) {
+            nosTexto.push(walker.currentNode);
+        }
+
+        nosTexto.forEach(function(noTexto) {
+            var texto = noTexto.nodeValue;
+            var regexCitacao = criarRegexCitacaoProtocolo('g');
+            var fragmento = document.createDocumentFragment();
+            var ultimaPosicao = 0;
+            var correspondencia;
+            while ((correspondencia = regexCitacao.exec(texto)) !== null) {
+                var linkAcesso = linksCitacoes[correspondencia[0].split('[')[0]];
+                if (!linkAcesso) {
+                    continue;
+                }
+                var link = document.createElement('a');
+                link.className = 'referencia-sei-link';
+                link.target = '_blank';
+                link.rel = 'noopener';
+                link.href = linkAcesso;
+                link.textContent = correspondencia[0];
+                fragmento.appendChild(document.createTextNode(texto.substring(ultimaPosicao, correspondencia.index)));
+                fragmento.appendChild(link);
+                ultimaPosicao = correspondencia.index + correspondencia[0].length;
+            }
+            if (ultimaPosicao > 0) {
+                fragmento.appendChild(document.createTextNode(texto.substring(ultimaPosicao)));
+                noTexto.replaceWith(fragmento);
+            }
+        });
+        return template.innerHTML;
+    }
+
+    function obterTextoMensagem() {
+        var editor = document.getElementById('mensagem');
+        if (!editor) {
+            return '';
+        }
+
+        var copia = editor.cloneNode(true);
+        copia.querySelectorAll('[data-citacao-sei]').forEach(function(referencia) {
+            referencia.replaceWith(document.createTextNode(referencia.getAttribute('data-citacao-sei')));
+        });
+        return obterTextoElementoEditavel(copia);
+    }
+
+    function obterTextoElementoEditavel(elemento) {
+        var texto = '';
+        elemento.childNodes.forEach(function(no, indice) {
+            if (no.nodeType === Node.TEXT_NODE) {
+                texto += no.nodeValue;
+                return;
+            }
+            if (no.nodeName === 'BR') {
+                texto += '\n';
+                return;
+            }
+
+            if (/^(DIV|P)$/.test(no.nodeName) && indice > 0 && !texto.endsWith('\n')) {
+                texto += '\n';
+            }
+            texto += obterTextoElementoEditavel(no);
+            if (/^(DIV|P)$/.test(no.nodeName) && indice < elemento.childNodes.length - 1 && !texto.endsWith('\n')) {
+                texto += '\n';
+            }
+        });
+        return texto;
+    }
+
+    // '\r' renderizado em white-space: pre-wrap impede o navegador de mover o cursor entre linhas com as setas.
+    function normalizarQuebrasLinhaMensagem(texto) {
+        return String(texto).replace(/\r\n?/g, '\n');
+    }
+
+    function definirTextoMensagem(texto) {
+        var editor = document.getElementById('mensagem');
+        if (!editor) {
+            return;
+        }
+        editor.textContent = normalizarQuebrasLinhaMensagem(texto || '');
+        destacarReferenciasSimplesMensagem();
+    }
+
+    function obterHtmlVisualMensagem() {
+        var editor = document.getElementById('mensagem');
+        if (!editor) {
+            return '';
+        }
+
+        var textoParaHtml = function(texto) {
+            return String(texto)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        };
+        var converterNo = function(no) {
+            if (no.nodeType === Node.TEXT_NODE) {
+                return textoParaHtml(no.nodeValue).replace(/\r\n?|\n/g, '<br>');
+            }
+            if (no.nodeName === 'BR') {
+                return '<br>';
+            }
+            if (no.matches && no.matches('.referencia-sei-link')) {
+                return '<a class="referencia-sei-link" target="_blank" rel="noopener" href="' + textoParaHtml(no.getAttribute('href')) + '">' + textoParaHtml(no.textContent) + '</a>';
+            }
+
+            return converterFilhos(no);
+        };
+
+        var converterFilhos = function(elemento) {
+            var html = '';
+            elemento.childNodes.forEach(function(no, indice) {
+                var bloco = /^(DIV|P)$/.test(no.nodeName);
+                if (bloco && indice > 0 && !html.endsWith('<br>')) {
+                    html += '<br>';
+                }
+                html += converterNo(no);
+                if (bloco && indice < elemento.childNodes.length - 1 && !html.endsWith('<br>')) {
+                    html += '<br>';
+                }
+            });
+            return html;
+        };
+
+        return converterFilhos(editor);
+    }
+
+    function criarReferenciaSei(idProtocolo, prefixo, protocolo, sufixo) {
+        var link = document.createElement('a');
+        link.className = 'referencia-sei-link';
+        link.contentEditable = 'false';
+        link.setAttribute('data-citacao-sei', '#' + protocolo);
+        link.href = obterLinkDiretoProtocolo(idProtocolo, protocolo);
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = '#' + protocolo;
+
+        var fragmento = document.createDocumentFragment();
+        fragmento.appendChild(document.createTextNode(prefixo));
+        fragmento.appendChild(link);
+        fragmento.appendChild(document.createTextNode(sufixo));
+        return fragmento;
+    }
+
+    function obterLinkDiretoProtocolo(idProtocolo, protocolo) {
+        if (/\d{5}\.\d{6}\/\d{4}-\d{2}/.test(protocolo)) {
+            return 'controlador.php?acao=procedimento_trabalhar&id_procedimento=' + encodeURIComponent(idProtocolo);
+        }
+
+        var idProcedimentoAtual = new URLSearchParams(window.location.search).get('id_procedimento');
+        if (idProcedimentoAtual) {
+            return 'controlador.php?acao=procedimento_trabalhar&id_procedimento=' + encodeURIComponent(idProcedimentoAtual) + '&id_documento=' + encodeURIComponent(idProtocolo);
+        }
+        return 'controlador.php?acao=documento_visualizar&id_documento=' + encodeURIComponent(idProtocolo);
+    }
+
+    function criarFragmentoTextoMensagem(texto) {
+        var fragmento = document.createDocumentFragment();
+        var regexLinkSei = /#([^#{}<>\\\r\n]*)\{(\d+)\|([^{}<>()&;\s\\]+)\}([^#<>\\\r\n]*)#/g;
+        var ultimaPosicao = 0;
+        var correspondencia;
+
+        while ((correspondencia = regexLinkSei.exec(texto)) !== null) {
+            fragmento.appendChild(document.createTextNode(texto.substring(ultimaPosicao, correspondencia.index)));
+            fragmento.appendChild(criarReferenciaSei(correspondencia[2], correspondencia[1], correspondencia[3], correspondencia[4]));
+            ultimaPosicao = correspondencia.index + correspondencia[0].length;
+        }
+        fragmento.appendChild(document.createTextNode(texto.substring(ultimaPosicao)));
+        return fragmento;
+    }
+
+    function inserirTextoColadoMensagem(texto) {
+        var selecao = window.getSelection();
+        if (!selecao.rangeCount) {
+            return;
+        }
+
+        var intervalo = selecao.getRangeAt(0);
+        intervalo.deleteContents();
+        var fragmento = criarFragmentoTextoMensagem(normalizarQuebrasLinhaMensagem(texto));
+        var ultimoNo = fragmento.lastChild;
+        intervalo.insertNode(fragmento);
+        if (ultimoNo) {
+            intervalo.setStartAfter(ultimoNo);
+            intervalo.collapse(true);
+            selecao.removeAllRanges();
+            selecao.addRange(intervalo);
+        }
+        document.getElementById('mensagem').normalize();
+        destacarReferenciasSimplesMensagem();
+        controlaPreenchimentoCampoMensagem();
+        controlaTamanhoInputDigitacao();
+    }
+
+    function destacarReferenciasSimplesMensagem() {
+        var editor = document.getElementById('mensagem');
+        if (!editor || !window.CSS || !CSS.highlights || typeof Highlight === 'undefined') {
+            return;
+        }
+
+        var walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, {
+            acceptNode: function(noTexto) {
+                return noTexto.parentElement.closest('.referencia-sei-link') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+            }
+        });
+        var intervalos = [];
+        var noTexto;
+        while ((noTexto = walker.nextNode())) {
+            var regexCitacao = criarRegexCitacaoProtocolo('g');
+            var correspondencia;
+            while ((correspondencia = regexCitacao.exec(noTexto.nodeValue)) !== null) {
+                var intervalo = new Range();
+                intervalo.setStart(noTexto, correspondencia.index);
+                intervalo.setEnd(noTexto, correspondencia.index + correspondencia[0].length);
+                intervalos.push(intervalo);
+            }
+        }
+        CSS.highlights.set('referencias-sei-simples', new Highlight(...intervalos));
+    }
+
     function criarIconeTopicoSvg() {
         var template = document.createElement('template');
-        template.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path d="M160 368c26.5 0 48 21.5 48 48v16l72.5-54.4c8.3-6.2 18.4-9.6 28.8-9.6H448c8.8 0 16-7.2 16-16V64c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16V352c0 8.8 7.2 16 16 16h96zm48 124l-.2 .2-5.1 3.8-17.1 12.8c-4.8 3.6-11.3 4.2-16.8 1.5s-8.8-8.2-8.8-14.3V474.7v-6.4V468v-4V416H112 64c-35.3 0-64-28.7-64-64V64C0 28.7 28.7 0 64 0H448c35.3 0 64 28.7 64 64V352c0 35.3-28.7 64-64 64H309.3L208 492z"/></svg>';
+        template.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/></svg>';
         return template.content.firstElementChild;
     }
 
@@ -407,12 +854,12 @@
         var $acaoArquivar = $('<a>').addClass('arquivo').on('click', function() {
             arquivarTopico(idTopico);
         });
-        $acaoArquivar.append('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path d="M121 32C91.6 32 66 52 58.9 80.5L1.9 308.4C.6 313.5 0 318.7 0 323.9V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V323.9c0-5.2-.6-10.4-1.9-15.5l-57-227.9C446 52 420.4 32 391 32H121zm0 64H391l48 192H387.8c-12.1 0-23.2 6.8-28.6 17.7l-14.3 28.6c-5.4 10.8-16.5 17.7-28.6 17.7H195.8c-12.1 0-23.2-6.8-28.6-17.7l-14.3-28.6c-5.4-10.8-16.5-17.7-28.6-17.7H73L121 96z"/></svg>');
+        $acaoArquivar.append('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>');
 
         var $acaoRenomear = $('<a>').addClass('rename').on('click', function() {
             editarTopico(idTopico);
         });
-        $acaoRenomear.append('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512"><path d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z"/></svg>');
+        $acaoRenomear.append('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>');
 
         $acoesTopico.append($acaoArquivar, $acaoRenomear);
         $topico.append($acoesTopico);
@@ -420,18 +867,102 @@
         return $topico;
     }
 
-    function resolveItensEnvioMensagem(mensagem, dadosCitacoes = "", idInteracao = "", favorito = "", dthCadastro) {
-
-        mensagem = decodeHtmlEntitiesPergunta(mensagem);
-        if (dadosCitacoes != "" && dadosCitacoes != null) {
-            if (Array.isArray(dadosCitacoes)) {
-                dadosCitacoes.forEach((citacao) => {
-                    mensagem = mensagem.replace(citacao["citacaoRealizada"], "<a target='_blank' href='" + citacao["linkAcesso"] + "'>" + citacao["citacaoRealizada"] + "</a>");
-                });
-            }
+    function atualizarControleExpansaoPrompt(elementoPrompt) {
+        if (!elementoPrompt) {
+            return;
         }
+
+        var estiloPrompt = window.getComputedStyle(elementoPrompt);
+        var alturaLinha = parseFloat(estiloPrompt.lineHeight);
+        if (isNaN(alturaLinha)) {
+            alturaLinha = parseFloat(estiloPrompt.fontSize) * 1.2;
+        }
+
+        var alturaLimite = (alturaLinha * 11) + parseFloat(estiloPrompt.paddingTop) + parseFloat(estiloPrompt.paddingBottom);
+        var estavaExpandido = elementoPrompt.classList.contains('prompt-usuario-expandido');
+        var botao = elementoPrompt.nextElementSibling;
+        var ehBotaoExpansao = botao && botao.classList.contains('botao-expansao-prompt');
+
+        elementoPrompt.classList.remove('prompt-usuario-recolhido', 'prompt-usuario-expandido');
+        elementoPrompt.style.removeProperty('--altura-prompt-recolhido');
+        elementoPrompt.style.removeProperty('max-height');
+
+        if (elementoPrompt.scrollHeight <= alturaLimite + 1) {
+            if (ehBotaoExpansao) {
+                botao.remove();
+            }
+            return;
+        }
+
+        if (!ehBotaoExpansao) {
+            botao = document.createElement('button');
+            botao.type = 'button';
+            botao.className = 'botao-expansao-prompt';
+            botao.setAttribute('aria-controls', elementoPrompt.id);
+            botao.addEventListener('click', function() {
+                var expandir = elementoPrompt.classList.contains('prompt-usuario-recolhido');
+                elementoPrompt.style.setProperty('--altura-prompt-expandido', elementoPrompt.scrollHeight + 'px');
+                if (!expandir) {
+                    // Retira o "none" inline e forca reflow para a transicao partir da altura atual.
+                    elementoPrompt.style.removeProperty('max-height');
+                    void elementoPrompt.offsetHeight;
+                }
+                elementoPrompt.classList.toggle('prompt-usuario-recolhido', !expandir);
+                elementoPrompt.classList.toggle('prompt-usuario-expandido', expandir);
+                botao.textContent = expandir ? 'Mostrar menos' : 'Mostrar mais';
+                botao.setAttribute('aria-expanded', expandir ? 'true' : 'false');
+                elementoPrompt.addEventListener('transitionend', function(evento) {
+                    if (evento.target === elementoPrompt && evento.propertyName === 'max-height') {
+                        if (elementoPrompt.classList.contains('prompt-usuario-expandido')) {
+                            elementoPrompt.style.maxHeight = 'none';
+                        }
+                        controlaTamanhoConteudoChat('', false);
+                    }
+                }, {
+                    once: true
+                });
+                controlaTamanhoConteudoChat('', false);
+            });
+            elementoPrompt.insertAdjacentElement('afterend', botao);
+        }
+
+        elementoPrompt.style.setProperty('--altura-prompt-recolhido', alturaLimite + 'px');
+        elementoPrompt.style.setProperty('--altura-prompt-expandido', elementoPrompt.scrollHeight + 'px');
+        elementoPrompt.classList.add(estavaExpandido ? 'prompt-usuario-expandido' : 'prompt-usuario-recolhido');
+        if (estavaExpandido) {
+            elementoPrompt.style.maxHeight = 'none';
+        }
+        botao.textContent = estavaExpandido ? 'Mostrar menos' : 'Mostrar mais';
+        botao.setAttribute('aria-expanded', estavaExpandido ? 'true' : 'false');
+        requestAnimationFrame(function() {
+            controlaTamanhoConteudoChat('', false);
+        });
+    }
+
+    function agendarAtualizacaoPromptsUsuario() {
+        if (window.mdIaPromptResizeTimeout) {
+            clearTimeout(window.mdIaPromptResizeTimeout);
+        }
+
+        window.mdIaPromptResizeTimeout = setTimeout(function() {
+            document.querySelectorAll('#conversa .interaction.agent .input').forEach(function(elementoPrompt) {
+                atualizarControleExpansaoPrompt(elementoPrompt);
+            });
+        }, 450);
+    }
+
+    function resolveItensEnvioMensagem(mensagem, dadosCitacoes = "", idInteracao = "", favorito = "", dthCadastro, upload = [], mensagemVisual = "") {
+        if (mensagemVisual !== "") {
+            mensagem = mensagemVisual;
+        } else {
+            mensagem = decodeHtmlEntitiesPergunta(mensagem);
+        }
+        mensagem = aplicarLinksCitacoesMensagem(mensagem, dadosCitacoes);
         var divPai = $("#conversa");
         var uniqueID = generateUniqueID();
+
+        // GERA O HTML DOS ARQUIVOS
+        var htmlArquivos = gerarHtmlArquivosHistorico(upload);
 
         var respostaMontada = '' +
             '<div class="interaction agent">' +
@@ -442,28 +973,32 @@
             '           </svg>' +
             '       </div>' +
             '       <div class="blocoMensagem" style="min-width: 91%">' +
+            '           ' + htmlArquivos + ' ' +
             '           <div class="input" id="textoPuro' + uniqueID + '">' + mensagem + '' + '</div>' +
             '           <div class="dthCadastro" style="color:#0000007a">' + dthCadastro + '</div>' +
             '       </div>' +
             '   </div>';
 
         var iconesGerais = '<div class="acoes_assistente" style="margin-top: -10px">' +
-            '<a onclick="copiar(' + uniqueID + ')"><div class="copiar" id="copiarResposta' + uniqueID + '"></div></a>';
+            '<a onclick="copiar(' + uniqueID + ')"><div class="copiar" id="copiarResposta' + uniqueID + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></div></a>';
 
         var iconeFavoritarChat = "";
 
         if (idInteracao != "") {
             if (favorito) {
-                iconeFavoritarChat = '<a onclick="favoritarChat(' + idInteracao + ')"><div class="promptFavoritado" id="promptFavoritado' + idInteracao + '"></div></a>';
+                iconeFavoritarChat = '<a onclick="favoritarChat(' + idInteracao + ')"><div class="promptFavoritado" id="promptFavoritado' + idInteracao + '"><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1.1-1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></div></a>';
             } else {
-                iconeFavoritarChat = '<a onclick="favoritarChat(' + idInteracao + ')"><div class="favoritarPrompt" id="favoritarPrompt' + idInteracao + '"></div></a>';
+                iconeFavoritarChat = '<a onclick="favoritarChat(' + idInteracao + ')"><div class="favoritarPrompt" id="favoritarPrompt' + idInteracao + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1.1-1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></div></a>';
             }
         }
 
-        var iconePublicarGaleriaPrompt = '<a onclick="publicarGaleriaPrompt(' + idInteracao + ')"><div class="publicarGaleriaPrompt" id="publicarGaleriaPrompt' + idInteracao + '"></div></a></div>';
+        var iconePublicarGaleriaPrompt = '<a onclick="publicarGaleriaPrompt(' + idInteracao + ')"><div class="publicarGaleriaPrompt" id="publicarGaleriaPrompt' + idInteracao + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></div></a></div>';
 
         var perguntaCliente = respostaMontada + iconesGerais + iconeFavoritarChat + iconePublicarGaleriaPrompt;
         divPai.append(perguntaCliente);
+        requestAnimationFrame(function() {
+            atualizarControleExpansaoPrompt(document.getElementById('textoPuro' + uniqueID));
+        });
         document.getElementById('conversa').scrollBy(0, 5000);
 
         if ($(".widget-content").hasClass("expandido")) {
@@ -473,7 +1008,7 @@
             $(".send-message-input").height("45");
             reduzirAssistente();
         }
-        elementosCopiarResposta = document.getElementById('conversa').querySelectorAll('.copiar');
+        elementosCopiarResposta = document.getElementById('conversa').querySelectorAll('.copiar:not(.copiarMarkdown)');
         elementosCopiarResposta.forEach(function(elemento) {
             geraTooltip(elemento.id, "Copiar");
         });
@@ -491,9 +1026,22 @@
         });
     }
 
-    function identificarProtocolo(mensagem) {
+    function identificarProtocolo(mensagem, mensagemVisual = "") {
 
-        let possiveisCitacoes = mensagem.match(/#[^\s#]+/g);
+        mensagem = (mensagem || "").trim();
+
+        if (mensagem === "") {
+            $("#validacaoMensagem").html("Informe uma mensagem para enviar.");
+            estadoDeInteracao();
+            return false;
+        }
+
+        if (!validarArquivosSelecionadosAntesEnvio()) {
+            estadoDeInteracao();
+            return false;
+        }
+
+        let possiveisCitacoes = mensagem.match(new RegExp(REGEX_POSSIVEL_CITACAO_PROTOCOLO_SEI, 'g'));
         let documentos = [];
         if (possiveisCitacoes) {
             possiveisCitacoes = possiveisCitacoes.filter((value, index, array) => array.indexOf(value) == index);
@@ -510,10 +1058,10 @@
                     } else {
                         let padraoColchetes = /\[/;
 
+                        let citacaoValida = possivelCitacao.match(criarRegexCitacaoProtocolo('', true));
                         if (padraoColchetes.test(possivelCitacao)) {
-                            let verificaColchete = /#[0-9]+\[[0-9]+(:[0-9]+)?]/;
-                            if (verificaColchete.test(possivelCitacao)) {
-                                documentos.push(possivelCitacao.match(verificaColchete)[0]);
+                            if (citacaoValida) {
+                                documentos.push(citacaoValida[0]);
                             } else {
                                 $("#validacaoMensagem").html('A indicação de intervalo de páginas sobre o Documento Externo está em formato irregular. Deve utilizar o formato [p:p] um intervalo ou [p] para indicar página única: #01234567[10:15] ou #01234567[20].');
                                 estadoDeInteracao();
@@ -521,9 +1069,8 @@
                                 return false;
                             }
                         } else {
-                            let regexValido = /#[0-9]+[^[\s]*?(?=\s|$|\n|[.,;:?!)](?![^.,;:?!)]))/g;
-                            if (regexValido.test(possivelCitacao)) {
-                                documentos.push(possivelCitacao.match(regexValido)[0]);
+                            if (citacaoValida) {
+                                documentos.push(citacaoValida[0]);
                             } else {
                                 $("#validacaoMensagem").html('O uso do caractere de "#" é exclusivo para citação de protocolos do SEI, cujo número deve estar colado ao # (no formato, por exemplo #01234567). Assim, a mensagem possui citação de protocolo em formato irregular.');
                                 estadoDeInteracao();
@@ -550,11 +1097,9 @@
         }
 
         $("#validacaoMensagem").html("");
-        $(".botaoEnvioMensagem #botaoEnviarMensagem").css("display", "none");
-        $(".botaoEnvioMensagem #imgArvoreAguarde").css("display", "block");
 
         if (documentos == null || documentos.length === 0) {
-            verificaJanelaContexto(mensagem);
+            verificaJanelaContexto(mensagem, "", mensagemVisual);
         } else {
             documentos = documentos.filter((value, index, array) => array.indexOf(value) === index);
             let protocolo = {};
@@ -563,51 +1108,77 @@
             protocolo["acao_origem"] = urlParams.get("acao_origem");
             protocolo["acesso"] = urlParams.get("acesso");
             protocolo["id_procedimento"] = urlParams.get("id_procedimento");
+            alterarEstadoVerificacaoPermissoes(true);
             $.ajax({
                 url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_consulta_protocolo_assistente_ia_ajax'); ?>',
                 type: 'POST',
                 contentType: 'application/json; charset=utf-8', // importante
                 dataType: "json",
+                async: true,
                 data: JSON.stringify({
                     protocolo: protocolo
                 }),
-                async: false,
                 success: function(dadosCitacoes) {
                     if (!Array.isArray(dadosCitacoes)) {
                         if (dadosCitacoes["result"] == "false") {
                             $("#validacaoMensagem").html(dadosCitacoes["mensagem"]);
-                            estadoDeInteracao();
+                        } else {
+                            $("#validacaoMensagem").html("Não foi possível validar os protocolos citados. Tente novamente.");
                         }
-                    } else {
-                        var mensagem = $("#mensagem").val();
-                        verificaJanelaContexto(mensagem, dadosCitacoes)
+                        estadoDeInteracao();
+                        return;
                     }
+
+                    if (obterTextoMensagem().trim() !== mensagem) {
+                        $("#validacaoMensagem").html("A mensagem foi alterada durante a validação. Envie novamente para validar os protocolos atuais.");
+                        estadoDeInteracao();
+                        return;
+                    }
+
+                    verificaJanelaContexto(mensagem, dadosCitacoes, mensagemVisual);
                 },
                 error: function(err) {
-                    console.log(err);
+                    console.error(err);
+                    $("#validacaoMensagem").html("Não foi possível validar os protocolos citados. Tente novamente.");
+                    estadoDeInteracao();
                 }
             });
         }
     }
 
     function estadoDeInteracao() {
+        alterarEstadoVerificacaoPermissoes(false);
         $("#botaoEnviarMensagem").removeClass("aguardandoResposta");
         controlaTamanhoConteudoChat();
         controlaPreenchimentoCampoMensagem();
-        $(".botaoEnvioMensagem #botaoEnviarMensagem").css("display", "block");
-        $(".botaoEnvioMensagem #imgArvoreAguarde").css("display", "none");
     }
 
     function enviarMensagem() {
+        $("#validacaoMensagem").html("");
+
+        if ($("#botaoEnviarMensagem").hasClass("aguardandoResposta")) {
+            return;
+        }
+
+        var mensagem = obterTextoMensagem().trim();
+        var mensagemVisual = obterHtmlVisualMensagem();
+
+        if (mensagem === "") {
+            $("#validacaoMensagem").html("Informe uma mensagem para enviar.");
+            $("#botaoEnviarMensagem").removeClass("habilitadoEnvio");
+            return;
+        }
+
         if ($("#botaoEnviarMensagem").hasClass("habilitadoEnvio") && !$("#botaoEnviarMensagem").hasClass("aguardandoResposta")) {
             $("#botaoEnviarMensagem").removeClass("habilitadoEnvio");
             $("#botaoEnviarMensagem").addClass("aguardandoResposta");
-            var mensagem = $("#mensagem").val();
-            identificarProtocolo(mensagem);
+            identificarProtocolo(mensagem, mensagemVisual);
         }
     }
 
-    function verificaJanelaContexto(mensagem, dadosCitacoes = "", ) {
+    function verificaJanelaContexto(mensagem, dadosCitacoes = "", mensagemVisual = "") {
+
+        alterarEstadoVerificacaoPermissoes(false);
 
         const {
             isWithinTokenLimit,
@@ -623,12 +1194,25 @@
         }
 
         var withinTokenLimit = isWithinTokenLimit(text, tokenLimit);
+
         if (withinTokenLimit != false) {
-            $(".botaoEnvioMensagem #botaoEnviarMensagem").css("display", "block");
-            $(".botaoEnvioMensagem #imgArvoreAguarde").css("display", "none");
-            $("#mensagem").val("");
-            resolveItensEnvioMensagem(mensagem, dadosCitacoes, null, null, dateTimeAgoraFormatado());
+            definirTextoMensagem("");
+
+            // --- ALTERAÇÃO AQUI ---
+            // 1. Criamos uma cópia simples dos arquivos selecionados formatada 
+            // para a função de renderização visual (que espera um objeto com propriedade 'nome')
+            var uploadsParaVisualizacao = arquivosSelecionados.map(function(file) {
+                return {
+                    nome: file.name
+                };
+            });
+
+            // 2. Passamos 'uploadsParaVisualizacao' como o 6º argumento (upload)
+            resolveItensEnvioMensagem(mensagem, dadosCitacoes, null, null, dateTimeAgoraFormatado(), uploadsParaVisualizacao, mensagemVisual);
+            // ----------------------
+
             controlaTamanhoConteudoChat().then(function() {
+                // A função resolveResposta enviará os dados reais (FormData) e depois limpará a variável arquivosSelecionados
                 resolveResposta(mensagem, dadosCitacoes);
             });
         } else {
@@ -652,8 +1236,6 @@
             }).done(function() {
                 $("#validacaoMensagem").html("O texto da mensagem ultrapassou o limite permitido. Reduza o texto e tente novamente.");
                 $("#botaoEnviarMensagem").removeClass("aguardandoResposta");
-                $(".botaoEnvioMensagem #botaoEnviarMensagem").css("display", "block");
-                $(".botaoEnvioMensagem #imgArvoreAguarde").css("display", "none");
             });
         }
     }
@@ -679,11 +1261,397 @@
     }
 
     function carregandoResposta(divpai) {
+        var minWidthBlocoMensagem = $(".widget-content").hasClass("expandido") ? "20%" : "91%";
         var divfilho = document.createElement('div');
         divfilho.className = 'interaction client dots';
-        divfilho.innerHTML = '<div class="mensagemIdentificador"><div class="iconeIdentificacao"><img src="modulos/ia/imagens/md_ia_icone.svg?' + <?= Icone::VERSAO ?> + '"/></div><div class="output">Aguarde<span>.</span><span>.</span><span>.</span></div></div>';
+        divfilho.setAttribute('data-render-id', generateUniqueID());
+        divfilho.innerHTML = '<div class="mensagemIdentificador"><div class="iconeIdentificacao"><img src="modulos/ia/imagens/md_ia_icone.svg?' + <?= Icone::VERSAO ?> + '"/></div><div class="blocoMensagem blocoMensagemCarregando" style="min-width: ' + minWidthBlocoMensagem + '"><div class="processing-live ativo"><span class="reasoning-spinner" aria-hidden="true"><span class="reasoning-spinner-ring"></span><span class="reasoning-spinner-glyph">&#9889;</span></span><span class="processing-status" style="display:none"></span></div></div></div>';
         divpai.appendChild(divfilho);
         return divfilho;
+    }
+
+    function obterIdRenderizacaoMensagem(divfilho) {
+        var renderId = divfilho.getAttribute('data-render-id');
+        if (!renderId) {
+            renderId = divfilho.id ? String(divfilho.id) : generateUniqueID();
+            divfilho.setAttribute('data-render-id', renderId);
+        }
+
+        return renderId;
+    }
+
+    function atualizarIndicadorCarregamento(divfilho, exibir) {
+        var processingElement = divfilho.querySelector('.processing-live');
+        if (!processingElement) {
+            return;
+        }
+
+        processingElement.style.display = exibir ? 'inline-flex' : 'none';
+        processingElement.classList.toggle('ativo', exibir);
+    }
+
+    function sincronizarScrollDuranteStreaming(scrollAnterior) {
+        var conversaElement = document.getElementById('conversa');
+        if (!conversaElement) {
+            return;
+        }
+
+        var autoScrollHabilitado = window.mdIaAutoScrollStreamingParcial;
+        if (typeof autoScrollHabilitado === 'undefined') {
+            autoScrollHabilitado = false;
+        }
+
+        var distanciaAteFim = conversaElement.scrollHeight - (conversaElement.scrollTop + conversaElement.clientHeight);
+        var usuarioEstaNoFim = distanciaAteFim <= 80;
+
+        var alturaAtualConversa = conversaElement.clientHeight || parseInt(conversaElement.style.height, 10);
+        if (alturaAtualConversa && alturaAtualConversa > 0) {
+            controleScroll(alturaAtualConversa, false);
+        } else {
+            controlaTamanhoConteudoChat("", false);
+        }
+
+        if (autoScrollHabilitado && usuarioEstaNoFim) {
+            requestAnimationFrame(function() {
+                conversaElement.scrollTop = conversaElement.scrollHeight;
+            });
+        } else if (scrollAnterior !== null && typeof scrollAnterior !== 'undefined') {
+            // Mantem a posicao de leitura; o usuario controla o scroll durante o streaming
+            conversaElement.scrollTop = scrollAnterior;
+        }
+    }
+
+    function definirEstadoReasoning(reasoningElement, expandido) {
+        if (!reasoningElement) {
+            return;
+        }
+
+        var toggleElement = reasoningElement.querySelector('.reasoning-toggle');
+        var labelElement = reasoningElement.querySelector('.reasoning-toggle-label');
+        var contentElement = reasoningElement.querySelector('.reasoning-content');
+
+        reasoningElement.setAttribute('data-expandido', expandido ? 'true' : 'false');
+        reasoningElement.classList.toggle('expandido', expandido);
+
+        if (toggleElement) {
+            toggleElement.setAttribute('aria-expanded', expandido ? 'true' : 'false');
+        }
+
+        if (labelElement) {
+            labelElement.textContent = expandido ? 'Ocultar processamento interno' : 'Processamento interno';
+        }
+
+        if (contentElement) {
+            if (expandido) {
+                atualizarLarguraPainelReasoning(reasoningElement);
+                contentElement.style.display = 'block';
+            } else {
+                contentElement.style.display = 'none';
+                reasoningElement.style.width = '';
+                reasoningElement.style.maxWidth = '';
+            }
+        }
+
+        controlaTamanhoConteudoChat('', false);
+
+        if (expandido && toggleElement) {
+            requestAnimationFrame(function() {
+                toggleElement.scrollIntoView({
+                    block: 'nearest',
+                    inline: 'nearest'
+                });
+            });
+        }
+    }
+
+    function atualizarLarguraPainelReasoning(reasoningElement) {
+        if (!reasoningElement) {
+            return;
+        }
+
+        var blocoMensagem = reasoningElement.parentElement;
+        var outputEl = blocoMensagem ? blocoMensagem.querySelector('.output') : null;
+        var larguraOutput = outputEl ? Math.round(outputEl.getBoundingClientRect().width) : 0;
+        if (larguraOutput > 0) {
+            reasoningElement.style.width = larguraOutput + 'px';
+            reasoningElement.style.maxWidth = larguraOutput + 'px';
+        }
+    }
+
+    function atualizarLarguraPaineisReasoningAbertos() {
+        document.querySelectorAll('#conteudoChat .reasoning-live[data-expandido="true"]').forEach(function(reasoningElement) {
+            atualizarLarguraPainelReasoning(reasoningElement);
+        });
+    }
+
+    function agendarAtualizacaoLarguraPaineisReasoningAbertos() {
+        if (window.mdIaReasoningResizeTimeout) {
+            clearTimeout(window.mdIaReasoningResizeTimeout);
+        }
+
+        window.mdIaReasoningResizeTimeout = setTimeout(function() {
+            requestAnimationFrame(function() {
+                atualizarLarguraPaineisReasoningAbertos();
+            });
+        }, 450);
+    }
+
+    function inicializarPainelReasoning(divfilho) {
+        var reasoningElement = divfilho.querySelector('.reasoning-live');
+        if (!reasoningElement) {
+            return null;
+        }
+
+        if (reasoningElement.getAttribute('data-inicializado') === 'true') {
+            return reasoningElement;
+        }
+
+        var toggleElement = reasoningElement.querySelector('.reasoning-toggle');
+        if (toggleElement) {
+            toggleElement.addEventListener('click', function() {
+                var expandido = reasoningElement.getAttribute('data-expandido') === 'true';
+                definirEstadoReasoning(reasoningElement, !expandido);
+            });
+        }
+
+        reasoningElement.setAttribute('data-inicializado', 'true');
+        definirEstadoReasoning(reasoningElement, reasoningElement.getAttribute('data-expandido') === 'true');
+
+        return reasoningElement;
+    }
+
+    function formatarMarkdownInteracao(texto, idBase) {
+        var txtArea = document.createElement('textarea');
+        txtArea.innerHTML = texto;
+
+        return markdownToHTML(txtArea.value, idBase);
+    }
+
+    function obterCacheReasoningAssistente() {
+        if (!window.mdIaReasoningCache) {
+            window.mdIaReasoningCache = {};
+        }
+
+        return window.mdIaReasoningCache;
+    }
+
+    function armazenarReasoningInteracao(idInteracao, reasoning) {
+        if (!idInteracao || !reasoning || reasoning.trim() === '') {
+            return;
+        }
+
+        obterCacheReasoningAssistente()[String(idInteracao)] = reasoning;
+    }
+
+    function obterReasoningInteracao(dadosInteracao, idInteracaoFallback) {
+        if (dadosInteracao && dadosInteracao['reasoning'] && dadosInteracao['reasoning'].trim() !== '') {
+            return dadosInteracao['reasoning'];
+        }
+
+        var idInteracao = null;
+        if (dadosInteracao && dadosInteracao['id_interacao']) {
+            idInteracao = dadosInteracao['id_interacao'];
+        } else if (idInteracaoFallback) {
+            idInteracao = idInteracaoFallback;
+        }
+
+        if (!idInteracao) {
+            return '';
+        }
+
+        return obterCacheReasoningAssistente()[String(idInteracao)] || '';
+    }
+
+    function obterCacheStatusAssistente() {
+        if (!window.mdIaStatusCache) {
+            window.mdIaStatusCache = {};
+        }
+        return window.mdIaStatusCache;
+    }
+
+    function armazenarStatusInteracao(idInteracao, status) {
+        if (!idInteracao || !status || status.trim() === '') {
+            return;
+        }
+        var cache = obterCacheStatusAssistente();
+        var key = String(idInteracao);
+        if (!cache[key]) {
+            cache[key] = [];
+        }
+        var statusTrimmed = status.trim();
+        if (cache[key].indexOf(statusTrimmed) === -1) {
+            cache[key].push(statusTrimmed);
+        }
+    }
+
+    function obterStatusInteracao(idInteracao) {
+        if (!idInteracao) return [];
+        return obterCacheStatusAssistente()[String(idInteracao)] || [];
+    }
+
+    function armazenarHistoricoStatusInteracao(idInteracao, statuses) {
+        if (!idInteracao || !Array.isArray(statuses)) {
+            return;
+        }
+
+        var cache = obterCacheStatusAssistente();
+        var key = String(idInteracao);
+        cache[key] = [];
+
+        statuses.forEach(function(status) {
+            if (!status || String(status).trim() === '') {
+                return;
+            }
+
+            var statusTrimmed = String(status).trim();
+            if (cache[key].indexOf(statusTrimmed) === -1) {
+                cache[key].push(statusTrimmed);
+            }
+        });
+    }
+
+    function atualizarPainelReasoning(divfilho, reasoning, statuses) {
+        var reasoningElement = inicializarPainelReasoning(divfilho);
+        if (!reasoningElement) {
+            return;
+        }
+
+        var contentElement = reasoningElement.querySelector('.reasoning-content');
+        if (!contentElement) {
+            return;
+        }
+
+        var listaStatuses = Array.isArray(statuses) ? statuses : [];
+        var hasStatuses = listaStatuses.length > 0;
+        var hasReasoning = reasoning && reasoning.trim() !== '';
+
+        if (!hasStatuses && !hasReasoning) {
+            contentElement.innerHTML = '';
+            reasoningElement.style.display = 'none';
+            reasoningElement.classList.remove('visivel');
+            definirEstadoReasoning(reasoningElement, false);
+            return;
+        }
+
+        reasoningElement.style.display = 'block';
+        reasoningElement.classList.add('visivel');
+
+        var html = '';
+        if (hasStatuses) {
+            html += '<div class="reasoning-section-label">Processamento Interno</div>';
+            html += '<ul class="reasoning-status-list">';
+            listaStatuses.forEach(function(s) {
+                html += '<li class="reasoning-status-item">' + s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</li>';
+            });
+            html += '</ul>';
+        }
+        if (hasStatuses && hasReasoning) {
+            html += '<div class="reasoning-section-label">Reflexão interna da IA</div>';
+        }
+        if (hasReasoning) {
+            html += '<div class="reasoning-text">' + formatarMarkdownInteracao(reasoning, obterIdRenderizacaoMensagem(divfilho) + '_reasoning') + '</div>';
+        }
+        contentElement.innerHTML = html;
+    }
+
+    function atualizarStatusExecucao(divfilho, statusExecucao) {
+        var statusElement = divfilho.querySelector('.processing-status, .status-live');
+        if (!statusElement) {
+            return;
+        }
+
+        if (statusExecucao && statusExecucao.trim() !== '') {
+            statusElement.style.display = statusElement.classList.contains('processing-status') ? 'inline' : 'block';
+            statusElement.textContent = statusExecucao;
+        } else {
+            statusElement.style.display = 'none';
+            statusElement.textContent = '';
+        }
+    }
+
+    function obterResumoReasoningInline(reasoning) {
+        if (!reasoning || reasoning.trim() === '') {
+            return '';
+        }
+
+        var linhas = String(reasoning).split(/\r?\n/);
+        var primeiraLinha = linhas[0].trim();
+
+        var proximoParagrafo = '';
+        for (var i = 1; i < linhas.length; i++) {
+            var linha = linhas[i].trim();
+            if (linha !== '') {
+                proximoParagrafo = linha;
+                break;
+            }
+        }
+
+        if (proximoParagrafo) {
+            var trecho = proximoParagrafo.substring(0, 20);
+            return primeiraLinha + ' - ' + trecho + '...';
+        }
+
+        return primeiraLinha;
+    }
+
+    function renderizarResumoReasoningInline(divfilho, reasoning) {
+        var statusElement = divfilho.querySelector('.processing-status');
+        var resumoReasoning = obterResumoReasoningInline(reasoning);
+
+        if (!statusElement || !resumoReasoning) {
+            return false;
+        }
+
+        var idBase = obterIdRenderizacaoMensagem(divfilho) + '_reasoning_inline';
+        var htmlResumo = formatarMarkdownInteracao(resumoReasoning, idBase).trim();
+
+        htmlResumo = htmlResumo.replace(/^<p>([\s\S]*)<\/p>$/i, '$1');
+
+        statusElement.style.display = 'inline';
+        statusElement.innerHTML = htmlResumo;
+        return true;
+    }
+
+    function renderizarEstadoCarregamento(divfilho, respostaParcial, statusExecucao, reasoning, idInteracao) {
+        // Se há resposta parcial, renderizar no .output
+        if (respostaParcial && respostaParcial.trim() !== "") {
+            atualizarIndicadorCarregamento(divfilho, false);
+
+            var outputElement = divfilho.querySelector('.output');
+
+            // Criar .output se não existir ainda
+            if (!outputElement) {
+                var blocoMensagem = divfilho.querySelector('.blocoMensagem');
+                if (blocoMensagem) {
+                    outputElement = document.createElement('div');
+                    outputElement.className = 'output';
+                    blocoMensagem.appendChild(outputElement);
+                }
+            }
+
+            if (outputElement) {
+                var conversaElement = document.getElementById('conversa');
+                var scrollAnterior = conversaElement ? conversaElement.scrollTop : null;
+                var textoBruto = respostaParcial;
+                var txtArea = document.createElement("textarea");
+                txtArea.innerHTML = textoBruto;
+
+                var textoDecodificado = txtArea.value;
+
+                var idTemporario = obterIdRenderizacaoMensagem(divfilho);
+                var textoFormatado = markdownToHTML(textoDecodificado, idTemporario);
+                outputElement.innerHTML = textoFormatado + '<span>.</span><span>.</span><span>.</span>';
+                insereCitacaoFonte(divfilho);
+                sincronizarScrollDuranteStreaming(scrollAnterior);
+            }
+        } else {
+            // Se não há resposta, manter indicadores de carregamento
+            atualizarIndicadorCarregamento(divfilho, true);
+
+            if (!renderizarResumoReasoningInline(divfilho, reasoning)) {
+                atualizarStatusExecucao(divfilho, statusExecucao);
+            }
+        }
     }
 
     function insereLoading() {
@@ -753,63 +1721,178 @@
     function resolveResposta(mensagem, dadosCitacoes) {
         var divpai = document.getElementById("conversa");
         var divfilho = carregandoResposta(divpai);
+
+        // Objeto com as configurações da mensagem (metadados)
         var mensagemUsuario = {};
         mensagemUsuario["text"] = encodeURIComponent(mensagem);
         mensagemUsuario["dadosCitacoes"] = dadosCitacoes;
         mensagemUsuario["topicoTemporario"] = $("#topicoTemporario").val();
+
+        // Flags de funcionalidades
+        mensagemUsuario["refletir"] = document.querySelector('.esforco-item[data-refletir="true"]').getAttribute('aria-checked') === 'true';
+        mensagemUsuario["buscarWeb"] = $("#botaoBuscarWeb").hasClass("botaoAcaoAssistenteIAAtivado");
+        mensagemUsuario["skipMemory"] = !$("#botaoMemoriaTopico").hasClass("botaoAcaoAssistenteIAAtivado");
+        const urlParams = new URLSearchParams(window.location.search);
+        mensagemUsuario["contextoProtocolo"] = {
+            acao_origem: urlParams.get("acao_origem"),
+            acesso: urlParams.get("acesso"),
+            id_procedimento: urlParams.get("id_procedimento")
+        };
+
+        // --- PREPARAÇÃO DO FORM DATA PARA ENVIO DE ARQUIVOS ---
+        var formData = new FormData();
+
+        // Adiciona os dados da mensagem como uma string JSON
+        formData.append('mensagemUsuario', JSON.stringify(mensagemUsuario));
+
+        var quantidadeArquivosSelecionados = arquivosSelecionados.length;
+
+        // Adiciona cada arquivo selecionado ao FormData
+        // Usamos 'arquivos[]' para que o PHP receba como um array
+        arquivosSelecionados.forEach(function(arquivo, index) {
+            formData.append('arquivos[]', arquivo);
+        });
+
+        limparTodosArquivos()
+
         document.getElementById('conversa').scrollBy(0, 5000);
-        if ($("#botaoRefletir").hasClass("botaoAcaoAssistenteIAAtivado")) {
-            mensagemUsuario["refletir"] = true;
-        } else {
-            mensagemUsuario["refletir"] = false;
-        }
 
-        if ($("#botaoBuscarWeb").hasClass("botaoAcaoAssistenteIAAtivado")) {
-            mensagemUsuario["buscarWeb"] = true;
-        } else {
-            mensagemUsuario["buscarWeb"] = false;
-        }
-
-        if ($("#botaoMemoriaTopico").hasClass("botaoAcaoAssistenteIAAtivado")) {
-            mensagemUsuario["skipMemory"] = false;
-        } else {
-            mensagemUsuario["skipMemory"] = true;
+        if (quantidadeArquivosSelecionados > 0) {
+            var rotuloArquivos = quantidadeArquivosSelecionados === 1 ? ' arquivo' : ' arquivos';
+            atualizarStatusExecucao(divfilho, 'Enviando ' + quantidadeArquivosSelecionados + rotuloArquivos + ': 0%');
         }
 
         $.ajax({
-            url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_assistente_envia_mensagem_ajax'); ?>',
-            type: 'POST', //selecionando o tipo de requisição, PUT,GET,POST,DELETE
-            contentType: 'application/json; charset=utf-8',
-            dataType: "json", //Tipo de dado que será enviado ao servidor
-            data: JSON.stringify({
-                mensagemUsuario: mensagemUsuario
-            }), // mensagemUsuario é seu objeto/array
-            success: function(data) {
-                if (data["error"]) {
+            url: '<?= SessaoSEI::getInstance()->assinarLink("controlador_ajax.php?acao_ajax=md_ia_assistente_envia_mensagem_ajax"); ?>',
+            type: 'POST',
+            data: formData,
+            processData: false, // Importante: impede que o jQuery tente converter o FormData em string
+            contentType: false, // Importante: obriga o navegador a definir o Boundary correto
+            dataType: "text",
+            xhr: function() {
+                var xhr = $.ajaxSettings.xhr();
+
+                if (quantidadeArquivosSelecionados > 0 && xhr.upload) {
+                    xhr.upload.addEventListener('progress', function(event) {
+                        if (event.lengthComputable) {
+                            var percentual = Math.round((event.loaded / event.total) * 100);
+                            atualizarStatusExecucao(divfilho, 'Enviando ' + quantidadeArquivosSelecionados + rotuloArquivos + ': ' + percentual + '%');
+                        }
+                    });
+                    xhr.upload.addEventListener('load', function() {
+                        atualizarStatusExecucao(divfilho, 'Arquivos enviados. Preparando resposta...');
+                    });
+                }
+
+                return xhr;
+            },
+            success: function(data, textStatus, jqXHR) {
+                var dadosResposta = data;
+                if (typeof dadosResposta === 'string') {
+                    try {
+                        dadosResposta = JSON.parse(dadosResposta);
+                    } catch (e) {
+                        var arquivoPossivelmentePrejudicial = detectarPossivelArquivoPrejudicial(jqXHR, data);
+                        var mensagemFalha = 'O servidor retornou uma resposta inválida. Tente novamente.';
+
+                        if (arquivoPossivelmentePrejudicial) {
+                            mensagemFalha = 'Os arquivos avulsos não foram enviados. Dentro deles pode ter conteúdo potencialmente prejudicial e foi bloqueado pela camada de segurança da rede do seu órgão.';
+                            geraLogBloqueioArquivoPrejudicial(quantidadeArquivosSelecionados);
+                        }
+
+                        console.error('Resposta inválida do servidor ao enviar mensagem.', e, data);
+                        divfilho.innerHTML = '<div class="mensagemIdentificador"><div class="iconeIdentificacao"><img src="modulos/ia/imagens/md_ia_icone.svg?' + <?= Icone::VERSAO ?> + '"/></div><div class="blocoMensagem" style="min-width: 91%"><div class="output badge badge-danger">' + mensagemFalha + '</div></div></div>';
+                        $("#botaoEnviarMensagem").removeClass("aguardandoResposta");
+                        return;
+                    }
+                }
+
+                if (dadosResposta["error"]) {
+                    if (dadosResposta["erroCitacao"]) {
+                        definirTextoMensagem(mensagem);
+                        $("#validacaoMensagem").html(dadosResposta["mensagem"]);
+                        estadoDeInteracao();
+                        return;
+                    }
+
                     $("#botaoEnviarMensagem").addClass("limiteDiarioExcedido");
-                    $("#validacaoMensagem").html(data["mensagem"]);
+                    $("#validacaoMensagem").html(dadosResposta["mensagem"]);
                     listarTopicos();
                 } else {
                     if ($("#topicoTemporario").val() == "true") {
                         $("#topicoTemporario").val("false");
                     }
 
-                    var idMdIaInteracaoChat = data;
+                    // LIMPA OS ARQUIVOS APÓS O ENVIO SUCEDIDO
+                    limparTodosArquivos();
+
+                    var idMdIaInteracaoChat = dadosResposta;
                     setTimeout(function() {
                         aguardandoResposta(idMdIaInteracaoChat, divfilho, divpai);
                     }, 500);
                 }
             },
             error: function(err) {
-                console.log(err);
-                divfilho.innerHTML = '<div class="mensagemIdentificador"><div class="iconeIdentificacao"><img src="modulos/ia/imagens/md_ia_icone.svg?' + <?= Icone::VERSAO ?> + '"/></div><div class="output">Ocorreu um erro no Assistente de IA.</div></div>';
+                console.error(err);
+                divfilho.innerHTML = '<div class="mensagemIdentificador"><div class="iconeIdentificacao"><img src="modulos/ia/imagens/md_ia_icone.svg?' + <?= Icone::VERSAO ?> + '"/></div><div class="blocoMensagem" style="min-width: 91%"><div class="output badge badge-danger">Ocorreu um erro ao enviar a mensagem e os arquivos.</div></div></div>';
                 $("#botaoEnviarMensagem").removeClass("aguardandoResposta");
             }
         });
     }
 
+    function detectarPossivelArquivoPrejudicial(jqXHR, respostaTexto) {
+        if (!jqXHR) {
+            return false;
+        }
+
+        var statusHttp = jqXHR.status;
+        var tamanhoResposta = respostaTexto ? String(respostaTexto).length : 0;
+        var contentType = jqXHR.getResponseHeader ? (jqXHR.getResponseHeader('Content-Type') || '') : '';
+        var contentLength = jqXHR.getResponseHeader ? (jqXHR.getResponseHeader('Content-Length') || '') : '';
+        var respostaNormalizada = (respostaTexto || '')
+            .toString()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
+
+        var retornoVazio = (tamanhoResposta === 0 && (contentLength === '' || contentLength === '0'));
+        var retornoHtml = contentType.toLowerCase().indexOf('text/html') !== -1;
+        var temMensagemBloqueio = respostaNormalizada.indexOf('por questoes de seguranca, esta operacao no sistema foi bloqueada') !== -1;
+        var temCodigoBloqueio = respostaNormalizada.indexOf('codigo de bloqueio') !== -1;
+        var temEnderecoBloqueio = respostaNormalizada.indexOf('endereco de bloqueio') !== -1;
+        var respostaHtmlWaf = retornoHtml && (temMensagemBloqueio || temCodigoBloqueio || temEnderecoBloqueio);
+
+        return statusHttp === 200 && ((retornoVazio && retornoHtml) || respostaHtmlWaf);
+    }
+
+    function geraLogBloqueioArquivoPrejudicial(quantidadeArquivos) {
+
+        var dadosLog = {};
+        dadosLog["quantidadeArquivos"] = quantidadeArquivos ? quantidadeArquivos : 0;
+
+        $.ajax({
+            url: '<?= SessaoSEI::getInstance()->assinarLink("controlador_ajax.php?acao_ajax=md_ia_gera_log_arquivo_prejudicial_ajax"); ?>',
+            type: 'POST',
+            dataType: 'json',
+            data: dadosLog,
+            async: true,
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    }
+
     function geraTooltip(idElemento, titulo) {
-        tippy("#" + idElemento, {
+        var elemento = document.getElementById(idElemento);
+        if (!elemento) {
+            return;
+        }
+
+        if (elemento._tippy) {
+            elemento._tippy.destroy();
+        }
+
+        tippy(elemento, {
             content: titulo,
         });
     }
@@ -849,6 +1932,7 @@
         var id_mensagem = data['id_mensagem'];
         divfilho.className = 'interaction client';
         divfilho.id = id_mensagem;
+        divfilho.setAttribute('data-render-id', String(id_mensagem));
         var mensagem = data['resposta'];
         var mensagemParseada = markdownToHTML(mensagem, id_mensagem);
         mensagem = safe_tags(mensagem);
@@ -860,7 +1944,9 @@
             '       <img src="modulos/ia/imagens/md_ia_icone.svg?' + <?= Icone::VERSAO ?> + '"/>' +
             '   </div>' +
             '   <div class="blocoMensagem" style="min-width: 91%">' +
+            '       <div class="reasoning-live" style="display:none" data-expandido="false"><button type="button" class="reasoning-toggle" aria-expanded="false"><span class="reasoning-toggle-glyph">&#10022;</span><span class="reasoning-toggle-label">Processamento interno</span><span class="reasoning-toggle-arrow">&#8250;</span></button><div class="reasoning-content"></div></div>' +
             '       <div class="output">' + mensagemParseada + '</div>' +
+            '       <div class="status-live" style="display:none;color:#0000007a;font-size:12px;margin-top:6px"></div>' +
             '       <div class="dthCadastro" style="color:#0000007a">' + dthCadastro + '</div>' +
             '   </div>' +
             '</div>';
@@ -868,8 +1954,9 @@
         var iconesGerais = '' +
             '<div class="acoes_assistente" style="margin-top: -10px">' +
             '   <div class="avaliacao_estrelinhas"></div>' +
-            '   <a onclick="abrirEstrelinhas(' + id_mensagem + ')"><div class="estrelinha"></div></a>' +
-            '   <a onclick="copiar(' + id_mensagem + ')"><div class="copiar" id="copiarResposta' + id_mensagem + '"></div></a>' +
+            '   <a onclick="abrirEstrelinhas(' + id_mensagem + ')"><div class="estrelinha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2L5.8 21 7 14.2 2 9.3l6.9-1Z"/></svg></div></a>' +
+            '   <a onclick="copiar(' + id_mensagem + ')"><div class="copiar copiarMarkdown" id="copiarResposta' + id_mensagem + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5Z"/><path d="M14 2v6h6"/><path d="m10 13-2 2 2 2"/><path d="m14 13 2 2-2 2"/></svg></div></a>' +
+            '   <a onclick="copiarFormatado(' + id_mensagem + ')"><div class="copiarFormatado" id="copiarRespostaFormatado' + id_mensagem + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></div></a>' +
             '   <pre>' +
             '       <code class="textoPuro language-markdown" data-trim="false" id="textoPuro' + id_mensagem + '">' + mensagem + '</code>' +
             '   </pre>';
@@ -884,6 +1971,9 @@
         divfilho.innerHTML = respostaMontada + iconesGerais + iconesEditor + '</div>';
 
         divpai.appendChild(divfilho);
+        var reasoning = obterReasoningInteracao(data);
+        var statuses = reasoning ? obterStatusInteracao(data['id_interacao']) : [];
+        atualizarPainelReasoning(divfilho, reasoning, statuses);
 
         elementosCopiarResposta = divfilho.querySelectorAll('.copiarCodigo');
         elementosCopiarResposta.forEach(function(elemento) {
@@ -894,7 +1984,8 @@
             content: "Feedback sobre a resposta do Assistente",
         });
         $("#botaoEnviarMensagem").removeClass("aguardandoResposta");
-        geraTooltip('copiarResposta' + id_mensagem, "Copiar");
+        geraTooltip('copiarResposta' + id_mensagem, "Copiar Markdown Puro");
+        geraTooltip('copiarRespostaFormatado' + id_mensagem, "Copiar Formatado");
 
         insereCitacaoFonte(divfilho);
 
@@ -993,6 +2084,10 @@
                 }
             });
 
+            $('#conversa').on('scroll._assistenteCitacao', function() {
+                $('.AssistenteSEIIAfonteResposta').popover('hide');
+            });
+
             /* === Novos handlers para evitar popovers "órfãos" ao navegar/trocar página === */
 
             // 1) Fechar ao clicar em links de navegação comuns (ajuste seletores se necessário)
@@ -1075,6 +2170,12 @@
             elemento.removeAttribute('title');
             if (!texto) return;
 
+            var referencia = elemento.textContent.trim().match(/^\[(\d+)\]$/);
+            if (referencia) {
+                elemento.textContent = referencia[1];
+                elemento.setAttribute('aria-label', 'Referencia ' + referencia[1]);
+            }
+
             // Separar título | restante (suporta múltiplos '|' juntando o resto)
             var partes = texto.split(' | ');
             var titulo = partes[0] || 'Sem título';
@@ -1103,7 +2204,7 @@
                     trigger: 'manual',
                     placement: 'top',
                     html: true,
-                    container: 'body',
+                    container: '#chat_ia .widget-content',
                     sanitize: true, // seguro: conteúdo é escapado e só usamos <br> para quebras
                     title: '<strong>' + window._escapeHtmlAssistente(titulo) + '</strong>',
                     content: function() {
@@ -1122,7 +2223,7 @@
                     trigger: 'manual',
                     placement: 'top',
                     html: true,
-                    container: 'body',
+                    container: '#chat_ia .widget-content',
                     sanitize: true,
                     title: '<strong>' + window._escapeHtmlAssistente(titulo) + '</strong>',
                     content: '', // nada no body
@@ -1141,7 +2242,6 @@
             return parts.slice(1).join(' | ');
         }
     }
-
 
     function insereCritica(data, divfilho, divpai, dthCadastro) {
         var id_mensagem = data['id_mensagem'];
@@ -1180,27 +2280,16 @@
             dataType: "json",
             data: dadosMensagem,
             success: function(data) {
+                var respostaParcial = data.resposta && data.resposta.resposta ? data.resposta.resposta : "";
+                armazenarReasoningInteracao(idMdIaInteracaoChat, data['reasoning']);
+                armazenarStatusInteracao(idMdIaInteracaoChat, data['status_execucao']);
+                renderizarEstadoCarregamento(divfilho, respostaParcial, data['status_execucao'], data['reasoning'], idMdIaInteracaoChat);
+
                 if (data["result"] == "true") {
+                    atualizarStatusExecucao(divfilho, null);
                     $("#botaoEnviarMensagem").removeClass("aguardandoResposta");
-                    listarTopicos();
+                    listarTopicos(true);
                 } else {
-
-                    if (data.resposta && data.resposta.resposta && data.resposta.resposta.trim() !== "") {
-                        var outputElement = divfilho.querySelector('.output');
-
-                        if (outputElement) {
-                            var textoBruto = data.resposta.resposta;
-                            var txtArea = document.createElement("textarea");
-                            txtArea.innerHTML = textoBruto;
-
-                            var textoDecodificado = txtArea.value;
-
-                            var idTemporario = -1;
-                            var textoFormatado = markdownToHTML(textoDecodificado, idTemporario);
-                            outputElement.innerHTML = textoFormatado + '<span>.</span><span>.</span><span>.</span>';
-                        }
-                    }
-
                     setTimeout(function() {
                         aguardandoResposta(idMdIaInteracaoChat, divfilho, divpai);
                     }, 500);
@@ -1421,17 +2510,74 @@
         document.getElementById("copiarResposta" + id)._tippy.show();
         setTimeout(function() {
             document.getElementById("copiarResposta" + id)._tippy.hide();
-            document.getElementById("copiarResposta" + id)._tippy.setContent("Copiar");
+            document.getElementById("copiarResposta" + id)._tippy.setContent("Copiar Markdown Puro");
         }, 2000);
     }
 
+    function copiarFormatado(id) {
+        var mensagemElement = document.getElementById(String(id));
+        var elementoResposta = mensagemElement ? mensagemElement.querySelector('.output') : null;
+        if (!elementoResposta) {
+            return;
+        }
+
+        var conteudoFormatado = elementoResposta.cloneNode(true);
+        conteudoFormatado.querySelectorAll('.AssistenteSEIIAfonteResposta').forEach(function(referencia) {
+            referencia.remove();
+        });
+
+        var idBotao = 'copiarRespostaFormatado' + id;
+        var confirmarCopia = function() {
+            document.getElementById(idBotao)._tippy.setContent("Copiado");
+            document.getElementById(idBotao)._tippy.show();
+            setTimeout(function() {
+                document.getElementById(idBotao)._tippy.hide();
+                document.getElementById(idBotao)._tippy.setContent("Copiar Formatado");
+            }, 2000);
+        };
+
+        var copiarPorSelecao = function() {
+            var temporario = document.createElement('div');
+            temporario.style = 'position:absolute;left:-1000px;top:-1000px';
+            temporario.appendChild(conteudoFormatado.cloneNode(true));
+            document.body.appendChild(temporario);
+
+            var range = document.createRange();
+            range.selectNodeContents(temporario);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            var copiado = document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            temporario.remove();
+
+            if (copiado) {
+                confirmarCopia();
+            }
+        };
+
+        if (navigator.clipboard && window.ClipboardItem) {
+            navigator.clipboard.write([new ClipboardItem({
+                'text/html': new Blob([conteudoFormatado.innerHTML], {
+                    type: 'text/html'
+                }),
+                'text/plain': new Blob([conteudoFormatado.innerText], {
+                    type: 'text/plain'
+                })
+            })]).then(confirmarCopia, copiarPorSelecao);
+            return;
+        }
+
+        copiarPorSelecao();
+    }
+
     function expandirAssistente() {
-        var larguraRealChat = parseInt($(window).width()) - 30;
+        var larguraTela = Math.min(parseInt($(window).width()), window.screen.width || parseInt($(window).width()));
+        var larguraRealChat = larguraTela - 30;
         $(".widget-content").css({
             "width": larguraRealChat + "px"
         });
         $("#reduzirAssistente").css({
-            "display": "inline"
+            "display": "inline-flex"
         });
         $("#expandirAssistente").css({
             "display": "none"
@@ -1439,6 +2585,7 @@
         $(".send-message-input").css({
             "width": "100%"
         });
+        $(".send-message-input").css("overflow-y", "");
         $('.send-message-input').attr('rows', 5);
         $(".widget-content").addClass('expandido');
         $(".widget-content").removeClass('reduzido');
@@ -1459,7 +2606,7 @@
             "display": "block"
         });
         $("#conteudoChat").css({
-            "width": "85%"
+            "width": $(".widget-content").hasClass("painel-topicos-recolhido") ? "calc(100% - 56px)" : "87%"
         });
         $("#memoriaTopico").css({
             "display": "block"
@@ -1467,17 +2614,46 @@
         $("#buscarWeb").css({
             "display": "block"
         });
-        $("#refletir").css({
+        $("#anexarArquivo").css({
             "display": "block"
         });
         $("#conteudoChat .blocoMensagem").css({
             "min-width": "20%"
         });
         controlaTamanhoConteudoChat("expandido");
+        if (larguraTela <= 576) {
+            setTimeout(function() {
+                if ($(".widget-content").hasClass("expandido")) {
+                    controlaTamanhoConteudoChat("expandido");
+                }
+            }, 450);
+        }
+        agendarAtualizacaoLarguraPaineisReasoningAbertos();
+        agendarAtualizacaoPromptsUsuario();
+    }
+
+    function alternarPainelTopicos() {
+        var widgetContent = document.querySelector('#chat_ia .widget-content');
+        var botao = document.getElementById('alternarPainelTopicos');
+        if (!widgetContent || !botao) {
+            return;
+        }
+
+        var recolhido = widgetContent.classList.toggle('painel-topicos-recolhido');
+        var descricaoBotao = recolhido ? 'Expandir menu lateral' : 'Recolher menu lateral';
+        botao.setAttribute('aria-expanded', recolhido ? 'false' : 'true');
+        botao.setAttribute('aria-label', descricaoBotao);
+        if (botao._tippy) {
+            botao._tippy.setContent(descricaoBotao);
+        }
+        controlaTamanhoConteudoChat('expandido', false);
+        agendarAtualizacaoLarguraPaineisReasoningAbertos();
+        agendarAtualizacaoPromptsUsuario();
     }
 
     function reduzirAssistente() {
-        if (parseInt($(window).width()) < 576) {
+        var larguraTela = Math.min(parseInt($(window).width()), window.screen.width || parseInt($(window).width()));
+        if (larguraTela < 576) {
             $(".widget-content").css({
                 "width": "360px"
             });
@@ -1491,16 +2667,17 @@
             "display": "none"
         });
         $("#expandirAssistente").css({
-            "display": "inline"
+            "display": "inline-flex"
         });
         $(".widget-content").removeClass('expandido');
         $(".widget-content").addClass('reduzido');
-        $(".send-message-input").height("45");
+        $('.send-message-input').attr('rows', 1);
+        $(".send-message-input").css("height", "30px");
         $(".send-message-input").css({
-            "min-height": "67px"
+            "min-height": "30px"
         });
         $(".send-message-input").css({
-            "max-height": "120px"
+            "max-height": "72px"
         });
         $("#assistenteExpandido").css({
             "display": "none"
@@ -1520,7 +2697,7 @@
         $("#buscarWeb").css({
             "display": "none"
         });
-        $("#refletir").css({
+        $("#anexarArquivo").css({
             "display": "none"
         });
         $("#conteudoChat .blocoMensagem").css({
@@ -1528,9 +2705,11 @@
         });
 
         controlaTamanhoConteudoChat();
+        agendarAtualizacaoLarguraPaineisReasoningAbertos();
+        agendarAtualizacaoPromptsUsuario();
     }
 
-    function controlaTamanhoConteudoChat(display = "") {
+    function controlaTamanhoConteudoChat(display = "", permitirAutoScroll = true) {
         if (display == "") {
             if ($(".widget-content").hasClass("expandido")) {
                 var display = "expandido";
@@ -1561,11 +2740,13 @@
         $(".widget-content").css({
             "height": alturaRealChat + "px"
         });
-        var alturaConteudoChat = alturaRealChat - document.getElementsByClassName('widget-title')[0].clientHeight - document.getElementById('lugarInteracaoUsuario').clientHeight - 56;
-        var alturaPainelTopico = alturaRealChat - document.getElementsByClassName('widget-title')[0].clientHeight - 160;
-        $("#listagemTopicos").css({
-            "height": alturaPainelTopico + "px"
-        });
+        var alturaConteudoChat;
+        var larguraTela = Math.min(parseInt($(window).width()), window.screen.width || parseInt($(window).width()));
+        if (display == "expandido" && larguraTela <= 576) {
+            alturaConteudoChat = document.querySelector('.widget-container-dialog').clientHeight - document.getElementById('lugarInteracaoUsuario').clientHeight - document.querySelector('.wrapperMensagens').clientHeight - 28;
+        } else {
+            alturaConteudoChat = alturaRealChat - document.getElementsByClassName('widget-title')[0].clientHeight - document.getElementById('lugarInteracaoUsuario').clientHeight - 56;
+        }
         var larguraPainelTopicos = document.getElementById('painelTopicos').clientWidth;
         var larguraConteudoChat = document.getElementById('conteudoChat').clientWidth;
         var larguraTotal = parseInt(larguraPainelTopicos) + parseInt(larguraConteudoChat);
@@ -1575,14 +2756,15 @@
                 "width": larguraDesejada
             });
         }
-        controleScroll(alturaConteudoChat);
+        controleScroll(alturaConteudoChat, permitirAutoScroll);
         return Promise.resolve("Success");
     }
 
-    function controleScroll(alturaConteudoChat) {
+    function controleScroll(alturaConteudoChat, permitirAutoScroll = true) {
         let somaTamanhoDiv = 0;
-        $('.interaction').each(function() {
-            somaTamanhoDiv = parseFloat(somaTamanhoDiv) + parseFloat($(this).height() + parseFloat(30));
+        $('#chat_ia .interaction').css('margin', '7px 0');
+        $('#conversa > .interaction').each(function() {
+            somaTamanhoDiv += $(this).outerHeight(true);
         });
         if (somaTamanhoDiv > alturaConteudoChat) {
             $("#conversa").css({
@@ -1597,7 +2779,9 @@
             $("#chat_ia .interaction").css({
                 "margin": "15px 0"
             });
-            document.getElementById('conversa').scrollBy(0, 10000)
+            if (permitirAutoScroll) {
+                document.getElementById('conversa').scrollBy(0, 10000);
+            }
             return false;
         } else {
             $("#conversa").css({
@@ -1612,18 +2796,28 @@
             $("#chat_ia .interaction").css({
                 "margin": "7px 0"
             });
-            document.getElementById('conversa').scrollBy(0, 10000);
+            if (permitirAutoScroll) {
+                document.getElementById('conversa').scrollBy(0, 10000);
+            }
             return false;
         }
-        document.getElementById('conversa').scrollBy(0, 5000);
+        if (permitirAutoScroll) {
+            document.getElementById('conversa').scrollBy(0, 5000);
+        }
     }
 
     function controlaTamanhoInputDigitacao() {
-        var scrollHeight = $(".send-message-input")[0].scrollHeight;
+        var inputDigitacao = $(".send-message-input")[0];
+        var scrollHeight = inputDigitacao.scrollHeight;
         var padding = 20;
         if ($(".widget-content").is(".reduzido")) {
-            if ($(".send-message-input").height() < (scrollHeight - padding) && $(".send-message-input").height() < 96) {
-                $(".send-message-input").height(scrollHeight - padding);
+            var alturaMaxima = 72;
+            var alturaAnterior = inputDigitacao.offsetHeight;
+            inputDigitacao.style.height = 'auto';
+            scrollHeight = inputDigitacao.scrollHeight;
+            inputDigitacao.style.height = Math.min(scrollHeight, alturaMaxima) + 'px';
+            inputDigitacao.style.overflowY = scrollHeight > alturaMaxima ? 'auto' : 'hidden';
+            if (inputDigitacao.offsetHeight !== alturaAnterior) {
                 controlaTamanhoConteudoChat();
             }
         } else {
@@ -1642,9 +2836,9 @@
         var divpai = document.getElementById("conversa");
         var divfilho = document.createElement('div');
         $("#conversa").html("");
-        $("#mensagem").val("");
+        definirTextoMensagem("");
         $("#botaoMemoriaTopico").addClass('botaoAcaoAssistenteIAAtivado');
-        $("#botaoRefletir").removeClass('botaoAcaoAssistenteIAAtivado');
+        atualizarTooltipMemoriaTopico();
         $("#botaoBuscarWeb").removeClass('botaoAcaoAssistenteIAAtivado');
         insereCards(divpai);
         insereBoasVindas(divpai, divfilho);
@@ -1713,7 +2907,7 @@
         }
     }
 
-    function listarTopicos() {
+    function listarTopicos(preservarScrollConversa = false) {
         $.ajax({
             url: '<?= SessaoSEI::getInstance()->assinarLink('controlador_ajax.php?acao_ajax=md_ia_listar_topicos'); ?>',
             type: 'GET', //selecionando o tipo de requisição, PUT,GET,POST,DELETE
@@ -1754,18 +2948,7 @@
                 } else {
                     $("#listagemTopicos").html("");
                 }
-                selecionaTopico(topicoAtivo, false);
-                tippy(".rename", {
-                    content: "Renomear Tópico",
-                });
-
-                tippy(".arquivo", {
-                    content: "Arquivar Tópico",
-                });
-
-                tippy(".selecionaTopico", {
-                    content: "Selecionar Tópico",
-                });
+                selecionaTopico(topicoAtivo, false, preservarScrollConversa);
                 $('#listagemTopicos').animate({
                     scrollTop: 0
                 }, "slow");
@@ -1786,10 +2969,11 @@
         acoesTopico.classList.remove('acoesVisiveis');
     }
 
-    function selecionaTopico(id = "", limparCampos = true) {
+    function selecionaTopico(id = "", limparCampos = true, preservarScrollConversa = false) {
         if (id) {
             controlaActive(id);
         }
+        var scrollConversaAnterior = preservarScrollConversa ? document.getElementById('conversa').scrollTop : null;
         insereLoading();
         var dadosTopico = {};
         dadosTopico["id"] = id;
@@ -1804,15 +2988,16 @@
                 var divfilho = document.createElement('div');
                 $("#conversa").html("");
                 if (limparCampos) {
-                    $("#mensagem").val("");
+                    definirTextoMensagem("");
                     $("#botaoMemoriaTopico").addClass('botaoAcaoAssistenteIAAtivado');
-                    $("#botaoRefletir").removeClass('botaoAcaoAssistenteIAAtivado');
+                    atualizarTooltipMemoriaTopico();
                     $("#botaoBuscarWeb").removeClass('botaoAcaoAssistenteIAAtivado');
                 }
                 if (data != "") {
                     insereBoasVindas(divpai, divfilho);
                     data.forEach(function(interacao) {
-                        resolveItensEnvioMensagem(interacao["pergunta"], interacao["dadosCitacoes"], interacao["id_interacao"], interacao["favorito"], interacao['dth_cadastro']);
+                        armazenarHistoricoStatusInteracao(interacao["id_interacao"], interacao["status_execucao_historico"]);
+                        resolveItensEnvioMensagem(interacao["pergunta"], interacao["dadosCitacoes"], interacao["id_interacao"], interacao["favorito"], interacao['dth_cadastro'], interacao['upload']);
                         var divfilho = document.createElement('div');
 
                         if (interacao["status_requisicao"] == "200" && interacao["resposta"] != "") {
@@ -1824,7 +3009,7 @@
                                 habilitaEstrelinhas(interacao["id_mensagem"], interacao["feedback"]);
                             }
 
-                        } else if (interacao["status_requisicao"] > 0 && (interacao["status_requisicao"] != "200" || interacao["tempo_execucao"] > 0)) {
+                        } else if (interacao["status_requisicao"] !== "" && interacao["status_requisicao"] !== null && typeof interacao["status_requisicao"] !== "undefined" && (interacao["status_requisicao"] != "200" || interacao["tempo_execucao"] > 0)) {
 
                             insereCritica(interacao, divfilho, divpai, interacao['dth_cadastro']);
 
@@ -1834,13 +3019,7 @@
                             }
 
                             var divLoading = carregandoResposta(divpai);
-
-                            if (interacao["resposta"] != "") {
-                                var outputElement = divLoading.querySelector('.output');
-                                if (outputElement) {
-                                    outputElement.innerHTML = decodeHtmlEntitiesPergunta(interacao["resposta"]) + '<span>.</span><span>.</span><span>.</span>';
-                                }
-                            }
+                            renderizarEstadoCarregamento(divLoading, interacao["resposta"], null, interacao["reasoning"], interacao["id_interacao"]);
 
                             setTimeout(function() {
                                 aguardandoResposta(interacao["id_interacao"], divLoading, divpai);
@@ -1868,6 +3047,9 @@
             expandirAssistente();
         } else {
             reduzirAssistente();
+        }
+        if (scrollConversaAnterior !== null) {
+            document.getElementById('conversa').scrollTop = scrollConversaAnterior;
         }
     }
 
@@ -1947,6 +3129,9 @@
             $(this).replaceWith(novoBotao);
             $("#acoesTopico" + id).removeClass('topicoEmEdicao');
         });
+
+        inputEditavel.trigger("focus");
+        inputEditavel[0].setSelectionRange(conteudo.length, conteudo.length);
     }
 
     function arquivarTopico(id) {
@@ -1987,11 +3172,28 @@
             800, false);
     }
 
+    function atualizarTooltipMemoriaTopico() {
+        var botao = document.getElementById('botaoMemoriaTopico');
+        if (!botao) {
+            return;
+        }
+
+        var descricaoBotao = botao.classList.contains('botaoAcaoAssistenteIAAtivado') ?
+            'Desativar Memória do Tópico' : 'Utilizar Memória do Tópico';
+        botao.setAttribute('aria-label', descricaoBotao);
+        if (botao._tippy) {
+            botao._tippy.setContent(descricaoBotao);
+        }
+    }
+
     function ativaBotaoAcao(botao) {
         if (!botao.classList.contains('botaoAcaoAssistenteIAAtivado')) {
             botao.classList.add('botaoAcaoAssistenteIAAtivado');
         } else {
             botao.classList.remove('botaoAcaoAssistenteIAAtivado');
+        }
+        if (botao.id === 'botaoMemoriaTopico') {
+            atualizarTooltipMemoriaTopico();
         }
     }
 
@@ -2013,12 +3215,281 @@
     function getTextForTextarea(sanitizedHtml) {
         // converte eventuais <br> em \n
         let text = sanitizedHtml.replace(/<br\s*\/?>/gi, '\n');
-        // opcional: se quiser preservar tabs
-        //text = text.replace(/&nbsp;/g, '\t');
 
-        // aí sim tira o resto das tags, mas mantendo \n intactos
-        const tmp = document.createElement('div');
+        // Usa textarea para decodificar entidades HTML sem interpretar tags como HTML
+        // Ex: <Manual TCU ? Estimativas> não é removido como seria num div
+        const tmp = document.createElement('textarea');
         tmp.innerHTML = text;
-        return tmp.textContent; // contém as quebras de linha reais
+        return tmp.value; // contém as quebras de linha reais e tags literais intactas
+    }
+
+    // 1. Variável global para armazenar os arquivos
+    var arquivosSelecionados = [];
+
+    // --- INICIALIZAÇÃO DE EVENTOS (Coloque isso dentro do seu document.ready ou DOMContentLoaded) ---
+    document.addEventListener("DOMContentLoaded", function() {
+
+        // EVENTO CTRL+V (PASTE)
+        const campoMensagem = document.getElementById('mensagem');
+        if (campoMensagem) {
+            document.getElementById('mensagem').addEventListener('paste', function(e) {
+                var items = (e.clipboardData || e.originalEvent.clipboardData).items;
+
+                for (var index in items) {
+                    var item = items[index];
+                    if (item.kind === 'file' && item.type.indexOf('image') !== -1) {
+                        var blob = item.getAsFile();
+
+                        // Para prints colados, o navegador muitas vezes não dá nome.
+                        // Se você quiser evitar colar o MESMO print em sequência:
+                        var arquivo = new File([blob], 'print_' + Date.now() + '.png', {
+                            type: blob.type
+                        });
+
+                        if (!validarArquivo(arquivo)) {
+                            continue;
+                        }
+
+                        if (!validarTamanhoTotalArquivos(arquivosSelecionados.concat([arquivo]))) {
+                            continue;
+                        }
+
+                        e.preventDefault();
+                        arquivosSelecionados.push(arquivo);
+
+                    }
+                }
+                renderizarListaArquivos();
+            });
+        }
+    });
+
+    // 2. Função disparada pelo botão de anexo (input file)
+    function processarArquivosSelecionados(input) {
+        if (input.files && input.files.length > 0) {
+            for (let i = 0; i < input.files.length; i++) {
+                const arquivo = input.files[i];
+
+                // AQUI ENTRA A VALIDAÇÃO
+                if (arquivoJaExiste(arquivo)) {
+                    alert("O arquivo '" + arquivo.name + "' já foi adicionado.");
+                    continue; // Pula para o próximo arquivo do loop sem adicionar
+                }
+
+                if (!validarArquivo(arquivo)) {
+                    continue;
+                }
+
+                if (!validarTamanhoTotalArquivos(arquivosSelecionados.concat([arquivo]))) {
+                    continue;
+                }
+
+                arquivosSelecionados.push(arquivo);
+            }
+            renderizarListaArquivos();
+        }
+        input.value = "";
+    }
+
+    // 3. Função que desenha os "chips" na tela (ESTILO CHATGPT)
+    function renderizarListaArquivos() {
+        const container = document.getElementById('containerListaArquivos');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        if (arquivosSelecionados.length === 0) {
+            container.style.display = 'none';
+            // Remove margens para garantir que não ocupará 1px sequer
+            container.style.margin = '0';
+            container.style.padding = '0';
+        } else {
+            container.style.display = 'flex';
+            // Restaura as margens apenas quando houver arquivos
+            container.style.marginTop = '10px';
+            container.style.marginBottom = '5px';
+
+            arquivosSelecionados.forEach((arquivo, index) => {
+                // ... seu código de criação dos chips/ícones ...
+            });
+        }
+
+        arquivosSelecionados.forEach((arquivo, index) => {
+            const chipDiv = document.createElement('div');
+            chipDiv.classList.add('file-chip'); // Classe base que deve ter overflow: visible no CSS
+
+            const isImage = arquivo.type.startsWith('image/');
+
+            if (isImage) {
+                // --- VISUAL DE IMAGEM ---
+                chipDiv.classList.add('chip-tipo-imagem');
+
+                // Div interna para a imagem (para o CSS aplicar border-radius na foto sem cortar o botão X)
+                const imgPreview = document.createElement('div');
+                imgPreview.classList.add('image-preview-box');
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imgPreview.style.backgroundImage = `url(${e.target.result})`;
+                };
+                reader.readAsDataURL(arquivo);
+
+                chipDiv.appendChild(imgPreview);
+
+            } else {
+                // --- VISUAL DE DOCUMENTO ---
+                chipDiv.classList.add('chip-tipo-doc');
+
+                const icone = obterIconePorNomeArquivo(arquivo.name);
+                const extensao = arquivo.name.split('.').pop().toLowerCase();
+                let iconClass = 'default-doc';
+
+                chipDiv.innerHTML = `
+                    <div class="doc-icon-box default-doc">
+                        <img src="${icone}">
+                    </div>
+                    <div class="doc-info">
+                        <span class="doc-name" title="${arquivo.name}">${arquivo.name}</span>
+                        <span class="doc-ext">${extensao.toUpperCase()} File</span>
+                    </div>
+                `;
+            }
+
+            // Botão de remover (O "X" que flutua na quina)
+            const btnRemover = document.createElement('button');
+            btnRemover.innerHTML = '×';
+            btnRemover.type = 'button';
+            btnRemover.classList.add('btn-remover-arquivo');
+            btnRemover.onclick = function() {
+                removerArquivo(index);
+            };
+
+            chipDiv.appendChild(btnRemover);
+            container.appendChild(chipDiv);
+        });
+
+        // Chama sua função existente para reajustar o layout do chat
+        if (typeof controlaTamanhoConteudoChat === "function") {
+            controlaTamanhoConteudoChat();
+        }
+    }
+
+    // 4. Função para remover arquivo
+    function removerArquivo(index) {
+        arquivosSelecionados.splice(index, 1);
+        renderizarListaArquivos();
+    }
+
+    // 5. Limpar tudo após o envio
+    function limparTodosArquivos() {
+        arquivosSelecionados = [];
+        renderizarListaArquivos();
+    }
+
+    function arquivoJaExiste(novoArquivo) {
+        return arquivosSelecionados.some(arquivo =>
+            arquivo.name === novoArquivo.name &&
+            arquivo.size === novoArquivo.size &&
+            arquivo.lastModified === novoArquivo.lastModified
+        );
+    }
+
+    function validarArquivo(arquivo) {
+        const ext = arquivo.name.toLowerCase().split('.').pop();
+
+        // 1) extensão permitida?
+        if (!Object.prototype.hasOwnProperty.call(ArrExtensoesAceitas, ext)) {
+            const extensoesPermitidas = Object.keys(ArrExtensoesAceitas).join(', ');
+            alert(`A extensão "${ext.toUpperCase()}" não é permitida. As extensões permitidas são: ${extensoesPermitidas}.`);
+            return false;
+        }
+
+        // 2) tamanho por extensão
+        const limiteMb = ArrExtensoesAceitas[ext];
+        if (limiteMb && limiteMb > 0) {
+            const limiteBytes = limiteMb * 1024 * 1024;
+            if (arquivo.size > limiteBytes) {
+                alert(`Arquivo "${arquivo.name}" com tamanho acima do permitido. O limite de tamanho para a extensão ${ext.toUpperCase()} é de ${limiteMb} MB.`);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function validarArquivosSelecionadosAntesEnvio() {
+        for (let i = 0; i < arquivosSelecionados.length; i++) {
+            if (!validarArquivo(arquivosSelecionados[i])) {
+                return false;
+            }
+        }
+
+        return validarTamanhoTotalArquivos(arquivosSelecionados);
+    }
+
+    function validarTamanhoTotalArquivos(arquivos) {
+        const tamanhoTotalBytes = arquivos.reduce(function(total, arquivo) {
+            return total + arquivo.size;
+        }, 0);
+        const tamanhoMaximoBytes = TAMANHO_MAXIMO_UPLOAD_TOTAL_MB * 1024 * 1024;
+
+        if (tamanhoTotalBytes > tamanhoMaximoBytes) {
+            alert(`O tamanho total dos arquivos excede o limite de ${TAMANHO_MAXIMO_UPLOAD_TOTAL_MB} MB por mensagem.`);
+            return false;
+        }
+
+        return true;
+    }
+
+    function gerarHtmlArquivosHistorico(uploads) {
+        if (!uploads || !Array.isArray(uploads) || uploads.length === 0) {
+            return "";
+        }
+
+        let html = '<div class="container-arquivos-historico">';
+
+        uploads.forEach(function(item) {
+
+            let nomeArquivo = null;
+
+            if (typeof item === 'string') {
+                nomeArquivo = item;
+            } else if (item instanceof File) {
+                nomeArquivo = item.name;
+            } else if (typeof item === 'object' && item.nome) {
+                nomeArquivo = item.nome;
+            }
+
+            if (!nomeArquivo) return;
+
+            const extensao = nomeArquivo.split('.').pop().toLowerCase();
+            const icone = obterIconePorNomeArquivo(nomeArquivo);
+
+            html += `
+                <div class="file-chip-historico">
+                    <div class="doc-icon-box default-doc">
+                        <img src="${icone}" alt="Arquivo" />
+                    </div>
+                    <div class="doc-info">
+                        <span class="doc-name" title="${nomeArquivo}">
+                            ${nomeArquivo}
+                        </span>
+                        <span class="doc-ext">${extensao.toUpperCase()} File</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        return html;
+    }
+
+    function obterIconePorNomeArquivo(nomeArquivo) {
+        if (!nomeArquivo || !ArrIcones) {
+            return ArrIcones.default;
+        }
+
+        const ext = nomeArquivo.split('.').pop().toLowerCase();
+        return ArrIcones.mapa[ext] || ArrIcones.default;
     }
 </script>

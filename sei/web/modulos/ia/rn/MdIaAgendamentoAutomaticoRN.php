@@ -1,4 +1,4 @@
-<?
+<?php
 
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4 REGIO
@@ -202,8 +202,6 @@ class MdIaAgendamentoAutomaticoRN extends InfraRN
 
     private function buscarProcessosDocumentosRelevantes($sinProcessoAberto)
     {
-        $arrExtensoesPermitidas = ["pdf", "html", "htm", "txt", "ods", "xlsx", "csv", "xml", "odt", "odp", "doc", "docx", "json", "ppt", "pptx", "rtf", "xls", "xlsm"];
-
         $arrObjMdIaAdmDocRelevDTO = $this->listaTiposDocumentosRelevantes();
         $retorno = array();
 
@@ -245,10 +243,12 @@ class MdIaAgendamentoAutomaticoRN extends InfraRN
             }
             $arrObjDocumentosDTO = (new MdIaDocumentoRN())->listar($objMdIaDocumentoDTO);
 
+            $objMdIaConfigAssistenteRN = new MdIaConfigAssistenteRN();
+
             foreach ($arrObjDocumentosDTO as $objDocumentoDTO) {
                 if ($objDocumentoDTO->getStrStaDocumento() == DocumentoRN::$TD_EXTERNO) {
                     $extensaoAnexo = end(explode('.', $objDocumentoDTO->getStrNomeAnexo()));
-                    if (in_array($extensaoAnexo, $arrExtensoesPermitidas)) {
+                    if ($objMdIaConfigAssistenteRN->verificarExtensaoPermitida($extensaoAnexo, MdIaConfigAssistenteRN::CONTEXTO_PROTOCOLO)) {
                         $this->adicionarAoRetorno($objDocumentoDTO, $retorno, $sinProcessoAberto);
                         $ext++;
                     }
@@ -361,27 +361,7 @@ class MdIaAgendamentoAutomaticoRN extends InfraRN
 
     private function atualizarRegistroProcessoIndexado($idProcedimento, $hash, $sinProcessoAberto)
     {
-        $objMdIaProcIndexaveisDTO = new MdIaProcIndexaveisDTO;
-        $objMdIaProcIndexaveisDTO->setDblIdProcedimento($idProcedimento);
-        $objMdIaProcIndexaveisDTO->setStrHash($hash);
-        $objMdIaProcIndexaveisDTO->setStrSinIndexado('N');
-        $objMdIaProcIndexaveisDTO->setStrSinVetorizado('N');
-        $objMdIaProcIndexaveisDTO->setStrSinProcessoAberto($sinProcessoAberto);
-        $objMdIaProcIndexaveisDTO->setDthAlteracao(InfraData::getStrDataHoraAtual());
-        (new MdIaProcIndexaveisRN())->alterar($objMdIaProcIndexaveisDTO);
-    }
-
-    private function cadastrarRegistroProcessoIndexado($idProcedimento, $hash, $sinProcessoAberto)
-    {
         try {
-            $objMdIaProcIndexaveisExistenteDTO = new MdIaProcIndexaveisDTO;
-            $objMdIaProcIndexaveisExistenteDTO->retDblIdProcedimento();
-            $objMdIaProcIndexaveisExistenteDTO->setDblIdProcedimento($idProcedimento);
-            if ((new MdIaProcIndexaveisRN())->consultar($objMdIaProcIndexaveisExistenteDTO)) {
-                $this->atualizarRegistroProcessoIndexado($idProcedimento, $hash, $sinProcessoAberto);
-                return;
-            }
-
             $objMdIaProcIndexaveisDTO = new MdIaProcIndexaveisDTO;
             $objMdIaProcIndexaveisDTO->setDblIdProcedimento($idProcedimento);
             $objMdIaProcIndexaveisDTO->setStrHash($hash);
@@ -389,20 +369,51 @@ class MdIaAgendamentoAutomaticoRN extends InfraRN
             $objMdIaProcIndexaveisDTO->setStrSinVetorizado('N');
             $objMdIaProcIndexaveisDTO->setStrSinProcessoAberto($sinProcessoAberto);
             $objMdIaProcIndexaveisDTO->setDthAlteracao(InfraData::getStrDataHoraAtual());
-            (new MdIaProcIndexaveisRN())->cadastrar($objMdIaProcIndexaveisDTO);
+            (new MdIaProcIndexaveisRN())->alterar($objMdIaProcIndexaveisDTO);
         } catch (Exception $e) {
-            InfraDebug::getInstance()->gravar('Erro ao cadastrar processo indexável. IdProcedimento: ' . $idProcedimento . ' - ' . $e->getMessage());
+            // Silencia erro de registro não encontrado (concorrência)
+            InfraDebug::getInstance()->gravar('Aviso ao atualizar processo indexável. IdProcedimento: ' . $idProcedimento . ' - ' . $e->getMessage());
+        }
+    }
+
+    private function cadastrarRegistroProcessoIndexado($idProcedimento, $hash, $sinProcessoAberto)
+    {
+        try {
+            $objMdIaProcIndexaveisDTO = new MdIaProcIndexaveisDTO;
+            $objMdIaProcIndexaveisDTO->setDblIdProcedimento($idProcedimento);
+            $objMdIaProcIndexaveisDTO->setStrHash($hash);
+            $objMdIaProcIndexaveisDTO->setStrSinIndexado('N');
+            $objMdIaProcIndexaveisDTO->setStrSinVetorizado('N');
+            $objMdIaProcIndexaveisDTO->setStrSinProcessoAberto($sinProcessoAberto);
+            $objMdIaProcIndexaveisDTO->setDthAlteracao(InfraData::getStrDataHoraAtual());
+
+            // Tenta UPDATE primeiro (se existe durante concorrência)
+            try {
+                (new MdIaProcIndexaveisRN())->alterar($objMdIaProcIndexaveisDTO);
+            } catch (Exception $eUpdate) {
+                // Se UPDATE falha (registro não existe), tenta INSERT
+                (new MdIaProcIndexaveisRN())->cadastrar($objMdIaProcIndexaveisDTO);
+            }
+        } catch (Exception $e) {
+            InfraDebug::getInstance()->gravar('Erro ao cadastrar/atualizar processo indexável. IdProcedimento: ' . $idProcedimento . ' - ' . $e->getMessage());
         }
     }
 
     private function removerRegistroProcessoIndexado($idProcedimento)
     {
-        $objMdIaProcIndexaveisRN = new MdIaProcIndexaveisRN();
-        $objMdIaProcIndexaveisDTO = new MdIaProcIndexaveisDTO;
-        $objMdIaProcIndexaveisDTO->setDblIdProcedimento($idProcedimento);
-        $objMdIaProcIndexaveisDTO->retDblIdProcedimento();
-        $arrObjMdIaProcIndexaveisDTO = $objMdIaProcIndexaveisRN->listar($objMdIaProcIndexaveisDTO);
-        $objMdIaProcIndexaveisRN->excluir($arrObjMdIaProcIndexaveisDTO);
+        try {
+            $objMdIaProcIndexaveisRN = new MdIaProcIndexaveisRN();
+            $objMdIaProcIndexaveisDTO = new MdIaProcIndexaveisDTO;
+            $objMdIaProcIndexaveisDTO->setDblIdProcedimento($idProcedimento);
+            $objMdIaProcIndexaveisDTO->retDblIdProcedimento();
+            $arrObjMdIaProcIndexaveisDTO = $objMdIaProcIndexaveisRN->listar($objMdIaProcIndexaveisDTO);
+            if (!empty($arrObjMdIaProcIndexaveisDTO)) {
+                $objMdIaProcIndexaveisRN->excluir($arrObjMdIaProcIndexaveisDTO);
+            }
+        } catch (Exception $e) {
+            // Silencia erro se registro já foi removido (concorrência)
+            InfraDebug::getInstance()->gravar('Aviso ao remover processo indexável. IdProcedimento: ' . $idProcedimento . ' - ' . $e->getMessage());
+        }
     }
 
     private function cadastrarRegistroProcessoIndexadoCancelados($idProcedimento)
@@ -410,9 +421,12 @@ class MdIaAgendamentoAutomaticoRN extends InfraRN
         $objMdIaProcIndexCancDTO = new MdIaProcIndexCancDTO;
         $objMdIaProcIndexCancDTO->retDblIdProcedimento();
         $objMdIaProcIndexCancDTO->setDblIdProcedimento($idProcedimento);
-        $idCadastrado = (new MdIaProcIndexCancRN())->consultar($objMdIaProcIndexCancDTO);
-        if (!$idCadastrado) {
+        try {
             (new MdIaProcIndexCancRN())->cadastrar($objMdIaProcIndexCancDTO);
+        } catch (InfraException $e) {
+            if (!preg_match('/Duplicate/', $e->getStrDescricao())) {
+                throw $e;
+            }
         }
     }
 
@@ -526,14 +540,19 @@ class MdIaAgendamentoAutomaticoRN extends InfraRN
 
     private function atualizarRegistroDocumentoIndexado($idDocumento, $hash, $sinProcessoAberto)
     {
-        $objMdIaDocIndexaveisDTO = new MdIaDocIndexaveisDTO();
-        $objMdIaDocIndexaveisDTO->setDblIdDocumento($idDocumento);
-        $objMdIaDocIndexaveisDTO->setStrHash($hash);
-        $objMdIaDocIndexaveisDTO->setStrSinIndexado('N');
-        $objMdIaDocIndexaveisDTO->setStrSinVetorizado('N');
-        $objMdIaDocIndexaveisDTO->setStrSinProcessoAberto($sinProcessoAberto);
-        $objMdIaDocIndexaveisDTO->setDthAlteracao(InfraData::getStrDataHoraAtual());
-        (new MdIaDocIndexaveisRN())->alterar($objMdIaDocIndexaveisDTO);
+        try {
+            $objMdIaDocIndexaveisDTO = new MdIaDocIndexaveisDTO();
+            $objMdIaDocIndexaveisDTO->setDblIdDocumento($idDocumento);
+            $objMdIaDocIndexaveisDTO->setStrHash($hash);
+            $objMdIaDocIndexaveisDTO->setStrSinIndexado('N');
+            $objMdIaDocIndexaveisDTO->setStrSinVetorizado('N');
+            $objMdIaDocIndexaveisDTO->setStrSinProcessoAberto($sinProcessoAberto);
+            $objMdIaDocIndexaveisDTO->setDthAlteracao(InfraData::getStrDataHoraAtual());
+            (new MdIaDocIndexaveisRN())->alterar($objMdIaDocIndexaveisDTO);
+        } catch (Exception $e) {
+            // Silencia erro de registro não encontrado (concorrência)
+            InfraDebug::getInstance()->gravar('Aviso ao atualizar documento indexável. IdDocumento: ' . $idDocumento . ' - ' . $e->getMessage());
+        }
     }
 
 
@@ -563,14 +582,6 @@ class MdIaAgendamentoAutomaticoRN extends InfraRN
     private function cadastrarRegistroDocumentoIndexado($idDocumento, $hash, $sinProcessoAberto)
     {
         try {
-            $objMdIaDocIndexaveisExistenteDTO = new MdIaDocIndexaveisDTO;
-            $objMdIaDocIndexaveisExistenteDTO->retDblIdDocumento();
-            $objMdIaDocIndexaveisExistenteDTO->setDblIdDocumento($idDocumento);
-            if ((new MdIaDocIndexaveisRN())->consultar($objMdIaDocIndexaveisExistenteDTO)) {
-                $this->atualizarRegistroDocumentoIndexado($idDocumento, $hash, $sinProcessoAberto);
-                return;
-            }
-
             $objMdIaDocIndexaveisDTO = new MdIaDocIndexaveisDTO;
             $objMdIaDocIndexaveisDTO->setDblIdDocumento($idDocumento);
             $objMdIaDocIndexaveisDTO->setStrSinIndexado('N');
@@ -578,20 +589,34 @@ class MdIaAgendamentoAutomaticoRN extends InfraRN
             $objMdIaDocIndexaveisDTO->setStrSinVetorizado('N');
             $objMdIaDocIndexaveisDTO->setStrSinProcessoAberto($sinProcessoAberto);
             $objMdIaDocIndexaveisDTO->setDthAlteracao(InfraData::getStrDataHoraAtual());
-            (new MdIaDocIndexaveisRN())->cadastrar($objMdIaDocIndexaveisDTO);
+
+            // Tenta UPDATE primeiro (se existe durante concorrência)
+            try {
+                (new MdIaDocIndexaveisRN())->alterar($objMdIaDocIndexaveisDTO);
+            } catch (Exception $eUpdate) {
+                // Se UPDATE falha (registro não existe), tenta INSERT
+                (new MdIaDocIndexaveisRN())->cadastrar($objMdIaDocIndexaveisDTO);
+            }
         } catch (Exception $e) {
-            InfraDebug::getInstance()->gravar('Erro ao cadastrar documento indexável. IdDocumento       : ' . $idDocumento . ' - ' . $e->getMessage());
+            InfraDebug::getInstance()->gravar('Erro ao cadastrar/atualizar documento indexável. IdDocumento: ' . $idDocumento . ' - ' . $e->getMessage());
         }
     }
 
     private function removerRegistroDocumentoIndexado($idDocumento)
     {
-        $objMdIaDocIndexaveisRN = new MdIaDocIndexaveisRN();
-        $objMdIaDocIndexaveisDTO = new MdIaDocIndexaveisDTO;
-        $objMdIaDocIndexaveisDTO->setDblIdDocumento($idDocumento);
-        $objMdIaDocIndexaveisDTO->retDblIdDocumento();
-        $arrObjMdIaDocIndexaveisDTO = $objMdIaDocIndexaveisRN->listar($objMdIaDocIndexaveisDTO);
-        $objMdIaDocIndexaveisRN->excluir($arrObjMdIaDocIndexaveisDTO);
+        try {
+            $objMdIaDocIndexaveisRN = new MdIaDocIndexaveisRN();
+            $objMdIaDocIndexaveisDTO = new MdIaDocIndexaveisDTO;
+            $objMdIaDocIndexaveisDTO->setDblIdDocumento($idDocumento);
+            $objMdIaDocIndexaveisDTO->retDblIdDocumento();
+            $arrObjMdIaDocIndexaveisDTO = $objMdIaDocIndexaveisRN->listar($objMdIaDocIndexaveisDTO);
+            if (!empty($arrObjMdIaDocIndexaveisDTO)) {
+                $objMdIaDocIndexaveisRN->excluir($arrObjMdIaDocIndexaveisDTO);
+            }
+        } catch (Exception $e) {
+            // Silencia erro se registro já foi removido (concorrência)
+            InfraDebug::getInstance()->gravar('Aviso ao remover documento indexável. IdDocumento: ' . $idDocumento . ' - ' . $e->getMessage());
+        }
     }
 
     private function cadastrarRegistroDocumentoIndexadoCancelados($idDocumento)
@@ -622,8 +647,6 @@ class MdIaAgendamentoAutomaticoRN extends InfraRN
 
     private function buscarDocumentosRelevantes($sinProcessoAberto)
     {
-        $arrExtensoesPermitidas = ["pdf", "html", "htm", "txt", "ods", "xlsx", "csv", "xml", "odt", "odp", "doc", "docx", "json", "ppt", "pptx", "rtf", "xls", "xlsm"];
-
         $retorno = array();
 
         //buscar id_serie cujo documento precisa pertencer

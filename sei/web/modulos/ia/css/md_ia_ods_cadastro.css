@@ -1,0 +1,71 @@
+#divMsg {
+    display: none;
+}
+
+#objetivosOds {
+    padding-left: 5%;
+    padding-right: 5%;
+}
+
+#objetivosOds .imagem {
+    border-radius: 5px;
+    width: 160px;
+    height: 160px;
+    position: relative;
+}
+
+#objetivosOds img.desfoque,
+#objetivosOds img.sugestaoIa,
+#objetivosOds img.historico,
+#objetivosOds img.sugestaoUsuExt {
+    opacity: 0.25;
+}
+
+#objetivosOds img.historico {
+    position: relative;
+}
+
+div.imagem>div.historico {
+    background: url('../../../svg/historico.svg') 0 0 no-repeat;
+}
+
+div.imagem>div.sugestaoIa {
+    background: url('../imagens/md_ia_icone_alerta.svg') 0 0 no-repeat;
+}
+
+div.imagem>div.sugestaoUsuExt {
+    background: url('../imagens/md_ia_usu_externo_sm.svg') 0 0 no-repeat;
+}
+
+div.imagem>div.historico,
+div.imagem>div.sugestaoIa,
+div.imagem>div.sugestaoUsuExt {
+    display: block !important;
+    position: absolute;
+    left: 6px;
+    bottom: 3px;
+    width: 24px;
+    height: 24px;
+}
+
+@media (max-width: 576px) {
+    #objetivosOds .imagem {
+        width: 95%;
+        height: auto;
+    }
+
+    div.imagem>div.historico,
+    div.imagem>div.sugestaoIa,
+    div.imagem>div.sugestaoUsuExt {
+        left: 25px;
+        bottom: 15px;
+    }
+}
+
+.colorido {
+    opacity: 100 !important;
+}
+
+.card-objetivo {
+    margin-bottom: 15px;
+}
