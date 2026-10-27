@@ -143,10 +143,18 @@ abstract class MdIaUtilWS extends InfraWS
         $log = "WS IA - Falha de validacao de autenticacao\n";
         $log .= "Mensagem: " . $mensagem . "\n";
         $log .= "Metodo: " . ($_SERVER['REQUEST_METHOD'] ?? '') . "\n";
-        $log .= "Endpoint: " . ($_SERVER['REQUEST_URI'] ?? '') . "\n";
+        $log .= "Endpoint: " . $this->redigirUri($_SERVER['REQUEST_URI'] ?? '') . "\n";
         $log .= "Dados: " . print_r($dadosRedigidos, true);
 
         LogSEI::getInstance()->gravar($log, InfraLog::$INFORMACAO);
+    }
+
+    /**
+     * Mascara o valor de IdentificacaoServico na query string da URI.
+     */
+    private function redigirUri(string $strUri): string
+    {
+        return preg_replace('/([?&]IdentificacaoServico=)[^&#]*/i', '$1***REDACTED***', $strUri) ?? '';
     }
 
     private function redigirCamposSensiveis($dados)

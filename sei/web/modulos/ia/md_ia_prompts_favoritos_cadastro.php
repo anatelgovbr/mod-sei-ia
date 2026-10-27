@@ -40,7 +40,7 @@ try {
 
     $objMdIaPromptsFavoritosDTO = new MdIaPromptsFavoritosDTO();
 
-    if ($numIdMdIaPromptsFavoritos) {
+    if ($numIdMdIaPromptsFavoritos && $_GET['acao'] == 'md_ia_prompts_favoritos_alterar') {
         $objMdIaPromptsFavoritosDTO->setNumIdMdIaPromptsFavoritos($numIdMdIaPromptsFavoritos);
         $objMdIaPromptsFavoritosDTO->retNumIdMdIaGrupoPromptsFav();
         $objMdIaPromptsFavoritosDTO->retNumIdMdIaPromptsFavoritos();
